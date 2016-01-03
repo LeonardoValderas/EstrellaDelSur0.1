@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">Estrella del Sur</string>
+
+
+    <!-- Navigation -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Array ListView Estrella -->
+    <string-array name="NavigationInstitucion">
+        <item>Articulos</item>
+        <item>Comisión Directiva</item>
+        <item>Dirección Técnica</item>
+    </string-array>
+
+    <!-- Array ListView Estrella -->
+    <string-array name="NavigationCarga">
+        <item>Fixture</item>
+        <item>Resultados</item>
+        <item>Jugadores</item>
+        <item>Entrenamientos</item>
+    </string-array>
+
+    <!-- Array ListView LigaAdeful -->
+    <string-array name="NavigationLigaAdeful">
+        <item>ADEFUL</item>
+    </string-array>
+
+    <!-- Array ListView LigaAdeful -->
+    <string-array name="NavigationLigaLifuba">
+        <item>LIFUBA</item>
+    </string-array>
+
+    <!-- Array ListView LigaAdeful -->
+    <string-array name="NavigationSocial">
+        <item>Notificación</item>
+        <item>Noticias</item>
+        <item>Fotos</item>
+        <item>Publicidad</item>
+    </string-array>
+
+    <!-- menu Articulo -->
+    <string name="action_usuario">USUARIO</string>
+    <string name="action_permisos">PERMISOS</string>
+    <string name="action_administrador">ADMINISTRADOR</string>
+    <string name="action_lifuba">LIFUBA</string>
+    <string name="action_adeful">ADEFUL</string>
+    <string name="action_posicion">POSICION</string>
+    <string name="action_cerrar">CERRAR</string>
+    <string name="action_puesto">PUESTO</string>
+    <string name="action_cargo">CARGO</string>
+    <string name="action_consultar">Consultar</string>
+    <string name="action_guardar">Guardar</string>
+    <string name="action_subir">Subir</string>
+    <string name="action_eliminar">Eliminar</string>
+
+</resources>

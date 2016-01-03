@@ -1,0 +1,13 @@
+<resources>
+    <color name="color_primary">#EB0001</color>
+    <color name="color_primary_dark">#570203</color>
+    <color name="color_accent">#FA0356</color>
+    <color name="colorPrimaryLight">#EF5C79</color>
+    <color name="colorHighlight">#FC3960</color>
+    <color name="colorPrimaryText">#58212C</color>
+    <color name="colorSecondaryText">#96283E</color>
+    <color name="colorDivider">#5C5254</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorRecycler">#E8E9E8</color>
+    <color name="colorCardView">#AAFFDC</color>
+</resources>
