@@ -1,6 +1,7 @@
 package com.estrelladelsur.estrelladelsur.institucion;
 
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,12 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.UtilityImage;
 import com.estrelladelsur.estrelladelsur.abstracta.Cargo;
@@ -34,10 +35,11 @@ import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCargoComision;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoMenuLista;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class FragmentGenerarComision extends Fragment {
@@ -46,8 +48,8 @@ public class FragmentGenerarComision extends Fragment {
     private ImageView fotoImageComision;
     private EditText nombreEditComision;
     private Spinner puestoSpinnerComision;
-    private EditText desdeEditComision;
-    private EditText hastaEditComision;
+    private Button desdeButtonComision;
+    private Button hastaButtonComision;
     private ControladorAdeful controladorAdeful;
     private boolean insertar = true;
     private Cargo cargo;
@@ -66,6 +68,9 @@ public class FragmentGenerarComision extends Fragment {
     private ByteArrayOutputStream baos;
     private Comision comision;
     private ArrayList<Comision> comisionArray;
+    private DateFormat formate = DateFormat.getDateInstance();
+    private Calendar calendar = Calendar.getInstance();
+    private boolean botonFecha = false;
 
     public static FragmentGenerarComision newInstance() {
         FragmentGenerarComision fragment = new FragmentGenerarComision();
@@ -102,10 +107,10 @@ public class FragmentGenerarComision extends Fragment {
         puestoSpinnerComision = (Spinner) v
                 .findViewById(R.id.puestoSpinnerComision);
         //DESDE
-        desdeEditComision = (EditText) v
+        desdeButtonComision = (Button) v
                 .findViewById(R.id.desdeEditComision);
         //HASTA
-        hastaEditComision = (EditText) v
+        hastaButtonComision = (Button) v
                 .findViewById(R.id.hastaEditComision);
 
         return v;
@@ -127,18 +132,21 @@ public class FragmentGenerarComision extends Fragment {
         if (actualizar) {
 
             idComisionExtra = getActivity().getIntent().getIntExtra("id_comision", 0);
-            nombreEditComision.setText(getActivity().getIntent()
+   /*         nombreEditComision.setText(getActivity().getIntent()
                     .getStringExtra("nombre"));
-            desdeEditComision.setText(getActivity().getIntent()
+            desdeButtonComision.setText(getActivity().getIntent()
                     .getStringExtra("desde"));
-            hastaEditComision.setText(getActivity().getIntent()
-                    .getStringExtra("hasta"));
+            hastaButtonComision.setText(getActivity().getIntent()
+                    .getStringExtra("hasta"));*/
 
             // COMISION POR ID
             controladorAdeful.abrirBaseDeDatos();
             comisionArray = controladorAdeful.selectComisionAdeful(idComisionExtra);
             controladorAdeful.cerrarBaseDeDatos();
 
+            nombreEditComision.setText(comisionArray.get(0).getNOMBRE_COMISION().toString());
+            desdeButtonComision.setText(comisionArray.get(0).getPERIODO_DESDE().toString());
+            hastaButtonComision.setText(comisionArray.get(0).getPERIODO_HASTA().toString());
             imageComision = comisionArray.get(0).getFOTO_COMISION();
 
             if (imageComision != null) {
@@ -147,7 +155,7 @@ public class FragmentGenerarComision extends Fragment {
                 theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
                 fotoImageComision.setImageBitmap(theImage);
             } else {
-                // fotoImageComision.setImageResource(R.drawable.logo);
+                 fotoImageComision.setImageResource(android.R.drawable.ic_menu_my_calendar);
             }
 
             insertar = false;
@@ -161,6 +169,27 @@ public class FragmentGenerarComision extends Fragment {
             public void onClick(View v) {
                 //Alerta galeria
                 ImageDialogComision();
+
+            }
+        });
+
+        desdeButtonComision.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                botonFecha = true;
+                setDate();
+
+            }
+        });
+        hastaButtonComision.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                botonFecha = false;
+                setDate();
 
             }
         });
@@ -307,6 +336,45 @@ public class FragmentGenerarComision extends Fragment {
         dialogoMenuLista.listViewGeneral.setAdapter(adapterList);
     }
 
+    public void dateDesde() {
+
+        desdeButtonComision.setText(formate.format(calendar.getTime()));
+
+    }
+
+    public void dateHasta() {
+
+        hastaButtonComision.setText(formate.format(calendar.getTime()));
+
+    }
+
+    public void setDate() {
+
+        new DatePickerDialog(getActivity(), d, calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)).show();
+
+    }
+
+    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, monthOfYear);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+            if (botonFecha) {
+                dateDesde();
+            } else {
+
+                dateHasta();
+            }
+        }
+    };
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -359,26 +427,28 @@ public class FragmentGenerarComision extends Fragment {
                 Toast.makeText(getActivity(), "Debe agregar un Cargo(Menu-Cargo).",
                         Toast.LENGTH_SHORT).show();
 
-            } else if (nombreEditComision.getText().toString().equals("") || desdeEditComision.getText().toString().equals("") || hastaEditComision.getText().toString().equals("")) {
-                Toast.makeText(getActivity(), "Ingrese todos los datos.",
+            } else if (nombreEditComision.getText().toString().equals("")) {
+                Toast.makeText(getActivity(), "Ingrese el nombre del integrante de la comisión.",
                         Toast.LENGTH_SHORT).show();
-
+            } else if (desdeButtonComision.getText().toString().equals("Desde") || hastaButtonComision.getText().toString().equals("Hasta")) {
+                Toast.makeText(getActivity(), "Complete el periodo del cargo.",
+                        Toast.LENGTH_SHORT).show();
             } else if (insertar) {
 
                 comision = new Comision(0, nombreEditComision.getText().toString(),
-                        imageComision, cargoSpinner.getID_CARGO(), desdeEditComision.getText().toString(),
-                        hastaEditComision.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                        imageComision, cargoSpinner.getID_CARGO(),null, desdeButtonComision.getText().toString(),
+                        hastaButtonComision.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
                 controladorAdeful.abrirBaseDeDatos();
                 if (controladorAdeful.insertComisionAdeful(comision)) {
 
                     controladorAdeful.cerrarBaseDeDatos();
                     nombreEditComision.setText("");
-                    desdeEditComision.setText("");
-                    hastaEditComision.setText("");
+                    desdeButtonComision.setText("Desde");
+                    hastaButtonComision.setText("Hasta");
                     imageComision = null;
-                    // fotoImageComision.setima
-                    communicator.refresh();
+                    fotoImageComision.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                   // communicator.refresh();
                     Toast.makeText(getActivity(), "Integrante ingresado correctamente",
                             Toast.LENGTH_SHORT).show();
                 } else {
@@ -392,18 +462,18 @@ public class FragmentGenerarComision extends Fragment {
 
 
                 comision = new Comision(idComisionExtra, nombreEditComision.getText().toString(),
-                        imageComision, cargoSpinner.getID_CARGO(), desdeEditComision.getText().toString(),
-                        hastaEditComision.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                        imageComision, cargoSpinner.getID_CARGO(), null, desdeButtonComision.getText().toString(),
+                        hastaButtonComision.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
                 controladorAdeful.abrirBaseDeDatos();
                 if(controladorAdeful.actualizarComisionAdeful(comision)){
                 controladorAdeful.cerrarBaseDeDatos();
 
                 nombreEditComision.setText("");
-                desdeEditComision.setText("");
-                hastaEditComision.setText("");
+                desdeButtonComision.setText("Desde");
+                hastaButtonComision.setText("Hasta");
                 imageComision = null;
-                // fotoImageComision.setima
+                fotoImageComision.setImageResource(android.R.drawable.ic_menu_my_calendar);
 
                 actualizar = false;
                 insertar = true;

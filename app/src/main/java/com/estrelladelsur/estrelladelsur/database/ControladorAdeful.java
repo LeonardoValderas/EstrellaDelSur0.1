@@ -381,7 +381,7 @@ public class ControladorAdeful {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        comision = new Comision(id, nombre, foto, id_cargo, desde, hasta, creador,
+                        comision = new Comision(id, nombre, foto, id_cargo,null, desde, hasta, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY CARGO
                         arrayComisionAdeful.add(comision);
@@ -393,6 +393,79 @@ public class ControladorAdeful {
         } else {
 
             Log.e("selectComisionAdeful", "Error Conexion Base de Datos");
+        }
+
+        sql = null;
+        cursor = null;
+        database = null;
+        nombre = null;
+        desde = null;
+        hasta = null;
+        foto = null;
+        fechaCreacion = null;
+        fechaActualizacion = null;
+        creador = null;
+        usuario_act = null;
+
+        return arrayComisionAdeful;
+    }
+
+    //LISTA COMISION
+    public ArrayList<Comision> selectListaComisionAdeful() {
+
+        String sql = "SELECT C.ID_COMISION, C.NOMBRE_COMISION, C.FOTO_COMISION, " +
+                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.USUARIO_CREADOR, " +
+                "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
+                "CA.CARGO FROM COMISION_ADEFUL C, CARGO_ADEFUL CA WHERE C.ID_CARGO=CA.ID_CARGO";
+        ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
+        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
+                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null;
+        int id;
+        int id_cargo;
+        byte[] foto = null;
+        Cursor cursor = null;
+
+        if (database != null && database.isOpen()) {
+
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        Comision comision = null;
+
+                        id = cursor.getInt(cursor.getColumnIndex("ID_COMISION"));
+                        nombre = cursor.getString(cursor
+                                .getColumnIndex("NOMBRE_COMISION"));
+                        foto = cursor.getBlob(cursor
+                                .getColumnIndex("FOTO_COMISION"));
+                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
+                        desde = cursor.getString(cursor
+                                .getColumnIndex("PERIODO_DESDE"));
+                        hasta = cursor.getString(cursor
+                                .getColumnIndex("PERIODO_HASTA"));
+                        creador = cursor.getString(cursor
+                                .getColumnIndex("USUARIO_CREADOR"));
+                        fechaCreacion = cursor.getString(cursor
+                                .getColumnIndex("FECHA_CREACION"));
+                        usuario_act = cursor.getString(cursor
+                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+                        fechaActualizacion = cursor.getString(cursor
+                                .getColumnIndex("FECHA_ACTUALIZACION"));
+                        // CLASE AUX
+                        comision = new Comision(id, nombre, foto, id_cargo,cargo, desde, hasta, creador,
+                                fechaCreacion, usuario_act, fechaActualizacion);
+                        //ARRAY CARGO
+                        arrayComisionAdeful.add(comision);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("selectListaComisionAdeful", e.toString());
+            }
+        } else {
+
+            Log.e("selectListaComisionAdeful", "Error Conexion Base de Datos");
         }
 
         sql = null;
@@ -437,7 +510,38 @@ public class ControladorAdeful {
             return false;
         }
     }
-	/*
+
+    //ELIMINAR COMISION
+    public boolean eliminarComisionAdeful(int id) {
+
+        boolean res = false;
+        String sql = "DELETE FROM COMISION_ADEFUL WHERE ID_COMISION = " + id;
+
+        if (database != null && database.isOpen()) {
+
+            try {
+
+                database.execSQL(sql);
+                res = true;
+
+            } catch (Exception e) {
+
+                res = false;
+                Log.e("eliminarComisionAdeful", e.toString());
+            }
+
+        } else {
+
+            res = false;
+            Log.e("eliminarComisionAdeful", "Error Conexion Base de Datos");
+        }
+
+        database = null;
+        sql = null;
+        return res;
+    }
+
+    /*
 
 	*//**
      * Se usa ContentVales para la utilizaci�n de byte[] blob

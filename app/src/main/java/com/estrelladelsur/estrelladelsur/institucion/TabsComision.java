@@ -133,7 +133,7 @@ public class TabsComision extends AppCompatActivity implements Communicator{
 
                     break;
                 case 1:
-                    fragmentTab = FragmentEditarArticulo.newInstance();
+                    fragmentTab = FragmentEditarComision.newInstance();
 
                     break;
             }

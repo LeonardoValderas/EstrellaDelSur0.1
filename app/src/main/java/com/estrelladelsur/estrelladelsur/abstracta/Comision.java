@@ -6,6 +6,7 @@ public class Comision {
     private String NOMBRE_COMISION;
     private byte[] FOTO_COMISION;
     private int ID_CARGO;
+    private String CARGO;
     private String PERIODO_DESDE;
     private String PERIODO_HASTA;
     private String USUARIO_CREADOR;
@@ -14,19 +15,28 @@ public class Comision {
     private String FECHA_ACTUALIZACION;
 
 
-    public Comision(int id, String nombre, byte[] foto, int id_cargo, String periodo_desde, String periodo_hasta,String usuario,
+    public Comision(int id, String nombre, byte[] foto, int id_cargo,String cargo, String periodo_desde, String periodo_hasta,String usuario,
                     String fecha_creacion, String usuario_actualizacion, String fecha_actualizacion) {
 
         ID_COMISION = id;
         NOMBRE_COMISION = nombre;
         FOTO_COMISION = foto;
         ID_CARGO = id_cargo;
+        CARGO = cargo;
         PERIODO_DESDE = periodo_desde;
         PERIODO_HASTA = periodo_hasta;
         USUARIO_CREADOR = usuario;
         FECHA_CREACION = fecha_creacion;
         USUARIO_ACTUALIZACION = usuario_actualizacion;
         FECHA_ACTUALIZACION = fecha_actualizacion;
+    }
+
+    public String getCARGO() {
+        return CARGO;
+    }
+
+    public void setCARGO(String CARGO) {
+        this.CARGO = CARGO;
     }
 
     public int getID_CARGO() {
