@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 
-public class TabsComision extends AppCompatActivity implements Communicator{
+public class TabsDireccion extends AppCompatActivity implements Communicator{
 
     private Toolbar toolbar;
     private Toolbar toolbar_sub;
@@ -49,7 +49,7 @@ public class TabsComision extends AppCompatActivity implements Communicator{
         txtAbTitulo.setVisibility(View.GONE);
 
         txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-        txtAbSubTitulo.setText("COMISION");
+        txtAbSubTitulo.setText("DIRECCION");
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -61,14 +61,14 @@ public class TabsComision extends AppCompatActivity implements Communicator{
                 viewpagerid = viewPager.getId();
             }
 
-            viewPager.setAdapter(new TabsComisionAdapter(
+            viewPager.setAdapter(new TabsDireccionAdapter(
                     getSupportFragmentManager()));
         } else {
             viewPager = (ViewPager) findViewById(R.id.viewpager);
             viewPager.setOffscreenPageLimit(PAGE_COUNT - 1);
             viewPager = (ViewPager) findViewById(R.id.viewpager);
 
-            viewPager.setAdapter(new TabsComisionAdapter(
+            viewPager.setAdapter(new TabsDireccionAdapter(
                     getSupportFragmentManager()));
         }
         tabLayout = (TabLayout) findViewById(R.id.appbartabs);
@@ -101,13 +101,13 @@ public class TabsComision extends AppCompatActivity implements Communicator{
 
     }
 
-    public class TabsComisionAdapter extends FragmentPagerAdapter {
+    public class TabsDireccionAdapter extends FragmentPagerAdapter {
 
         private FragmentManager fm;
         private String tabTitles[] =
-                new String[]{"CREAR COMISION", "EDITAR COMISION"};
+                new String[]{"CREAR DIRECCION", "EDITAR DIRECCION"};
 
-        public TabsComisionAdapter(FragmentManager fm) {
+        public TabsDireccionAdapter(FragmentManager fm) {
             super(fm);
             this.fm = fm;
         }
@@ -129,11 +129,11 @@ public class TabsComision extends AppCompatActivity implements Communicator{
 
             switch (position) {
                 case 0:
-                    fragmentTab = FragmentGenerarComision.newInstance();
+                    fragmentTab = FragmentGenerarDireccion.newInstance();
 
                     break;
                 case 1:
-                    fragmentTab = FragmentEditarComision.newInstance();
+                    fragmentTab = FragmentEditarDireccion.newInstance();
 
                     break;
             }
@@ -183,11 +183,11 @@ public class TabsComision extends AppCompatActivity implements Communicator{
         // TODO Auto-generated method stub
 
         FragmentManager manager = getSupportFragmentManager();
-        FragmentEditarComision fragment = (FragmentEditarComision) manager
+        FragmentEditarDireccion fragment = (FragmentEditarDireccion) manager
                 .findFragmentByTag("android:switcher:" + viewPager.getId()
                         + ":" + 1);
 
-        fragment.recyclerViewLoadComision();
+        fragment.recyclerViewLoadDireccion();
 
     }
 

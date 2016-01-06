@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.institucion.TabsArticulo;
 import com.estrelladelsur.estrelladelsur.institucion.TabsComision;
+import com.estrelladelsur.estrelladelsur.institucion.TabsDireccion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,9 +104,9 @@ private TextView txtAbSubTitulo;
                                 break;
 
                             case 2:
-                       //         Intent tecnica  = new Intent(NavigationDrawerAdeful.this,TabsTecnica.class);
-                        //        startActivity(tecnica);
-                                tituloClickFragment = institucionalList.get(
+                               Intent direccion  = new Intent(NavigationAdeful.this,TabsDireccion.class);
+                               startActivity(direccion);
+                               tituloClickFragment = institucionalList.get(
                                         childPosition).toString();
                                 break;
                         }

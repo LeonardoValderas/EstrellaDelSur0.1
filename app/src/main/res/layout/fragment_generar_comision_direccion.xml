@@ -29,7 +29,7 @@
                     android:textSize="20dp" />
 
                 <ImageView
-                    android:id="@+id/fotoImageComision"
+                    android:id="@+id/fotoImageComisionDireccion"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center"
@@ -39,7 +39,7 @@
 
 
                 <EditText
-                    android:id="@+id/nombreEditComision"
+                    android:id="@+id/nombreEditComisionDireccion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -61,7 +61,7 @@
                     android:textSize="20dp" />
 
                 <Spinner
-                    android:id="@+id/puestoSpinnerComision"
+                    android:id="@+id/puestoSpinnerComisionDireccion"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="10dp" />
@@ -82,14 +82,14 @@
                     android:textSize="20dp" />
 
                 <Button
-                    android:id="@+id/desdeEditComision"
+                    android:id="@+id/desdeEditComisionDireccion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Desde" />
 
                 <Button
-                    android:id="@+id/hastaEditComision"
+                    android:id="@+id/hastaEditComisionDireccion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

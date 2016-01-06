@@ -36,6 +36,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".NavigationAdeful" />
         </activity>
+        <activity
+            android:name=".institucion.TabsDireccion"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".NavigationAdeful" />
+        </activity>
 
     </application>
 

@@ -17,32 +17,30 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Comision;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerComision;
+import com.estrelladelsur.estrelladelsur.abstracta.Direccion;
+import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerDireccion;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
-
 import java.util.ArrayList;
 
 
-public class FragmentEditarComision extends Fragment {
+public class FragmentEditarDireccion extends Fragment {
 
     private int CheckedPositionFragment;
-    private RecyclerView recyclerComision;
+    private RecyclerView recyclerDireccion;
     private ControladorAdeful controladorAdeful;
-    private ArrayList<Comision> comisionArray;
-    private AdaptadorRecyclerComision adaptadorRecyclerComision;
+    private ArrayList<Direccion> direccionArray;
+    private AdaptadorRecyclerDireccion adaptadorRecyclerDireccion;
     private DialogoAlerta dialogoAlerta;
 
-    public static FragmentEditarComision newInstance() {
-        FragmentEditarComision fragment = new FragmentEditarComision();
+    public static FragmentEditarDireccion newInstance() {
+        FragmentEditarDireccion fragment = new FragmentEditarDireccion();
         return fragment;
     }
 
-    public FragmentEditarComision() {
+    public FragmentEditarDireccion() {
         // Required empty public constructor
     }
 
@@ -64,7 +62,7 @@ public class FragmentEditarComision extends Fragment {
         View v = inflater.inflate(R.layout.fragment_editar_recyclerview, container, false);
 
         // RECYCLER ARTICULO
-        recyclerComision = (RecyclerView) v
+        recyclerDireccion = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
 
         return v;
@@ -79,28 +77,28 @@ public class FragmentEditarComision extends Fragment {
 
     private void init() {
 
-        recyclerComision.setLayoutManager(new LinearLayoutManager(
+        recyclerDireccion.setLayoutManager(new LinearLayoutManager(
                 getActivity(), LinearLayoutManager.VERTICAL, false));
-        recyclerComision.addItemDecoration(new DividerItemDecoration(
+        recyclerDireccion.addItemDecoration(new DividerItemDecoration(
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        recyclerComision.setItemAnimator(new DefaultItemAnimator());
+        recyclerDireccion.setItemAnimator(new DefaultItemAnimator());
 
-        recyclerViewLoadComision();
+        recyclerViewLoadDireccion();
 
-        recyclerComision.addOnItemTouchListener(new
+        recyclerDireccion.addOnItemTouchListener(new
                 RecyclerTouchListener(getActivity(),
-                recyclerComision, new ClickListener() {
+                recyclerDireccion, new ClickListener() {
 
             @Override
             public void onClick(View view, int position) {
                 // TODO Auto-generated method stub
 
-                Intent editarComision = new Intent(getActivity(),
+                Intent editarDireccion = new Intent(getActivity(),
                         TabsComision.class);
-                editarComision.putExtra("actualizar", true);
-                editarComision.putExtra("id_comision",
-                        comisionArray.get(position).getID_COMISION());
-                startActivity(editarComision);
+                editarDireccion.putExtra("actualizar", true);
+                editarDireccion.putExtra("id_direccion",
+                        direccionArray.get(position).getID_DIRECCION());
+                startActivity(editarDireccion);
             }
 
             @Override
@@ -121,11 +119,11 @@ public class FragmentEditarComision extends Fragment {
                                 // TODO Auto-generated method stub
 
                                 controladorAdeful.abrirBaseDeDatos();
-                                if (controladorAdeful.eliminarComisionAdeful(comisionArray.get(position)
-                                        .getID_COMISION())) {
+                                if (controladorAdeful.eliminarDireccionAdeful(direccionArray.get(position)
+                                        .getID_DIRECCION())) {
                                     controladorAdeful.cerrarBaseDeDatos();
 
-                                    recyclerViewLoadComision();
+                                    recyclerViewLoadDireccion();
 
                                     Toast.makeText(
                                             getActivity(),
@@ -160,15 +158,15 @@ public class FragmentEditarComision extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    public void recyclerViewLoadComision() {
+    public void recyclerViewLoadDireccion() {
 
         controladorAdeful.abrirBaseDeDatos();
-        comisionArray = controladorAdeful.selectListaComisionAdeful();
+        direccionArray = controladorAdeful.selectListaDireccionAdeful();
         controladorAdeful.cerrarBaseDeDatos();
 
-        adaptadorRecyclerComision = new AdaptadorRecyclerComision(comisionArray);
-        adaptadorRecyclerComision.notifyDataSetChanged();
-        recyclerComision.setAdapter(adaptadorRecyclerComision);
+        adaptadorRecyclerDireccion = new AdaptadorRecyclerDireccion(direccionArray);
+        adaptadorRecyclerDireccion.notifyDataSetChanged();
+        recyclerDireccion.setAdapter(adaptadorRecyclerDireccion);
     }
 
     public static interface ClickListener {
