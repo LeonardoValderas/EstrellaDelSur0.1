@@ -98,16 +98,11 @@ public class FragmentEditarComision extends Fragment {
                 // TODO Auto-generated method stub
 
                 Intent editarComision = new Intent(getActivity(),
-                        TabsArticulo.class);
+                        TabsComision.class);
                 editarComision.putExtra("actualizar", true);
                 editarComision.putExtra("id_comision",
                         comisionArray.get(position).getID_COMISION());
-                //  editarComision.putExtra("nombre", comisionArray.get(position).);
-                //  editarComision.putExtra("desde", comisionArray.get(position).getARTICULO());
-                //  editarComision.putExtra("hasta", comisionArray.get(position).getUSUARIO_CREADOR());
-
                 startActivity(editarComision);
-
             }
 
             @Override

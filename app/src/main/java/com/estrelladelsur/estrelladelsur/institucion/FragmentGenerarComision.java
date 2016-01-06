@@ -128,16 +128,12 @@ public class FragmentGenerarComision extends Fragment {
 
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
+        // LOAD SPINNER
+        loadSpinnerCargo();
         //Metodo Extra
         if (actualizar) {
 
             idComisionExtra = getActivity().getIntent().getIntExtra("id_comision", 0);
-   /*         nombreEditComision.setText(getActivity().getIntent()
-                    .getStringExtra("nombre"));
-            desdeButtonComision.setText(getActivity().getIntent()
-                    .getStringExtra("desde"));
-            hastaButtonComision.setText(getActivity().getIntent()
-                    .getStringExtra("hasta"));*/
 
             // COMISION POR ID
             controladorAdeful.abrirBaseDeDatos();
@@ -148,6 +144,7 @@ public class FragmentGenerarComision extends Fragment {
             desdeButtonComision.setText(comisionArray.get(0).getPERIODO_DESDE().toString());
             hastaButtonComision.setText(comisionArray.get(0).getPERIODO_HASTA().toString());
             imageComision = comisionArray.get(0).getFOTO_COMISION();
+            puestoSpinnerComision.setSelection(getPositionCargo(comisionArray.get(0).getID_CARGO()));
 
             if (imageComision != null) {
                 Bitmap theImage = BitmapFactory.decodeByteArray(imageComision, 0,
@@ -160,8 +157,6 @@ public class FragmentGenerarComision extends Fragment {
 
             insertar = false;
         }
-        // LOAD SPINNER
-        loadSpinnerCargo();
 
         // CLICK IMAGEN
         fotoImageComision.setOnClickListener(new View.OnClickListener() {
@@ -220,7 +215,18 @@ public class FragmentGenerarComision extends Fragment {
         myAlertDialog.show();
 
     }
+    //get posicion en el spinner del cargo.
+    private int getPositionCargo(int idCargo){
 
+        int index = 0;
+
+        for (int i=0;i<cargoArray.size();i++){
+            if (cargoArray.get(i).getID_CARGO()==(idCargo)){
+                index = i;
+            }
+        }
+        return index;
+    }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
@@ -448,7 +454,7 @@ public class FragmentGenerarComision extends Fragment {
                     hastaButtonComision.setText("Hasta");
                     imageComision = null;
                     fotoImageComision.setImageResource(android.R.drawable.ic_menu_my_calendar);
-                   // communicator.refresh();
+                    communicator.refresh();
                     Toast.makeText(getActivity(), "Integrante ingresado correctamente",
                             Toast.LENGTH_SHORT).show();
                 } else {
@@ -477,6 +483,7 @@ public class FragmentGenerarComision extends Fragment {
 
                 actualizar = false;
                 insertar = true;
+                communicator.refresh();
                 Toast.makeText(getActivity(), "Integrante actualizado correctamente.",
                         Toast.LENGTH_SHORT).show();
                  }else {

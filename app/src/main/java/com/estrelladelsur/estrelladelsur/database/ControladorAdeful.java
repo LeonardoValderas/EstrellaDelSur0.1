@@ -416,7 +416,7 @@ public class ControladorAdeful {
         String sql = "SELECT C.ID_COMISION, C.NOMBRE_COMISION, C.FOTO_COMISION, " +
                 "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.USUARIO_CREADOR, " +
                 "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
-                "CA.CARGO FROM COMISION_ADEFUL C, CARGO_ADEFUL CA WHERE C.ID_CARGO=CA.ID_CARGO";
+                "CA.CARGO FROM COMISION_ADEFUL C INNER JOIN CARGO_ADEFUL CA ON CA.ID_CARGO=C.ID_CARGO";
         ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
         String nombre = null, desde = null, hasta = null, fechaCreacion = null,
                 fechaActualizacion = null, creador = null, usuario_act = null, cargo = null;
@@ -441,6 +441,8 @@ public class ControladorAdeful {
                         foto = cursor.getBlob(cursor
                                 .getColumnIndex("FOTO_COMISION"));
                         id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
+                        cargo = cursor.getString(cursor
+                                .getColumnIndex("CARGO"));
                         desde = cursor.getString(cursor
                                 .getColumnIndex("PERIODO_DESDE"));
                         hasta = cursor.getString(cursor
@@ -456,7 +458,7 @@ public class ControladorAdeful {
                         // CLASE AUX
                         comision = new Comision(id, nombre, foto, id_cargo,cargo, desde, hasta, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY CARGO
+                        //ARRAY COMISION
                         arrayComisionAdeful.add(comision);
                     }
                 }

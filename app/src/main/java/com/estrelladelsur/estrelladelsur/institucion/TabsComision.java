@@ -183,11 +183,11 @@ public class TabsComision extends AppCompatActivity implements Communicator{
         // TODO Auto-generated method stub
 
         FragmentManager manager = getSupportFragmentManager();
-        FragmentEditarArticulo fragment = (FragmentEditarArticulo) manager
+        FragmentEditarComision fragment = (FragmentEditarComision) manager
                 .findFragmentByTag("android:switcher:" + viewPager.getId()
                         + ":" + 1);
 
-        fragment.recyclerViewLoadArticulo();
+        fragment.recyclerViewLoadComision();
 
     }
 
