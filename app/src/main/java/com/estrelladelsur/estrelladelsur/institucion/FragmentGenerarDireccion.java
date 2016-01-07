@@ -70,7 +70,7 @@ public class FragmentGenerarDireccion extends Fragment {
     private byte[] imageDireccion;
     private ByteArrayOutputStream baos;
     private Direccion direccion;
-    private ArrayList<Comision> direccionArray;
+    private ArrayList<Direccion> direccionArray;
     private DateFormat formate = DateFormat.getDateInstance();
     private Calendar calendar = Calendar.getInstance();
     private boolean botonFecha = false;
@@ -136,17 +136,17 @@ public class FragmentGenerarDireccion extends Fragment {
         //Metodo Extra
         if (actualizar) {
 
-            idDireccionExtra = getActivity().getIntent().getIntExtra("id_comision", 0);
+            idDireccionExtra = getActivity().getIntent().getIntExtra("id_direccion", 0);
 
-            // COMISION POR ID
+            // DIRECCION POR ID
             controladorAdeful.abrirBaseDeDatos();
-            direccionArray = controladorAdeful.selectComisionAdeful(idDireccionExtra);
+            direccionArray = controladorAdeful.selectDireccionAdeful(idDireccionExtra);
             controladorAdeful.cerrarBaseDeDatos();
 
-            nombreEditDireccion.setText(direccionArray.get(0).getNOMBRE_COMISION().toString());
+            nombreEditDireccion.setText(direccionArray.get(0).getNOMBRE_DIRECCION().toString());
             desdeButtonDireccion.setText(direccionArray.get(0).getPERIODO_DESDE().toString());
             hastaButtonDireccion.setText(direccionArray.get(0).getPERIODO_HASTA().toString());
-            imageDireccion = direccionArray.get(0).getFOTO_COMISION();
+            imageDireccion = direccionArray.get(0).getFOTO_DIRECCION();
             puestoSpinnerDireccion.setSelection(getPositionCargo(direccionArray.get(0).getID_CARGO()));
 
             if (imageDireccion != null) {

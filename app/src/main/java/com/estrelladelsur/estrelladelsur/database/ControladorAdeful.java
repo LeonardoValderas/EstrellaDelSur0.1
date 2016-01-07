@@ -572,7 +572,7 @@ public class ControladorAdeful {
         }
     }
 
-    //COMISION POR ID
+    //DIRECCION POR ID
     public ArrayList<Direccion> selectDireccionAdeful(int id_direccion) {
 
         String sql = "SELECT * FROM DIRECCION_ADEFUL WHERE ID_DIRECCION=" + id_direccion;
@@ -722,8 +722,8 @@ public class ControladorAdeful {
 
         ContentValues cv = new ContentValues();
         try {
-            cv.put("NOMBRE_COMISION", direccion.getNOMBRE_DIRECCION());
-            cv.put("FOTO_COMISION", direccion.getFOTO_DIRECCION());
+            cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
+            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
             cv.put("ID_CARGO", direccion.getID_CARGO());
             cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
             cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());

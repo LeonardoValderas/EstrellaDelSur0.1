@@ -94,7 +94,7 @@ public class FragmentEditarDireccion extends Fragment {
                 // TODO Auto-generated method stub
 
                 Intent editarDireccion = new Intent(getActivity(),
-                        TabsComision.class);
+                        TabsDireccion.class);
                 editarDireccion.putExtra("actualizar", true);
                 editarDireccion.putExtra("id_direccion",
                         direccionArray.get(position).getID_DIRECCION());
