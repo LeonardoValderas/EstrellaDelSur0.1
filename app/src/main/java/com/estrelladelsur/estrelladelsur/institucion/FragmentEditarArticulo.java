@@ -131,19 +131,26 @@ public class FragmentEditarArticulo extends Fragment {
                                 // TODO Auto-generated method stub
 
                                 controladorAdeful.abrirBaseDeDatos();
-                                controladorAdeful.eliminarArticuloAdeful(articuloArray.get(position)
-                                        .getID_ARTICULO());
-                                controladorAdeful.cerrarBaseDeDatos();
+                                if (controladorAdeful.eliminarArticuloAdeful(articuloArray.get(position)
+                                        .getID_ARTICULO())) {
+                                    controladorAdeful.cerrarBaseDeDatos();
 //
-                                recyclerViewLoadArticulo();
+                                    recyclerViewLoadArticulo();
 
-                                Toast.makeText(
-                                        getActivity(),
-                                        "Articulo Eliminado Correctamente",
-                                        Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(
+                                            getActivity(),
+                                            "Articulo Eliminado Correctamente",
+                                            Toast.LENGTH_SHORT).show();
 
-                                dialogoAlerta.alertDialog.dismiss();
+                                    dialogoAlerta.alertDialog.dismiss();
 
+                                } else {
+
+                                    controladorAdeful.cerrarBaseDeDatos();
+                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                                    "\n Si el error persiste comuniquese con soporte.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -169,12 +176,18 @@ public class FragmentEditarArticulo extends Fragment {
 
         controladorAdeful.abrirBaseDeDatos();
         articuloArray = controladorAdeful.selectListaArticuloAdeful();
-        controladorAdeful.cerrarBaseDeDatos();
+        if(articuloArray!= null) {
+            controladorAdeful.cerrarBaseDeDatos();
 
-        adaptadorRecyclerArticulo = new AdaptadorRecyclerArticulo(articuloArray);
-        adaptadorRecyclerArticulo.notifyDataSetChanged();
-        recyclerArticulo.setAdapter(adaptadorRecyclerArticulo);
-
+            adaptadorRecyclerArticulo = new AdaptadorRecyclerArticulo(articuloArray);
+            adaptadorRecyclerArticulo.notifyDataSetChanged();
+            recyclerArticulo.setAdapter(adaptadorRecyclerArticulo);
+        }else{
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                            "\n Si el error persiste comuniquese con soporte.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static interface ClickListener {

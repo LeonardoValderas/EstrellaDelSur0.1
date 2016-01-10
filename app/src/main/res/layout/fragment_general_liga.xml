@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.estrelladelsur.estrelladelsur.liga.TabsAdeful">
+
+    <!--<android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:fitsSystemWindows="true">-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+                             <!--app:layout_scrollFlags="scroll|enterAlways">-->
+
+            <ImageView
+                android:id="@+id/imageButtonEquipo_Cancha"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:clickable="true" />
+
+            <EditText
+                android:id="@+id/editTextDescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="Ingrese el Equipo"
+                android:textColor="#000000"
+                android:textCursorDrawable="@drawable/color_cursor_edittext"
+                android:textSize="30dp">
+
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycleViewGeneral"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </LinearLayout>
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+    <!--     <android.support.design.widget.FloatingActionButton
+             android:id="@+id/botonFloating"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="end|bottom"
+             android:layout_margin="16dp"
+             android:src="@drawable/ic_buttonfloating"
+             app:borderWidth="0dp" />-->
+     <!--</android.support.design.widget.CoordinatorLayout>-->
+
+</FrameLayout>

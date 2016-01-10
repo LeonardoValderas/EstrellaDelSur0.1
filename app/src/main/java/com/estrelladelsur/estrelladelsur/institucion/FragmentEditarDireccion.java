@@ -162,11 +162,18 @@ public class FragmentEditarDireccion extends Fragment {
 
         controladorAdeful.abrirBaseDeDatos();
         direccionArray = controladorAdeful.selectListaDireccionAdeful();
-        controladorAdeful.cerrarBaseDeDatos();
+        if(direccionArray != null) {
+            controladorAdeful.cerrarBaseDeDatos();
 
-        adaptadorRecyclerDireccion = new AdaptadorRecyclerDireccion(direccionArray);
-        adaptadorRecyclerDireccion.notifyDataSetChanged();
-        recyclerDireccion.setAdapter(adaptadorRecyclerDireccion);
+            adaptadorRecyclerDireccion = new AdaptadorRecyclerDireccion(direccionArray);
+            adaptadorRecyclerDireccion.notifyDataSetChanged();
+            recyclerDireccion.setAdapter(adaptadorRecyclerDireccion);
+        }else{
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                            "\n Si el error persiste comuniquese con soporte.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static interface ClickListener {

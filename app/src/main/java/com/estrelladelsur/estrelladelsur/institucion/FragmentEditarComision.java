@@ -164,11 +164,18 @@ public class FragmentEditarComision extends Fragment {
 
         controladorAdeful.abrirBaseDeDatos();
         comisionArray = controladorAdeful.selectListaComisionAdeful();
-        controladorAdeful.cerrarBaseDeDatos();
+        if(comisionArray != null) {
+            controladorAdeful.cerrarBaseDeDatos();
 
-        adaptadorRecyclerComision = new AdaptadorRecyclerComision(comisionArray);
-        adaptadorRecyclerComision.notifyDataSetChanged();
-        recyclerComision.setAdapter(adaptadorRecyclerComision);
+            adaptadorRecyclerComision = new AdaptadorRecyclerComision(comisionArray);
+            adaptadorRecyclerComision.notifyDataSetChanged();
+            recyclerComision.setAdapter(adaptadorRecyclerComision);
+        }else{
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                            "\n Si el error persiste comuniquese con soporte.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static interface ClickListener {

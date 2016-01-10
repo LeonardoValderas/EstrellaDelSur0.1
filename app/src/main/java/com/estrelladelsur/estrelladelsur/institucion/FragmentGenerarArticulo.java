@@ -161,16 +161,20 @@ public class FragmentGenerarArticulo extends Fragment {
                         usuario, fechaCreacion,usuario,fechaActualizacion);
 
                 controladorAdeful.abrirBaseDeDatos();
-                controladorAdeful.insertArticuloAdeful(articulo);
-                controladorAdeful.cerrarBaseDeDatos();
-
-                articuloEditTituto.setText("");
-                articuloEditArticulo.setText("");
-                communicator.refresh();
-                Toast.makeText(getActivity(), "Articulo Cargado Correctamente",
-                        Toast.LENGTH_SHORT).show();
-
-            }else{ //FIXTURE ACTUALIZAR
+               if(controladorAdeful.insertArticuloAdeful(articulo)) {
+                   controladorAdeful.cerrarBaseDeDatos();
+                   articuloEditTituto.setText("");
+                   articuloEditArticulo.setText("");
+                   communicator.refresh();
+                   Toast.makeText(getActivity(), "Articulo Cargado Correctamente",
+                           Toast.LENGTH_SHORT).show();
+               }else {
+                    controladorAdeful.cerrarBaseDeDatos();
+                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                    "\n Si el error persiste comuniquese con soporte.",
+                            Toast.LENGTH_SHORT).show();
+                }
+                }else{ //FIXTURE ACTUALIZAR
 
 
                 articulo = new Articulo(idArticuloExtra, articuloEditTituto.getText().toString(),
@@ -178,7 +182,7 @@ public class FragmentGenerarArticulo extends Fragment {
                         usuario, fechaCreacionExtra, usuario,controladorAdeful.getFechaOficial());
 
                 controladorAdeful.abrirBaseDeDatos();
-                controladorAdeful.actualizarArticuloAdeful(articulo);
+                if(controladorAdeful.actualizarArticuloAdeful(articulo)){
                 controladorAdeful.cerrarBaseDeDatos();
 
                 articuloEditTituto.setText("");
@@ -188,6 +192,12 @@ public class FragmentGenerarArticulo extends Fragment {
                 insertar = true;
                 Toast.makeText(getActivity(), "Articulo Actualizado Correctamente",
                         Toast.LENGTH_SHORT).show();
+                }else {
+                controladorAdeful.cerrarBaseDeDatos();
+                Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                "\n Si el error persiste comuniquese con soporte.",
+                        Toast.LENGTH_SHORT).show();
+                }
             }
             return true;
         }

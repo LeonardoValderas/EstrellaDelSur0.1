@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.institucion.TabsArticulo;
 import com.estrelladelsur.estrelladelsur.institucion.TabsComision;
 import com.estrelladelsur.estrelladelsur.institucion.TabsDireccion;
+import com.estrelladelsur.estrelladelsur.liga.TabsAdeful;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -142,8 +143,8 @@ private TextView txtAbSubTitulo;
                     } else if (groupPosition == 2) {
                         switch (childPosition) {
                             case 0:
-                            //    Intent equipo  = new Intent(NavigationDrawerAdeful.this,TabsAdeful.class);
-                           //     startActivity(equipo);
+                                Intent liga  = new Intent(NavigationAdeful.this,TabsAdeful.class);
+                               startActivity(liga);
                                 tituloClickFragment = ligaDatos.get(childPosition)
                                         .toString();
                                 break;

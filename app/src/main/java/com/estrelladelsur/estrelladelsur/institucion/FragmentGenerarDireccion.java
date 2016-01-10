@@ -140,25 +140,32 @@ public class FragmentGenerarDireccion extends Fragment {
 
             // DIRECCION POR ID
             controladorAdeful.abrirBaseDeDatos();
-            direccionArray = controladorAdeful.selectDireccionAdeful(idDireccionExtra);
-            controladorAdeful.cerrarBaseDeDatos();
+            if (controladorAdeful.selectDireccionAdeful(idDireccionExtra) != null) {
+                direccionArray = controladorAdeful.selectDireccionAdeful(idDireccionExtra);
+                controladorAdeful.cerrarBaseDeDatos();
 
-            nombreEditDireccion.setText(direccionArray.get(0).getNOMBRE_DIRECCION().toString());
-            desdeButtonDireccion.setText(direccionArray.get(0).getPERIODO_DESDE().toString());
-            hastaButtonDireccion.setText(direccionArray.get(0).getPERIODO_HASTA().toString());
-            imageDireccion = direccionArray.get(0).getFOTO_DIRECCION();
-            puestoSpinnerDireccion.setSelection(getPositionCargo(direccionArray.get(0).getID_CARGO()));
+                nombreEditDireccion.setText(direccionArray.get(0).getNOMBRE_DIRECCION().toString());
+                desdeButtonDireccion.setText(direccionArray.get(0).getPERIODO_DESDE().toString());
+                hastaButtonDireccion.setText(direccionArray.get(0).getPERIODO_HASTA().toString());
+                imageDireccion = direccionArray.get(0).getFOTO_DIRECCION();
+                puestoSpinnerDireccion.setSelection(getPositionCargo(direccionArray.get(0).getID_CARGO()));
 
-            if (imageDireccion != null) {
-                Bitmap theImage = BitmapFactory.decodeByteArray(imageDireccion, 0,
-                        imageDireccion.length);
-                theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
-                fotoImageDireccion.setImageBitmap(theImage);
+                if (imageDireccion != null) {
+                    Bitmap theImage = BitmapFactory.decodeByteArray(imageDireccion, 0,
+                            imageDireccion.length);
+                    theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
+                    fotoImageDireccion.setImageBitmap(theImage);
+                } else {
+                    fotoImageDireccion.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                }
+
+                insertar = false;
             } else {
-                 fotoImageDireccion.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                controladorAdeful.cerrarBaseDeDatos();
+                Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                "\n Si el error persiste comuniquese con soporte.",
+                        Toast.LENGTH_SHORT).show();
             }
-
-            insertar = false;
         }
 
         // CLICK IMAGEN
@@ -218,18 +225,20 @@ public class FragmentGenerarDireccion extends Fragment {
         myAlertDialog.show();
 
     }
+
     //get posicion en el spinner del cargo.
-    private int getPositionCargo(int idCargo){
+    private int getPositionCargo(int idCargo) {
 
         int index = 0;
 
-        for (int i=0;i<cargoArray.size();i++){
-            if (cargoArray.get(i).getID_CARGO()==(idCargo)){
+        for (int i = 0; i < cargoArray.size(); i++) {
+            if (cargoArray.get(i).getID_CARGO() == (idCargo)) {
                 index = i;
             }
         }
         return index;
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
@@ -322,8 +331,15 @@ public class FragmentGenerarDireccion extends Fragment {
 
         // CARGO
         controladorAdeful.abrirBaseDeDatos();
-        cargoArray = controladorAdeful.selectListaCargoAdeful();
-        controladorAdeful.cerrarBaseDeDatos();
+        if (controladorAdeful.selectListaCargoAdeful() != null) {
+            cargoArray = controladorAdeful.selectListaCargoAdeful();
+            controladorAdeful.cerrarBaseDeDatos();
+        } else {
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                            "\n Si el error persiste comuniquese con soporte.",
+                    Toast.LENGTH_SHORT).show();
+        }
         return cargoArray;
     }
 
@@ -445,7 +461,7 @@ public class FragmentGenerarDireccion extends Fragment {
             } else if (insertar) {
 
                 direccion = new Direccion(0, nombreEditDireccion.getText().toString(),
-                        imageDireccion, cargoSpinner.getID_CARGO(),null, desdeButtonDireccion.getText().toString(),
+                        imageDireccion, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
                         hastaButtonDireccion.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
                 controladorAdeful.abrirBaseDeDatos();
@@ -475,80 +491,79 @@ public class FragmentGenerarDireccion extends Fragment {
                         hastaButtonDireccion.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
                 controladorAdeful.abrirBaseDeDatos();
-                if(controladorAdeful.actualizarDireccionAdeful(direccion)){
-                controladorAdeful.cerrarBaseDeDatos();
+                if (controladorAdeful.actualizarDireccionAdeful(direccion)) {
+                    controladorAdeful.cerrarBaseDeDatos();
 
-                nombreEditDireccion.setText("");
-                desdeButtonDireccion.setText("Desde");
-                hastaButtonDireccion.setText("Hasta");
-                imageDireccion = null;
-                fotoImageDireccion.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                    nombreEditDireccion.setText("");
+                    desdeButtonDireccion.setText("Desde");
+                    hastaButtonDireccion.setText("Hasta");
+                    imageDireccion = null;
+                    fotoImageDireccion.setImageResource(android.R.drawable.ic_menu_my_calendar);
 
-                actualizar = false;
-                insertar = true;
-                communicator.refresh();
-                Toast.makeText(getActivity(), "Integrante actualizado correctamente.",
-                        Toast.LENGTH_SHORT).show();
-                 }else {
-
+                    actualizar = false;
+                    insertar = true;
+                    communicator.refresh();
+                    Toast.makeText(getActivity(), "Integrante actualizado correctamente.",
+                            Toast.LENGTH_SHORT).show();
+                } else {
                     controladorAdeful.cerrarBaseDeDatos();
                     Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
                                     "\n Si el error persiste comuniquese con soporte.",
                             Toast.LENGTH_SHORT).show();
                 }
             }
-                return true;
-            }
+            return true;
+        }
 
-            if (id == R.id.action_lifuba) {
+        if (id == R.id.action_lifuba) {
 
-                return true;
-            }
+            return true;
+        }
 
-            if (id == R.id.action_cargo) {
+        if (id == R.id.action_cargo) {
 
-                dialogoAlerta = new DialogoAlerta(
-                        getActivity(),
-                        "CARGO",
-                        "En esta opción puedes agregar o editar un cargo directivo.",
-                        null, null);
-                dialogoAlerta.btnAceptar.setText("Crear");
-                dialogoAlerta.btnCancelar.setText("Editar");
-                dialogoAlerta.btnAceptar
-                        .setOnClickListener(new View.OnClickListener() {
+            dialogoAlerta = new DialogoAlerta(
+                    getActivity(),
+                    "CARGO",
+                    "En esta opción puedes agregar o editar un cargo directivo.",
+                    null, null);
+            dialogoAlerta.btnAceptar.setText("Crear");
+            dialogoAlerta.btnCancelar.setText("Editar");
+            dialogoAlerta.btnAceptar
+                    .setOnClickListener(new View.OnClickListener() {
 
-                            @Override
-                            public void onClick(View v) {
-                                // TODO Auto-generated method stub
-                                dialogoAlerta.mensaje.setVisibility(View.GONE);
-                                dialogoAlerta.editTextUno.setVisibility(View.VISIBLE);
-                                dialogoAlerta.btnAceptar.setText("Aceptar");
-                                dialogoAlerta.btnCancelar.setText("Cancelar");
+                        @Override
+                        public void onClick(View v) {
+                            // TODO Auto-generated method stub
+                            dialogoAlerta.mensaje.setVisibility(View.GONE);
+                            dialogoAlerta.editTextUno.setVisibility(View.VISIBLE);
+                            dialogoAlerta.btnAceptar.setText("Aceptar");
+                            dialogoAlerta.btnCancelar.setText("Cancelar");
 
-                                // Crear la Cargo
-                                dialogoAlerta.btnAceptar
-                                        .setOnClickListener(new View.OnClickListener() {
+                            // Crear la Cargo
+                            dialogoAlerta.btnAceptar
+                                    .setOnClickListener(new View.OnClickListener() {
 
-                                            @Override
-                                            public void onClick(View v) {
-                                                // TODO Auto-generated method stub
-                                                if (!dialogoAlerta.editTextUno
-                                                        .getText().toString()
-                                                        .equals("")) {
+                                        @Override
+                                        public void onClick(View v) {
+                                            // TODO Auto-generated method stub
+                                            if (!dialogoAlerta.editTextUno
+                                                    .getText().toString()
+                                                    .equals("")) {
 
-                                                    String usuario = "Administrador";
-                                                    String fechaCreacion = controladorAdeful.getFechaOficial();
-                                                    String fechaActualizacion = fechaCreacion;
+                                                String usuario = "Administrador";
+                                                String fechaCreacion = controladorAdeful.getFechaOficial();
+                                                String fechaActualizacion = fechaCreacion;
 
-                                                    cargo = new Cargo(0,
-                                                            dialogoAlerta.editTextUno
-                                                                    .getText()
-                                                                    .toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                                                cargo = new Cargo(0,
+                                                        dialogoAlerta.editTextUno
+                                                                .getText()
+                                                                .toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                                                    controladorAdeful
-                                                            .abrirBaseDeDatos();
-                                                    controladorAdeful
-                                                            .insertCargoAdeful(cargo);
+                                                controladorAdeful
+                                                        .abrirBaseDeDatos();
+                                                if (controladorAdeful
+                                                        .insertCargoAdeful(cargo)) {
                                                     controladorAdeful
                                                             .cerrarBaseDeDatos();
                                                     //SPINNER
@@ -561,80 +576,85 @@ public class FragmentGenerarDireccion extends Fragment {
                                                             .show();
                                                     dialogoAlerta.alertDialog
                                                             .dismiss();
-
                                                 } else {
-                                                    Toast.makeText(
-                                                            getActivity(),
-                                                            "Ingrese un Cargo.",
-                                                            Toast.LENGTH_SHORT)
-                                                            .show();
+                                                    controladorAdeful.cerrarBaseDeDatos();
+                                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                                                    "\n Si el error persiste comuniquese con soporte.",
+                                                            Toast.LENGTH_SHORT).show();
                                                 }
+                                            } else {
+                                                Toast.makeText(
+                                                        getActivity(),
+                                                        "Ingrese un Cargo.",
+                                                        Toast.LENGTH_SHORT)
+                                                        .show();
                                             }
-                                        });
+                                        }
+                                    });
 
-                                dialogoAlerta.btnCancelar
-                                        .setOnClickListener(new View.OnClickListener() {
+                            dialogoAlerta.btnCancelar
+                                    .setOnClickListener(new View.OnClickListener() {
 
-                                            @Override
-                                            public void onClick(View v) {
-                                                // TODO Auto-generated method stub
+                                        @Override
+                                        public void onClick(View v) {
+                                            // TODO Auto-generated method stub
 
-                                                dialogoAlerta.alertDialog.dismiss();
+                                            dialogoAlerta.alertDialog.dismiss();
 
-                                            }
-                                        });
-                            }
-                        });
+                                        }
+                                    });
+                        }
+                    });
 
-                //EDITAR UN CARGO
-                dialogoAlerta.btnCancelar
-                        .setOnClickListener(new View.OnClickListener() {
+            //EDITAR UN CARGO
+            dialogoAlerta.btnCancelar
+                    .setOnClickListener(new View.OnClickListener() {
 
-                            @Override
-                            public void onClick(View v) {
-                                // TODO Auto-generated method stub
+                        @Override
+                        public void onClick(View v) {
+                            // TODO Auto-generated method stub
 
-                                dialogoMenuLista = new DialogoMenuLista(getActivity(),
-                                        "CARGOS", cargoArray);
+                            dialogoMenuLista = new DialogoMenuLista(getActivity(),
+                                    "CARGOS", cargoArray);
 
-                                dialogoMenuLista.btnAceptar.setText("Aceptar");
-                                dialogoMenuLista.btnCancelar.setText("Cancelar");
-
-
-                                loadListViewMenu();
+                            dialogoMenuLista.btnAceptar.setText("Aceptar");
+                            dialogoMenuLista.btnCancelar.setText("Cancelar");
 
 
-                                dialogoMenuLista.listViewGeneral.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
+                            loadListViewMenu();
 
-                                        dialogoAlertaEditar = new DialogoAlerta(
-                                                getActivity(),
-                                                "CARGO",
-                                                null,
-                                                null, null);
 
-                                        dialogoAlertaEditar.editTextUno.setVisibility(View.VISIBLE);
-                                        dialogoAlertaEditar.editTextUno.setText(parent.getItemAtPosition(position).toString());
-                                        dialogoAlertaEditar.btnAceptar.setText("Aceptar");
-                                        dialogoAlertaEditar.btnCancelar.setText("Cancelar");
+                            dialogoMenuLista.listViewGeneral.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
 
-                                        dialogoAlertaEditar.btnAceptar.setOnClickListener(new View.OnClickListener() {
+                                    dialogoAlertaEditar = new DialogoAlerta(
+                                            getActivity(),
+                                            "CARGO",
+                                            null,
+                                            null, null);
 
-                                            @Override
-                                            public void onClick(View v) {
-                                                // TODO Auto-generated method stub
+                                    dialogoAlertaEditar.editTextUno.setVisibility(View.VISIBLE);
+                                    dialogoAlertaEditar.editTextUno.setText(parent.getItemAtPosition(position).toString());
+                                    dialogoAlertaEditar.btnAceptar.setText("Aceptar");
+                                    dialogoAlertaEditar.btnCancelar.setText("Cancelar");
 
-                                                String usuario = "Administrador";
-                                                cargo = new Cargo(
-                                                        cargoArray.get(position).getID_CARGO(),
-                                                        dialogoAlertaEditar.editTextUno.getText().toString(),
-                                                        usuario, null, usuario, controladorAdeful.getFechaOficial());
+                                    dialogoAlertaEditar.btnAceptar.setOnClickListener(new View.OnClickListener() {
 
-                                                controladorAdeful
-                                                        .abrirBaseDeDatos();
-                                                controladorAdeful
-                                                        .actualizarCargoAdeful(cargo);
+                                        @Override
+                                        public void onClick(View v) {
+                                            // TODO Auto-generated method stub
+
+                                            String usuario = "Administrador";
+                                            cargo = new Cargo(
+                                                    cargoArray.get(position).getID_CARGO(),
+                                                    dialogoAlertaEditar.editTextUno.getText().toString(),
+                                                    usuario, null, usuario, controladorAdeful.getFechaOficial());
+
+                                            controladorAdeful
+                                                    .abrirBaseDeDatos();
+                                            if (controladorAdeful
+                                                    .actualizarCargoAdeful(cargo)) {
                                                 controladorAdeful
                                                         .cerrarBaseDeDatos();
                                                 loadListViewMenu();
@@ -644,60 +664,66 @@ public class FragmentGenerarDireccion extends Fragment {
                                                         getActivity(),
                                                         "Cargo Actualizado Correctamente.",
                                                         Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                controladorAdeful.cerrarBaseDeDatos();
+                                                Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                                                "\n Si el error persiste comuniquese con soporte.",
+                                                        Toast.LENGTH_SHORT).show();
                                             }
-                                        });
+                                        }
+                                    });
 
 
-                                        dialogoAlertaEditar.btnCancelar.setOnClickListener(new View.OnClickListener() {
+                                    dialogoAlertaEditar.btnCancelar.setOnClickListener(new View.OnClickListener() {
 
-                                            @Override
-                                            public void onClick(View v) {
-                                                // TODO Auto-generated method stub
-
-
-                                                dialogoAlertaEditar.alertDialog.dismiss();
-
-                                            }
-                                        });
-                                    }
-
-                                });
+                                        @Override
+                                        public void onClick(View v) {
+                                            // TODO Auto-generated method stub
 
 
-                                // Editar Cargo
-                                dialogoMenuLista.btnAceptar
-                                        .setOnClickListener(new View.OnClickListener() {
+                                            dialogoAlertaEditar.alertDialog.dismiss();
 
-                                            @Override
-                                            public void onClick(View v) {
-                                                // TODO Auto-generated method stub
+                                        }
+                                    });
+                                }
 
-                                                dialogoMenuLista.alertDialog.dismiss();
-                                                dialogoAlerta.alertDialog.dismiss();
-                                            }
-                                        });
+                            });
 
-                                dialogoMenuLista.btnCancelar.setOnClickListener(new View.OnClickListener() {
 
-                                    @Override
-                                    public void onClick(View v) {
-                                        // TODO Auto-generated method stub
+                            // Editar Cargo
+                            dialogoMenuLista.btnAceptar
+                                    .setOnClickListener(new View.OnClickListener() {
 
-                                        dialogoMenuLista.alertDialog.dismiss();
-                                        dialogoAlerta.alertDialog.dismiss();
-                                    }
-                                });
-                            }
-                        });
+                                        @Override
+                                        public void onClick(View v) {
+                                            // TODO Auto-generated method stub
 
-                return true;
-            }
+                                            dialogoMenuLista.alertDialog.dismiss();
+                                            dialogoAlerta.alertDialog.dismiss();
+                                        }
+                                    });
 
-            if (id == android.R.id.home) {
+                            dialogoMenuLista.btnCancelar.setOnClickListener(new View.OnClickListener() {
 
-                NavUtils.navigateUpFromSameTask(getActivity());
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+                                @Override
+                                public void onClick(View v) {
+                                    // TODO Auto-generated method stub
+
+                                    dialogoMenuLista.alertDialog.dismiss();
+                                    dialogoAlerta.alertDialog.dismiss();
+                                }
+                            });
+                        }
+                    });
+
+            return true;
         }
+
+        if (id == android.R.id.home) {
+
+            NavUtils.navigateUpFromSameTask(getActivity());
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
+}

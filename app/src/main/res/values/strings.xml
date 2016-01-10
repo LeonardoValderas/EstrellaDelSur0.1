@@ -54,4 +54,6 @@
     <string name="action_subir">Subir</string>
     <string name="action_eliminar">Eliminar</string>
 
+    <!-- mapa cancha -->
+    <string name="error_internet">Verifique su conexión de Internet</string>
 </resources>

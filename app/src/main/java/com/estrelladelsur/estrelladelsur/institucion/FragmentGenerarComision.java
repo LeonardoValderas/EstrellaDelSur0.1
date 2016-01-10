@@ -137,6 +137,7 @@ public class FragmentGenerarComision extends Fragment {
 
             // COMISION POR ID
             controladorAdeful.abrirBaseDeDatos();
+            if(controladorAdeful.selectComisionAdeful(idComisionExtra) != null) {
             comisionArray = controladorAdeful.selectComisionAdeful(idComisionExtra);
             controladorAdeful.cerrarBaseDeDatos();
 
@@ -156,6 +157,13 @@ public class FragmentGenerarComision extends Fragment {
             }
 
             insertar = false;
+
+        }else{
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                            "\n Si el error persiste comuniquese con soporte.",
+                    Toast.LENGTH_SHORT).show();
+        }
         }
 
         // CLICK IMAGEN
@@ -319,8 +327,15 @@ public class FragmentGenerarComision extends Fragment {
 
         // CARGO
         controladorAdeful.abrirBaseDeDatos();
-        cargoArray = controladorAdeful.selectListaCargoAdeful();
-        controladorAdeful.cerrarBaseDeDatos();
+        if(controladorAdeful.selectListaCargoAdeful() != null) {
+            cargoArray = controladorAdeful.selectListaCargoAdeful();
+            controladorAdeful.cerrarBaseDeDatos();
+        }else{
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                            "\n Si el error persiste comuniquese con soporte.",
+                    Toast.LENGTH_SHORT).show();
+        }
         return cargoArray;
     }
 
@@ -544,21 +559,26 @@ public class FragmentGenerarComision extends Fragment {
 
                                                     controladorAdeful
                                                             .abrirBaseDeDatos();
-                                                    controladorAdeful
-                                                            .insertCargoAdeful(cargo);
-                                                    controladorAdeful
-                                                            .cerrarBaseDeDatos();
-                                                    //SPINNER
-                                                    loadSpinnerCargo();
+                                                    if(controladorAdeful
+                                                            .insertCargoAdeful(cargo)) {
+                                                        controladorAdeful
+                                                                .cerrarBaseDeDatos();
+                                                        //SPINNER
+                                                        loadSpinnerCargo();
 
-                                                    Toast.makeText(
-                                                            getActivity(),
-                                                            "Cargo Generado Correctamente.",
-                                                            Toast.LENGTH_SHORT)
-                                                            .show();
-                                                    dialogoAlerta.alertDialog
-                                                            .dismiss();
-
+                                                        Toast.makeText(
+                                                                getActivity(),
+                                                                "Cargo Generado Correctamente.",
+                                                                Toast.LENGTH_SHORT)
+                                                                .show();
+                                                        dialogoAlerta.alertDialog
+                                                                .dismiss();
+                                                    }else{
+                                                        controladorAdeful.cerrarBaseDeDatos();
+                                                        Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                                                        "\n Si el error persiste comuniquese con soporte.",
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
                                                 } else {
                                                     Toast.makeText(
                                                             getActivity(),
@@ -630,17 +650,23 @@ public class FragmentGenerarComision extends Fragment {
 
                                                 controladorAdeful
                                                         .abrirBaseDeDatos();
-                                                controladorAdeful
-                                                        .actualizarCargoAdeful(cargo);
-                                                controladorAdeful
-                                                        .cerrarBaseDeDatos();
-                                                loadListViewMenu();
-                                                loadSpinnerCargo();
-                                                dialogoAlertaEditar.alertDialog.dismiss();
-                                                Toast.makeText(
-                                                        getActivity(),
-                                                        "Cargo Actualizado Correctamente.",
-                                                        Toast.LENGTH_SHORT).show();
+                                                if (controladorAdeful
+                                                        .actualizarCargoAdeful(cargo)) {
+                                                    controladorAdeful
+                                                            .cerrarBaseDeDatos();
+                                                    loadListViewMenu();
+                                                    loadSpinnerCargo();
+                                                    dialogoAlertaEditar.alertDialog.dismiss();
+                                                    Toast.makeText(
+                                                            getActivity(),
+                                                            "Cargo Actualizado Correctamente.",
+                                                            Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    controladorAdeful.cerrarBaseDeDatos();
+                                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                                                    "\n Si el error persiste comuniquese con soporte.",
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
                                             }
                                         });
 
