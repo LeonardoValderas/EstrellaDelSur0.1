@@ -9,12 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.abstracta.FixtureRecycler;
 
-public class AdaptadorRecyclerFixture extends
-		RecyclerView.Adapter<AdaptadorRecyclerFixture.FixtureViewHolder> implements
+public class AdaptadorEditarFixture extends
+		RecyclerView.Adapter<AdaptadorEditarFixture.FixtureViewHolder> implements
 		View.OnClickListener {
+
+	// private final static Context context;
 
 	private View.OnClickListener listener;
 	private ArrayList<FixtureRecycler> fixtureArray;
@@ -57,13 +60,12 @@ public class AdaptadorRecyclerFixture extends
 			// RESULTADO LOCAL
 			textRecyclerViewResultadoL = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewResultadoL);
-			//textRecyclerViewResultadoL.setVisibility(View.INVISIBLE);
+			textRecyclerViewResultadoL.setVisibility(View.INVISIBLE);
      		// RESULTADO VISITA
 			textRecyclerViewResultadoV = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewResultadoV);
-			//textRecyclerViewResultadoV.setVisibility(View.INVISIBLE);
+			textRecyclerViewResultadoV.setVisibility(View.INVISIBLE);
 		}
-
 
 		public void bindTitular(FixtureRecycler fixtureRecycler) {
 			// ESCUDO EQUIPO LOCAL
@@ -95,22 +97,10 @@ public class AdaptadorRecyclerFixture extends
 			textRecyclerViewDia.setText(fixtureRecycler.getDIA());
 			textRecyclerViewHora.setText(fixtureRecycler.getHORA());
 			textRecyclerViewCancha.setText(fixtureRecycler.getCANCHA());
-			//String rl = fixtureRecycler.getRESULTADO_LOCAL().toString();
-			//String rv = fixtureRecycler.getRESULTADO_VISITA().toString();
-			if(fixtureRecycler.getRESULTADO_LOCAL() != null){
-				textRecyclerViewResultadoL.setText(fixtureRecycler.getRESULTADO_LOCAL());
-			}else{
-				textRecyclerViewResultadoL.setText("-");
-			}
-			if(fixtureRecycler.getRESULTADO_VISITA() != null){
-				textRecyclerViewResultadoV.setText(fixtureRecycler.getRESULTADO_VISITA());
-			}else{
-				textRecyclerViewResultadoV.setText("-");
-			}
 		}
 	}
 
-	public AdaptadorRecyclerFixture(ArrayList<FixtureRecycler> fixtureArray) {
+	public AdaptadorEditarFixture(ArrayList<FixtureRecycler> fixtureArray) {
 		this.fixtureArray = fixtureArray;
 	}
 
@@ -121,7 +111,6 @@ public class AdaptadorRecyclerFixture extends
 				R.layout.recyclerview_item_fixture, viewGroup, false);
 		itemView.setOnClickListener(this);
 		FixtureViewHolder tvh = new FixtureViewHolder(itemView);
-
 		return tvh;
 	}
 

@@ -9,15 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.FixtureRecycler;
 
-public class AdaptadorRecyclerFixture extends
-		RecyclerView.Adapter<AdaptadorRecyclerFixture.FixtureViewHolder> implements
+import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.abstracta.ResultadoRecycler;
+
+public class AdaptadorRecyclerResultado extends
+		RecyclerView.Adapter<AdaptadorRecyclerResultado.FixtureViewHolder> implements
 		View.OnClickListener {
 
 	private View.OnClickListener listener;
-	private ArrayList<FixtureRecycler> fixtureArray;
+	private ArrayList<ResultadoRecycler> resultadoArray;
 
 	public static class FixtureViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -32,7 +33,6 @@ public class AdaptadorRecyclerFixture extends
 
 		public FixtureViewHolder(View itemView) {
 			super(itemView);
-
 			// ESCUDO LOCAL
 			imageViewEscudoL = (ImageView) itemView
 					.findViewById(R.id.imageViewEscudoL);
@@ -48,70 +48,74 @@ public class AdaptadorRecyclerFixture extends
 			// DIA
 			textRecyclerViewDia = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewDia);
+			textRecyclerViewDia.setVisibility(View.INVISIBLE);
 			// HORA
 			textRecyclerViewHora = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewHora);
+			textRecyclerViewHora.setVisibility(View.INVISIBLE);
 			// CANCHA
 			textRecyclerViewCancha = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewCancha);
+			textRecyclerViewCancha.setVisibility(View.INVISIBLE);
 			// RESULTADO LOCAL
 			textRecyclerViewResultadoL = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewResultadoL);
-			//textRecyclerViewResultadoL.setVisibility(View.INVISIBLE);
-     		// RESULTADO VISITA
+			// RESULTADO VISITA
 			textRecyclerViewResultadoV = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewResultadoV);
-			//textRecyclerViewResultadoV.setVisibility(View.INVISIBLE);
+
 		}
 
-
-		public void bindTitular(FixtureRecycler fixtureRecycler) {
+    	public void bindTitular(ResultadoRecycler resultadoRecycler) {
 			// ESCUDO EQUIPO LOCAL
-			byte[] escudoLocal = fixtureRecycler.getESCUDOLOCAL();
+			byte[] escudoLocal = resultadoRecycler.getESCUDOLOCAL();
 			if (escudoLocal == null) {
 				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_equipo);
 			} else {
 				Bitmap escudoLocalBitmap = BitmapFactory.decodeByteArray(
-						fixtureRecycler.getESCUDOLOCAL(), 0,
-						fixtureRecycler.getESCUDOLOCAL().length);
+						resultadoRecycler.getESCUDOLOCAL(), 0,
+						resultadoRecycler.getESCUDOLOCAL().length);
 				escudoLocalBitmap = Bitmap.createScaledBitmap(
 						escudoLocalBitmap, 150, 150, true);
+
 				imageViewEscudoL.setImageBitmap(escudoLocalBitmap);
 			}
 			// ESCUDO EQUIPO VISITA
-			byte[] escudovisita = fixtureRecycler.getESCUDOVISITA();
+			byte[] escudovisita = resultadoRecycler.getESCUDOVISITA();
 			if (escudovisita == null) {
 				imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_equipo);
 			} else {
 				Bitmap escudoVisitaBitmap = BitmapFactory.decodeByteArray(
-						fixtureRecycler.getESCUDOVISITA(), 0,
-						fixtureRecycler.getESCUDOVISITA().length);
+						resultadoRecycler.getESCUDOVISITA(), 0,
+						resultadoRecycler.getESCUDOVISITA().length);
 				escudoVisitaBitmap = Bitmap.createScaledBitmap(
 						escudoVisitaBitmap, 150, 150, true);
+
 				imageViewEscudoV.setImageBitmap(escudoVisitaBitmap);
 			}
-			textRecyclerViewEquipoL.setText(fixtureRecycler.getEQUIPO_LOCAL());
-			textRecyclerViewEquipoV.setText(fixtureRecycler.getEQUIPO_VISITA());
-			textRecyclerViewDia.setText(fixtureRecycler.getDIA());
-			textRecyclerViewHora.setText(fixtureRecycler.getHORA());
-			textRecyclerViewCancha.setText(fixtureRecycler.getCANCHA());
-			//String rl = fixtureRecycler.getRESULTADO_LOCAL().toString();
-			//String rv = fixtureRecycler.getRESULTADO_VISITA().toString();
-			if(fixtureRecycler.getRESULTADO_LOCAL() != null){
-				textRecyclerViewResultadoL.setText(fixtureRecycler.getRESULTADO_LOCAL());
+			
+			textRecyclerViewEquipoL.setText(resultadoRecycler
+					.getEQUIPO_LOCAL());
+			textRecyclerViewEquipoV.setText(resultadoRecycler
+					.getEQUIPO_VISITA());
+
+			if (resultadoRecycler.getRESULTADO_LOCAL() != null){
+				textRecyclerViewResultadoL.setText(resultadoRecycler
+						.getRESULTADO_LOCAL());
 			}else{
 				textRecyclerViewResultadoL.setText("-");
 			}
-			if(fixtureRecycler.getRESULTADO_VISITA() != null){
-				textRecyclerViewResultadoV.setText(fixtureRecycler.getRESULTADO_VISITA());
+			if (resultadoRecycler.getRESULTADO_VISITA()!=null){
+				textRecyclerViewResultadoV.setText(resultadoRecycler
+						.getRESULTADO_VISITA());
 			}else{
 				textRecyclerViewResultadoV.setText("-");
 			}
 		}
 	}
 
-	public AdaptadorRecyclerFixture(ArrayList<FixtureRecycler> fixtureArray) {
-		this.fixtureArray = fixtureArray;
+	public AdaptadorRecyclerResultado(ArrayList<ResultadoRecycler> resultadoArray) {
+		this.resultadoArray = resultadoArray;
 	}
 
 	@Override
@@ -119,6 +123,7 @@ public class AdaptadorRecyclerFixture extends
 			int viewType) {
 		View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
 				R.layout.recyclerview_item_fixture, viewGroup, false);
+
 		itemView.setOnClickListener(this);
 		FixtureViewHolder tvh = new FixtureViewHolder(itemView);
 
@@ -127,13 +132,13 @@ public class AdaptadorRecyclerFixture extends
 
 	@Override
 	public void onBindViewHolder(FixtureViewHolder viewHolder, int pos) {
-		FixtureRecycler item = fixtureArray.get(pos);
+		ResultadoRecycler item = resultadoArray.get(pos);
 		viewHolder.bindTitular(item);
 	}
 
 	@Override
 	public int getItemCount() {
-		return fixtureArray.size();
+		return resultadoArray.size();
 	}
 
 	public void setOnClickListener(View.OnClickListener listener) {

@@ -1,67 +1,29 @@
 package com.estrelladelsur.estrelladelsur.abstracta;
 
-public class FixtureRecycler {
+public class ResultadoRecycler {
 
 	private int ID_FIXTURE;
 	private int ID_EQUIPO_LOCAL;
 	private int ID_EQUIPO_VISITA;
-	private int ID_CANCHA;
-	private String EQUIPO_LOCAL;
 	private String RESULTADO_LOCAL;
-	private String EQUIPO_VISITA;
 	private String RESULTADO_VISITA;
-	private String CANCHA;
-	private String DIA;
-	private String HORA;
+	private String EQUIPO_LOCAL;
+	private String EQUIPO_VISITA;
 	private byte[] ESCUDOLOCAL;
 	private byte[] ESCUDOVISITA;
 
-	public FixtureRecycler(int id,int id_equipo_local, String equipo_local,byte[]escudoLocal,String r_local, int id_equipo_visita, String equipo_visita,byte[] escudovisita,String r_visita, int id_cancha,String cancha, String dia,String hora) {
-
+	public ResultadoRecycler(int id,int id_equipo_local, String equipo_local,byte[]escudoLocal,String resultado_local,int id_equipo_visita, String equipo_visita,byte[] escudovisita,String resultado_visita) {
 		ID_FIXTURE = id;
 		ID_EQUIPO_LOCAL = id_equipo_local;
 		EQUIPO_LOCAL=equipo_local;
 		ESCUDOLOCAL = escudoLocal;
-		RESULTADO_LOCAL = r_local;
+		RESULTADO_LOCAL= resultado_local;
 		ID_EQUIPO_VISITA = id_equipo_visita;
 		EQUIPO_VISITA=equipo_visita;
 		ESCUDOVISITA = escudovisita;
-		RESULTADO_VISITA = r_visita;
-		ID_CANCHA = id_cancha;
-		CANCHA=cancha;
-		DIA = dia;
-		HORA = hora;
-
+		RESULTADO_VISITA=resultado_visita;
 	}
-
-	public String getRESULTADO_LOCAL() {
-		return RESULTADO_LOCAL;
-	}
-
-	public void setRESULTADO_LOCAL(String RESULTADO_LOCAL) {
-		this.RESULTADO_LOCAL = RESULTADO_LOCAL;
-	}
-
-	public String getRESULTADO_VISITA() {
-		return RESULTADO_VISITA;
-	}
-
-	public void setRESULTADO_VISITA(String RESULTADO_VISITA) {
-		this.RESULTADO_VISITA = RESULTADO_VISITA;
-	}
-
-	public String getCANCHA() {
-		return CANCHA;
-	}
-	public void setCANCHA(String cANCHA) {
-		CANCHA = cANCHA;
-	}
-	public void setID_CANCHA(int iD_CANCHA) {
-		ID_CANCHA = iD_CANCHA;
-	}
-	public int getID_CANCHA() {
-		return ID_CANCHA;
-	}
+	
 	public int getID_FIXTURE() {
 		return ID_FIXTURE;
 	}
@@ -92,17 +54,17 @@ public class FixtureRecycler {
 	public void setEQUIPO_VISITA(String eQUIPO_VISITA) {
 		EQUIPO_VISITA = eQUIPO_VISITA;
 	}
-	public String getDIA() {
-		return DIA;
+	public String getRESULTADO_LOCAL() {
+		return RESULTADO_LOCAL;
 	}
-	public void setDIA(String dIA) {
-		DIA = dIA;
+	public void setRESULTADO_LOCAL(String rESULTADO_LOCAL) {
+		RESULTADO_LOCAL = rESULTADO_LOCAL;
 	}
-	public String getHORA() {
-		return HORA;
+	public String getRESULTADO_VISITA() {
+		return RESULTADO_VISITA;
 	}
-	public void setHORA(String hORA) {
-		HORA = hORA;
+	public void setRESULTADO_VISITA(String rESULTADO_VISITA) {
+		RESULTADO_VISITA = rESULTADO_VISITA;
 	}
 	public byte[] getESCUDOLOCAL() {
 		return ESCUDOLOCAL;

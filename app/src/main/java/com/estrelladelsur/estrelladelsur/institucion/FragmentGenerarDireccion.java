@@ -331,8 +331,8 @@ public class FragmentGenerarDireccion extends Fragment {
 
         // CARGO
         controladorAdeful.abrirBaseDeDatos();
-        if (controladorAdeful.selectListaCargoAdeful() != null) {
-            cargoArray = controladorAdeful.selectListaCargoAdeful();
+        cargoArray = controladorAdeful.selectListaCargoAdeful();
+        if (cargoArray != null) {
             controladorAdeful.cerrarBaseDeDatos();
         } else {
             controladorAdeful.cerrarBaseDeDatos();
@@ -345,40 +345,31 @@ public class FragmentGenerarDireccion extends Fragment {
 
     // POPULATION SPINNER
     public void loadSpinnerCargo() {
-
         // CARGO SPINNER
         adapterSpinnerCargoComision = new AdapterSpinnerCargoComision(getActivity(),
                 R.layout.simple_spinner_dropdown_item, selectCargoList());
         puestoSpinnerDireccion.setAdapter(adapterSpinnerCargoComision);
-
     }
 
     // POPULATION LISTVIEW
     public void loadListViewMenu() {
-
         adapterList = new ArrayAdapter<Cargo>(getActivity(),
                 R.layout.listview_item_dialogo, R.id.textViewGeneral, selectCargoList());
         dialogoMenuLista.listViewGeneral.setAdapter(adapterList);
     }
 
     public void dateDesde() {
-
         desdeButtonDireccion.setText(formate.format(calendar.getTime()));
-
     }
 
     public void dateHasta() {
-
         hastaButtonDireccion.setText(formate.format(calendar.getTime()));
-
     }
 
     public void setDate() {
-
         new DatePickerDialog(getActivity(), d, calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)).show();
-
     }
 
     DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
@@ -386,7 +377,6 @@ public class FragmentGenerarDireccion extends Fragment {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
-
             calendar.set(Calendar.YEAR, year);
             calendar.set(Calendar.MONTH, monthOfYear);
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);

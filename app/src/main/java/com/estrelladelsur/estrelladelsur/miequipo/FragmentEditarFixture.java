@@ -17,11 +17,14 @@ import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.abstracta.Anio;
 import com.estrelladelsur.estrelladelsur.abstracta.Division;
 import com.estrelladelsur.estrelladelsur.abstracta.Fecha;
+import com.estrelladelsur.estrelladelsur.abstracta.FixtureRecycler;
 import com.estrelladelsur.estrelladelsur.abstracta.Torneo;
+import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorEditarFixture;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerFixture;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
@@ -40,7 +43,7 @@ public class FragmentEditarFixture extends Fragment {
 	private ArrayList<Torneo> torneoArray;
 	private ArrayList<Fecha> fechaArray;
 	private ArrayList<Anio> anioArray;
-	//private ArrayList<FixtureRecycler> fixtureArray;
+	private ArrayList<FixtureRecycler> fixtureArray;
 	private Spinner fixtureDivisionSpinner;
 	private Spinner fixtureTorneoSpinner;
 	private Spinner fixtureFechaSpinner;
@@ -96,6 +99,8 @@ public class FragmentEditarFixture extends Fragment {
 				.findViewById(R.id.fixtureFechaSpinner);
 		// ANIO
 		fixtureAnioSpinner = (Spinner) v.findViewById(R.id.fixtureAnioSpinner);
+        // FLOATING BUTTON
+		botonFloating = (FloatingActionButton)v.findViewById(R.id.botonFloating);
 		// RecyclerView
 		recyclerViewFixture = (RecyclerView) v
 				.findViewById(R.id.recycleViewGeneral);
@@ -111,39 +116,69 @@ public class FragmentEditarFixture extends Fragment {
 
 	private void init() {
 
-		/*// DIVISION
+		// DIVISION
 		controladorAdeful.abrirBaseDeDatos();
 		divisionArray = controladorAdeful.selectListaDivisionAdeful();
-		controladorAdeful.cerrarBaseDeDatos();
+		if(divisionArray != null) {
+			controladorAdeful.cerrarBaseDeDatos();
+			// DIVSION SPINNER
+			adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
+					R.layout.simple_spinner_dropdown_item, divisionArray);
+			fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
+		}else{
+			controladorAdeful.cerrarBaseDeDatos();
+			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+							"\n Si el error persiste comuniquese con soporte.",
+					Toast.LENGTH_SHORT).show();
+		}
 		// TORNEO
 		controladorAdeful.abrirBaseDeDatos();
 		torneoArray = controladorAdeful.selectListaTorneoAdeful();
-		controladorAdeful.cerrarBaseDeDatos();
+		if(torneoArray != null) {
+			controladorAdeful.cerrarBaseDeDatos();
+			// TORNEO SPINNER
+			adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
+					R.layout.simple_spinner_dropdown_item, torneoArray);
+			fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
+		}else{
+			controladorAdeful.cerrarBaseDeDatos();
+			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+							"\n Si el error persiste comuniquese con soporte.",
+					Toast.LENGTH_SHORT).show();
+		}
 		// FECHA
 		controladorAdeful.abrirBaseDeDatos();
 		fechaArray = controladorAdeful.selectListaFecha();
-		controladorAdeful.cerrarBaseDeDatos();
+		if(fechaArray != null) {
+			controladorAdeful.cerrarBaseDeDatos();
+			// FECHA SPINNER
+			adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
+					R.layout.simple_spinner_dropdown_item, fechaArray);
+			fixtureFechaSpinner.setAdapter(adapterFixtureFecha);
+		}else{
+			controladorAdeful.cerrarBaseDeDatos();
+			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+							"\n Si el error persiste comuniquese con soporte.",
+					Toast.LENGTH_SHORT).show();
+		}
 		// ANIO
 		controladorAdeful.abrirBaseDeDatos();
 		anioArray = controladorAdeful.selectListaAnio();
-		controladorAdeful.cerrarBaseDeDatos();
+		if(anioArray != null) {
+			controladorAdeful.cerrarBaseDeDatos();
+			// ANIO SPINNER
+			adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
+					R.layout.simple_spinner_dropdown_item, anioArray);
+			fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
+		}else{
+			controladorAdeful.cerrarBaseDeDatos();
+			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+							"\n Si el error persiste comuniquese con soporte.",
+					Toast.LENGTH_SHORT).show();
+		}
 
 		// DIVSION SPINNER
-		adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
-				R.layout.simple_spinner_dropdown_item, divisionArray);
-		fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
-		// TORNEO SPINNER
-		adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
-				R.layout.simple_spinner_dropdown_item, torneoArray);
-		fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
-		// FECHA SPINNER
-		adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
-				R.layout.simple_spinner_dropdown_item, fechaArray);
-		fixtureFechaSpinner.setAdapter(adapterFixtureFecha);
-		// ANIO SPINNER
-		adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
-				R.layout.simple_spinner_dropdown_item, anioArray);
-		fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
+
 		// RECLYCLER
 		recyclerViewFixture.setLayoutManager(new LinearLayoutManager(
 				getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -199,18 +234,12 @@ public class FragmentEditarFixture extends Fragment {
 										fixtureArray.get(position).getDIA());
 								editarFixture.putExtra("hora",
 										fixtureArray.get(position).getHORA());
-								
-							
 								startActivity(editarFixture);
-
-								
 							}
-
 							@Override
 							public void onLongClick(View view, final int position) {
 								// TODO Auto-generated method stub
-								
-								
+
 								dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
 										"Desea eliminar el Partido?", null, null);
 								dialogoAlerta.btnAceptar.setText("Aceptar");
@@ -219,25 +248,26 @@ public class FragmentEditarFixture extends Fragment {
 								dialogoAlerta.btnAceptar
 										.setOnClickListener(new View.OnClickListener() {
 
-											@SuppressLint("NewApi")
 											@Override
 											public void onClick(View v) {
 												// TODO Auto-generated method stub
-												
+
 												controladorAdeful.abrirBaseDeDatos();
-												controladorAdeful.eliminarEquipoAdeful(fixtureArray.get(position)
-														.getID_FIXTURE());
-												controladorAdeful.cerrarBaseDeDatos();
-
-												recyclerViewLoadDivision(divisionSpinner,torneoSpinner,fechaSpinner,anioSpiner);
-
-												Toast.makeText(
-														getActivity(),
-														"Fixture Eliminado Correctamente",
-														Toast.LENGTH_SHORT).show();
-
-												dialogoAlerta.alertDialog.dismiss();
-
+												if (controladorAdeful.eliminarEquipoAdeful(fixtureArray.get(position)
+														.getID_FIXTURE())) {
+													controladorAdeful.cerrarBaseDeDatos();
+													recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+													Toast.makeText(
+															getActivity(),
+															"Fixture Eliminado Correctamente",
+															Toast.LENGTH_SHORT).show();
+													dialogoAlerta.alertDialog.dismiss();
+												} else {
+													controladorAdeful.cerrarBaseDeDatos();
+													Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+																	"\n Si el error persiste comuniquese con soporte.",
+															Toast.LENGTH_SHORT).show();
+												}
 											}
 										});
 								dialogoAlerta.btnCancelar
@@ -249,35 +279,35 @@ public class FragmentEditarFixture extends Fragment {
 												dialogoAlerta.alertDialog.dismiss();
 											}
 										});
-
-								
-								
 							}
-			
-				
 				}));
 	}
 
+   //LOAD RECYCLER
 	public void recyclerViewLoadDivision(int division, int torneo, int fecha,
 			int anio) {
 
 		controladorAdeful.abrirBaseDeDatos();
 		fixtureArray = controladorAdeful.selectListaFixtureAdeful(division,
 				torneo, fecha, anio);
-		controladorAdeful.cerrarBaseDeDatos();
+		if(fixtureArray != null) {
+			controladorAdeful.cerrarBaseDeDatos();
 
-		adaptadorFixtureEdit = new AdaptadorEditarFixture(fixtureArray);
-		adaptadorFixtureEdit.notifyDataSetChanged();
-		recyclerViewFixture.setAdapter(adaptadorFixtureEdit);
-
+			adaptadorFixtureEdit = new AdaptadorRecyclerFixture(fixtureArray);
+			adaptadorFixtureEdit.notifyDataSetChanged();
+			recyclerViewFixture.setAdapter(adaptadorFixtureEdit);
+		}else{
+			controladorAdeful.cerrarBaseDeDatos();
+			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+							"\n Si el error persiste comuniquese con soporte.",
+					Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	public static interface ClickListener {
 
 		public void onClick(View view, int position);
-
 		public void onLongClick(View view, int position);
-
 	}
 
 	static class RecyclerTouchListener implements
@@ -308,7 +338,6 @@ public class FragmentEditarFixture extends Fragment {
 							}
 						}
 					});
-
 		}
 
 		@Override
@@ -321,19 +350,13 @@ public class FragmentEditarFixture extends Fragment {
 			}
 			return false;
 		}
-
 		@Override
 		public void onTouchEvent(RecyclerView rv, MotionEvent e) {
 
 		}
-
 		@Override
 		public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
 			// TODO Auto-generated method stub
-
 		}
-
-	}
-*/
 	}
 }

@@ -327,8 +327,8 @@ public class FragmentGenerarComision extends Fragment {
 
         // CARGO
         controladorAdeful.abrirBaseDeDatos();
-        if(controladorAdeful.selectListaCargoAdeful() != null) {
-            cargoArray = controladorAdeful.selectListaCargoAdeful();
+        cargoArray = controladorAdeful.selectListaCargoAdeful();
+        if(cargoArray != null) {
             controladorAdeful.cerrarBaseDeDatos();
         }else{
             controladorAdeful.cerrarBaseDeDatos();

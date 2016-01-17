@@ -3,6 +3,7 @@ package com.estrelladelsur.estrelladelsur.database;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +11,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
+
+import com.estrelladelsur.estrelladelsur.abstracta.Anio;
 import com.estrelladelsur.estrelladelsur.abstracta.Articulo;
 import com.estrelladelsur.estrelladelsur.abstracta.Cancha;
 import com.estrelladelsur.estrelladelsur.abstracta.Cargo;
@@ -17,6 +20,12 @@ import com.estrelladelsur.estrelladelsur.abstracta.Comision;
 import com.estrelladelsur.estrelladelsur.abstracta.Direccion;
 import com.estrelladelsur.estrelladelsur.abstracta.Division;
 import com.estrelladelsur.estrelladelsur.abstracta.Equipo;
+import com.estrelladelsur.estrelladelsur.abstracta.Fecha;
+import com.estrelladelsur.estrelladelsur.abstracta.Fixture;
+import com.estrelladelsur.estrelladelsur.abstracta.FixtureRecycler;
+import com.estrelladelsur.estrelladelsur.abstracta.Mes;
+import com.estrelladelsur.estrelladelsur.abstracta.Resultado;
+import com.estrelladelsur.estrelladelsur.abstracta.ResultadoRecycler;
 import com.estrelladelsur.estrelladelsur.abstracta.Torneo;
 
 public class ControladorAdeful {
@@ -838,6 +847,7 @@ public class ControladorAdeful {
 
         return arrayEquipoAdeful;
     }
+
     //EQUIPO ACTUALIZAR
     public boolean actualizarEquipoAdeful(Equipo equipo) throws SQLiteException {
         boolean ban = false;
@@ -862,14 +872,14 @@ public class ControladorAdeful {
             return false;
         }
     }
-   //EQUIPO ELIMINAR
+
+    //EQUIPO ELIMINAR
     public boolean eliminarEquipoAdeful(int id) {
 
         boolean res = false;
         String sql = "DELETE FROM EQUIPO_ADEFUL WHERE ID_EQUIPO = " + id;
 
         if (database != null && database.isOpen()) {
-
             try {
                 database.execSQL(sql);
                 res = true;
@@ -879,16 +889,17 @@ public class ControladorAdeful {
         } else {
             res = false;
         }
-
         database = null;
         sql = null;
         return res;
     }
+
     // DIVISION INSERTAR
     public boolean insertDivisionAdeful(Division division) {
         boolean ban = false;
 
-        String sql = "INSERT INTO DIVISION_ADEFUL ( DESCRIPCION, USUARIO_CREADOR, FECHA_CREACION, USUARIO_ACTUALIZACION, FECHA_ACTUALIZACION) VALUES ('"
+        String sql = "INSERT INTO DIVISION_ADEFUL ( DESCRIPCION, USUARIO_CREADOR, FECHA_CREACION," +
+                " USUARIO_ACTUALIZACION, FECHA_ACTUALIZACION) VALUES ('"
                 + division.getDESCRIPCION()
                 + "', '"
                 + division.getUSUARIO_CREADOR()
@@ -910,11 +921,11 @@ public class ControladorAdeful {
         } else {
             ban = false;
         }
-
         sql = null;
         database = null;
         return ban;
     }
+
     //DIVISION LISTA
     public ArrayList<Division> selectListaDivisionAdeful() {
 
@@ -971,6 +982,7 @@ public class ControladorAdeful {
 
         return arrayDivision;
     }
+
     // ACTUALIZAR DIVISION
     public boolean actualizarDivisionAdeful(Division division) {
 
@@ -978,7 +990,7 @@ public class ControladorAdeful {
         String sql = "UPDATE DIVISION_ADEFUL SET DESCRIPCION='"
                 + division.getDESCRIPCION() + "', USUARIO_ACTUALIZACION='"
                 + division.getUSUARIO_ACTUALIZACION() + "', FECHA_ACTUALIZACION='"
-                + division.getFECHA_ACTUALIZACION()  +
+                + division.getFECHA_ACTUALIZACION() +
                 "' WHERE ID_DIVISION ='" + division.getID_DIVISION() + "'";
 
         if (database != null && database.isOpen()) {
@@ -991,12 +1003,13 @@ public class ControladorAdeful {
             }
         } else {
             res = false;
-         }
+        }
 
         database = null;
         sql = null;
         return res;
     }
+
     //ELIMINAR DIVISION
     public boolean eliminarDivisionAdeful(int id) {
 
@@ -1020,6 +1033,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     // INSERTAR TORNEO
     public boolean insertTorneoAdeful(Torneo torneo) {
         boolean ban = false;
@@ -1044,13 +1058,14 @@ public class ControladorAdeful {
                 ban = false;
             }
         } else {
-             ban = false;
+            ban = false;
         }
 
         sql = null;
         database = null;
         return ban;
     }
+
     //LISTA TORNEO
     public ArrayList<Torneo> selectListaTorneoAdeful() {
 
@@ -1061,7 +1076,6 @@ public class ControladorAdeful {
         Cursor cursor = null;
 
         if (database != null && database.isOpen()) {
-
             try {
                 cursor = database.rawQuery(sql, null);
                 if (cursor != null && cursor.getCount() > 0) {
@@ -1105,6 +1119,7 @@ public class ControladorAdeful {
 
         return arrayTorneo;
     }
+
     //ACTUALIZAR TORNEO
     public boolean actualizarTorneoAdeful(Torneo torneo) {
 
@@ -1117,20 +1132,14 @@ public class ControladorAdeful {
                 + "' WHERE ID_TORNEO ='" + torneo.getID_TORNEO() + "'";
 
         if (database != null && database.isOpen()) {
-
             try {
-
                 database.execSQL(sql);
                 res = true;
-
             } catch (Exception e) {
-
                 res = false;
                 Log.e("actualizarTorneoAdeful", e.toString());
             }
-
         } else {
-
             res = false;
             Log.e("actualizarTorneoAdeful", "Error Conexi�n Base de Datos");
         }
@@ -1139,6 +1148,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     //ELIMINAR TORNEO
     public boolean eliminarTorneoAdeful(int id) {
 
@@ -1160,7 +1170,8 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
-// INSERTAR CANCHA
+
+    // INSERTAR CANCHA
     public boolean insertCanchaAdeful(Cancha cancha) {
         boolean ban = false;
 
@@ -1190,13 +1201,14 @@ public class ControladorAdeful {
                 ban = false;
             }
         } else {
-                ban = false;
+            ban = false;
         }
 
         sql = null;
         database = null;
         return ban;
     }
+
     //LISTA CANCHA
     public ArrayList<Cancha> selectListaCanchaAdeful() {
 
@@ -1258,6 +1270,7 @@ public class ControladorAdeful {
 
         return arrayCancha;
     }
+
     //ACTUALIZAR CANCHA
     public boolean actualizarCanchaAdeful(Cancha cancha) {
 
@@ -1285,7 +1298,8 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
-   // ELIMINAR CANCHA
+
+    // ELIMINAR CANCHA
     public boolean eliminarCanchaAdeful(int id) {
 
         boolean res = false;
@@ -1306,22 +1320,10 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
-/*{
-    // ////////////////////////////////////////MI
-    // EQUIPO//////////////////////////////////////
 
-    *//**
-            *
-    Metodo que
-    inserta los
-    datos de
-    las fechas
-    en la
-    base de
-    datos.
-    *
-            *//*
+    ///////MI EQUIPO////////
 
+    // FECHA INSERTAR
     public boolean insertFecha(Fecha fecha) {
         boolean ban = false;
 
@@ -1330,34 +1332,20 @@ public class ControladorAdeful {
 
         if (database != null && database.isOpen()) {
             try {
-
                 database.execSQL(sql);
                 ban = true;
-
             } catch (Exception e) {
-
-                Log.e("insertFecha", e.toString());
                 ban = false;
             }
         } else {
-            Log.e("insertFecha", "Error Conexi�n Base de Datos");
             ban = false;
         }
-
         sql = null;
         database = null;
         return ban;
     }
 
-    *//**
-            *
-            *
-    Metodo que
-    obtiene lista
-    de fecha
-    .
-            *//*
-
+    // LISTA FECHA
     public ArrayList<Fecha> selectListaFecha() {
 
         String sql = "SELECT * FROM FECHA";
@@ -1367,33 +1355,25 @@ public class ControladorAdeful {
         Cursor cursor = null;
 
         if (database != null && database.isOpen()) {
-
             try {
                 cursor = database.rawQuery(sql, null);
                 if (cursor != null && cursor.getCount() > 0) {
 
                     while (cursor.moveToNext()) {
-
                         Fecha fecha = null;
                         id = cursor.getInt(cursor.getColumnIndex("ID_FECHA"));
                         fechaa = cursor.getString(cursor
                                 .getColumnIndex("FECHA"));
-
                         fecha = new Fecha(id, fechaa);
-
                         arrayFecha.add(fecha);
-
                     }
                 }
-
             } catch (Exception e) {
-                Log.e("selectListaFecha", e.toString());
+                arrayFecha = null;
             }
         } else {
-
-            Log.e("selectListaFecha", "Error Conexi�n Base de Datos");
+            arrayFecha = null;
         }
-
         sql = null;
         cursor = null;
         database = null;
@@ -1401,54 +1381,28 @@ public class ControladorAdeful {
         return arrayFecha;
     }
 
-    *//**
-            *
-    Metodo que
-    inserta los
-    datos de
-    los anio
-    en la
-    base de
-    datos.
-    *
-            *//*
-
+    // INSERTA ANIO
     public boolean insertAnio(Anio anio) {
         boolean ban = false;
 
         String sql = "INSERT INTO ANIO ( ANIO) VALUES ('" + anio.getANIO()
                 + "')";
-
         if (database != null && database.isOpen()) {
             try {
-
                 database.execSQL(sql);
                 ban = true;
-
             } catch (Exception e) {
-
-                Log.e("insertAnio", e.toString());
                 ban = false;
             }
         } else {
-            Log.e("insertAnio", "Error Conexi�n Base de Datos");
             ban = false;
         }
-
         sql = null;
         database = null;
         return ban;
     }
 
-    *//**
-            *
-            *
-    Metodo que
-    obtiene lista
-    de fecha
-    .
-            *//*
-
+    //LISTA ANIO
     public ArrayList<Anio> selectListaAnio() {
 
         String sql = "SELECT * FROM ANIO";
@@ -1458,7 +1412,6 @@ public class ControladorAdeful {
         Cursor cursor = null;
 
         if (database != null && database.isOpen()) {
-
             try {
                 cursor = database.rawQuery(sql, null);
                 if (cursor != null && cursor.getCount() > 0) {
@@ -1468,20 +1421,16 @@ public class ControladorAdeful {
                         Anio anio = null;
                         id = cursor.getInt(cursor.getColumnIndex("ID_ANIO"));
                         anioo = cursor.getString(cursor.getColumnIndex("ANIO"));
-
                         anio = new Anio(id, anioo);
 
                         arrayAnio.add(anio);
-
                     }
                 }
-
             } catch (Exception e) {
-                Log.e("selectListaAnio", e.toString());
+                arrayAnio = null;
             }
         } else {
-
-            Log.e("selectListaAnio", "Error Conexi�n Base de Datos");
+            arrayAnio = null;
         }
 
         sql = null;
@@ -1491,18 +1440,7 @@ public class ControladorAdeful {
         return arrayAnio;
     }
 
-    *//**
-            *
-    Metodo que
-    inserta los
-    datos de
-    los mes
-    en la
-    base de
-    datos.
-    *
-            *//*
-
+    //INSERTAR MES
     public boolean insertMes(Mes mes) {
         boolean ban = false;
 
@@ -1511,17 +1449,12 @@ public class ControladorAdeful {
 
         if (database != null && database.isOpen()) {
             try {
-
                 database.execSQL(sql);
                 ban = true;
-
             } catch (Exception e) {
-
-                Log.e("insertMes", e.toString());
                 ban = false;
             }
         } else {
-            Log.e("insertMes", "Error Conexi�n Base de Datos");
             ban = false;
         }
 
@@ -1530,15 +1463,7 @@ public class ControladorAdeful {
         return ban;
     }
 
-    *//**
-            *
-            *
-    Metodo que
-    obtiene lista
-    de fecha
-    .
-            *//*
-
+    //LISTA MES
     public ArrayList<Mes> selectListaMes() {
 
         String sql = "SELECT * FROM MES";
@@ -1558,20 +1483,16 @@ public class ControladorAdeful {
                         Mes mes = null;
                         id = cursor.getInt(cursor.getColumnIndex("ID_MES"));
                         mess = cursor.getString(cursor.getColumnIndex("MES"));
-
                         mes = new Mes(id, mess);
 
                         arrayMes.add(mes);
-
                     }
                 }
-
             } catch (Exception e) {
-                Log.e("selectListaMes", e.toString());
+                arrayMes = null;
             }
         } else {
-
-            Log.e("selectListaMes", "Error Conexi�n Base de Datos");
+            arrayMes = null;
         }
 
         sql = null;
@@ -1581,13 +1502,7 @@ public class ControladorAdeful {
         return arrayMes;
     }
 
-
-    *//**
-            *
-    Insertar Fixture
-    22/11/2015
-            *//*
-
+    // INSERTAR FIXTURE
     public boolean insertFixtureAdeful(Fixture fixture) throws SQLiteException {
 
         ContentValues cv = new ContentValues();
@@ -1601,11 +1516,10 @@ public class ControladorAdeful {
             cv.put("ID_ANIO", fixture.getID_ANIO());
             cv.put("DIA", fixture.getDIA());
             cv.put("HORA", fixture.getHORA());
-            cv.put("USUARIO_CREADOR", fixture.getNOMBRE_USUARIO());
+            cv.put("USUARIO_CREADOR", fixture.getUSUARIO_CREACION());
+            cv.put("USUARIO_ACTUALIZACION", fixture.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_CREACION", fixture.getFECHA_CREACION());
             cv.put("FECHA_ACTUALIZACION", fixture.getFECHA_ACTUALIZACION());
-            cv.put("ESTADO", fixture.getESTADO());
-            cv.put("TABLA", fixture.getTABLA());
 
             long valor = database.insert("FIXTURE_ADEFUL", null, cv);
             if (valor > 0) {
@@ -1619,12 +1533,7 @@ public class ControladorAdeful {
         }
     }
 
-    *//**
-            *
-    Actualizar Fixture
-    22/11/2015
-            *//*
-
+    //ACTUALIZAR FIXTURE
     public boolean actualizarFixtureAdeful(Fixture fixture)
             throws SQLiteException {
 
@@ -1639,11 +1548,10 @@ public class ControladorAdeful {
             cv.put("ID_ANIO", fixture.getID_ANIO());
             cv.put("DIA", fixture.getDIA());
             cv.put("HORA", fixture.getHORA());
-            cv.put("USUARIO_CREADOR", fixture.getNOMBRE_USUARIO());
+            cv.put("USUARIO_CREADOR", fixture.getUSUARIO_CREACION());
             cv.put("FECHA_CREACION", fixture.getFECHA_CREACION());
+            cv.put("USUARIO_ACTUALIZACION", fixture.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", fixture.getFECHA_ACTUALIZACION());
-            cv.put("ESTADO", fixture.getESTADO());
-            cv.put("TABLA", fixture.getTABLA());
 
             long valor = database.update("FIXTURE_ADEFUL", cv, "ID_FIXTURE="
                     + fixture.getID_FIXTURE(), null);
@@ -1658,16 +1566,14 @@ public class ControladorAdeful {
         }
     }
 
-    *//**
-            *
-    Lista Fixture
-    22/11/2015
-            *//*
 
+    //LISTA FIXTURE RECYCLER
     public ArrayList<FixtureRecycler> selectListaFixtureAdeful(int division,
                                                                int torneo, int fecha, int anio) {
 
-        String sql = "SELECT F.ID_FIXTURE AS ID,F.ID_EQUIPO_LOCAL AS ID_LOCAL, LOCALE.NOMBRE AS LOCAL,LOCALE.ESCUDO AS ESCUDOLOCAL, F.ID_EQUIPO_VISITA AS ID_VISITA,VISITAE.NOMBRE AS VISITA,VISITAE.ESCUDO AS ESCUDOVISITA, C.ID_CANCHA AS ID_CANCHA,C.NOMBRE AS CANCHA, DIA, HORA "
+        String sql = "SELECT F.ID_FIXTURE AS ID,F.ID_EQUIPO_LOCAL AS ID_LOCAL, LOCALE.NOMBRE AS LOCAL,LOCALE.ESCUDO AS ESCUDOLOCAL,F.RESULTADO_LOCAL AS RESULTADOLOCAL, "
+                + "F.ID_EQUIPO_VISITA AS ID_VISITA, VISITAE.NOMBRE AS VISITA, VISITAE.ESCUDO AS ESCUDOVISITA, F.RESULTADO_VISITA AS RESULTADOVISITA, "
+                + "C.ID_CANCHA AS ID_CANCHA, C.NOMBRE AS CANCHA, DIA, HORA "
                 + "FROM FIXTURE_ADEFUL F INNER JOIN EQUIPO_ADEFUL LOCALE ON LOCALE.ID_EQUIPO = F.ID_EQUIPO_LOCAL "
                 + "INNER JOIN EQUIPO_ADEFUL VISITAE ON  VISITAE.ID_EQUIPO =  F.ID_EQUIPO_VISITA "
                 + "INNER JOIN CANCHA_ADEFUL C ON C.ID_CANCHA = F.ID_CANCHA "
@@ -1678,14 +1584,13 @@ public class ControladorAdeful {
                 + " AND ID_FECHA=" + fecha + " AND ID_ANIO=" + anio + "";
 
         ArrayList<FixtureRecycler> arrayFixture = new ArrayList<FixtureRecycler>();
-        String dia = null, hora = null, e_local = null, e_visita = null, cancha = null;
+        String dia = null, hora = null, e_local = null, e_visita = null, cancha = null,r_local = null,r_visita = null;
         int id_fixture, id_equipo_local, id_equipo_visita, id_cancha;
         byte[] escudolocal, escudovisita;
 
         Cursor cursor = null;
 
         if (database != null && database.isOpen()) {
-
             try {
                 cursor = database.rawQuery(sql, null);
                 if (cursor != null && cursor.getCount() > 0) {
@@ -1693,20 +1598,24 @@ public class ControladorAdeful {
                     while (cursor.moveToNext()) {
 
                         FixtureRecycler fixtureRecycler = null;
+
                         id_fixture = cursor.getInt(cursor.getColumnIndex("ID"));
                         id_equipo_local = cursor.getInt(cursor
                                 .getColumnIndex("ID_LOCAL"));
                         e_local = cursor.getString(cursor
                                 .getColumnIndex("LOCAL"));
-
                         escudolocal = cursor.getBlob(cursor
                                 .getColumnIndex("ESCUDOLOCAL"));
+                        r_local = cursor.getString(cursor
+                                .getColumnIndex("RESULTADOLOCAL"));
                         id_equipo_visita = cursor.getInt(cursor
                                 .getColumnIndex("ID_VISITA"));
                         e_visita = cursor.getString(cursor
                                 .getColumnIndex("VISITA"));
                         escudovisita = cursor.getBlob(cursor
                                 .getColumnIndex("ESCUDOVISITA"));
+                        r_visita = cursor.getString(cursor
+                                .getColumnIndex("RESULTADOVISITA"));
                         id_cancha = cursor.getInt(cursor
                                 .getColumnIndex("ID_CANCHA"));
                         cancha = cursor.getString(cursor
@@ -1715,21 +1624,18 @@ public class ControladorAdeful {
                         hora = cursor.getString(cursor.getColumnIndex("HORA"));
 
                         fixtureRecycler = new FixtureRecycler(id_fixture,
-                                id_equipo_local, e_local, escudolocal,
-                                id_equipo_visita, e_visita, escudovisita,
+                                id_equipo_local, e_local, escudolocal,r_local,
+                                id_equipo_visita, e_visita, escudovisita,r_visita,
                                 id_cancha, cancha, dia, hora);
 
                         arrayFixture.add(fixtureRecycler);
-
                     }
                 }
-
             } catch (Exception e) {
-                Log.e("selectListaFixtureAdeful", e.toString());
+                arrayFixture = null;
             }
         } else {
-
-            Log.e("selectListaFixtureAdeful", "Error Conexi�n Base de Datos");
+            arrayFixture = null;
         }
 
         sql = null;
@@ -1739,32 +1645,27 @@ public class ControladorAdeful {
         hora = null;
         e_local = null;
         e_visita = null;
+        r_local = null;
+        r_visita = null;
 
         return arrayFixture;
     }
 
+    // ELIMINAR FIXTURE
     public boolean eliminarFixtureAdeful(int id) {
 
         boolean res = false;
         String sql = "DELETE FROM FIXTURE_ADEFUL WHERE ID_FIXTURE = " + id;
 
         if (database != null && database.isOpen()) {
-
             try {
-
                 database.execSQL(sql);
                 res = true;
-
             } catch (Exception e) {
-
                 res = false;
-                Log.e("eliminarFixtureAdeful", e.toString());
             }
-
         } else {
-
             res = false;
-            Log.e("eliminarFixtureAdeful", "Error Conexi�n Base de Datos");
         }
 
         database = null;
@@ -1772,42 +1673,39 @@ public class ControladorAdeful {
         return res;
     }
 
-    // ///////////////////////////////////RESULTADOS////////////////////////////////////////////
-
-    *//**
-            *
-    Insertar Fixture
-    22/11/2015
-            *//*
-            // public boolean insertResultadoAdeful(Resultado resultado)
-            // throws SQLiteException {
-            //
-            //
-            // ContentValues cv = new ContentValues();
-            // cv.put("ID_FIXTURE",resultado.getID_FIXTURE());
-            // cv.put("RESULTADO_LOCAL", resultado.getRESULTADO_LOCAL());
-            // cv.put("RESULTADO_VISITA", resultado.getRESULTADO_VISITA());
-            //
-            //
-            //
-            // database.insert("FIXTURE_ADEFUL", null, cv);
-            // return true;
-            // }
-            *//**
-            *
-    Actualizar Fixture
-    22/11/2015
-            *//*
-
-    public boolean actualizarResultadoAdeful(int id_fixture,
-                                             String resultado_local, String resultado_visita)
+    ////RESULTADOS////
+    //INSERTAR RESULTADO
+    public boolean insertResultadoAdeful(Resultado resultado)
             throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+
+        cv.put("ID_FIXTURE", resultado.getID_FIXTURE());
+        cv.put("RESULTADO_LOCAL", resultado.getRESULTADO_LOCAL());
+        cv.put("RESULTADO_VISITA", resultado.getRESULTADO_VISITA());
+        cv.put("USUARIO_CREADOR", resultado.getRESULTADO_VISITA());
+        cv.put("FECHA_CREACION", resultado.getRESULTADO_VISITA());
+        cv.put("USUARIO_ACTUALIZACION", resultado.getRESULTADO_VISITA());
+        cv.put("FECHA_ACTUALIZACION", resultado.getRESULTADO_VISITA());
+
+        long valor = database.insert("FIXTURE_ADEFUL", null, cv);
+        return true;
+    }
+
+    //ACTUALIZAR RESULTADO/FIXTURE
+    public boolean actualizarResultadoAdeful(int id_fixture,
+                                             String resultado_local,
+                                             String resultado_visita,
+                                             String usuario_act,
+                                             String fecha_act) throws SQLiteException {
 
         ContentValues cv = new ContentValues();
 
         try {
             cv.put("RESULTADO_LOCAL", resultado_local);
             cv.put("RESULTADO_VISITA", resultado_visita);
+            cv.put("USUARIO_ACTUALIZACION", usuario_act);
+            cv.put("FECHA_ACTUALIZACION", fecha_act);
 
             long valor = database.update("FIXTURE_ADEFUL", cv, "ID_FIXTURE="
                     + id_fixture, null);
@@ -1817,17 +1715,11 @@ public class ControladorAdeful {
                 return false;
             }
         } catch (SQLiteException e) {
-
             return false;
         }
     }
 
-    *//**
-            *
-    Lista de
-    resultados
-    *//*
-
+    //LISTA RECYCLER
     public ArrayList<ResultadoRecycler> selectListaResultadoAdeful(
             int division, int torneo, int fecha, int anio) {
 
@@ -1912,14 +1804,14 @@ public class ControladorAdeful {
 
         return arrayResultado;
     }
-
+/*
     // ///////////////////////////////////JUGADORES////////////////////////////////////////////
 
     *//**
-            *
-    Insertar Jugador
-    22/11/2015
-            *//*
+     *
+     Insertar Jugador
+     22/11/2015
+     *//*
 
     public boolean insertJugadorAdeful(Jugador jugador) throws SQLiteException {
 
@@ -1943,13 +1835,13 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-            *
-    Metodo que
-    obtiene lista
-    de jugador
-    adeful.
-    *//*
+     *
+     *
+     Metodo que
+     obtiene lista
+     de jugador
+     adeful.
+     *//*
 
     public ArrayList<JugadorRecycler> selectListaJugadorAdeful(int division) {
 
@@ -2015,10 +1907,10 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-    Actualizar Jugador
-    22/11/2015
-            *//*
+     *
+     Actualizar Jugador
+     22/11/2015
+     *//*
 
     public boolean actualizarJugadorAdeful(Jugador jugador)
             throws SQLiteException {
@@ -2044,10 +1936,10 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-    Eliminar Jugador
-    *
-            *//*
+     *
+     Eliminar Jugador
+     *
+     *//*
 
     public boolean eliminarJugadorAdeful(int id) {
 
@@ -2079,10 +1971,10 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-    Insertar Posicion
-    22/11/2015
-            *//*
+     *
+     Insertar Posicion
+     22/11/2015
+     *//*
 
     public boolean insertPosicionAdeful(Posicion posicion)
             throws SQLiteException {
@@ -2104,10 +1996,10 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-    Actualizar Posicion
-    22/11/2015
-            *//*
+     *
+     Actualizar Posicion
+     22/11/2015
+     *//*
 
     public boolean actualizarPosicionAdeful(Posicion posicion)
             throws SQLiteException {
@@ -2130,13 +2022,13 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-            *
-    Metodo que
-    obtiene lista
-    de Posicion
-    adeful.
-    *//*
+     *
+     *
+     Metodo que
+     obtiene lista
+     de Posicion
+     adeful.
+     *//*
 
     public ArrayList<Posicion> selectListaPosicionAdeful() {
 
@@ -2182,10 +2074,10 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-    Insertar Entrenamiento
-    30/11/2015
-            *//*
+     *
+     Insertar Entrenamiento
+     30/11/2015
+     *//*
 
     public int insertEntrenamientoAdeful(Entrenamiento entrenamiento)
             throws SQLiteException {
@@ -2209,10 +2101,10 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-    Insertar Entrenamiento
-    30/11/2015
-            *//*
+     *
+     Insertar Entrenamiento
+     30/11/2015
+     *//*
 
     public boolean insertEntrenamiento_DivisionAdeful(
             Entrenamiento_Division entrenamientoXDivision)
@@ -2240,13 +2132,13 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-            *
-    Metodo que
-    obtiene lista
-    de Entrenamientoxdivision
-    adeful.
-    *//*
+     *
+     *
+     Metodo que
+     obtiene lista
+     de Entrenamientoxdivision
+     adeful.
+     *//*
 
     public int selectIdEntrenamiento_Division() {
 
@@ -2284,13 +2176,13 @@ public class ControladorAdeful {
     }
 
     *//**
-            *
-            *
-    Metodo que
-    obtiene lista
-    de division
-    adeful.
-    *//*
+     *
+     *
+     Metodo que
+     obtiene lista
+     de division
+     adeful.
+     *//*
 
     public ArrayList<Entrenamiento_Division> selectListaDivisionEntrenamientoAdeful() {
 
@@ -2341,13 +2233,13 @@ public class ControladorAdeful {
 
 
     *//**
-            *
-            *
-    Metodo que
-    obtiene lista
-    de division
-    adeful.
-    *//*
+     *
+     *
+     Metodo que
+     obtiene lista
+     de division
+     adeful.
+     *//*
 
     public ArrayList<Entrenamiento_Division> selectListaEditarDivisionEntrenamientoAdeful() {
 
@@ -2406,4 +2298,4 @@ public class ControladorAdeful {
 
 }*/
 
-        }
+}

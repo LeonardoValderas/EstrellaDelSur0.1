@@ -36,12 +36,12 @@ public class Equipo {
         this.ID_EQUIPO = ID_EQUIPO;
     }
 
-    public String getNOMBRE_EQUIPO() {
+    public String toString() {
+
         return NOMBRE_EQUIPO;
     }
 
-    public String ToString() {
-
+    public String getNOMBRE_EQUIPO() {
         return NOMBRE_EQUIPO;
     }
 

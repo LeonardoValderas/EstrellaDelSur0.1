@@ -1,33 +1,32 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.estrelladelsur.fragments.fragmentresultado" >
+    tools:context="com.estrelladelsur.estrelladelsur.miequipo.TabsFixture">
 
-    <android.support.design.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true" >
+    <!--<android.support.design.widget.CoordinatorLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:fitsSystemWindows="true">-->
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appbarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:fitsSystemWindows="true" >
+        <!--<android.support.design.widget.AppBarLayout-->
+            <!--android:id="@+id/appbarLayout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:fitsSystemWindows="true">-->
 
             <LinearLayout
-                android:id="@+id/linearAdm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <Spinner
                         android:id="@+id/fixtureDivisionSpinner"
@@ -43,7 +42,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal">
 
                         <Spinner
                             android:id="@+id/fixtureFechaSpinner"
@@ -58,23 +57,25 @@
                             android:layout_weight="2" />
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycleViewGeneral"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-        </android.support.design.widget.AppBarLayout>
-
-       <!-- <android.support.design.widget.FloatingActionButton
+        <!--</android.support.design.widget.AppBarLayout>-->
+            </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/botonFloating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:layout_margin="16dp"
-            android:src="@drawable/ic_buttonfloating"
-            app:borderWidth="0dp" />-->
-    </android.support.design.widget.CoordinatorLayout>
+            app:backgroundTint="@color/color_primary"
+            android:src="@drawable/ic_pelota_futbol"
+            app:borderWidth="0dp" />
+
+    <!--</android.support.design.widget.CoordinatorLayout>-->
 
 </FrameLayout>

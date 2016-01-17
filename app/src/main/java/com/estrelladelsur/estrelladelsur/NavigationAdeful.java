@@ -20,6 +20,8 @@ import com.estrelladelsur.estrelladelsur.institucion.TabsArticulo;
 import com.estrelladelsur.estrelladelsur.institucion.TabsComision;
 import com.estrelladelsur.estrelladelsur.institucion.TabsDireccion;
 import com.estrelladelsur.estrelladelsur.liga.TabsAdeful;
+import com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado;
+import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,14 +117,14 @@ private TextView txtAbSubTitulo;
                         switch (childPosition) {
                             case 0:
 
-                               // Intent fixture  = new Intent(NavigationDrawerAdeful.this,TabsFixture.class);
-                               // startActivity(fixture);
+                                Intent fixture  = new Intent(NavigationAdeful.this,TabsFixture.class);
+                                startActivity(fixture);
                                 tituloClickFragment = cargaGeneral.get(childPosition)
                                         .toString();
                                 break;
                             case 1:
-                              //  Intent resultado  = new Intent(NavigationDrawerAdeful.this,ActivityResultado.class);
-                              //  startActivity(resultado);
+                                Intent resultado  = new Intent(NavigationAdeful.this,ActivityResultado.class);
+                                startActivity(resultado);
                                 tituloClickFragment = cargaGeneral.get(childPosition)
                                         .toString();
                                 break;
