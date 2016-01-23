@@ -53,7 +53,7 @@ public class AdaptadorRecyclerDireccion extends
             foto = direccion.getFOTO_DIRECCION();
 
             if (foto == null) {
-                imageRecyclerViewFoto.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
             } else {
                 Bitmap theImage = BitmapFactory.decodeByteArray(
                         foto, 0, foto.length);

@@ -13,7 +13,7 @@
         <item>Dirección Técnica</item>
     </string-array>
 
-    <!-- Array ListView Estrella -->
+    <!-- Array ListView MI equipo -->
     <string-array name="NavigationCarga">
         <item>Fixture</item>
         <item>Resultados</item>
@@ -39,7 +39,7 @@
         <item>Publicidad</item>
     </string-array>
 
-    <!-- menu Articulo -->
+    <!-- menu -->
     <string name="action_usuario">USUARIO</string>
     <string name="action_permisos">PERMISOS</string>
     <string name="action_administrador">ADMINISTRADOR</string>
@@ -54,9 +54,55 @@
     <string name="action_subir">Subir</string>
     <string name="action_eliminar">Eliminar</string>
 
+    <!--COMISION-->
+    <!-- Array SPINNER CARGO/DIRECCION  -->
+    <string-array name="ceroSpinner">
+        <item>Genere un cargo.</item>
+    </string-array>
+
+    <!--FIXTURE-->
+    <!-- Array SPINNER DIVISION  -->
+    <string-array name="ceroSpinnerDivision">
+        <item>Genere una división.</item>
+    </string-array>
+    <!-- Array SPINNER DIVISION  -->
+    <string name="ceroSpinnerDivision">Genere una división.</string>
+    <!-- Array SPINNER TORNEO  -->
+    <string-array name="ceroSpinnerTorneo">
+        <item>Genere un torneo.</item>
+    </string-array>
+    <string name="ceroSpinnerTorneo">Genere un torneo.</string>
+    <!-- Array SPINNER FECHA  -->
+    <string-array name="ceroSpinnerFecha">
+        <item>Genere un fecha.</item>
+    </string-array>
+    <string name="ceroSpinnerFecha">Genere un fecha.</string>
+    <!-- Array SPINNER ANIO  -->
+    <string-array name="ceroSpinnerAnio">
+        <item>Genere un año.</item>
+    </string-array>
+    <string name="ceroSpinnerAnio">Genere un año.</string>
+    <!-- Array SPINNER CANCHA  -->
+    <string-array name="ceroSpinnerCancha">
+        <item>Genere una cancha.</item>
+    </string-array>
+    <string name="ceroSpinnerCancha">Genere una cancha.</string>
+    <!-- Array SPINNER EQUIPO  -->
+    <string-array name="ceroSpinnerEquipo">
+        <item>Genere un equipo.</item>
+    </string-array>
+    <string name="ceroSpinnerEquipo">Genere un equipo.</string>
     <!-- mapa cancha -->
     <string name="error_internet">Verifique su conexión de Internet</string>
 
+    <!--JUGADOR-->
+    <!-- Array SPINNER POSICION  -->
+    <string-array name="ceroSpinnerPosicion">
+        <item>Genere una posición.</item>
+    </string-array>
+    <!-- Array SPINNER POSICION  -->
+    <string name="ceroSpinnerPosicion">Genere una posición.</string>
+    
     <!-- Array fecha  -->
     <string-array name="fechaArray">
         <item>1</item>
@@ -111,6 +157,11 @@
         <item>OCTUBRE</item>
         <item>NOVIEMBRE</item>
         <item>DICIEMBRE</item>
-
     </string-array>
+
+    <!--MENSAJE ERROR-->
+    <string name="error_data_base">Error en la base de datos interna,
+        vuelva a intentar.\nSi el error persiste comuniquese con soporte.</string>
+
+
 </resources>

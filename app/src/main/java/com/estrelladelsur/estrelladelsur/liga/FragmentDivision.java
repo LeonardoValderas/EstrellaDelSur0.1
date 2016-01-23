@@ -279,7 +279,7 @@ public class FragmentDivision extends Fragment {
 
 		if (id == R.id.action_guardar) {
 			if (editTextDivision.getText().toString().equals("")) {
-				Toast.makeText(getActivity(), "Ingrese la Divisi�n.",
+				Toast.makeText(getActivity(), "Ingrese la División.",
 						Toast.LENGTH_SHORT).show();
 
 			} else {
@@ -301,7 +301,7 @@ public class FragmentDivision extends Fragment {
 						recyclerViewLoadDivision();
 						editTextDivision.setText("");
 						Toast.makeText(getActivity(),
-								"Divisi�n cargada correctamente.",
+								"División cargada correctamente.",
 								Toast.LENGTH_SHORT).show();
 					}else{
 						controladorAdeful.cerrarBaseDeDatos();
@@ -326,7 +326,7 @@ public class FragmentDivision extends Fragment {
 						editTextDivision.setText("");
 						insertar = true;
 						Toast.makeText(getActivity(),
-								"Divisi�n actualizada correctamente.",
+								"División actualizada correctamente.",
 								Toast.LENGTH_SHORT).show();
 					}else{
 						controladorAdeful.cerrarBaseDeDatos();

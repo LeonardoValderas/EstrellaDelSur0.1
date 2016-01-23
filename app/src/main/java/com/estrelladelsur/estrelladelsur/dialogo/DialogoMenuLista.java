@@ -33,7 +33,7 @@ public class DialogoMenuLista {
     public ArrayAdapter adapterList;
     public TextView textViewCargo;
 
-    public DialogoMenuLista(Context context, String tituloA, ArrayList<Cargo> cagosArray) {
+    public DialogoMenuLista(Context context, String tituloA) {
         this.context = context;
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);

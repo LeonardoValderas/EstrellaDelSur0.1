@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -71,6 +72,7 @@ public class FragmentGenerarComision extends Fragment {
     private DateFormat formate = DateFormat.getDateInstance();
     private Calendar calendar = Calendar.getInstance();
     private boolean botonFecha = false;
+    private ArrayAdapter<String> adaptadorInicial;
 
     public static FragmentGenerarComision newInstance() {
         FragmentGenerarComision fragment = new FragmentGenerarComision();
@@ -132,19 +134,19 @@ public class FragmentGenerarComision extends Fragment {
         loadSpinnerCargo();
         //Metodo Extra
         if (actualizar) {
-
             idComisionExtra = getActivity().getIntent().getIntExtra("id_comision", 0);
 
             // COMISION POR ID
             controladorAdeful.abrirBaseDeDatos();
-            if(controladorAdeful.selectComisionAdeful(idComisionExtra) != null) {
             comisionArray = controladorAdeful.selectComisionAdeful(idComisionExtra);
+            if(comisionArray != null) {
             controladorAdeful.cerrarBaseDeDatos();
 
             nombreEditComision.setText(comisionArray.get(0).getNOMBRE_COMISION().toString());
             desdeButtonComision.setText(comisionArray.get(0).getPERIODO_DESDE().toString());
             hastaButtonComision.setText(comisionArray.get(0).getPERIODO_HASTA().toString());
             imageComision = comisionArray.get(0).getFOTO_COMISION();
+
             puestoSpinnerComision.setSelection(getPositionCargo(comisionArray.get(0).getID_CARGO()));
 
             if (imageComision != null) {
@@ -153,7 +155,7 @@ public class FragmentGenerarComision extends Fragment {
                 theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
                 fotoImageComision.setImageBitmap(theImage);
             } else {
-                 fotoImageComision.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                 fotoImageComision.setImageResource(R.mipmap.ic_foto_galery);
             }
 
             insertar = false;
@@ -161,10 +163,10 @@ public class FragmentGenerarComision extends Fragment {
         }else{
             controladorAdeful.cerrarBaseDeDatos();
             Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\n Si el error persiste comuniquese con soporte.",
+                            "\nSi el error persiste comuniquese con soporte.",
                     Toast.LENGTH_SHORT).show();
         }
-        }
+     }
 
         // CLICK IMAGEN
         fotoImageComision.setOnClickListener(new View.OnClickListener() {
@@ -172,7 +174,6 @@ public class FragmentGenerarComision extends Fragment {
             public void onClick(View v) {
                 //Alerta galeria
                 ImageDialogComision();
-
             }
         });
 
@@ -183,7 +184,6 @@ public class FragmentGenerarComision extends Fragment {
                 // TODO Auto-generated method stub
                 botonFecha = true;
                 setDate();
-
             }
         });
         hastaButtonComision.setOnClickListener(new View.OnClickListener() {
@@ -193,7 +193,6 @@ public class FragmentGenerarComision extends Fragment {
                 // TODO Auto-generated method stub
                 botonFecha = false;
                 setDate();
-
             }
         });
     }
@@ -219,9 +218,7 @@ public class FragmentGenerarComision extends Fragment {
                                 UtilityImage.GALLERY_PICTURE);
                     }
                 });
-
         myAlertDialog.show();
-
     }
     //get posicion en el spinner del cargo.
     private int getPositionCargo(int idCargo){
@@ -242,7 +239,6 @@ public class FragmentGenerarComision extends Fragment {
             // Do some task
             SeleccionarImagen(data);
         }
-
     }
 
     public static Bitmap createDrawableFromView(View view) {
@@ -333,7 +329,7 @@ public class FragmentGenerarComision extends Fragment {
         }else{
             controladorAdeful.cerrarBaseDeDatos();
             Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\n Si el error persiste comuniquese con soporte.",
+                            "\nSi el error persiste comuniquese con soporte.",
                     Toast.LENGTH_SHORT).show();
         }
         return cargoArray;
@@ -342,39 +338,38 @@ public class FragmentGenerarComision extends Fragment {
     // POPULATION SPINNER
     public void loadSpinnerCargo() {
 
-        // CARGO SPINNER
-        adapterSpinnerCargoComision = new AdapterSpinnerCargoComision(getActivity(),
-                R.layout.simple_spinner_dropdown_item, selectCargoList());
-        puestoSpinnerComision.setAdapter(adapterSpinnerCargoComision);
-
+        if(selectCargoList().size()!=0){
+            // CARGO SPINNER
+            adapterSpinnerCargoComision = new AdapterSpinnerCargoComision(getActivity(),
+                    R.layout.simple_spinner_dropdown_item, selectCargoList());
+            puestoSpinnerComision.setAdapter(adapterSpinnerCargoComision);
+        }else{
+            //SPINNER HINT
+            adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                    R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinner));
+            puestoSpinnerComision.setAdapter(adaptadorInicial);
+        }
     }
 
     // POPULATION LISTVIEW
     public void loadListViewMenu() {
-
         adapterList = new ArrayAdapter<Cargo>(getActivity(),
                 R.layout.listview_item_dialogo, R.id.textViewGeneral, selectCargoList());
         dialogoMenuLista.listViewGeneral.setAdapter(adapterList);
     }
 
     public void dateDesde() {
-
         desdeButtonComision.setText(formate.format(calendar.getTime()));
-
     }
 
     public void dateHasta() {
-
         hastaButtonComision.setText(formate.format(calendar.getTime()));
-
     }
 
     public void setDate() {
-
         new DatePickerDialog(getActivity(), d, calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)).show();
-
     }
 
     DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
@@ -382,7 +377,6 @@ public class FragmentGenerarComision extends Fragment {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
-
             calendar.set(Calendar.YEAR, year);
             calendar.set(Calendar.MONTH, monthOfYear);
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -390,7 +384,6 @@ public class FragmentGenerarComision extends Fragment {
             if (botonFecha) {
                 dateDesde();
             } else {
-
                 dateHasta();
             }
         }
@@ -423,7 +416,6 @@ public class FragmentGenerarComision extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-
         if (id == R.id.action_usuario) {
 
             /*Intent usuario = new Intent(getActivity(),
@@ -439,23 +431,22 @@ public class FragmentGenerarComision extends Fragment {
 
         if (id == R.id.action_guardar) {
 
-            cargoSpinner = (Cargo) puestoSpinnerComision.getSelectedItem();
+
             String usuario = "Administrador";
             String fechaCreacion = controladorAdeful.getFechaOficial();
             String fechaActualizacion = fechaCreacion;
 
-            if (puestoSpinnerComision.getSelectedItem() == null) {
-                Toast.makeText(getActivity(), "Debe agregar un Cargo(Menu-Cargo).",
-                        Toast.LENGTH_SHORT).show();
-
-            } else if (nombreEditComision.getText().toString().equals("")) {
+            if (nombreEditComision.getText().toString().equals("")) {
                 Toast.makeText(getActivity(), "Ingrese el nombre del integrante de la comisión.",
+                        Toast.LENGTH_SHORT).show();
+            }else if (puestoSpinnerComision.getSelectedItem().toString().equals(getResources().getStringArray(R.array.ceroSpinner))) {
+                Toast.makeText(getActivity(), "Debe agregar un Cargo (Menu-Cargo).",
                         Toast.LENGTH_SHORT).show();
             } else if (desdeButtonComision.getText().toString().equals("Desde") || hastaButtonComision.getText().toString().equals("Hasta")) {
                 Toast.makeText(getActivity(), "Complete el periodo del cargo.",
                         Toast.LENGTH_SHORT).show();
             } else if (insertar) {
-
+                cargoSpinner = (Cargo) puestoSpinnerComision.getSelectedItem();
                 comision = new Comision(0, nombreEditComision.getText().toString(),
                         imageComision, cargoSpinner.getID_CARGO(),null, desdeButtonComision.getText().toString(),
                         hastaButtonComision.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
@@ -468,7 +459,7 @@ public class FragmentGenerarComision extends Fragment {
                     desdeButtonComision.setText("Desde");
                     hastaButtonComision.setText("Hasta");
                     imageComision = null;
-                    fotoImageComision.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                    fotoImageComision.setImageResource(R.mipmap.ic_foto_galery);
                     communicator.refresh();
                     Toast.makeText(getActivity(), "Integrante ingresado correctamente",
                             Toast.LENGTH_SHORT).show();
@@ -481,7 +472,7 @@ public class FragmentGenerarComision extends Fragment {
                 }
             } else { //COMISION ACTUALIZAR
 
-
+                cargoSpinner = (Cargo) puestoSpinnerComision.getSelectedItem();
                 comision = new Comision(idComisionExtra, nombreEditComision.getText().toString(),
                         imageComision, cargoSpinner.getID_CARGO(), null, desdeButtonComision.getText().toString(),
                         hastaButtonComision.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
@@ -494,7 +485,7 @@ public class FragmentGenerarComision extends Fragment {
                 desdeButtonComision.setText("Desde");
                 hastaButtonComision.setText("Hasta");
                 imageComision = null;
-                fotoImageComision.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                fotoImageComision.setImageResource(R.mipmap.ic_foto_galery);
 
                 actualizar = false;
                 insertar = true;
@@ -612,7 +603,7 @@ public class FragmentGenerarComision extends Fragment {
                                 // TODO Auto-generated method stub
 
                                 dialogoMenuLista = new DialogoMenuLista(getActivity(),
-                                        "CARGOS", cargoArray);
+                                        "CARGOS");
 
                                 dialogoMenuLista.btnAceptar.setText("Aceptar");
                                 dialogoMenuLista.btnCancelar.setText("Cancelar");

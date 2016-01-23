@@ -1,11 +1,14 @@
-package com.estrelladelsur.estrelladelsur.institucion;
+package com.estrelladelsur.estrelladelsur.miequipo;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.ArrayList;
 
-import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,75 +16,71 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.MeasureSpec;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.UtilityImage;
 import com.estrelladelsur.estrelladelsur.abstracta.Cargo;
-import com.estrelladelsur.estrelladelsur.abstracta.Comision;
-import com.estrelladelsur.estrelladelsur.abstracta.Direccion;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCargoComision;
+import com.estrelladelsur.estrelladelsur.abstracta.Division;
+import com.estrelladelsur.estrelladelsur.abstracta.Jugador;
+import com.estrelladelsur.estrelladelsur.abstracta.Posicion;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerPosicion;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoMenuLista;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
+public class FragmentGenerarJugador extends Fragment {
 
-
-public class FragmentGenerarDireccion extends Fragment {
-
-    private int CheckedPositionFragment;
-    private ImageView fotoImageDireccion;
-    private EditText nombreEditDireccion;
-    private Spinner puestoSpinnerDireccion;
-    private Button desdeButtonDireccion;
-    private Button hastaButtonDireccion;
+    private Spinner jugadoresDivisionSpinner;
+    private Spinner jugadoresPosicionSpinner;
     private ControladorAdeful controladorAdeful;
+    private ImageView imageJugador;
+    private EditText jugadoresNombreEdit;
+    private int CheckedPositionFragment;
+    private ByteArrayOutputStream baos;
+    private byte[] imageJugadorByte = null;
     private boolean insertar = true;
-    private Cargo cargo;
-    private Cargo cargoSpinner;
-    private Communicator communicator;
-    private boolean actualizar = false;
-    private int idDireccionExtra;
-    private String fechaCreacionExtra;
-    private ArrayList<Cargo> cargoArray;
-    private AdapterSpinnerCargoComision adapterSpinnerCargoComision;
+    private Jugador jugador;
+    private Division division;
+    private AdapterSpinnerDivision adapterSpinnerDivision;
+    private AdapterSpinnerPosicion adapterSpinnerPosicion;
+    private ArrayList<Division> divisionArray;
+    private ArrayList<Posicion> posicionArray;
+    private Posicion posicion;
     private DialogoAlerta dialogoAlerta;
     private DialogoAlerta dialogoAlertaEditar;
     private DialogoMenuLista dialogoMenuLista;
-    private ArrayAdapter<Cargo> adapterList;
-    private byte[] imageDireccion;
-    private ByteArrayOutputStream baos;
-    private Direccion direccion;
-    private ArrayList<Direccion> direccionArray;
-    private DateFormat formate = DateFormat.getDateInstance();
-    private Calendar calendar = Calendar.getInstance();
-    private boolean botonFecha = false;
-    private ArrayAdapter<String> adaptadorInicial;
+    private boolean actualizar = false;
+    private int idJugadorExtra;
+    private String nombre;
+    private TextView foto;
+    private String usuario = "Administrador";
+    private String fechaCreacion = null;
+    private String fechaActualizacion = null;
+    private ArrayAdapter<Posicion> posicionAdapter;
 
-    public static FragmentGenerarDireccion newInstance() {
-        FragmentGenerarDireccion fragment = new FragmentGenerarDireccion();
+    public static FragmentGenerarJugador newInstance() {
+        FragmentGenerarJugador fragment = new FragmentGenerarJugador();
         return fragment;
     }
 
-    public FragmentGenerarDireccion() {
+    public FragmentGenerarJugador() {
         // Required empty public constructor
     }
 
@@ -89,9 +88,10 @@ public class FragmentGenerarDireccion extends Fragment {
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
 
-        communicator = (Communicator) getActivity();
+        controladorAdeful = new ControladorAdeful(getActivity());
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
+
         } else {
             init();
         }
@@ -100,23 +100,20 @@ public class FragmentGenerarDireccion extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_generar_comision_direccion, container, false);
-        //FOTO INTEGRANTE
-        fotoImageDireccion = (ImageView) v
-                .findViewById(R.id.fotoImageComisionDireccion);
-        //NOMBRE INTEGRANTE
-        nombreEditDireccion = (EditText) v
-                .findViewById(R.id.nombreEditComisionDireccion);
-        //CARGO SPINNER INTEGRANTE
-        puestoSpinnerDireccion = (Spinner) v
-                .findViewById(R.id.puestoSpinnerComisionDireccion);
-        //DESDE
-        desdeButtonDireccion = (Button) v
-                .findViewById(R.id.desdeEditComisionDireccion);
-        //HASTA
-        hastaButtonDireccion = (Button) v
-                .findViewById(R.id.hastaEditComisionDireccion);
 
+        View v = inflater.inflate(R.layout.fragment_generar_jugador,
+                container, false);
+        // FOTO JUGADOR
+        imageJugador = (ImageView) v.findViewById(R.id.imageJugador);
+        // NOMBRE JUGADOR
+        jugadoresNombreEdit = (EditText) v
+                .findViewById(R.id.jugadoresNombreEdit);
+        // DIVISION
+        jugadoresDivisionSpinner = (Spinner) v
+                .findViewById(R.id.jugadoresDivisionSpinner);
+        // PUESTO
+        jugadoresPosicionSpinner = (Spinner) v
+                .findViewById(R.id.jugadoresPosicionSpinner);
         return v;
     }
 
@@ -127,82 +124,67 @@ public class FragmentGenerarDireccion extends Fragment {
     }
 
     private void init() {
-        // VER DONDE EJECUCTAR ESTA LINEA
-        controladorAdeful = new ControladorAdeful(getActivity());
 
+        usuario = "Administrador";
+        fechaCreacion = controladorAdeful.getFechaOficial();
+        fechaActualizacion = fechaCreacion;
+
+        // DIVISION
+        controladorAdeful.abrirBaseDeDatos();
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        if (divisionArray != null) {
+            controladorAdeful.cerrarBaseDeDatos();
+            // DIVSION SPINNER
+            adapterSpinnerDivision = new AdapterSpinnerDivision(getActivity(),
+                    R.layout.simple_spinner_dropdown_item, divisionArray);
+            jugadoresDivisionSpinner.setAdapter(adapterSpinnerDivision);
+        } else {
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                    Toast.LENGTH_SHORT).show();
+        }
+        // POSICION
+        loadSpinnerPosicion();
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
-        // LOAD SPINNER
-        loadSpinnerCargo();
         //Metodo Extra
         if (actualizar) {
+            idJugadorExtra = getActivity().getIntent().getIntExtra("id_jugador", 0);
+            //DIVISION
+            jugadoresDivisionSpinner.setSelection(getActivity().getIntent()
+                    .getIntExtra("divisionSpinner", 0) - 1);
+            // TORNEO
+            jugadoresPosicionSpinner.setSelection(getActivity().getIntent()
+                    .getIntExtra("posicionSpinner", 0) - 1);
+            //NOMBRE
+            jugadoresNombreEdit.setText(getActivity().getIntent()
+                    .getStringExtra("nombre"));
+            //FOTO
+            imageJugadorByte = getActivity().getIntent()
+                    .getByteArrayExtra("foto");
 
-            idDireccionExtra = getActivity().getIntent().getIntExtra("id_direccion", 0);
-
-            // DIRECCION POR ID
-            controladorAdeful.abrirBaseDeDatos();
-            direccionArray = controladorAdeful.selectDireccionAdeful(idDireccionExtra);
-            if (direccionArray != null) {
-                controladorAdeful.cerrarBaseDeDatos();
-
-                nombreEditDireccion.setText(direccionArray.get(0).getNOMBRE_DIRECCION().toString());
-                desdeButtonDireccion.setText(direccionArray.get(0).getPERIODO_DESDE().toString());
-                hastaButtonDireccion.setText(direccionArray.get(0).getPERIODO_HASTA().toString());
-                imageDireccion = direccionArray.get(0).getFOTO_DIRECCION();
-                puestoSpinnerDireccion.setSelection(getPositionCargo(direccionArray.get(0).getID_CARGO()));
-
-                if (imageDireccion != null) {
-                    Bitmap theImage = BitmapFactory.decodeByteArray(imageDireccion, 0,
-                            imageDireccion.length);
-                    theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
-                    fotoImageDireccion.setImageBitmap(theImage);
-                } else {
-                    fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
-                }
-
-                insertar = false;
+            if (imageJugadorByte != null) {
+                Bitmap theImage = BitmapFactory.decodeByteArray(imageJugadorByte, 0,
+                        imageJugadorByte.length);
+                theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
+                imageJugador.setImageBitmap(theImage);
             } else {
-                controladorAdeful.cerrarBaseDeDatos();
-                Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                "\n Si el error persiste comuniquese con soporte.",
-                        Toast.LENGTH_SHORT).show();
+                imageJugador.setImageResource(R.mipmap.ic_foto_galery);
             }
+            insertar = false;
         }
 
-        // CLICK IMAGEN
-        fotoImageDireccion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Alerta galeria
-                ImageDialogDireccion();
-
-            }
-        });
-
-        desdeButtonDireccion.setOnClickListener(new View.OnClickListener() {
+        imageJugador.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                botonFecha = true;
-                setDate();
-
-            }
-        });
-        hastaButtonDireccion.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                botonFecha = false;
-                setDate();
-
+                ImageDialogjugador();
             }
         });
     }
 
-    //Alerta galeria
-    public void ImageDialogDireccion() {
+    public void ImageDialogjugador() {
 
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(
                 getActivity());
@@ -222,22 +204,7 @@ public class FragmentGenerarDireccion extends Fragment {
                                 UtilityImage.GALLERY_PICTURE);
                     }
                 });
-
         myAlertDialog.show();
-
-    }
-
-    //get posicion en el spinner del cargo.
-    private int getPositionCargo(int idCargo) {
-
-        int index = 0;
-
-        for (int i = 0; i < cargoArray.size(); i++) {
-            if (cargoArray.get(i).getID_CARGO() == (idCargo)) {
-                index = i;
-            }
-        }
-        return index;
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -247,14 +214,12 @@ public class FragmentGenerarDireccion extends Fragment {
             // Do some task
             SeleccionarImagen(data);
         }
-
     }
 
     public static Bitmap createDrawableFromView(View view) {
-
         view.setDrawingCacheEnabled(true);
-        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         view.buildDrawingCache(true);
         Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
@@ -307,102 +272,70 @@ public class FragmentGenerarDireccion extends Fragment {
                         .toString();
                 b = Bitmap.createScaledBitmap(b, 150, 150, true);
 
-                // set bitmap a imagenView
-                fotoImageDireccion.setImageBitmap(b);
+                // set your selected image in image view
+                imageJugador.setImageBitmap(b);
                 cursor.close();
 
-                //Pasar bitmap a byte[]
                 baos = new ByteArrayOutputStream();
-                b.compress(Bitmap.CompressFormat.PNG, 0, baos);
-                imageDireccion = baos.toByteArray();
+                b.compress(CompressFormat.PNG, 0, baos);
+                imageJugadorByte = baos.toByteArray();
 
             } else {
                 Toast toast = Toast.makeText(getActivity(),
-                        "No se selecciono una foto.", Toast.LENGTH_LONG);
+                        "No se selecciono un escudo.", Toast.LENGTH_LONG);
                 toast.show();
             }
         } catch (Exception e) {
             // you get this when you will not select any single image
             Log.e("onActivityResult", "" + e);
-
         }
     }
-
-    public ArrayList<Cargo> selectCargoList() {
-
-        // CARGO
-        controladorAdeful.abrirBaseDeDatos();
-        cargoArray = controladorAdeful.selectListaCargoAdeful();
-        if (cargoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\nSi el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
-        }
-        return cargoArray;
-    }
-
-    // POPULATION SPINNER
-    public void loadSpinnerCargo() {
-
-        if(selectCargoList().size()!=0){
-            // CARGO SPINNER
-            adapterSpinnerCargoComision = new AdapterSpinnerCargoComision(getActivity(),
-                    R.layout.simple_spinner_dropdown_item, selectCargoList());
-            puestoSpinnerDireccion.setAdapter(adapterSpinnerCargoComision);
-        }else{
-            //SPINNER HINT
-            adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                    R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinner));
-            puestoSpinnerDireccion.setAdapter(adaptadorInicial);
-        }
-    }
-
-    // POPULATION LISTVIEW
-    public void loadListViewMenu() {
-        adapterList = new ArrayAdapter<Cargo>(getActivity(),
-                R.layout.listview_item_dialogo, R.id.textViewGeneral, selectCargoList());
-        dialogoMenuLista.listViewGeneral.setAdapter(adapterList);
-    }
-
-    public void dateDesde() {
-        desdeButtonDireccion.setText(formate.format(calendar.getTime()));
-    }
-
-    public void dateHasta() {
-        hastaButtonDireccion.setText(formate.format(calendar.getTime()));
-    }
-
-    public void setDate() {
-        new DatePickerDialog(getActivity(), d, calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)).show();
-    }
-
-    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, monthOfYear);
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-            if (botonFecha) {
-                dateDesde();
-            } else {
-
-                dateHasta();
-            }
-        }
-    };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
+    public void loadSpinnerPosicion() {
+        // POSICION
+        controladorAdeful.abrirBaseDeDatos();
+        posicionArray = controladorAdeful.selectListaPosicionAdeful();
+        if (posicionArray != null) {
+            controladorAdeful.cerrarBaseDeDatos();
+            // POSICION SPINNER
+            adapterSpinnerPosicion = new AdapterSpinnerPosicion(getActivity(),
+                    R.layout.simple_spinner_dropdown_item, posicionArray);
+            jugadoresPosicionSpinner.setAdapter(adapterSpinnerPosicion);
+        } else {
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public ArrayList<Posicion> selectPosicionList() {
+
+        //POSICION
+        controladorAdeful.abrirBaseDeDatos();
+        posicionArray = controladorAdeful.selectListaPosicionAdeful();
+        if (posicionArray != null) {
+            controladorAdeful.cerrarBaseDeDatos();
+        } else {
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                    Toast.LENGTH_SHORT).show();
+        }
+        return posicionArray;
+    }
+
+    // POPULATION LISTVIEW
+    public void loadListViewMenu() {
+
+        posicionAdapter = new ArrayAdapter<Posicion>(getActivity(),
+                R.layout.listview_item_dialogo, R.id.textViewGeneral, selectPosicionList());
+        dialogoMenuLista.listViewGeneral.setAdapter(posicionAdapter);
+    }
+
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -412,8 +345,8 @@ public class FragmentGenerarDireccion extends Fragment {
         // menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
-        menu.getItem(5).setVisible(false);// posicion
-        // menu.getItem(6).setVisible(false);// cargo
+        // menu.getItem(5).setVisible(false);// posicion
+        menu.getItem(6).setVisible(false);// cargo
         // menu.getItem(7).setVisible(false);//cerrar
         // menu.getItem(8).setVisible(false);// guardar
         menu.getItem(9).setVisible(false);// Subir
@@ -429,10 +362,9 @@ public class FragmentGenerarDireccion extends Fragment {
 
         if (id == R.id.action_usuario) {
 
-            /*Intent usuario = new Intent(getActivity(),
-                    NavigationDrawerUsuario.class);
-            startActivity(usuario);*/
-
+//            Intent usuario = new Intent(getActivity(),
+//                    NavigationDrawerUsuario.class);
+//            startActivity(usuario);
             return true;
         }
 
@@ -442,70 +374,76 @@ public class FragmentGenerarDireccion extends Fragment {
 
         if (id == R.id.action_guardar) {
 
-            String usuario = "Administrador";
-            String fechaCreacion = controladorAdeful.getFechaOficial();
-            String fechaActualizacion = fechaCreacion;
 
-            if (nombreEditDireccion.getText().toString().equals("")) {
-                Toast.makeText(getActivity(), "Ingrese el nombre del integrante de la Dirección.",
-                        Toast.LENGTH_SHORT).show();
-            }else if (puestoSpinnerDireccion.getSelectedItem().toString().equals(getResources().getStringArray(R.array.ceroSpinner))) {
-                Toast.makeText(getActivity(), "Debe agregar un Cargo (Menu-Cargo).",
-                        Toast.LENGTH_SHORT).show();
-            } else if (desdeButtonDireccion.getText().toString().equals("Desde") || hastaButtonDireccion.getText().toString().equals("Hasta")) {
-                Toast.makeText(getActivity(), "Complete el periodo del cargo.",
-                        Toast.LENGTH_SHORT).show();
-            } else if (insertar) {
-                cargoSpinner = (Cargo) puestoSpinnerDireccion.getSelectedItem();
-                direccion = new Direccion(0, nombreEditDireccion.getText().toString(),
-                        imageDireccion, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
-                        hastaButtonDireccion.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                controladorAdeful.abrirBaseDeDatos();
-                if (controladorAdeful.insertDireccionAdeful(direccion)) {
+            if (jugadoresDivisionSpinner.getSelectedItem().toString().equals(getResources().getString(R.string.ceroSpinnerDivision))) {
+                Toast.makeText(getActivity(), "Debe Cargar una División.",
+                        Toast.LENGTH_SHORT).show();
+            } else if (jugadoresPosicionSpinner.getSelectedItem().toString().equals()) {
+                Toast.makeText(getActivity(), "Debe Cargar una Posición.",
+                        Toast.LENGTH_SHORT).show();
+            } else if (jugadoresNombreEdit.getText().toString().equals("")) {
+                Toast.makeText(getActivity(), "Ingrese el Nombre del Jugador.",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                division = (Division) jugadoresDivisionSpinner.getSelectedItem();
+                posicion = (Posicion) jugadoresPosicionSpinner.getSelectedItem();
+                if (insertar) {
 
-                    controladorAdeful.cerrarBaseDeDatos();
-                    nombreEditDireccion.setText("");
-                    desdeButtonDireccion.setText("Desde");
-                    hastaButtonDireccion.setText("Hasta");
-                    imageDireccion = null;
-                    fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
-                    communicator.refresh();
-                    Toast.makeText(getActivity(), "Integrante ingresado correctamente",
-                            Toast.LENGTH_SHORT).show();
+                    jugador = new Jugador(0, jugadoresNombreEdit.getText()
+                            .toString(), imageJugadorByte,
+                            division.getID_DIVISION(),
+                            posicion.getID_POSICION(), usuario, fechaCreacion, usuario, fechaActualizacion);
+
+                    controladorAdeful.abrirBaseDeDatos();
+                    if (controladorAdeful.insertJugadorAdeful(jugador)) {
+                        controladorAdeful.cerrarBaseDeDatos();
+
+                        if (imageJugadorByte != null) {
+                            imageJugador
+                                    .setImageResource(R.mipmap.ic_foto_galery);
+                            imageJugadorByte = null;
+                        }
+                        jugadoresNombreEdit.setText("");
+                        Toast.makeText(getActivity(),
+                                "Jugador Cargado Correctamente.",
+                                Toast.LENGTH_SHORT).show();
+                        imageJugadorByte = null;
+                    } else {
+                        controladorAdeful.cerrarBaseDeDatos();
+                        Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                        "\nSi el error persiste comuniquese con soporte.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
                 } else {
-                    controladorAdeful.cerrarBaseDeDatos();
-                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                    "\nSi el error persiste comuniquese con soporte.",
-                            Toast.LENGTH_SHORT).show();
+                    jugador = new Jugador(idJugadorExtra, jugadoresNombreEdit.getText()
+                            .toString(), imageJugadorByte,
+                            division.getID_DIVISION(),
+                            posicion.getID_POSICION(), null, null, usuario, fechaActualizacion);
 
-                }
-            } else { //DIRECCION ACTUALIZAR
-                cargoSpinner = (Cargo) puestoSpinnerDireccion.getSelectedItem();
-                direccion = new Direccion(idDireccionExtra, nombreEditDireccion.getText().toString(),
-                        imageDireccion, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
-                        hastaButtonDireccion.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                    controladorAdeful.abrirBaseDeDatos();
+                    if (controladorAdeful.actualizarJugadorAdeful(jugador)) {
+                        controladorAdeful.cerrarBaseDeDatos();
 
-                controladorAdeful.abrirBaseDeDatos();
-                if (controladorAdeful.actualizarDireccionAdeful(direccion)) {
-                    controladorAdeful.cerrarBaseDeDatos();
-
-                    nombreEditDireccion.setText("");
-                    desdeButtonDireccion.setText("Desde");
-                    hastaButtonDireccion.setText("Hasta");
-                    imageDireccion = null;
-                    fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
-
-                    actualizar = false;
-                    insertar = true;
-                    communicator.refresh();
-                    Toast.makeText(getActivity(), "Integrante actualizado correctamente.",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    controladorAdeful.cerrarBaseDeDatos();
-                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                    "\n Si el error persiste comuniquese con soporte.",
-                            Toast.LENGTH_SHORT).show();
+                        if (imageJugadorByte != null) {
+                            imageJugador
+                                    .setImageResource(R.mipmap.ic_foto_galery);
+                            imageJugadorByte = null;
+                        }
+                        jugadoresNombreEdit.setText("");
+                        Toast.makeText(getActivity(),
+                                "Jugador Actualizado Correctamente.",
+                                Toast.LENGTH_SHORT).show();
+                        imageJugadorByte = null;
+                        actualizar = false;
+                        insertar = true;
+                    } else {
+                        controladorAdeful.cerrarBaseDeDatos();
+                        Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
+                                        "\nSi el error persiste comuniquese con soporte.",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
             return true;
@@ -515,14 +453,13 @@ public class FragmentGenerarDireccion extends Fragment {
 
             return true;
         }
-
-        if (id == R.id.action_cargo) {
+        if (id == R.id.action_posicion) {
 
             dialogoAlerta = new DialogoAlerta(
                     getActivity(),
-                    "CARGO",
-                    "En esta opción puedes agregar o editar un cargo directivo.",
-                    null, null);
+                    "POSICION",
+                    "En esta opción puede agreagar o editar una posición de juego",
+                    "Ingrese Posición", null);
             dialogoAlerta.btnAceptar.setText("Crear");
             dialogoAlerta.btnCancelar.setText("Editar");
             dialogoAlerta.btnAceptar
@@ -533,11 +470,10 @@ public class FragmentGenerarDireccion extends Fragment {
                             // TODO Auto-generated method stub
                             dialogoAlerta.mensaje.setVisibility(View.GONE);
                             dialogoAlerta.editTextUno.setVisibility(View.VISIBLE);
-                            dialogoAlerta.editTextUno.setHint("Ingrese un Cargo ");
                             dialogoAlerta.btnAceptar.setText("Aceptar");
                             dialogoAlerta.btnCancelar.setText("Cancelar");
 
-                            // Crear la Cargo
+                            // Crear la Posicion
                             dialogoAlerta.btnAceptar
                                     .setOnClickListener(new View.OnClickListener() {
 
@@ -548,27 +484,22 @@ public class FragmentGenerarDireccion extends Fragment {
                                                     .getText().toString()
                                                     .equals("")) {
 
-                                                String usuario = "Administrador";
-                                                String fechaCreacion = controladorAdeful.getFechaOficial();
-                                                String fechaActualizacion = fechaCreacion;
-
-                                                cargo = new Cargo(0,
+                                                posicion = new Posicion(0,
                                                         dialogoAlerta.editTextUno
                                                                 .getText()
-                                                                .toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                                                                .toString(), usuario, fechaCreacion,
+                                                        usuario, fechaActualizacion);
 
                                                 controladorAdeful
                                                         .abrirBaseDeDatos();
                                                 if (controladorAdeful
-                                                        .insertCargoAdeful(cargo)) {
+                                                        .insertPosicionAdeful(posicion)) {
                                                     controladorAdeful
                                                             .cerrarBaseDeDatos();
-                                                    //SPINNER
-                                                    loadSpinnerCargo();
-
+                                                    loadSpinnerPosicion();
                                                     Toast.makeText(
                                                             getActivity(),
-                                                            "Cargo Generado Correctamente.",
+                                                            "Posición Cargada Correctamente.",
                                                             Toast.LENGTH_SHORT)
                                                             .show();
                                                     dialogoAlerta.alertDialog
@@ -579,31 +510,26 @@ public class FragmentGenerarDireccion extends Fragment {
                                                                     "\nSi el error persiste comuniquese con soporte.",
                                                             Toast.LENGTH_SHORT).show();
                                                 }
+
                                             } else {
                                                 Toast.makeText(
                                                         getActivity(),
-                                                        "Ingrese un Cargo.",
+                                                        "Ingrese una Posición.",
                                                         Toast.LENGTH_SHORT)
                                                         .show();
                                             }
                                         }
                                     });
-
                             dialogoAlerta.btnCancelar
                                     .setOnClickListener(new View.OnClickListener() {
-
                                         @Override
                                         public void onClick(View v) {
                                             // TODO Auto-generated method stub
-
                                             dialogoAlerta.alertDialog.dismiss();
-
                                         }
                                     });
                         }
                     });
-
-            //EDITAR UN CARGO
             dialogoAlerta.btnCancelar
                     .setOnClickListener(new View.OnClickListener() {
 
@@ -612,18 +538,21 @@ public class FragmentGenerarDireccion extends Fragment {
                             // TODO Auto-generated method stub
 
                             dialogoMenuLista = new DialogoMenuLista(getActivity(),
-                                    "CARGOS");
+                                    "POSICION");
 
                             dialogoMenuLista.btnAceptar.setText("Aceptar");
                             dialogoMenuLista.btnCancelar.setText("Cancelar");
+
                             loadListViewMenu();
+
+
                             dialogoMenuLista.listViewGeneral.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
 
                                     dialogoAlertaEditar = new DialogoAlerta(
                                             getActivity(),
-                                            "CARGO",
+                                            "POSICION",
                                             null,
                                             null, null);
 
@@ -639,23 +568,23 @@ public class FragmentGenerarDireccion extends Fragment {
                                             // TODO Auto-generated method stub
 
                                             String usuario = "Administrador";
-                                            cargo = new Cargo(
-                                                    cargoArray.get(position).getID_CARGO(),
+                                            posicion = new Posicion(
+                                                    posicionArray.get(position).getID_POSICION(),
                                                     dialogoAlertaEditar.editTextUno.getText().toString(),
-                                                    usuario, null, usuario, controladorAdeful.getFechaOficial());
+                                                    null, null, usuario, controladorAdeful.getFechaOficial());
 
                                             controladorAdeful
                                                     .abrirBaseDeDatos();
                                             if (controladorAdeful
-                                                    .actualizarCargoAdeful(cargo)) {
+                                                    .actualizarPosicionAdeful(posicion)) {
                                                 controladorAdeful
                                                         .cerrarBaseDeDatos();
                                                 loadListViewMenu();
-                                                loadSpinnerCargo();
+                                                loadSpinnerPosicion();
                                                 dialogoAlertaEditar.alertDialog.dismiss();
                                                 Toast.makeText(
                                                         getActivity(),
-                                                        "Cargo Actualizado Correctamente.",
+                                                        "Posición Actualizada Correctamente.",
                                                         Toast.LENGTH_SHORT).show();
                                             } else {
                                                 controladorAdeful.cerrarBaseDeDatos();
@@ -665,8 +594,6 @@ public class FragmentGenerarDireccion extends Fragment {
                                             }
                                         }
                                     });
-
-
                                     dialogoAlertaEditar.btnCancelar.setOnClickListener(new View.OnClickListener() {
 
                                         @Override
@@ -676,16 +603,14 @@ public class FragmentGenerarDireccion extends Fragment {
                                         }
                                     });
                                 }
-
                             });
-                            // Editar Cargo
+                            // Editar Posicion
                             dialogoMenuLista.btnAceptar
                                     .setOnClickListener(new View.OnClickListener() {
 
                                         @Override
                                         public void onClick(View v) {
                                             // TODO Auto-generated method stub
-
                                             dialogoMenuLista.alertDialog.dismiss();
                                             dialogoAlerta.alertDialog.dismiss();
                                         }
@@ -696,22 +621,22 @@ public class FragmentGenerarDireccion extends Fragment {
                                 @Override
                                 public void onClick(View v) {
                                     // TODO Auto-generated method stub
-
                                     dialogoMenuLista.alertDialog.dismiss();
                                     dialogoAlerta.alertDialog.dismiss();
                                 }
                             });
                         }
                     });
-
             return true;
         }
 
         if (id == android.R.id.home) {
 
             NavUtils.navigateUpFromSameTask(getActivity());
+
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

@@ -96,6 +96,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".liga.TabsAdeful" />
         </activity>
+        <activity
+            android:name=".miequipo.TabsJugador"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.TabsAdeful" />
+        </activity>
 
     </application>
 

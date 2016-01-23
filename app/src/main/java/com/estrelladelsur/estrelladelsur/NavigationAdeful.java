@@ -22,6 +22,7 @@ import com.estrelladelsur.estrelladelsur.institucion.TabsDireccion;
 import com.estrelladelsur.estrelladelsur.liga.TabsAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
+import com.estrelladelsur.estrelladelsur.miequipo.TabsJugador;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -129,8 +130,8 @@ private TextView txtAbSubTitulo;
                                         .toString();
                                 break;
                             case 2:
-                               // Intent jugadores  = new Intent(NavigationDrawerAdeful.this,TabsJugadores.class);
-                               // startActivity(jugadores);
+                                Intent jugadores  = new Intent(NavigationAdeful.this,TabsJugador.class);
+                                startActivity(jugadores);
                                 tituloClickFragment = cargaGeneral.get(childPosition)
                                         .toString();
                                 break;

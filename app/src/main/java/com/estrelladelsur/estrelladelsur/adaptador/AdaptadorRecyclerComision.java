@@ -55,7 +55,7 @@ public class AdaptadorRecyclerComision extends
             foto = comision.getFOTO_COMISION();
 
             if (foto == null) {
-                imageRecyclerViewFoto.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
             } else {
                 Bitmap theImage = BitmapFactory.decodeByteArray(
                         foto, 0, foto.length);
