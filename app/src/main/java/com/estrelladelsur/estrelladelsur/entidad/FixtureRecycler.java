@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur.abstracta;
+package com.estrelladelsur.estrelladelsur.entidad;
 
 public class FixtureRecycler {
 

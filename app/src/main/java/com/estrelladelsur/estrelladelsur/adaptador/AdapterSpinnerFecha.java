@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Fecha;
+import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 
 
 public class AdapterSpinnerFecha extends ArrayAdapter<Fecha>

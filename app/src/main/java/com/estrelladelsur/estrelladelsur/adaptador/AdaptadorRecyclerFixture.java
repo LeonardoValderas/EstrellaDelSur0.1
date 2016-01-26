@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.FixtureRecycler;
+import com.estrelladelsur.estrelladelsur.entidad.FixtureRecycler;
 
 public class AdaptadorRecyclerFixture extends
 		RecyclerView.Adapter<AdaptadorRecyclerFixture.FixtureViewHolder> implements

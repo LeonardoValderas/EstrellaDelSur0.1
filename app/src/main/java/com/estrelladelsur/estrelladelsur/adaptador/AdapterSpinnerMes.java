@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Mes;
+import com.estrelladelsur.estrelladelsur.entidad.Mes;
 
 public class AdapterSpinnerMes extends ArrayAdapter<Mes> {
 	private Activity context;

@@ -1,9 +1,4 @@
-package com.estrelladelsur.estrelladelsur.abstracta;
-
-import java.io.ByteArrayOutputStream;
-import java.sql.Blob;
-
-import android.graphics.Bitmap.CompressFormat;
+package com.estrelladelsur.estrelladelsur.entidad;
 
 public class JugadorRecycler {
 

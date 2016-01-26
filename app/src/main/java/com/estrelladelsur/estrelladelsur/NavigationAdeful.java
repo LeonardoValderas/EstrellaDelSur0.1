@@ -21,6 +21,7 @@ import com.estrelladelsur.estrelladelsur.institucion.TabsComision;
 import com.estrelladelsur.estrelladelsur.institucion.TabsDireccion;
 import com.estrelladelsur.estrelladelsur.liga.TabsAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado;
+import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsJugador;
 
@@ -136,8 +137,8 @@ private TextView txtAbSubTitulo;
                                         .toString();
                                 break;
                             case 3:
-                             //   Intent entrenamiento  = new Intent(NavigationDrawerAdeful.this,TabsEntrenamiento.class);
-                              //  startActivity(entrenamiento);
+                                Intent entrenamiento  = new Intent(NavigationAdeful.this,TabsEntrenamiento.class);
+                                startActivity(entrenamiento);
                                 tituloClickFragment = cargaGeneral.get(childPosition)
                                         .toString();
                                 break;

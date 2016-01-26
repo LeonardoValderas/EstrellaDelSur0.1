@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Cancha;
+import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerCancha;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
@@ -182,8 +182,7 @@ public class FragmentCancha extends Fragment {
 			recycleViewCancha.setAdapter(adaptadorCancha);
 		}else{
 			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-							"\n Si el error persiste comuniquese con soporte.",
+			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
 					Toast.LENGTH_SHORT).show();
 		}
 	}

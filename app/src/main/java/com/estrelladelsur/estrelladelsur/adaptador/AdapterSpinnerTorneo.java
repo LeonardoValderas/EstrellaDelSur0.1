@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Torneo;
+import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
 
 public class AdapterSpinnerTorneo extends ArrayAdapter<Torneo>

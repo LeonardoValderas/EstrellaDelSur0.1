@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -14,8 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Cargo;
-import com.estrelladelsur.estrelladelsur.abstracta.Jugador;
+import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 
 import java.util.ArrayList;
 

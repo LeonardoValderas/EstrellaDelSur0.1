@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -24,8 +23,7 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Division;
-import com.estrelladelsur.estrelladelsur.abstracta.Equipo;
+import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerDivision;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;

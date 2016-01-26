@@ -1,10 +1,12 @@
-package com.estrelladelsur.estrelladelsur.abstracta;
+package com.estrelladelsur.estrelladelsur.entidad;
 
-public class Fixture {
-
+public class Resultado {
+	
 	private int ID_FIXTURE;
 	private int ID_EQUIPO_LOCAL;
 	private int ID_EQUIPO_VISITA;
+	private String RESULTADO_VISITA;
+	private String RESULTADO_LOCAL;
 	private int ID_DIVISION;
 	private int ID_TORNEO;
 	private int ID_CANCHA;
@@ -17,12 +19,15 @@ public class Fixture {
 	private String USUARIO_ACTUALIZACION;
 	private String FECHA_ACTUALIZACION;
 
-	public Fixture(int id, int id_equipo_local, int id_equipo_visita, int id_division, int id_torneo,int id_cancha, int id_fecha,int id_anio,String dia,String hora, String usuario,
-			String fechaCreacion,String usuario_act, String fechaActualizacion) {
+
+	public Resultado(int id, int id_equipo_local, int id_equipo_visita,String resultado_local,String resultado_visita, int id_division, int id_torneo,int id_cancha, int id_fecha,int id_anio,String dia,String hora, String usuario,
+			String fechaCreacion,String usuarioActualizacion, String fechaActualizacion) {
 
 		ID_FIXTURE = id;
 		ID_EQUIPO_LOCAL=id_equipo_local;
 		ID_EQUIPO_VISITA=id_equipo_visita;
+		RESULTADO_LOCAL = resultado_local;
+		RESULTADO_VISITA= resultado_visita;
 		ID_DIVISION=id_division;
 		ID_TORNEO=id_torneo;
 		ID_CANCHA=id_cancha;
@@ -32,9 +37,9 @@ public class Fixture {
 		HORA = hora;
 		USUARIO_CREACION = usuario;
 		FECHA_CREACION = fechaCreacion;
-		USUARIO_ACTUALIZACION = usuario_act;
+		USUARIO_ACTUALIZACION = usuarioActualizacion;
 		FECHA_ACTUALIZACION = fechaActualizacion;
-		}
+	}
 
 	public String getUSUARIO_CREACION() {
 		return USUARIO_CREACION;
@@ -73,8 +78,25 @@ public class Fixture {
 	}
 
 	public void setID_EQUIPO_VISITA(int iD_EQUIPO_VISITA) {
-		ID_EQUIPO_LOCAL = iD_EQUIPO_VISITA;
+		ID_EQUIPO_VISITA = iD_EQUIPO_VISITA;
 	}
+
+	public String getRESULTADO_VISITA() {
+		return RESULTADO_VISITA;
+	}
+
+	public void setRESULTADO_VISITA(String rESULTADO_VISITA) {
+		RESULTADO_VISITA = rESULTADO_VISITA;
+	}
+
+	public String getRESULTADO_LOCAL() {
+		return RESULTADO_LOCAL;
+	}
+
+	public void setRESULTADO_LOCAL(String rESULTADO_LOCAL) {
+		RESULTADO_LOCAL = rESULTADO_LOCAL;
+	}
+
 	public int getID_DIVISION() {
 		return ID_DIVISION;
 	}
@@ -98,7 +120,7 @@ public class Fixture {
 	public void setID_CANCHA(int iD_CANCHA) {
 		ID_CANCHA = iD_CANCHA;
 	}
-	
+
 	public int getID_FECHA() {
 		return ID_FECHA;
 	}
@@ -106,6 +128,7 @@ public class Fixture {
 	public void setID_FECHA(int iD_FECHA) {
 		ID_FECHA = iD_FECHA;
 	}
+
 	public int getID_ANIO() {
 		return ID_ANIO;
 	}
@@ -145,6 +168,5 @@ public class Fixture {
 	public void setFECHA_ACTUALIZACION(String fECHA_ACTUALIZACION) {
 		FECHA_ACTUALIZACION = fECHA_ACTUALIZACION;
 	}
-
 
 }

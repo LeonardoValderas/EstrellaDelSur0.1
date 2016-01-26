@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Division;
+import com.estrelladelsur.estrelladelsur.entidad.Division;
 
 
 public class AdapterSpinnerDivision extends ArrayAdapter<Division>

@@ -24,11 +24,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.abstracta.Anio;
-import com.estrelladelsur.estrelladelsur.abstracta.Division;
-import com.estrelladelsur.estrelladelsur.abstracta.Fecha;
-import com.estrelladelsur.estrelladelsur.abstracta.ResultadoRecycler;
-import com.estrelladelsur.estrelladelsur.abstracta.Torneo;
+import com.estrelladelsur.estrelladelsur.entidad.Anio;
+import com.estrelladelsur.estrelladelsur.entidad.Division;
+import com.estrelladelsur.estrelladelsur.entidad.Fecha;
+import com.estrelladelsur.estrelladelsur.entidad.ResultadoRecycler;
+import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerResultado;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;

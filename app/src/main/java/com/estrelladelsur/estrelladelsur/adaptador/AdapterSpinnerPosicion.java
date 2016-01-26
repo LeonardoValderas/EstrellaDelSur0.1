@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Posicion;
+import com.estrelladelsur.estrelladelsur.entidad.Posicion;
 
 
 public class AdapterSpinnerPosicion extends ArrayAdapter<Posicion>

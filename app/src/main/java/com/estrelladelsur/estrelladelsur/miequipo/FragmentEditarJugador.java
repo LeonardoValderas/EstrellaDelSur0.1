@@ -19,9 +19,9 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Division;
-import com.estrelladelsur.estrelladelsur.abstracta.JugadorRecycler;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorEditarJugador;
+import com.estrelladelsur.estrelladelsur.entidad.Division;
+import com.estrelladelsur.estrelladelsur.entidad.JugadorRecycler;
+import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerJugador;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
@@ -39,7 +39,7 @@ public class FragmentEditarJugador extends Fragment {
     private int divisionSpinner;
     private ArrayList<JugadorRecycler> jugadorArray;
     private DialogoAlerta dialogoAlerta;
-    private AdaptadorEditarJugador adaptadorEditarJugador;
+    private AdaptadorRecyclerJugador adaptadorEditarJugador;
 
 	public static FragmentEditarJugador newInstance() {
 		FragmentEditarJugador fragment = new FragmentEditarJugador();
@@ -204,7 +204,7 @@ public class FragmentEditarJugador extends Fragment {
 		if(jugadorArray != null) {
 			controladorAdeful.cerrarBaseDeDatos();
 
-			adaptadorEditarJugador = new AdaptadorEditarJugador(jugadorArray);
+			adaptadorEditarJugador = new AdaptadorRecyclerJugador(jugadorArray);
 			adaptadorEditarJugador.notifyDataSetChanged();
 			recyclerViewJugador.setAdapter(adaptadorEditarJugador);
 		}else {

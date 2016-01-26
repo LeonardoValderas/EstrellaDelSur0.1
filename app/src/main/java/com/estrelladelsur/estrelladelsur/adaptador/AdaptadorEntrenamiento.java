@@ -1,6 +1,5 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
-import java.util.ArrayList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
@@ -9,20 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.JugadorRecycler;
+import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
+import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento_Division;
+import com.estrelladelsur.estrelladelsur.entidad.FixtureRecycler;
+import java.util.ArrayList;
 
-public class AdaptadorEditarJugador extends
-		RecyclerView.Adapter<AdaptadorEditarJugador.JugadorViewHolder> implements
+public class AdaptadorEntrenamiento extends
+		RecyclerView.Adapter<AdaptadorEntrenamiento.EntrenamientoViewHolder> implements
 		View.OnClickListener {
 
-	// private final static Context context;
-
 	private View.OnClickListener listener;
-	private ArrayList<JugadorRecycler> jugadorArray;
+	private ArrayList<EntrenamientoRecycler> entrenamientoArray;
+	private ArrayList<Entrenamiento_Division> entrenamientoDivisionArray;
 
-	public static class JugadorViewHolder extends RecyclerView.ViewHolder {
+	public static class EntrenamientoViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
 		private TextView textRecyclerViewEquipoL;
 		private ImageView imageViewEscudoV;
@@ -32,35 +32,33 @@ public class AdaptadorEditarJugador extends
 		private TextView textRecyclerViewCancha;
 		private TextView textRecyclerViewResultadoV;
 		private TextView textRecyclerViewResultadoL;
-
-		public JugadorViewHolder(View itemView) {
+        private String divisiones;
+		public EntrenamientoViewHolder(View itemView) {
 			super(itemView);
 
 			// ESCUDO LOCAL
 			imageViewEscudoL = (ImageView) itemView
 					.findViewById(R.id.imageViewEscudoL);
+			imageViewEscudoL.setVisibility(View.GONE);
 			// ESCUDO VISITA
 			imageViewEscudoV = (ImageView) itemView
 					.findViewById(R.id.imageViewEscudoV);
-			imageViewEscudoV.setVisibility(View.INVISIBLE);
+			imageViewEscudoV.setVisibility(View.GONE);
 			// EQUIPO LOCAL
 			textRecyclerViewEquipoL = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewEquipoL);
 			// EQUIPO VISITA
 			textRecyclerViewEquipoV = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewEquipoV);
-			textRecyclerViewEquipoV.setVisibility(View.INVISIBLE);
 			// DIA
 			textRecyclerViewDia = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewDia);
 			// HORA
 			textRecyclerViewHora = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewHora);
-			textRecyclerViewHora.setVisibility(View.INVISIBLE);
 			// CANCHA
 			textRecyclerViewCancha = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewCancha);
-			textRecyclerViewCancha.setVisibility(View.INVISIBLE);
 			// RESULTADO LOCAL
 			textRecyclerViewResultadoL = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewResultadoL);
@@ -71,56 +69,48 @@ public class AdaptadorEditarJugador extends
 			textRecyclerViewResultadoV.setVisibility(View.INVISIBLE);
 		}
 
-		public void bindTitular(JugadorRecycler jugador) {
-			// ESCUDO EQUIPO LOCAL
-			byte[] fotoJugador = jugador.getFOTO_JUGADOR();
-			if (fotoJugador == null) {
+		//public void bindTitular(EntrenamientoRecycler entrenamientoRecycler,Entrenamiento_Division entrenamiento_division) {
+			public void bindTitular(EntrenamientoRecycler entrenamientoRecycler) {
 
-				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_equipo);
-			} else {
-				Bitmap fotoBitmap = BitmapFactory.decodeByteArray(
-						jugador.getFOTO_JUGADOR(), 0,
-						jugador.getFOTO_JUGADOR().length);
+			textRecyclerViewEquipoL.setText(entrenamientoRecycler.getDIA().toString());
+			textRecyclerViewEquipoV.setText(entrenamientoRecycler.getHORA().toString());
+			textRecyclerViewDia.setText("División citada: ");
 
-				fotoBitmap = Bitmap.createScaledBitmap(
-						fotoBitmap, 150, 150, true);
-
-				imageViewEscudoL.setImageBitmap(fotoBitmap);
+			for (int i = 0 ; i < entrenamientoRecycler.getENTRENAMIENTO_DIVISION().size() ; i ++) {
+				divisiones = divisiones + entrenamientoRecycler.getENTRENAMIENTO_DIVISION().get(i).getDESCRIPCION().toString()+" ";
 			}
-		
-			textRecyclerViewEquipoL.setText(jugador.getNOMBRE_JUGADOR());
-			//textRecyclerViewEquipoV.setText(jugador.getEQUIPO_VISITA());
-			textRecyclerViewDia.setText(jugador.getNOMBRE_POSICION());
-//			textRecyclerViewHora.setText(jugador.getHORA());
-//			textRecyclerViewCancha.setText(jugador.getCANCHA());
+				textRecyclerViewHora.setText(divisiones);
+			textRecyclerViewCancha.setText(entrenamientoRecycler.getNOMBRE().toString());
 		}
 	}
-	public AdaptadorEditarJugador(ArrayList<JugadorRecycler> jugadorArray) {
-		this.jugadorArray = jugadorArray;
+
+//	public AdaptadorEntrenamiento(ArrayList<EntrenamientoRecycler> entrenamientoArray, ArrayList<Entrenamiento_Division> entrenamientoDivisionArray ) {
+		public AdaptadorEntrenamiento(ArrayList<EntrenamientoRecycler> entrenamientoArray ) {
+			this.entrenamientoArray = entrenamientoArray;
+		//this.entrenamientoDivisionArray = entrenamientoDivisionArray;
 	}
 
 	@Override
-	public JugadorViewHolder onCreateViewHolder(ViewGroup viewGroup,
+	public EntrenamientoViewHolder onCreateViewHolder(ViewGroup viewGroup,
 			int viewType) {
 		View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
 				R.layout.recyclerview_item_fixture, viewGroup, false);
-
 		itemView.setOnClickListener(this);
-		JugadorViewHolder tvh = new JugadorViewHolder(itemView);
-
+		EntrenamientoViewHolder tvh = new EntrenamientoViewHolder(itemView);
 		return tvh;
 	}
 
 	@Override
-	public void onBindViewHolder(JugadorViewHolder viewHolder, int pos) {
-		JugadorRecycler item = jugadorArray.get(pos);
-
+	public void onBindViewHolder(EntrenamientoViewHolder viewHolder, int pos) {
+		EntrenamientoRecycler item = entrenamientoArray.get(pos);
+	//	Entrenamiento_Division item_division = entrenamientoDivisionArray.get(pos);
+	//	viewHolder.bindTitular(item,item_division);
 		viewHolder.bindTitular(item);
 	}
 
 	@Override
 	public int getItemCount() {
-		return jugadorArray.size();
+		return entrenamientoArray.size();
 	}
 
 	public void setOnClickListener(View.OnClickListener listener) {

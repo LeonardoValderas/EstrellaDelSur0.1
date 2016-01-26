@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Division;
+import com.estrelladelsur.estrelladelsur.entidad.Division;
 
 public class AdaptadorRecyclerDivision extends
 		RecyclerView.Adapter<AdaptadorRecyclerDivision.DivisionViewHolder> implements

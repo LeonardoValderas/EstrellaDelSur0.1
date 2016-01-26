@@ -10,8 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Articulo;
-import com.estrelladelsur.estrelladelsur.abstracta.Comision;
+import com.estrelladelsur.estrelladelsur.entidad.Comision;
 
 import java.util.ArrayList;
 

@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Direccion;
+import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerDireccion;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;

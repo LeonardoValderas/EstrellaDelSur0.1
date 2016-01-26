@@ -158,10 +158,7 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
     //ENTRENAMIENTO X DIVISION
     String TABLA_ENTRENAMIENTO_DIVISION_ADEFUL = "CREATE TABLE IF NOT EXISTS ENTRENAMIENTO_DIVISION_ADEFUL(ID_ENTRENAMIENTO_DIVISION INTEGER PRIMARY KEY AUTOINCREMENT,"
             + " ID_ENTRENAMIENTO INTEGER,"
-            + " ID_DIVISION INTEGER," + " USUARIO_CREADOR VARCHAR(100),"
-            + " FECHA_CREACION VARCHAR(100),"
-            + " USUARIO_ACTUALIZACION VARCHAR(100),"
-            + " FECHA_ACTUALIZACION VARCHAR(100));";
+            + " ID_DIVISION INTEGER);";
 
     public SQLiteDBConnectionAdeful(Context context, String name,
                                     CursorFactory factory, int version) {
@@ -222,7 +219,7 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS JUGADOR_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS POSICION_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS ENTRENAMIENTO_ADEFUL");
-        db.execSQL("DROP TABLE IF EXISTS ENTRENAMIENTOXDIVISION_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS ENTRENAMIENTO_DIVISION_ADEFUL");
 
         //MODULO GENERAL
         db.execSQL(TABLA_TABLA_ADEFUL);

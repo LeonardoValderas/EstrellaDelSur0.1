@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Torneo;
+import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
 public class AdaptadorRecyclerTorneo extends
 		RecyclerView.Adapter<AdaptadorRecyclerTorneo.TorneoViewHolder> implements

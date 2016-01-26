@@ -3,8 +3,6 @@ package com.estrelladelsur.estrelladelsur.adaptador;
 import java.util.ArrayList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Equipo;
+import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 
 public class AdaptadorRecyclerEquipo extends
 		RecyclerView.Adapter<AdaptadorRecyclerEquipo.EquipoAdefulViewHolder> implements

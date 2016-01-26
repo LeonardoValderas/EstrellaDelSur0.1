@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Anio;
+import com.estrelladelsur.estrelladelsur.entidad.Anio;
 
 
 public class AdapterSpinnerAnio extends ArrayAdapter<Anio>

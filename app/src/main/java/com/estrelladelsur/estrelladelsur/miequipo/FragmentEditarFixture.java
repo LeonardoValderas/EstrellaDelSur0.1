@@ -19,12 +19,11 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Anio;
-import com.estrelladelsur.estrelladelsur.abstracta.Division;
-import com.estrelladelsur.estrelladelsur.abstracta.Fecha;
-import com.estrelladelsur.estrelladelsur.abstracta.FixtureRecycler;
-import com.estrelladelsur.estrelladelsur.abstracta.Torneo;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorEditarFixture;
+import com.estrelladelsur.estrelladelsur.entidad.Anio;
+import com.estrelladelsur.estrelladelsur.entidad.Division;
+import com.estrelladelsur.estrelladelsur.entidad.Fecha;
+import com.estrelladelsur.estrelladelsur.entidad.FixtureRecycler;
+import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerFixture;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
@@ -176,8 +175,6 @@ public class FragmentEditarFixture extends Fragment {
 							"\n Si el error persiste comuniquese con soporte.",
 					Toast.LENGTH_SHORT).show();
 		}
-
-		// DIVSION SPINNER
 
 		// RECLYCLER
 		recyclerViewFixture.setLayoutManager(new LinearLayoutManager(

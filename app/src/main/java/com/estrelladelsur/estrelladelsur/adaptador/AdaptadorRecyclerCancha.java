@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Cancha;
+import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 
 public class AdaptadorRecyclerCancha extends
 		RecyclerView.Adapter<AdaptadorRecyclerCancha.CanchaViewHolder> implements

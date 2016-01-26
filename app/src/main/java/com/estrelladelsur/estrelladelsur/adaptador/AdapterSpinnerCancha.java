@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Cancha;
+import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 
 
 public class AdapterSpinnerCancha extends ArrayAdapter<Cancha>

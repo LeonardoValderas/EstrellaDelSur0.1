@@ -3,7 +3,7 @@ package com.estrelladelsur.estrelladelsur.adaptador;
 import java.util.ArrayList;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Cargo;
+import com.estrelladelsur.estrelladelsur.entidad.Cargo;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

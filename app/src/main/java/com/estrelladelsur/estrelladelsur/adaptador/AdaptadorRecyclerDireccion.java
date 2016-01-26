@@ -9,8 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Comision;
-import com.estrelladelsur.estrelladelsur.abstracta.Direccion;
+import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import java.util.ArrayList;
 
 public class AdaptadorRecyclerDireccion extends

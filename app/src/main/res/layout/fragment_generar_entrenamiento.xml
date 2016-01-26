@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!--<android.support.design.widget.CoordinatorLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:fitsSystemWindows="true" >-->
+
+        <!--<android.support.design.widget.AppBarLayout-->
+            <!--android:id="@+id/appbarLayout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:fitsSystemWindows="true" >-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <ImageButton
+                    android:id="@+id/imageButton1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:src="@android:drawable/ic_menu_my_calendar"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/textViewFecha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:text="DIA - HORA"
+                    android:textSize="25dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal" >
+
+                    <Button
+                        android:id="@+id/buttonFechaEntrenamiento"
+                        android:layout_width="100dp"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+                        android:text="Día" />
+
+                    <Button
+                        android:id="@+id/buttonHoraEntrenamiento"
+                        android:layout_width="100dp"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+                        android:text="Hora" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textViewLugar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="LUGAR"
+                    android:textSize="25dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerLugarEntrenamiento"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/style_spinner"
+                    android:layout_margin="2dp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/textViewDivisionCitada"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="DIVISION CITADA"
+                    android:textSize="25dp" />
+            </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycleViewGeneral"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+            </android.support.v7.widget.RecyclerView>
+
+        <!--</android.support.design.widget.AppBarLayout>-->
+
+        <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/botonFloating"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="end|bottom"-->
+            <!--android:layout_margin="16dp"-->
+            <!--android:src="@drawable/ic_buttonfloating"-->
+            <!--app:borderWidth="0dp" />-->
+    <!--</android.support.design.widget.CoordinatorLayout>-->
+
+</LinearLayout>

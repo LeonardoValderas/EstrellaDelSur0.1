@@ -3,13 +3,12 @@ package com.estrelladelsur.estrelladelsur.adaptador;
 import java.util.ArrayList;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Articulo;
+import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class AdaptadorRecyclerArticulo extends

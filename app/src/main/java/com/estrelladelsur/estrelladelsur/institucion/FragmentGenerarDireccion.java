@@ -30,9 +30,8 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.UtilityImage;
-import com.estrelladelsur.estrelladelsur.abstracta.Cargo;
-import com.estrelladelsur.estrelladelsur.abstracta.Comision;
-import com.estrelladelsur.estrelladelsur.abstracta.Direccion;
+import com.estrelladelsur.estrelladelsur.entidad.Cargo;
+import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCargoComision;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
@@ -41,6 +40,7 @@ import com.estrelladelsur.estrelladelsur.dialogo.DialogoMenuLista;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -71,7 +71,9 @@ public class FragmentGenerarDireccion extends Fragment {
     private ByteArrayOutputStream baos;
     private Direccion direccion;
     private ArrayList<Direccion> direccionArray;
-    private DateFormat formate = DateFormat.getDateInstance();
+    //private DateFormat formate = DateFormat.getDateInstance();
+    private SimpleDateFormat formate = new SimpleDateFormat(
+            "dd-MM-yyyy");
     private Calendar calendar = Calendar.getInstance();
     private boolean botonFecha = false;
     private ArrayAdapter<String> adaptadorInicial;
@@ -355,7 +357,7 @@ public class FragmentGenerarDireccion extends Fragment {
         }else{
             //SPINNER HINT
             adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                    R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinner));
+                    R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerCargo));
             puestoSpinnerDireccion.setAdapter(adaptadorInicial);
         }
     }
@@ -449,7 +451,7 @@ public class FragmentGenerarDireccion extends Fragment {
             if (nombreEditDireccion.getText().toString().equals("")) {
                 Toast.makeText(getActivity(), "Ingrese el nombre del integrante de la Dirección.",
                         Toast.LENGTH_SHORT).show();
-            }else if (puestoSpinnerDireccion.getSelectedItem().toString().equals(getResources().getStringArray(R.array.ceroSpinner))) {
+            }else if (puestoSpinnerDireccion.getSelectedItem().toString().equals(getResources().getStringArray(R.array.ceroSpinnerCargo))) {
                 Toast.makeText(getActivity(), "Debe agregar un Cargo (Menu-Cargo).",
                         Toast.LENGTH_SHORT).show();
             } else if (desdeButtonDireccion.getText().toString().equals("Desde") || hastaButtonDireccion.getText().toString().equals("Hasta")) {

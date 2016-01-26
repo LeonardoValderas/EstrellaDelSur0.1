@@ -16,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,17 +27,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.UtilityImage;
-import com.estrelladelsur.estrelladelsur.abstracta.Cargo;
-import com.estrelladelsur.estrelladelsur.abstracta.Division;
-import com.estrelladelsur.estrelladelsur.abstracta.Jugador;
-import com.estrelladelsur.estrelladelsur.abstracta.Posicion;
+import com.estrelladelsur.estrelladelsur.entidad.Division;
+import com.estrelladelsur.estrelladelsur.entidad.Jugador;
+import com.estrelladelsur.estrelladelsur.entidad.Posicion;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerPosicion;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
@@ -74,6 +71,7 @@ public class FragmentGenerarJugador extends Fragment {
     private String fechaCreacion = null;
     private String fechaActualizacion = null;
     private ArrayAdapter<Posicion> posicionAdapter;
+    private ArrayAdapter<String> adaptadorInicial;
 
     public static FragmentGenerarJugador newInstance() {
         FragmentGenerarJugador fragment = new FragmentGenerarJugador();
@@ -135,9 +133,16 @@ public class FragmentGenerarJugador extends Fragment {
         if (divisionArray != null) {
             controladorAdeful.cerrarBaseDeDatos();
             // DIVSION SPINNER
-            adapterSpinnerDivision = new AdapterSpinnerDivision(getActivity(),
-                    R.layout.simple_spinner_dropdown_item, divisionArray);
-            jugadoresDivisionSpinner.setAdapter(adapterSpinnerDivision);
+            if (divisionArray.size() != 0) {
+                adapterSpinnerDivision = new AdapterSpinnerDivision(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, divisionArray);
+                jugadoresDivisionSpinner.setAdapter(adapterSpinnerDivision);
+            } else {
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
+                jugadoresDivisionSpinner.setAdapter(adaptadorInicial);
+            }
         } else {
             controladorAdeful.cerrarBaseDeDatos();
             Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
@@ -297,20 +302,17 @@ public class FragmentGenerarJugador extends Fragment {
     }
 
     public void loadSpinnerPosicion() {
-        // POSICION
-        controladorAdeful.abrirBaseDeDatos();
-        posicionArray = controladorAdeful.selectListaPosicionAdeful();
-        if (posicionArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            // POSICION SPINNER
-            adapterSpinnerPosicion = new AdapterSpinnerPosicion(getActivity(),
-                    R.layout.simple_spinner_dropdown_item, posicionArray);
-            jugadoresPosicionSpinner.setAdapter(adapterSpinnerPosicion);
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
-        }
+         if(selectPosicionList().size()!=0){
+                // CARGO SPINNER
+                adapterSpinnerPosicion = new AdapterSpinnerPosicion(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, posicionArray);
+                jugadoresPosicionSpinner.setAdapter(adapterSpinnerPosicion);
+            }else{
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerPosicion));
+                jugadoresPosicionSpinner.setAdapter(adaptadorInicial);
+            }
     }
 
     public ArrayList<Posicion> selectPosicionList() {
@@ -330,7 +332,6 @@ public class FragmentGenerarJugador extends Fragment {
 
     // POPULATION LISTVIEW
     public void loadListViewMenu() {
-
         posicionAdapter = new ArrayAdapter<Posicion>(getActivity(),
                 R.layout.listview_item_dialogo, R.id.textViewGeneral, selectPosicionList());
         dialogoMenuLista.listViewGeneral.setAdapter(posicionAdapter);
@@ -374,13 +375,11 @@ public class FragmentGenerarJugador extends Fragment {
 
         if (id == R.id.action_guardar) {
 
-
-
             if (jugadoresDivisionSpinner.getSelectedItem().toString().equals(getResources().getString(R.string.ceroSpinnerDivision))) {
-                Toast.makeText(getActivity(), "Debe Cargar una División.",
+                Toast.makeText(getActivity(), "Debe Cargar una División.(Liga)",
                         Toast.LENGTH_SHORT).show();
-            } else if (jugadoresPosicionSpinner.getSelectedItem().toString().equals()) {
-                Toast.makeText(getActivity(), "Debe Cargar una Posición.",
+            } else if (jugadoresPosicionSpinner.getSelectedItem().toString().equals(getResources().getString(R.string.ceroSpinnerPosicion))) {
+                Toast.makeText(getActivity(), "Debe Cargar una Posición.(Menú-Posición)",
                         Toast.LENGTH_SHORT).show();
             } else if (jugadoresNombreEdit.getText().toString().equals("")) {
                 Toast.makeText(getActivity(), "Ingrese el Nombre del Jugador.",
@@ -411,8 +410,7 @@ public class FragmentGenerarJugador extends Fragment {
                         imageJugadorByte = null;
                     } else {
                         controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                        "\nSi el error persiste comuniquese con soporte.",
+                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                                 Toast.LENGTH_SHORT).show();
                     }
 
@@ -440,8 +438,7 @@ public class FragmentGenerarJugador extends Fragment {
                         insertar = true;
                     } else {
                         controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                        "\nSi el error persiste comuniquese con soporte.",
+                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -506,8 +503,7 @@ public class FragmentGenerarJugador extends Fragment {
                                                             .dismiss();
                                                 } else {
                                                     controladorAdeful.cerrarBaseDeDatos();
-                                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                                    "\nSi el error persiste comuniquese con soporte.",
+                                                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                                                             Toast.LENGTH_SHORT).show();
                                                 }
 
@@ -588,8 +584,7 @@ public class FragmentGenerarJugador extends Fragment {
                                                         Toast.LENGTH_SHORT).show();
                                             } else {
                                                 controladorAdeful.cerrarBaseDeDatos();
-                                                Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                                "\nSi el error persiste comuniquese con soporte.",
+                                                Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                                                         Toast.LENGTH_SHORT).show();
                                             }
                                         }

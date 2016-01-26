@@ -1,18 +1,18 @@
-package com.estrelladelsur.estrelladelsur.abstracta;
+package com.estrelladelsur.estrelladelsur.entidad;
 
-public class Division {
+public class Torneo {
 
-	private int ID_DIVISION;
+	private int ID_TORNEO;
 	private String DESCRIPCION;
 	private String USUARIO_CREADOR;
 	private String FECHA_CREACION;
 	private String USUARIO_ACTUALIZACION;
 	private String FECHA_ACTUALIZACION;
 
-	public Division(int id, String descripcion, String usuario,
+	public Torneo(int id, String descripcion, String usuario,
 			String fechaCreacion, String usuario_act, String fechaActualizacion) {
 
-		ID_DIVISION = id;
+		ID_TORNEO = id;
 		DESCRIPCION = descripcion;
 		USUARIO_CREADOR = usuario;
 		FECHA_CREACION = fechaCreacion;
@@ -20,6 +20,10 @@ public class Division {
 		FECHA_ACTUALIZACION = fechaActualizacion;
 
 
+	}
+
+	public int getID_TORNEO() {
+		return ID_TORNEO;
 	}
 
 	public String getUSUARIO_CREADOR() {
@@ -38,36 +42,32 @@ public class Division {
 		this.USUARIO_ACTUALIZACION = USUARIO_ACTUALIZACION;
 	}
 
-	public int getID_DIVISION() {
-		return ID_DIVISION;
-	}
-
-	public void setID_DIVISION(int iD_DIVISION) {
-		ID_DIVISION = iD_DIVISION;
+	public void setID_TORNEO(int iD_TORNEO) {
+		ID_TORNEO = iD_TORNEO;
 	}
 
 	public String getDESCRIPCION() {
 		return DESCRIPCION;
 	}
-
+	
 	public String toString() {
 		return DESCRIPCION;
-	}
-
-	public String getFECHA_CREACION() {
-		return FECHA_CREACION;
-	}
-
-	public String getFECHA_ACTUALIZACION() {
-		return FECHA_ACTUALIZACION;
 	}
 
 	public void setDESCRIPCION(String dESCRIPCION) {
 		DESCRIPCION = dESCRIPCION;
 	}
 
+	public String getFECHA_CREACION() {
+		return FECHA_CREACION;
+	}
+
 	public void setFECHA_CREACION(String fECHA_CREACION) {
 		FECHA_CREACION = fECHA_CREACION;
+	}
+
+	public String getFECHA_ACTUALIZACION() {
+		return FECHA_ACTUALIZACION;
 	}
 
 	public void setFECHA_ACTUALIZACION(String fECHA_ACTUALIZACION) {

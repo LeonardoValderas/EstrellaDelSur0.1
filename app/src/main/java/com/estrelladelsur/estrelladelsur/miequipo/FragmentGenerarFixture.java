@@ -1,6 +1,8 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
+import java.sql.Date;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -23,13 +25,14 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Anio;
-import com.estrelladelsur.estrelladelsur.abstracta.Cancha;
-import com.estrelladelsur.estrelladelsur.abstracta.Division;
-import com.estrelladelsur.estrelladelsur.abstracta.Equipo;
-import com.estrelladelsur.estrelladelsur.abstracta.Fecha;
-import com.estrelladelsur.estrelladelsur.abstracta.Fixture;
-import com.estrelladelsur.estrelladelsur.abstracta.Torneo;
+import com.estrelladelsur.estrelladelsur.entidad.Anio;
+import com.estrelladelsur.estrelladelsur.entidad.Cancha;
+import com.estrelladelsur.estrelladelsur.entidad.Division;
+import com.estrelladelsur.estrelladelsur.entidad.Equipo;
+import com.estrelladelsur.estrelladelsur.entidad.Fecha;
+import com.estrelladelsur.estrelladelsur.entidad.Fixture;
+import com.estrelladelsur.estrelladelsur.entidad.Mes;
+import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCancha;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
@@ -61,7 +64,10 @@ public class FragmentGenerarFixture extends Fragment {
     private ArrayList<Equipo> equipoArray;
     private Fecha fecha;
     private Anio anio;
-    private DateFormat formate = DateFormat.getDateInstance();
+    private Mes mes;
+    //private DateFormat formate = DateFormat.getDateInstance();
+    private SimpleDateFormat formate = new SimpleDateFormat(
+            "dd-MM-yyyy");
     private DateFormat form = DateFormat.getTimeInstance(DateFormat.SHORT);
     private Calendar calendar = Calendar.getInstance();
     private Calendar calenda = Calendar.getInstance();
@@ -163,6 +169,16 @@ public class FragmentGenerarFixture extends Fragment {
             controladorAdeful.cerrarBaseDeDatos();
         }
 
+        // Mes ver donde implementar
+        for (int i = 0; i < getResources().getStringArray(R.array.mesArray).length; i++) {
+
+            mes = new Mes(i,
+                    getResources().getStringArray(R.array.mesArray)[i]);
+
+            controladorAdeful.abrirBaseDeDatos();
+            controladorAdeful.insertMes(mes);
+            controladorAdeful.cerrarBaseDeDatos();
+        }
         // DIVISION
         controladorAdeful.abrirBaseDeDatos();
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
@@ -479,13 +495,16 @@ public class FragmentGenerarFixture extends Fragment {
                 fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
                 anio = (Anio) fixtureAnioSpinner.getSelectedItem();
 
+
                 //FIXTURE NVO
                 if (insertar) {
+                //    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                //    Date d = format.parse();
                     fixture = new Fixture(0, equipol.getID_EQUIPO(),
                             equipov.getID_EQUIPO(), division.getID_DIVISION(),
                             torneo.getID_TORNEO(), cancha.getID_CANCHA(),
-                            fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText()
-                            .toString(), btn_hora.getText().toString(),
+                            fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText().toString()
+                            , btn_hora.getText().toString(),
                             usuario, fechaCreacion, usuario, fechaActualizacion);
 
                     controladorAdeful.abrirBaseDeDatos();

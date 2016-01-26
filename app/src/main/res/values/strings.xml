@@ -56,7 +56,7 @@
 
     <!--COMISION-->
     <!-- Array SPINNER CARGO/DIRECCION  -->
-    <string-array name="ceroSpinner">
+    <string-array name="ceroSpinnerCargo">
         <item>Genere un cargo.</item>
     </string-array>
 
@@ -102,7 +102,7 @@
     </string-array>
     <!-- Array SPINNER POSICION  -->
     <string name="ceroSpinnerPosicion">Genere una posición.</string>
-    
+
     <!-- Array fecha  -->
     <string-array name="fechaArray">
         <item>1</item>

@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.abstracta.Comision;
+import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerComision;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
