@@ -1,6 +1,7 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -8,20 +9,16 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorEntrenamiento;
+import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerEntrenamiento;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerMes;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
@@ -46,8 +43,8 @@ public class FragmentEditarEntrenamiento extends Fragment {
     private AdapterSpinnerAnio adapterSpinnerAnio;
     private AdapterSpinnerMes adapterSpinnerMes;
     private ArrayList<EntrenamientoRecycler> entrenamientoArray;
-   // private ArrayList<Entrenamiento_Division> entrenamiento_division;
-   private AdaptadorEntrenamiento adaptadorEntrenamiento;
+    private ArrayList<Entrenamiento_Division> entrenamiento_division;
+    private AdaptadorRecyclerEntrenamiento adaptadorEntrenamiento;
 
     private ArrayList<Entrenamiento_Division> entrenamiento_divisions;
 
@@ -184,16 +181,34 @@ public class FragmentEditarEntrenamiento extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 // TODO Auto-generated method stub
+
+                Intent editarEntrenamiento = new Intent(getActivity(),
+                        TabsEntrenamiento.class);
+                editarEntrenamiento.putExtra("actualizar", true);
+                editarEntrenamiento.putExtra("id_entrenamiento",
+                        entrenamientoArray.get(position).getID_ENTRENAMIENTO());
+                editarEntrenamiento.putExtra("dia", entrenamientoArray.get(position).getDIA());
+                editarEntrenamiento.putExtra("hora",entrenamientoArray.get(position).getHORA());
+                editarEntrenamiento.putExtra("id_cancha", entrenamientoArray.get(position).getID_CANCHA());
+                editarEntrenamiento.putExtra("cancha", entrenamientoArray.get(position).getNOMBRE());
+
+//                controladorAdeful.abrirBaseDeDatos();
+//                entrenamiento_division = controladorAdeful.selectListaDivisionEntrenamientoAdefulId(entrenamientoArray.get(position).getID_ENTRENAMIENTO());
+//                if(entrenamiento_division != null) {
+//                    controladorAdeful.cerrarBaseDeDatos();
 //
-//						insertar = false;
-//						editTextTorneo.setText(torneoArray.get(position)
-//								.getDESCRIPCION());
+//                    editarEntrenamiento.putExtra("arrayDivision",
+//                            entrenamiento_division);
 //
-//						posicion = position;
-//
+//                }else{
+//                    controladorAdeful.cerrarBaseDeDatos();
+//                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+//                            Toast.LENGTH_SHORT).show();
+//                }
+                 startActivity(editarEntrenamiento);
             }
         }));
-//		
+
 		botonFloating.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View view) {
@@ -273,7 +288,7 @@ public class FragmentEditarEntrenamiento extends Fragment {
         if (entrenamientoArray != null) {
             controladorAdeful.cerrarBaseDeDatos();
 
-		adaptadorEntrenamiento = new AdaptadorEntrenamiento(entrenamientoArray);
+		adaptadorEntrenamiento = new AdaptadorRecyclerEntrenamiento(entrenamientoArray,getActivity());
      	recycleViewGeneral.setAdapter(adaptadorEntrenamiento);
         } else {
             controladorAdeful.cerrarBaseDeDatos();

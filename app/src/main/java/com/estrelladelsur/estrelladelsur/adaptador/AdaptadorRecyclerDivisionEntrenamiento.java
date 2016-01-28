@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
@@ -21,13 +20,13 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 
 	public static class DivisionViewHolder extends RecyclerView.ViewHolder {
 
-		private TextView editTextDivision;
+		private TextView textViewDivision;
 		private CheckBox checkBoxEntrenamiento;
 
 			public DivisionViewHolder(View itemView) {
 			super(itemView);
 
-			editTextDivision = (TextView) itemView
+			textViewDivision = (TextView) itemView
 					.findViewById(R.id.editTextDivision);
 
 			checkBoxEntrenamiento = (CheckBox) itemView
@@ -36,7 +35,8 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 
 
 		public void bindTitular(Entrenamiento_Division entrenamientoXDivision) {
-			editTextDivision.setText(entrenamientoXDivision.getDESCRIPCION());
+			textViewDivision.setText(entrenamientoXDivision.getDESCRIPCION());
+			checkBoxEntrenamiento.setSelected(entrenamientoXDivision.isSelected());
 		}
 	}
 
@@ -61,7 +61,7 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 		//EntrenamientoXDivision item = divisionArray.get(pos);
 		final int position = pos;
 
-		viewHolder.editTextDivision.setText(divisionArray.get(position).getDESCRIPCION());
+		viewHolder.textViewDivision.setText(divisionArray.get(position).getDESCRIPCION());
 
 		viewHolder.checkBoxEntrenamiento.setChecked(divisionArray.get(position).isSelected());
 
@@ -74,7 +74,6 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 
 			    entre.setSelected(cb.isChecked());
 			    divisionArray.get(position).setSelected(cb.isChecked());
-
 			   }
 			  });
 	}

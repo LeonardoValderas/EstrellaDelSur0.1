@@ -3,20 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.estrelladelsur.fragments.fragmentgenerarpuestocomision" >
+    tools:context="com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento" >
 
-    <android.support.design.widget.CoordinatorLayout
+    <!--<android.support.design.widget.CoordinatorLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:fitsSystemWindows="true" >-->
+
+        <!--<android.support.design.widget.AppBarLayout-->
+            <!--android:id="@+id/appbarLayout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:fitsSystemWindows="true" >-->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true" >
-
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appbarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:fitsSystemWindows="true" >
-
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,11 +45,11 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycleViewGeneral"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+                android:layout_height="wrap_content">
+                <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" >-->
             </android.support.v7.widget.RecyclerView>
-        </android.support.design.widget.AppBarLayout>
-
+        <!--</android.support.design.widget.AppBarLayout>-->
+    </LinearLayout>
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/botonFloating"
             android:layout_width="wrap_content"
@@ -56,6 +59,6 @@
             android:backgroundTint="@color/color_primary"
             android:src="@drawable/ic_pelota_futbol"
             app:borderWidth="0dp" />
-    </android.support.design.widget.CoordinatorLayout>
+    <!--</android.support.design.widget.CoordinatorLayout>-->
 
 </FrameLayout>

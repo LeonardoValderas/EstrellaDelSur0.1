@@ -9,26 +9,13 @@ public class EntrenamientoRecycler {
     private String NOMBRE;
     private String DIA;
     private String HORA;
-    private ArrayList<Entrenamiento_Division> ENTRENAMIENTO_DIVISION;
-    //private int ID_DIVISION;
-    //private String DESCRIPCION;
 
-
-    public EntrenamientoRecycler(int id, String dia, String hora, int id_cancha, String nombre, ArrayList<Entrenamiento_Division> entrenamiento_division) {
+    public EntrenamientoRecycler(int id, String dia, String hora, int id_cancha, String nombre) {
         ID_ENTRENAMIENTO = id;
         DIA = dia;
         HORA = hora;
         ID_CANCHA = id_cancha;
         NOMBRE = nombre;
-        ENTRENAMIENTO_DIVISION = entrenamiento_division;
-    }
-
-    public ArrayList<Entrenamiento_Division> getENTRENAMIENTO_DIVISION() {
-        return ENTRENAMIENTO_DIVISION;
-    }
-
-    public void setENTRENAMIENTO_DIVISION(ArrayList<Entrenamiento_Division> ENTRENAMIENTO_DIVISION) {
-        this.ENTRENAMIENTO_DIVISION = ENTRENAMIENTO_DIVISION;
     }
 
     public int getID_ENTRENAMIENTO() {

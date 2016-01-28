@@ -156,8 +156,7 @@ public class FragmentEditarFixture extends Fragment {
 			fixtureFechaSpinner.setAdapter(adapterFixtureFecha);
 		}else{
 			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-							"\n Si el error persiste comuniquese con soporte.",
+			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
 					Toast.LENGTH_SHORT).show();
 		}
 		// ANIO
@@ -171,8 +170,7 @@ public class FragmentEditarFixture extends Fragment {
 			fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
 		}else{
 			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-							"\n Si el error persiste comuniquese con soporte.",
+			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
 					Toast.LENGTH_SHORT).show();
 		}
 

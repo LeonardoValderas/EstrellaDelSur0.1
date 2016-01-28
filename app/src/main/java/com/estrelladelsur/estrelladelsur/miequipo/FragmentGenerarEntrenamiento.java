@@ -8,7 +8,6 @@ import java.util.Calendar;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -45,7 +44,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     private DialogoListCheck dialogoListCheck;
     private ListView entrenamientolistView;
     private int CheckedPositionFragment;
-   // private DateFormat formate = DateFormat.getDateInstance();
+    // private DateFormat formate = DateFormat.getDateInstance();
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
     private DateFormat form = DateFormat.getTimeInstance(DateFormat.SHORT);
@@ -59,6 +58,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     private AdapterSpinnerCancha adapterFixtureCancha;
     private RecyclerView recycleViewGeneral;
     private ArrayList<Entrenamiento_Division> divisionArray;
+    private ArrayList<Entrenamiento_Division> divisionArrayExtra;
     private AdaptadorRecyclerDivisionEntrenamiento adaptadorRecyclerDivisionEntrenamiento;
     private Cancha lugar;
     private int id_x_division;
@@ -66,7 +66,14 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     private Entrenamiento entrenamiento;
     private boolean bandera = true;
     private ArrayAdapter<String> adaptadorInicial;
-
+    private boolean actualizar = false;
+    private int idEntrenamientoExtra;
+    private String entrenamientoDiaExtra = null;
+    private String entrenamientoHoraExtra = null;
+    private String entrenamientoCanchaExtra = null;
+    private boolean insertar = true;
+    ArrayList<Integer> id_divisin_array = null;
+            
     public static FragmentGenerarEntrenamiento newInstance() {
         FragmentGenerarEntrenamiento fragment = new FragmentGenerarEntrenamiento();
         return fragment;
@@ -115,28 +122,55 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     }
 
     private void init() {
+
+        actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
+                false);
+
+
         // CANCHA
 
         controladorAdeful.abrirBaseDeDatos();
         canchaArray = controladorAdeful.selectListaCanchaAdeful();
-        if(canchaArray != null) {
+        if (canchaArray != null) {
             controladorAdeful.cerrarBaseDeDatos();
             if (canchaArray.size() != 0) {
                 // CANCHA SPINNER
                 adapterFixtureCancha = new AdapterSpinnerCancha(getActivity(),
                         R.layout.simple_spinner_dropdown_item, canchaArray);
                 spinnerLugarEntrenamiento.setAdapter(adapterFixtureCancha);
-            }else{
+            } else {
                 //SPINNER HINT
                 adaptadorInicial = new ArrayAdapter<String>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerCancha));
                 spinnerLugarEntrenamiento.setAdapter(adaptadorInicial);
             }
-        }else{
+        } else {
             controladorAdeful.cerrarBaseDeDatos();
             Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                     Toast.LENGTH_SHORT).show();
         }
+
+        //Metodo Extra
+        if (actualizar) {
+
+            idEntrenamientoExtra = getActivity().getIntent().getIntExtra("id_entrenamiento", 0);
+
+            //DIA
+            buttonFechaEntrenamiento.setText(getActivity().getIntent()
+                    .getStringExtra("dia"));
+            // HORA
+            buttonHoraEntrenamiento.setText(getActivity().getIntent()
+                    .getStringExtra("hora"));
+            // SPINNER
+            spinnerLugarEntrenamiento.setSelection(getPositionCancha(getActivity().getIntent()
+                    .getIntExtra("id_cancha", 0)));
+
+            entrenamientoCanchaExtra = getActivity().getIntent()
+                    .getStringExtra("cancha");
+
+            insertar = false;
+        }
+
         // RECLYCLER
         recycleViewGeneral.setLayoutManager(new LinearLayoutManager(
                 getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -211,18 +245,55 @@ public class FragmentGenerarEntrenamiento extends Fragment {
         controladorAdeful.abrirBaseDeDatos();
         divisionArray = controladorAdeful
                 .selectListaDivisionEntrenamientoAdeful();
-        if(divisionArray != null) {
+        if (divisionArray != null) {
+            
+            if(!insertar){
+                controladorAdeful.abrirBaseDeDatos();
+                divisionArrayExtra = controladorAdeful
+                        .selectListaDivisionEntrenamientoAdefulId(idEntrenamientoExtra);
+                controladorAdeful.cerrarBaseDeDatos();
+                if (divisionArrayExtra != null) {
+                    for(int extra = 0 ; extra <divisionArrayExtra.size(); extra ++ ){
+                        for(int div = 0 ; div <divisionArray.size(); div ++ ){
+
+                            if(divisionArrayExtra.get(extra).getID_DIVISION()==divisionArray.get(div).getID_DIVISION()){
+                                divisionArray.get(div).setSelected(true);
+                                break;
+                            }
+
+                        }
+
+                    }
+                }else{
+                    controladorAdeful.cerrarBaseDeDatos();
+                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+            
             controladorAdeful.cerrarBaseDeDatos();
 
             adaptadorRecyclerDivisionEntrenamiento = new AdaptadorRecyclerDivisionEntrenamiento(
                     divisionArray);
             adaptadorRecyclerDivisionEntrenamiento.notifyDataSetChanged();
             recycleViewGeneral.setAdapter(adaptadorRecyclerDivisionEntrenamiento);
-        }else{
+        } else {
             controladorAdeful.cerrarBaseDeDatos();
             Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private int getPositionCancha(int idCancha){
+
+        int index = 0;
+
+        for (int i=0;i<canchaArray.size();i++){
+            if (canchaArray.get(i).getID_CANCHA()==(idCancha)){
+                index = i;
+            }
+        }
+        return index;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -286,16 +357,20 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                 Toast.makeText(getActivity(), "Debe Seleccionar una Hora.",
                         Toast.LENGTH_SHORT).show();
             } else {
-
-                ArrayList<Integer> id_divisin_array = new ArrayList<Integer>();
-                for (int i = 0; i < listaDivisiones.size(); i++) {
-                    Entrenamiento_Division entrenamientoDivision = listaDivisiones
-                            .get(i);
-                    if (entrenamientoDivision.isSelected() == true) {
-                        bandera = true;
-                        id_divisin_array.add(entrenamientoDivision
-                                .getID_DIVISION());
+                if (insertar) {
+                    id_divisin_array = new ArrayList<Integer>();
+                    
+                    for (int i = 0; i < listaDivisiones.size(); i++) {
+                        Entrenamiento_Division entrenamientoDivision = listaDivisiones
+                                .get(i);
+                        if (entrenamientoDivision.isSelected() == true) {
+                            bandera = true;
+                            id_divisin_array.add(entrenamientoDivision
+                                    .getID_DIVISION());
+                        }
                     }
+                } else {
+
                 }
                 if (!bandera) {
                     Toast.makeText(getActivity(),
@@ -303,50 +378,56 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                             Toast.LENGTH_SHORT).show();
 
                 } else {
-                    String usuario = "Administrador";
-                    String fechaCreacion = controladorAdeful.getFechaOficial();
-                    String fechaActualizacion = fechaCreacion;
 
-                    lugar = (Cancha) spinnerLugarEntrenamiento
-                            .getSelectedItem();
-                    entrenamiento = new Entrenamiento(0,
-                            buttonFechaEntrenamiento.getText().toString(),
-                            buttonHoraEntrenamiento.getText().toString(),
-                            lugar.getID_CANCHA(),usuario,fechaCreacion,usuario,fechaActualizacion);
+                    if (insertar) {
+                        String usuario = "Administrador";
+                        String fechaCreacion = controladorAdeful.getFechaOficial();
+                        String fechaActualizacion = fechaCreacion;
 
-                   // inserto entrenamiento y verifico el id
-                    controladorAdeful.abrirBaseDeDatos();
-                    int id_entrenamiento = controladorAdeful
-                            .insertEntrenamientoAdeful(entrenamiento);
-                    controladorAdeful.cerrarBaseDeDatos();
+                        lugar = (Cancha) spinnerLugarEntrenamiento
+                                .getSelectedItem();
+                        entrenamiento = new Entrenamiento(0,
+                                buttonFechaEntrenamiento.getText().toString(),
+                                buttonHoraEntrenamiento.getText().toString(),
+                                lugar.getID_CANCHA(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                    if (id_entrenamiento > 0) {
-                        for (int i = 0; i < id_divisin_array.size(); i++) {
+                        // inserto entrenamiento y verifico el id
+                        controladorAdeful.abrirBaseDeDatos();
+                        int id_entrenamiento = controladorAdeful
+                                .insertEntrenamientoAdeful(entrenamiento);
+                        controladorAdeful.cerrarBaseDeDatos();
 
-                            entrenamiento_Division = new Entrenamiento_Division(
-                                    0, id_entrenamiento, id_divisin_array
-                                    .get(i), "", true);
-                            controladorAdeful.abrirBaseDeDatos();
-                            if (!controladorAdeful
-                                    .insertEntrenamientoDivisionAdeful(entrenamiento_Division))
-                                break;
+                        if (id_entrenamiento > 0) {
+                            for (int i = 0; i < id_divisin_array.size(); i++) {
+
+                                entrenamiento_Division = new Entrenamiento_Division(
+                                        0, id_entrenamiento, id_divisin_array
+                                        .get(i), "", true);
+                                controladorAdeful.abrirBaseDeDatos();
+                                if (!controladorAdeful
+                                        .insertEntrenamientoDivisionAdeful(entrenamiento_Division))
+                                    break;
+                                controladorAdeful.cerrarBaseDeDatos();
+                            }
+                            buttonFechaEntrenamiento.setText("Día");
+                            buttonHoraEntrenamiento.setText("Hora");
+                            recyclerViewLoadDivision();
+                            Toast.makeText(
+                                    getActivity(),
+                                    "Entrenamiento cargado correctamente.",
+                                    Toast.LENGTH_SHORT).show();
+                            controladorAdeful.cerrarBaseDeDatos();
+
+                        } else {
+                            Toast.makeText(
+                                    getActivity(),
+                                    getResources().getString(R.string.error_data_base),
+                                    Toast.LENGTH_SHORT).show();
                             controladorAdeful.cerrarBaseDeDatos();
                         }
-                        buttonFechaEntrenamiento.setText("Día");
-                        buttonHoraEntrenamiento.setText("Hora");
-                        recyclerViewLoadDivision();
-                        Toast.makeText(
-                                getActivity(),
-                                "Entrenamiento cargado correctamente.",
-                                Toast.LENGTH_SHORT).show();
-                        controladorAdeful.cerrarBaseDeDatos();
-
                     } else {
-                        Toast.makeText(
-                                getActivity(),
-                                getResources().getString(R.string.error_data_base),
-                                Toast.LENGTH_SHORT).show();
-                        controladorAdeful.cerrarBaseDeDatos();
+
+
                     }
                 }
             }

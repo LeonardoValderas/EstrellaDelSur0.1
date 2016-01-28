@@ -2082,23 +2082,19 @@ public class ControladorAdeful {
         return id;
     }
 
-      //LISTA ENTRENAMIENTO sin division
+    //LISTA ENTRENAMIENTO sin division
     public ArrayList<EntrenamientoRecycler> selectListaEntrenamientoAdeful(String fecha) {
 
         String sql = "SELECT EA.ID_ENTRENAMIENTO, EA.DIA_ENTRENAMIENTO, EA.HORA_ENTRENAMIENTO, EA.ID_CANCHA, CA.NOMBRE"
                 + " FROM ENTRENAMIENTO_ADEFUL EA INNER JOIN CANCHA_ADEFUL CA ON EA.ID_CANCHA = CA.ID_CANCHA"
-                + " WHERE substr(EA.DIA_ENTRENAMIENTO , 4, 2) = '"+fecha+"'";
-             //   + " WHERE substr(EA.DIA_ENTRENAMIENTO , 3, 7) = "+fecha+"";
+                + " WHERE substr(EA.DIA_ENTRENAMIENTO , 4, 2) = '" + fecha + "'";
+        //   + " WHERE substr(EA.DIA_ENTRENAMIENTO , 3, 7) = "+fecha+"";
 
 
         ArrayList<EntrenamientoRecycler> arrayEntrenamiento = new ArrayList<EntrenamientoRecycler>();
         int id_entrenamiento, id_cancha;
-        String dia = null ,hora=null, nombre=null;
+        String dia = null, hora = null, nombre = null;
         Cursor cursor = null;
-        Cursor cursorDiv = null;
-        ArrayList<Entrenamiento_Division> arrayDivision = new ArrayList<Entrenamiento_Division>();
-        int id, id_division;
-        String descripcion = null;
 
         if (database != null && database.isOpen()) {
 
@@ -2120,60 +2116,73 @@ public class ControladorAdeful {
                         nombre = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE"));
 
-                        String sql2 = "SELECT ED.ID_DIVISION, D.DESCRIPCION"
-                                + " FROM ENTRENAMIENTO_DIVISION_ADEFUL ED INNER JOIN DIVISION_ADEFUL D ON"
-                                + " ED.ID_DIVISION = D.ID_DIVISION"
-                                + " WHERE ID_ENTRENAMIENTO = " + id_entrenamiento + "";
+                        entrenamientoRecycler = new EntrenamientoRecycler(id_entrenamiento,
+                                dia, hora, id_cancha, nombre);
 
-                        cursorDiv = database.rawQuery(sql2, null);
-
-                        if (cursorDiv != null && cursorDiv.getCount() > 0) {
-
-                            while (cursorDiv.moveToNext()) {
-
-                                Entrenamiento_Division entrenamiento_division = null;
-                                id = 0;
-                                id_division = cursorDiv.getInt(cursorDiv
-                                        .getColumnIndex("ID_DIVISION"));
-                                descripcion = cursorDiv.getString(cursorDiv
-                                        .getColumnIndex("DESCRIPCION"));
-
-                                entrenamiento_division = new Entrenamiento_Division(id,
-                                        id, id_division, descripcion, false);
-                                arrayDivision.add(entrenamiento_division);
-
-                                entrenamientoRecycler = new EntrenamientoRecycler(id_entrenamiento,
-                                        dia, hora, id_cancha, nombre, arrayDivision);
-
-                                arrayEntrenamiento.add(entrenamientoRecycler);
-                            }
-                        }
+                        arrayEntrenamiento.add(entrenamientoRecycler);
                     }
                 }
             } catch (Exception e) {
                 arrayEntrenamiento = null;
-                arrayDivision = null;
             }
         } else {
             arrayEntrenamiento = null;
-            arrayDivision = null;
         }
 
         sql = null;
         cursor = null;
         database = null;
         dia = null;
-        hora=null;
-        nombre=null;
+        hora = null;
+        nombre = null;
         return arrayEntrenamiento;
     }
+
+    //LISTA Division por Id
+    public ArrayList<Entrenamiento_Division> selectListaDivisionEntrenamientoAdefulId(int id_entrenamiento) {
+
+        String sql = "SELECT ED.ID_DIVISION, D.DESCRIPCION"
+                + " FROM ENTRENAMIENTO_DIVISION_ADEFUL ED INNER JOIN DIVISION_ADEFUL D ON"
+                + " ED.ID_DIVISION = D.ID_DIVISION"
+                + " WHERE ID_ENTRENAMIENTO = " + id_entrenamiento + "";
+
+        Cursor cursor = null;
+        ArrayList<Entrenamiento_Division> arrayDivision = new ArrayList<Entrenamiento_Division>();
+        int id, id_division;
+        String descripcion = null;
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        Entrenamiento_Division entrenamiento_division = null;
+                        id = 0;
+                        id_division = cursor.getInt(cursor
+                                .getColumnIndex("ID_DIVISION"));
+                        descripcion = cursor.getString(cursor
+                                .getColumnIndex("DESCRIPCION"));
+
+                        entrenamiento_division = new Entrenamiento_Division(id,
+                                id_entrenamiento, id_division, descripcion, false);
+                        arrayDivision.add(entrenamiento_division);
+                    }
+                }
+            } catch (Exception e) {
+                arrayDivision = null;
+            }
+        } else {
+            arrayDivision = null;
+        }
+
+        sql = null;
+        cursor = null;
+        database = null;
+        return arrayDivision;
+    }
+
     //lISTA ENTRENAMIENTO division
     public ArrayList<Entrenamiento_Division> selectListaDivisionEntrenamientoAdeful() {
-
-//        String sql = "SELECT ED.ID_DIVISION, D.DESCRIPCION"
-//                + " FROM ENTRENAMIENTO_DIVISION_ADEFUL ED INNER JOIN DIVISION_ADEFUL D ON "
-//                + " ED.ID_DIVISION = D.ID_DIVISION";
-              //  + " WHERE ID_ENTRENAMIENTO ="+ id_entrenamiento +"";
 
         String sql = "SELECT * FROM DIVISION_ADEFUL";
         ArrayList<Entrenamiento_Division> arrayDivision = new ArrayList<Entrenamiento_Division>();
@@ -2182,7 +2191,6 @@ public class ControladorAdeful {
         Cursor cursor = null;
 
         if (database != null && database.isOpen()) {
-
             try {
                 cursor = database.rawQuery(sql, null);
                 if (cursor != null && cursor.getCount() > 0) {
