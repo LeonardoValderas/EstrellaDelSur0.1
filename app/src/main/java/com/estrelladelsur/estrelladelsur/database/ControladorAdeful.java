@@ -2049,6 +2049,31 @@ public class ControladorAdeful {
         }
     }
 
+    //ACTUALIZAR
+    public boolean actualizarEntrenamientoAdeful(Entrenamiento entrenamiento)
+            throws SQLiteException {
+        int id_entrenamiento = 0;
+        ContentValues cv = new ContentValues();
+        try {
+            cv.put("DIA_ENTRENAMIENTO", entrenamiento.getDIA());
+            cv.put("HORA_ENTRENAMIENTO", entrenamiento.getHORA());
+            cv.put("ID_CANCHA", entrenamiento.getID_CANCHA());
+            cv.put("USUARIO_ACTUALIZACION", entrenamiento.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", entrenamiento.getFECHA_ACTUALIZACION());
+
+            long valor = database.update("ENTRENAMIENTO_ADEFUL", cv, "ID_ENTRENAMIENTO="
+                    + entrenamiento.getID_ENTRENAMIENTO(), null);
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            return false;
+        }
+    }
+
+
     //SELECT ID TABLA INTERMEDIA
     public int selectIdEntrenamiento_Division() {
 
@@ -2087,7 +2112,7 @@ public class ControladorAdeful {
 
         String sql = "SELECT EA.ID_ENTRENAMIENTO, EA.DIA_ENTRENAMIENTO, EA.HORA_ENTRENAMIENTO, EA.ID_CANCHA, CA.NOMBRE"
                 + " FROM ENTRENAMIENTO_ADEFUL EA INNER JOIN CANCHA_ADEFUL CA ON EA.ID_CANCHA = CA.ID_CANCHA"
-                + " WHERE substr(EA.DIA_ENTRENAMIENTO , 4, 2) = '" + fecha + "'";
+                + " WHERE substr(EA.DIA_ENTRENAMIENTO , 4, 7) = '" + fecha + "'";
         //   + " WHERE substr(EA.DIA_ENTRENAMIENTO , 3, 7) = "+fecha+"";
 
 
@@ -2113,8 +2138,7 @@ public class ControladorAdeful {
                                 .getColumnIndex("HORA_ENTRENAMIENTO"));
                         id_cancha = cursor.getInt(cursor
                                 .getColumnIndex("ID_CANCHA"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE"));
+                        nombre = cursor.getString(cursor.getColumnIndex("NOMBRE"));
 
                         entrenamientoRecycler = new EntrenamientoRecycler(id_entrenamiento,
                                 dia, hora, id_cancha, nombre);
@@ -2141,7 +2165,7 @@ public class ControladorAdeful {
     //LISTA Division por Id
     public ArrayList<Entrenamiento_Division> selectListaDivisionEntrenamientoAdefulId(int id_entrenamiento) {
 
-        String sql = "SELECT ED.ID_DIVISION, D.DESCRIPCION"
+        String sql = "SELECT ED.ID_ENTRENAMIENTO_DIVISION, ED.ID_DIVISION, D.DESCRIPCION"
                 + " FROM ENTRENAMIENTO_DIVISION_ADEFUL ED INNER JOIN DIVISION_ADEFUL D ON"
                 + " ED.ID_DIVISION = D.ID_DIVISION"
                 + " WHERE ID_ENTRENAMIENTO = " + id_entrenamiento + "";
@@ -2157,7 +2181,8 @@ public class ControladorAdeful {
                 if (cursor != null && cursor.getCount() > 0) {
                     while (cursor.moveToNext()) {
                         Entrenamiento_Division entrenamiento_division = null;
-                        id = 0;
+                        id = cursor.getInt(cursor
+                                .getColumnIndex("ID_ENTRENAMIENTO_DIVISION"));
                         id_division = cursor.getInt(cursor
                                 .getColumnIndex("ID_DIVISION"));
                         descripcion = cursor.getString(cursor
@@ -2221,6 +2246,48 @@ public class ControladorAdeful {
         database = null;
         descripcion = null;
         return arrayDivision;
+    }
+    //ELIMINAR ENTRENAMIENTO
+    public boolean eliminarEntrenamientoAdeful(int id) {
+
+        boolean res = false;
+        String sql = "DELETE FROM ENTRENAMIENTO_ADEFUL WHERE ID_ENTRENAMIENTO = " + id;
+
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+
+        database = null;
+        sql = null;
+        return res;
+    }
+    //ELIMINAR DIVISION_ENTRENAMIENTO
+    public boolean eliminarDivisionEntrenamientoAdeful(int id) {
+
+        boolean res = false;
+        String sql = "DELETE FROM ENTRENAMIENTO_DIVISION_ADEFUL WHERE ID_ENTRENAMIENTO_DIVISION = " + id;
+
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+
+        database = null;
+        sql = null;
+        return res;
     }
 
 }

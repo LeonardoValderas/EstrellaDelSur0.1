@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur;
+package com.estrelladelsur.estrelladelsur.auxiliar;
 
 /**
  * Created by LEO on 22/12/2015.
@@ -13,6 +13,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import com.estrelladelsur.estrelladelsur.R;
 
 
 /**

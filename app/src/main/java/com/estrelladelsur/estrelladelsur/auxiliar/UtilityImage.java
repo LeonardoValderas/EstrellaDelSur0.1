@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur;
+package com.estrelladelsur.estrelladelsur.auxiliar;
 
 import java.io.File;
 import java.io.FileInputStream;

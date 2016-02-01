@@ -28,7 +28,7 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
+import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerDivisionEntrenamiento;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
@@ -73,7 +73,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     private String entrenamientoCanchaExtra = null;
     private boolean insertar = true;
     ArrayList<Integer> id_divisin_array = null;
-            
+
     public static FragmentGenerarEntrenamiento newInstance() {
         FragmentGenerarEntrenamiento fragment = new FragmentGenerarEntrenamiento();
         return fragment;
@@ -125,7 +125,6 @@ public class FragmentGenerarEntrenamiento extends Fragment {
 
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
-
 
         // CANCHA
 
@@ -179,7 +178,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
         recycleViewGeneral.setItemAnimator(new DefaultItemAnimator());
 
         recyclerViewLoadDivision();
-
+        //DIA
         buttonFechaEntrenamiento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -246,36 +245,33 @@ public class FragmentGenerarEntrenamiento extends Fragment {
         divisionArray = controladorAdeful
                 .selectListaDivisionEntrenamientoAdeful();
         if (divisionArray != null) {
-            
-            if(!insertar){
+            //EDITAR
+            if (!insertar) {
                 controladorAdeful.abrirBaseDeDatos();
                 divisionArrayExtra = controladorAdeful
                         .selectListaDivisionEntrenamientoAdefulId(idEntrenamientoExtra);
                 controladorAdeful.cerrarBaseDeDatos();
                 if (divisionArrayExtra != null) {
-                    for(int extra = 0 ; extra <divisionArrayExtra.size(); extra ++ ){
-                        for(int div = 0 ; div <divisionArray.size(); div ++ ){
+                    for (int extra = 0; extra < divisionArrayExtra.size(); extra++) {
+                        for (int div = 0; div < divisionArray.size(); div++) {
 
-                            if(divisionArrayExtra.get(extra).getID_DIVISION()==divisionArray.get(div).getID_DIVISION()){
+                            if (divisionArrayExtra.get(extra).getID_DIVISION() == divisionArray.get(div).getID_DIVISION()) {
                                 divisionArray.get(div).setSelected(true);
                                 break;
                             }
-
                         }
-
                     }
-                }else{
+                } else {
                     controladorAdeful.cerrarBaseDeDatos();
                     Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                             Toast.LENGTH_SHORT).show();
                 }
             }
-            
-            controladorAdeful.cerrarBaseDeDatos();
 
+            controladorAdeful.cerrarBaseDeDatos();
+            //ADAPTER
             adaptadorRecyclerDivisionEntrenamiento = new AdaptadorRecyclerDivisionEntrenamiento(
                     divisionArray);
-            adaptadorRecyclerDivisionEntrenamiento.notifyDataSetChanged();
             recycleViewGeneral.setAdapter(adaptadorRecyclerDivisionEntrenamiento);
         } else {
             controladorAdeful.cerrarBaseDeDatos();
@@ -284,12 +280,12 @@ public class FragmentGenerarEntrenamiento extends Fragment {
         }
     }
 
-    private int getPositionCancha(int idCancha){
+    private int getPositionCancha(int idCancha) {
 
         int index = 0;
 
-        for (int i=0;i<canchaArray.size();i++){
-            if (canchaArray.get(i).getID_CANCHA()==(idCancha)){
+        for (int i = 0; i < canchaArray.size(); i++) {
+            if (canchaArray.get(i).getID_CANCHA() == (idCancha)) {
                 index = i;
             }
         }
@@ -357,9 +353,9 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                 Toast.makeText(getActivity(), "Debe Seleccionar una Hora.",
                         Toast.LENGTH_SHORT).show();
             } else {
-                if (insertar) {
+
                     id_divisin_array = new ArrayList<Integer>();
-                    
+
                     for (int i = 0; i < listaDivisiones.size(); i++) {
                         Entrenamiento_Division entrenamientoDivision = listaDivisiones
                                 .get(i);
@@ -369,68 +365,144 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                                     .getID_DIVISION());
                         }
                     }
-                } else {
 
-                }
-                if (!bandera) {
-                    Toast.makeText(getActivity(),
-                            "Seleccione la/s División/es Citada/s.",
-                            Toast.LENGTH_SHORT).show();
 
-                } else {
+                    if (!bandera) {
+                        Toast.makeText(getActivity(),
+                                "Seleccione la/s División/es Citada/s.",
+                                Toast.LENGTH_SHORT).show();
 
-                    if (insertar) {
+                    } else {
                         String usuario = "Administrador";
                         String fechaCreacion = controladorAdeful.getFechaOficial();
                         String fechaActualizacion = fechaCreacion;
+                        if (insertar) {
 
-                        lugar = (Cancha) spinnerLugarEntrenamiento
-                                .getSelectedItem();
-                        entrenamiento = new Entrenamiento(0,
-                                buttonFechaEntrenamiento.getText().toString(),
-                                buttonHoraEntrenamiento.getText().toString(),
-                                lugar.getID_CANCHA(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                            lugar = (Cancha) spinnerLugarEntrenamiento
+                                    .getSelectedItem();
+                            entrenamiento = new Entrenamiento(0,
+                                    buttonFechaEntrenamiento.getText().toString(),
+                                    buttonHoraEntrenamiento.getText().toString(),
+                                    lugar.getID_CANCHA(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                        // inserto entrenamiento y verifico el id
-                        controladorAdeful.abrirBaseDeDatos();
-                        int id_entrenamiento = controladorAdeful
-                                .insertEntrenamientoAdeful(entrenamiento);
-                        controladorAdeful.cerrarBaseDeDatos();
+                            // inserto entrenamiento y verifico el id
+                            controladorAdeful.abrirBaseDeDatos();
+                            int id_entrenamiento = controladorAdeful
+                                    .insertEntrenamientoAdeful(entrenamiento);
+                            controladorAdeful.cerrarBaseDeDatos();
 
-                        if (id_entrenamiento > 0) {
-                            for (int i = 0; i < id_divisin_array.size(); i++) {
+                            if (id_entrenamiento > 0) {
+                                for (int i = 0; i < id_divisin_array.size(); i++) {
 
-                                entrenamiento_Division = new Entrenamiento_Division(
-                                        0, id_entrenamiento, id_divisin_array
-                                        .get(i), "", true);
-                                controladorAdeful.abrirBaseDeDatos();
-                                if (!controladorAdeful
-                                        .insertEntrenamientoDivisionAdeful(entrenamiento_Division))
-                                    break;
+                                    entrenamiento_Division = new Entrenamiento_Division(
+                                            0, id_entrenamiento, id_divisin_array
+                                            .get(i), "", true);
+                                    controladorAdeful.abrirBaseDeDatos();
+                                    if (!controladorAdeful
+                                            .insertEntrenamientoDivisionAdeful(entrenamiento_Division))
+                                        break;
+                                    controladorAdeful.cerrarBaseDeDatos();
+                                }
+                                buttonFechaEntrenamiento.setText("Día");
+                                buttonHoraEntrenamiento.setText("Hora");
+                                recyclerViewLoadDivision();
+                                Toast.makeText(
+                                        getActivity(),
+                                        "Entrenamiento cargado correctamente.",
+                                        Toast.LENGTH_SHORT).show();
+                                controladorAdeful.cerrarBaseDeDatos();
+
+                            } else {
+                                Toast.makeText(
+                                        getActivity(),
+                                        getResources().getString(R.string.error_data_base),
+                                        Toast.LENGTH_SHORT).show();
                                 controladorAdeful.cerrarBaseDeDatos();
                             }
-                            buttonFechaEntrenamiento.setText("Día");
-                            buttonHoraEntrenamiento.setText("Hora");
-                            recyclerViewLoadDivision();
-                            Toast.makeText(
-                                    getActivity(),
-                                    "Entrenamiento cargado correctamente.",
-                                    Toast.LENGTH_SHORT).show();
-                            controladorAdeful.cerrarBaseDeDatos();
-
                         } else {
-                            Toast.makeText(
-                                    getActivity(),
-                                    getResources().getString(R.string.error_data_base),
-                                    Toast.LENGTH_SHORT).show();
-                            controladorAdeful.cerrarBaseDeDatos();
+                            //EDITAR ENTRENAMIENTO
+                            lugar = (Cancha) spinnerLugarEntrenamiento
+                                    .getSelectedItem();
+
+                            entrenamiento = new Entrenamiento(idEntrenamientoExtra,
+                                    buttonFechaEntrenamiento.getText().toString(),
+                                    buttonHoraEntrenamiento.getText().toString(),
+                                    lugar.getID_CANCHA(), null, null, usuario, fechaActualizacion);
+
+                            // inserto entrenamiento y verifico el id
+                            controladorAdeful.abrirBaseDeDatos();
+                            if (controladorAdeful
+                                    .actualizarEntrenamientoAdeful(entrenamiento)) {
+                                controladorAdeful.cerrarBaseDeDatos();
+                                controladorAdeful.abrirBaseDeDatos();
+
+//                                if (controladorAdeful
+//                                        .eliminarDivisionEntrenamientoAdeful(idEntrenamientoExtra)) {
+//                                    controladorAdeful.cerrarBaseDeDatos();
+//                                }
+                                //if (id_entrenamiento > 0) {
+                                for (int i = 0; i < divisionArrayExtra.size(); i++) {
+                                    for (int d = 0; d < id_divisin_array.size(); d++) {
+                                        if (divisionArrayExtra.get(i).getID_DIVISION() == id_divisin_array.get(d)) {
+                                            break;
+                                        } else {
+
+                                            entrenamiento_Division = new Entrenamiento_Division(
+                                                    0, idEntrenamientoExtra, id_divisin_array
+                                                    .get(i), "", true);
+                                            controladorAdeful.abrirBaseDeDatos();
+                                            if (controladorAdeful
+                                                    .insertEntrenamientoDivisionAdeful(entrenamiento_Division)) {
+                                                controladorAdeful.cerrarBaseDeDatos();
+                                            } else {
+                                                Toast.makeText(
+                                                        getActivity(),
+                                                        getResources().getString(R.string.error_data_base),
+                                                        Toast.LENGTH_SHORT).show();
+                                                controladorAdeful.cerrarBaseDeDatos();
+                                            }
+                                        }
+                                    }
+                                }
+                                for (int i = 0; i < id_divisin_array.size(); i++) {
+                                    for (int d = 0; d < divisionArrayExtra.size(); d++) {
+                                        if (id_divisin_array.get(i) == divisionArrayExtra.get(d).getID_DIVISION()) {
+                                            break;
+                                        }else{
+
+                                            controladorAdeful.abrirBaseDeDatos();
+                                         if(controladorAdeful.eliminarDivisionEntrenamientoAdeful(divisionArrayExtra.get(d).getID_ENTRENAMIENTO_DIVISION())){
+                                            controladorAdeful.cerrarBaseDeDatos();
+                                        } else {
+                                            Toast.makeText(
+                                                    getActivity(),
+                                                    getResources().getString(R.string.error_data_base),
+                                                    Toast.LENGTH_SHORT).show();
+                                            controladorAdeful.cerrarBaseDeDatos();
+                                        }
+                                        }
+                                    }
+                                }
+
+                                buttonFechaEntrenamiento.setText("Día");
+                                buttonHoraEntrenamiento.setText("Hora");
+                                recyclerViewLoadDivision();
+                                Toast.makeText(
+                                        getActivity(),
+                                        "Entrenamiento actualizado correctamente.",
+                                        Toast.LENGTH_SHORT).show();
+                                controladorAdeful.cerrarBaseDeDatos();
+
+                            } else {
+                                Toast.makeText(
+                                        getActivity(),
+                                        getResources().getString(R.string.error_data_base),
+                                        Toast.LENGTH_SHORT).show();
+                                controladorAdeful.cerrarBaseDeDatos();
+                            }
                         }
-                    } else {
-
-
                     }
                 }
-            }
             return true;
         }
         if (id == R.id.action_lifuba) {

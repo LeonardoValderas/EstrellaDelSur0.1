@@ -19,11 +19,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
+import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
@@ -72,6 +73,7 @@ public class ActivityResultado extends AppCompatActivity {
     private int posicionRecycler;
     private ArrayList<ResultadoRecycler> arrayResultado;
     private DialogoAlerta dialogoAlerta;
+    private ArrayAdapter<String> adaptadorInicial;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,15 +127,21 @@ public class ActivityResultado extends AppCompatActivity {
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
             controladorAdeful.cerrarBaseDeDatos();
-            // DIVSION SPINNER
-            adapterFixtureDivision = new AdapterSpinnerDivision(
-                    ActivityResultado.this, R.layout.simple_spinner_dropdown_item,
-                    divisionArray);
-            resultadoDivisionSpinner.setAdapter(adapterFixtureDivision);
+            if (divisionArray.size() != 0) {
+                // DIVSION SPINNER
+                adapterFixtureDivision = new AdapterSpinnerDivision(
+                        ActivityResultado.this, R.layout.simple_spinner_dropdown_item,
+                        divisionArray);
+                resultadoDivisionSpinner.setAdapter(adapterFixtureDivision);
+            } else {
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(ActivityResultado.this,
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
+                resultadoDivisionSpinner.setAdapter(adaptadorInicial);
+            }
         } else {
             controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-                            "\nSi el error persiste comuniquese con soporte.",
+            Toast.makeText(this, getResources().getString(R.string.error_data_base),
                     Toast.LENGTH_SHORT).show();
         }
         // TORNEO
@@ -141,14 +149,21 @@ public class ActivityResultado extends AppCompatActivity {
         torneoArray = controladorAdeful.selectListaTorneoAdeful();
         if (torneoArray != null) {
             controladorAdeful.cerrarBaseDeDatos();
-            // TORNEO SPINNER
-            adapterFixtureTorneo = new AdapterSpinnerTorneo(ActivityResultado.this,
-                    R.layout.simple_spinner_dropdown_item, torneoArray);
-            resultadoTorneoSpinner.setAdapter(adapterFixtureTorneo);
+
+            if (torneoArray.size() != 0) {
+                // TORNEO SPINNER
+                adapterFixtureTorneo = new AdapterSpinnerTorneo(ActivityResultado.this,
+                        R.layout.simple_spinner_dropdown_item, torneoArray);
+                resultadoTorneoSpinner.setAdapter(adapterFixtureTorneo);
+            } else {
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(ActivityResultado.this,
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
+                resultadoTorneoSpinner.setAdapter(adaptadorInicial);
+            }
         } else {
             controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-                            "\nSi el error persiste comuniquese con soporte.",
+            Toast.makeText(this, getResources().getString(R.string.error_data_base),
                     Toast.LENGTH_SHORT).show();
         }
         // FECHA
@@ -162,8 +177,7 @@ public class ActivityResultado extends AppCompatActivity {
             resultadoFechaSpinner.setAdapter(adapterFixtureFecha);
         } else {
             controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-                            "\nSi el error persiste comuniquese con soporte.",
+            Toast.makeText(this, getResources().getString(R.string.error_data_base),
                     Toast.LENGTH_SHORT).show();
         }
         // ANIO
@@ -177,8 +191,7 @@ public class ActivityResultado extends AppCompatActivity {
             resultadoAnioSpinner.setAdapter(adapterFixtureAnio);
         } else {
             controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-                            "\nSi el error persiste comuniquese con soporte.",
+            Toast.makeText(this, getResources().getString(R.string.error_data_base),
                     Toast.LENGTH_SHORT).show();
         }
 
@@ -186,20 +199,32 @@ public class ActivityResultado extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                division = (Division) resultadoDivisionSpinner
-                        .getSelectedItem();
-                torneo = (Torneo) resultadoTorneoSpinner.getSelectedItem();
-                fecha = (Fecha) resultadoFechaSpinner.getSelectedItem();
-                anio = (Anio) resultadoAnioSpinner.getSelectedItem();
 
-                divisionSpinner = division.getID_DIVISION();
-                torneoSpinner = torneo.getID_TORNEO();
-                fechaSpinner = fecha.getID_FECHA();
-                anioSpiner = anio.getID_ANIO();
-                //LOAD RECYCLER
-                recyclerViewLoadResultado(divisionSpinner, torneoSpinner,
-                        fechaSpinner, anioSpiner);
+                if (resultadoDivisionSpinner.getSelectedItem().toString().equals(getResources().
+                        getString(R.string.ceroSpinnerDivision))) {
+                    Toast.makeText(ActivityResultado.this, "Debe agregar un division (Liga).",
+                            Toast.LENGTH_SHORT).show();
+                } else if (resultadoTorneoSpinner.getSelectedItem().toString().equals(getResources().
+                        getString(R.string.ceroSpinnerTorneo))) {
+                    Toast.makeText(ActivityResultado.this, "Debe agregar un torneo (Liga).",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+
+
+                    division = (Division) resultadoDivisionSpinner
+                            .getSelectedItem();
+                    torneo = (Torneo) resultadoTorneoSpinner.getSelectedItem();
+                    fecha = (Fecha) resultadoFechaSpinner.getSelectedItem();
+                    anio = (Anio) resultadoAnioSpinner.getSelectedItem();
+
+                    divisionSpinner = division.getID_DIVISION();
+                    torneoSpinner = torneo.getID_TORNEO();
+                    fechaSpinner = fecha.getID_FECHA();
+                    anioSpiner = anio.getID_ANIO();
+                    //LOAD RECYCLER
+                    recyclerViewLoadResultado(divisionSpinner, torneoSpinner,
+                            fechaSpinner, anioSpiner);
+                }
             }
         });
 
@@ -293,8 +318,7 @@ public class ActivityResultado extends AppCompatActivity {
                                                         .dismiss();
                                             }else{
                                                 controladorAdeful.cerrarBaseDeDatos();
-                                                Toast.makeText(ActivityResultado.this, "Error en la base de datos interna, vuelva a intentar." +
-                                                                "\nSi el error persiste comuniquese con soporte.",
+                                                Toast.makeText(ActivityResultado.this,getResources().getString(R.string.error_data_base),
                                                         Toast.LENGTH_SHORT).show();
                                             }
                                         } else {
@@ -354,8 +378,7 @@ public class ActivityResultado extends AppCompatActivity {
                                             dialogoAlerta.alertDialog.dismiss();
                                         }else{
                                             controladorAdeful.cerrarBaseDeDatos();
-                                            Toast.makeText(ActivityResultado.this, "Error en la base de datos interna, vuelva a intentar." +
-                                                            "\nSi el error persiste comuniquese con soporte.",
+                                            Toast.makeText(ActivityResultado.this, getResources().getString(R.string.error_data_base),
                                                     Toast.LENGTH_SHORT).show();
                                         }
                                     }
@@ -389,8 +412,7 @@ public class ActivityResultado extends AppCompatActivity {
             recyclerViewResultado.setAdapter(adaptadorResultado);
         } else {
             controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(ActivityResultado.this, "Error en la base de datos interna, vuelva a intentar." +
-                            "\nSi el error persiste comuniquese con soporte.",
+            Toast.makeText(ActivityResultado.this,getResources().getString(R.string.error_data_base),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -429,7 +451,6 @@ public class ActivityResultado extends AppCompatActivity {
                         }
                     });
         }
-
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
             // TODO Auto-generated method stub
@@ -440,16 +461,12 @@ public class ActivityResultado extends AppCompatActivity {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
             // TODO Auto-generated method stub
-
         }
     }
 

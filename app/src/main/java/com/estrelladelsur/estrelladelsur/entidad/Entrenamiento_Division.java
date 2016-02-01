@@ -36,6 +36,10 @@ public class Entrenamiento_Division {
 	public String getDESCRIPCION() {
 		return DESCRIPCION;
 	}
+	public String toString() {
+		return DESCRIPCION;
+	}
+
 	public void setDESCRIPCION(String dESCRIPCION) {
 		DESCRIPCION = dESCRIPCION;
 	}

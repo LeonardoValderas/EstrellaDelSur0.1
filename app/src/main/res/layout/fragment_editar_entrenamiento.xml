@@ -5,17 +5,6 @@
     android:layout_height="match_parent"
     tools:context="com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento" >
 
-    <!--<android.support.design.widget.CoordinatorLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:fitsSystemWindows="true" >-->
-
-        <!--<android.support.design.widget.AppBarLayout-->
-            <!--android:id="@+id/appbarLayout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="@android:color/transparent"-->
-            <!--android:fitsSystemWindows="true" >-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,14 +30,40 @@
                     android:layout_height="50dp"
                     android:layout_weight="1" />
             </LinearLayout>
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Spinner
+                android:id="@+id/entrenamientoFechahsSpinner"
+                android:layout_width="match_parent"
+                android:layout_margin="2dp"
+                android:background="@drawable/style_spinner"
+                android:visibility="gone"
+                android:layout_height="50dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+           <Spinner
+                android:id="@+id/entrenamientoDivisionSpinner"
+                android:layout_width="match_parent"
+                android:layout_margin="2dp"
+                android:background="@drawable/style_spinner"
+                android:layout_height="50dp"
+                android:visibility="gone"
+                android:layout_weight="1" />
+        </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycleViewGeneral"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" >-->
             </android.support.v7.widget.RecyclerView>
-        <!--</android.support.design.widget.AppBarLayout>-->
     </LinearLayout>
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/botonFloating"
@@ -59,6 +74,4 @@
             android:backgroundTint="@color/color_primary"
             android:src="@drawable/ic_pelota_futbol"
             app:borderWidth="0dp" />
-    <!--</android.support.design.widget.CoordinatorLayout>-->
-
 </FrameLayout>

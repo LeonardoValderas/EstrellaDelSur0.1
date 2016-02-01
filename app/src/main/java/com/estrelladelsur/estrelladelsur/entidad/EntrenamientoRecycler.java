@@ -48,4 +48,10 @@ public class EntrenamientoRecycler {
     public void setHORA(String hORA) {
         HORA = hORA;
     }
+    public String getDIAHORA() {
+        return DIA + " " +HORA;
+    }
+    public String toString() {
+        return DIA + " " +HORA;
+    }
 }

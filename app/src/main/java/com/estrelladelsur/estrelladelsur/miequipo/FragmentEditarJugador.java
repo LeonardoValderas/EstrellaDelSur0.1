@@ -14,10 +14,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
+import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.JugadorRecycler;
@@ -40,6 +41,7 @@ public class FragmentEditarJugador extends Fragment {
     private ArrayList<JugadorRecycler> jugadorArray;
     private DialogoAlerta dialogoAlerta;
     private AdaptadorRecyclerJugador adaptadorEditarJugador;
+	private ArrayAdapter<String> adaptadorInicial;
 
 	public static FragmentEditarJugador newInstance() {
 		FragmentEditarJugador fragment = new FragmentEditarJugador();
@@ -95,15 +97,21 @@ public class FragmentEditarJugador extends Fragment {
 		divisionArray = controladorAdeful.selectListaDivisionAdeful();
 		if(divisionArray != null) {
 			controladorAdeful.cerrarBaseDeDatos();
-
 			// DIVSION SPINNER
-			adapterSpinnerDivision = new AdapterSpinnerDivision(getActivity(),
-					R.layout.simple_spinner_dropdown_item, divisionArray);
-			jugadoresDivisionSpinner.setAdapter(adapterSpinnerDivision);
+			if (divisionArray.size() != 0) {
+				adapterSpinnerDivision = new AdapterSpinnerDivision(getActivity(),
+						R.layout.simple_spinner_dropdown_item, divisionArray);
+				jugadoresDivisionSpinner.setAdapter(adapterSpinnerDivision);
+			} else {
+				//SPINNER HINT
+				adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+						R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
+				jugadoresDivisionSpinner.setAdapter(adaptadorInicial);
+			}
+
 		}else{
 			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-							"\nSi el error persiste comuniquese con soporte.",
+			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
 					Toast.LENGTH_SHORT).show();
 		}
 		// RECLYCLER
@@ -117,10 +125,15 @@ public class FragmentEditarJugador extends Fragment {
 					
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						division = (Division) jugadoresDivisionSpinner.getSelectedItem();
-						divisionSpinner=division.getID_DIVISION();
-						recyclerViewLoadJugador(divisionSpinner);
+						if (jugadoresDivisionSpinner.getSelectedItem().toString().equals(getResources().
+								getString(R.string.ceroSpinnerDivision))) {
+							Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
+									Toast.LENGTH_SHORT).show();
+						}else {
+							division = (Division) jugadoresDivisionSpinner.getSelectedItem();
+							divisionSpinner = division.getID_DIVISION();
+							recyclerViewLoadJugador(divisionSpinner);
+						}
 	      			}
 				});
 				

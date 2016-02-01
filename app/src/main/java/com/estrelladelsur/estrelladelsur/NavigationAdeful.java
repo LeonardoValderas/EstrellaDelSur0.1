@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
 import com.estrelladelsur.estrelladelsur.institucion.TabsArticulo;
 import com.estrelladelsur.estrelladelsur.institucion.TabsComision;
 import com.estrelladelsur.estrelladelsur.institucion.TabsDireccion;
@@ -24,6 +25,7 @@ import com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsJugador;
+import com.estrelladelsur.estrelladelsur.miequipo.TabsSancion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -139,6 +141,12 @@ private TextView txtAbSubTitulo;
                             case 3:
                                 Intent entrenamiento  = new Intent(NavigationAdeful.this,TabsEntrenamiento.class);
                                 startActivity(entrenamiento);
+                                tituloClickFragment = cargaGeneral.get(childPosition)
+                                        .toString();
+                                break;
+                            case 4:
+                                Intent sanciones  = new Intent(NavigationAdeful.this,TabsSancion.class);
+                                startActivity(sanciones);
                                 tituloClickFragment = cargaGeneral.get(childPosition)
                                         .toString();
                                 break;

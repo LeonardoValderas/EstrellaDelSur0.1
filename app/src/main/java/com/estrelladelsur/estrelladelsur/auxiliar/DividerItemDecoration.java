@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur;
+package com.estrelladelsur.estrelladelsur.auxiliar;
 
 import android.content.Context;
 import android.content.res.TypedArray;

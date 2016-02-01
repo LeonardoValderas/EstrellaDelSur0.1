@@ -13,9 +13,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivisionEntrenamiento;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFechaEntrenamiento;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
@@ -26,15 +29,18 @@ import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
+import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento_Division;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 
 import java.util.ArrayList;
 
 
-public class FragmentEditarEntrenamiento extends Fragment {
+public class FragmentAsistenciaEntrenamiento extends Fragment {
 
     private Spinner entrenamientoAnioSpinner;
     private Spinner entrenamientoMesSpinner;
+    private Spinner entrenamientoDivisionSpinner;
+    private Spinner entrenamientoFechahsSpinner;
     private ControladorAdeful controladorAdeful;
     private RecyclerView recycleViewGeneral;
     private int CheckedPositionFragment;
@@ -43,17 +49,21 @@ public class FragmentEditarEntrenamiento extends Fragment {
     private ArrayList<Mes> mesArray;
     private AdapterSpinnerAnio adapterSpinnerAnio;
     private AdapterSpinnerMes adapterSpinnerMes;
+    private AdapterSpinnerFechaEntrenamiento adapterSpinnerFechaEntrenamiento;
+    //private ArrayList<EntrenamientoRecycler> arrayEntrenamiento;
     private ArrayList<EntrenamientoRecycler> entrenamientoArray;
     private AdaptadorRecyclerEntrenamiento adaptadorEntrenamiento;
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
+    private ArrayList<Entrenamiento_Division> entrenamientoDivisionArray;
+    private AdapterSpinnerDivisionEntrenamiento adapterSpinnerDivisionEntrenamiento;
 
-    public static FragmentEditarEntrenamiento newInstance() {
-        FragmentEditarEntrenamiento fragment = new FragmentEditarEntrenamiento();
+    public static FragmentAsistenciaEntrenamiento newInstance() {
+        FragmentAsistenciaEntrenamiento fragment = new FragmentAsistenciaEntrenamiento();
         return fragment;
     }
 
-    public FragmentEditarEntrenamiento() {
+    public FragmentAsistenciaEntrenamiento() {
         // Required empty public constructor
     }
 
@@ -77,12 +87,22 @@ public class FragmentEditarEntrenamiento extends Fragment {
         // RECYCLER
         recycleViewGeneral = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
-        // CANCHA
+        // ANIO
         entrenamientoAnioSpinner = (Spinner) v
                 .findViewById(R.id.entrenamientoAnioSpinner);
         // DIA
         entrenamientoMesSpinner = (Spinner) v
                 .findViewById(R.id.entrenamientoMesSpinner);
+        //FECHA
+        entrenamientoFechahsSpinner = (Spinner) v
+                .findViewById(R.id.entrenamientoFechahsSpinner);
+        entrenamientoFechahsSpinner.setVisibility(View.VISIBLE);
+        // DIVISION
+        entrenamientoDivisionSpinner = (Spinner) v
+                .findViewById(R.id.entrenamientoDivisionSpinner);
+        entrenamientoDivisionSpinner.setVisibility(View.VISIBLE);
+
+
         //BOTON FLOATING
         botonFloating = (FloatingActionButton) v
                 .findViewById(R.id.botonFloating);
@@ -203,14 +223,89 @@ public class FragmentEditarEntrenamiento extends Fragment {
                                              public void onClick(View view) {
                                                  String fecha = null;
                                                  fecha = auxiliarGeneral.setFormatoMes(
-                                                         entrenamientoMesSpinner.getSelectedItem().toString())+"-"+entrenamientoAnioSpinner.getSelectedItem().toString();
+                                                         entrenamientoMesSpinner.getSelectedItem().toString()) + "-" + entrenamientoAnioSpinner.getSelectedItem().toString();
+                                                 if (fecha != null)
+                                                     //     recyclerViewLoadEntrenamiento(fecha);
 
-                                                 if(fecha!=null)
-                                                 recyclerViewLoadEntrenamiento(fecha);
+
+                                                     controladorAdeful.abrirBaseDeDatos();
+                                                 entrenamientoArray = controladorAdeful.selectListaEntrenamientoAdeful(fecha);
+                                                 if (entrenamientoArray != null) {
+                                                     controladorAdeful.cerrarBaseDeDatos();
+
+                                                     // MES ADAPTER
+                                                     adapterSpinnerFechaEntrenamiento = new AdapterSpinnerFechaEntrenamiento(getActivity(),
+                                                             R.layout.simple_spinner_dropdown_item, entrenamientoArray);
+                                                     entrenamientoFechahsSpinner.setAdapter(adapterSpinnerFechaEntrenamiento);
+                                                 } else {
+                                                     controladorAdeful.cerrarBaseDeDatos();
+                                                     Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                                                             Toast.LENGTH_SHORT).show();
+                                                 }
                                              }
                                          }
         );
+
+
+        entrenamientoFechahsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int position, long arg3) {
+
+                controladorAdeful.abrirBaseDeDatos();
+                entrenamientoDivisionArray = controladorAdeful.selectListaDivisionEntrenamientoAdefulId(entrenamientoArray.get(position).getID_ENTRENAMIENTO());
+                if (entrenamientoDivisionArray != null) {
+                    controladorAdeful.cerrarBaseDeDatos();
+                    // MES ADAPTER
+                    adapterSpinnerDivisionEntrenamiento = new AdapterSpinnerDivisionEntrenamiento(getActivity(),
+                            R.layout.simple_spinner_dropdown_item, entrenamientoDivisionArray);
+                    entrenamientoDivisionSpinner.setAdapter(adapterSpinnerDivisionEntrenamiento);
+
+
+                } else {
+                    controladorAdeful.cerrarBaseDeDatos();
+                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
+
+        entrenamientoDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int position, long arg3) {
+
+                Toast.makeText(getActivity(),""+entrenamientoDivisionArray.get(position).getID_DIVISION(),Toast.LENGTH_SHORT).show();
+
+//                controladorAdeful.abrirBaseDeDatos();
+//                entrenamientoDivisionArray = controladorAdeful.selectListaDivisionEntrenamientoAdefulId(entrenamientoArray.get(position).getID_ENTRENAMIENTO());
+//                if (entrenamientoDivisionArray != null) {
+//                    controladorAdeful.cerrarBaseDeDatos();
+//                    // MES ADAPTER
+//                    adapterSpinnerDivisionEntrenamiento = new AdapterSpinnerDivisionEntrenamiento(getActivity(),
+//                            R.layout.simple_spinner_dropdown_item, entrenamientoDivisionArray);
+//                    entrenamientoDivisionSpinner.setAdapter(adapterSpinnerDivisionEntrenamiento);
+//
+//
+//                } else {
+//                    controladorAdeful.cerrarBaseDeDatos();
+//                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+//                            Toast.LENGTH_SHORT).show();
+//                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
+
     }
+
 
     public void recyclerViewLoadEntrenamiento(String fecha) {
 

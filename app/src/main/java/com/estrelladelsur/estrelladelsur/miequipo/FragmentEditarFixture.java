@@ -14,10 +14,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
+import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
@@ -58,6 +59,7 @@ public class FragmentEditarFixture extends Fragment {
 	private int CheckedPositionFragment;
 	private int divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner;
 	private DialogoAlerta dialogoAlerta;
+	private ArrayAdapter<String> adaptadorInicial;
 
 	public static FragmentEditarFixture newInstance() {
 		FragmentEditarFixture fragment = new FragmentEditarFixture();
@@ -120,14 +122,20 @@ public class FragmentEditarFixture extends Fragment {
 		divisionArray = controladorAdeful.selectListaDivisionAdeful();
 		if(divisionArray != null) {
 			controladorAdeful.cerrarBaseDeDatos();
-			// DIVSION SPINNER
-			adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
-					R.layout.simple_spinner_dropdown_item, divisionArray);
-			fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
+     		// DIVSION SPINNER
+			if (divisionArray.size() != 0) {
+				adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
+						R.layout.simple_spinner_dropdown_item, divisionArray);
+				fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
+			} else {
+				//SPINNER HINT
+				adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+						R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
+				fixtureDivisionSpinner.setAdapter(adaptadorInicial);
+			}
 		}else{
 			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-							"\n Si el error persiste comuniquese con soporte.",
+			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
 					Toast.LENGTH_SHORT).show();
 		}
 		// TORNEO
@@ -136,13 +144,20 @@ public class FragmentEditarFixture extends Fragment {
 		if(torneoArray != null) {
 			controladorAdeful.cerrarBaseDeDatos();
 			// TORNEO SPINNER
-			adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
-					R.layout.simple_spinner_dropdown_item, torneoArray);
-			fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
+			if (torneoArray.size() != 0) {
+				// TORNEO SPINNER
+				adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
+						R.layout.simple_spinner_dropdown_item, torneoArray);
+				fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
+			} else {
+				//SPINNER HINT
+				adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+						R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
+				fixtureTorneoSpinner.setAdapter(adaptadorInicial);
+			}
 		}else{
 			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-							"\n Si el error persiste comuniquese con soporte.",
+			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
 					Toast.LENGTH_SHORT).show();
 		}
 		// FECHA
@@ -185,20 +200,29 @@ public class FragmentEditarFixture extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				division = (Division) fixtureDivisionSpinner.getSelectedItem();
-				torneo = (Torneo) fixtureTorneoSpinner.getSelectedItem();
-				fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
-				anio = (Anio) fixtureAnioSpinner.getSelectedItem();
-				
-				divisionSpinner=division.getID_DIVISION();
-				torneoSpinner =  torneo.getID_TORNEO();
-				fechaSpinner =  fecha.getID_FECHA();
-				anioSpiner =  anio.getID_ANIO();
-				
-				recyclerViewLoadDivision(divisionSpinner,torneoSpinner,fechaSpinner,anioSpiner);
-				
-				
+
+				if (fixtureDivisionSpinner.getSelectedItem().toString().equals(getResources().
+						getString(R.string.ceroSpinnerDivision))) {
+					Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
+							Toast.LENGTH_SHORT).show();
+				} else if (fixtureTorneoSpinner.getSelectedItem().toString().equals(getResources().
+						getString(R.string.ceroSpinnerTorneo))) {
+					Toast.makeText(getActivity(), "Debe agregar un torneo (Liga).",
+							Toast.LENGTH_SHORT).show();
+				}else {
+					division = (Division) fixtureDivisionSpinner.getSelectedItem();
+					torneo = (Torneo) fixtureTorneoSpinner.getSelectedItem();
+					fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
+					anio = (Anio) fixtureAnioSpinner.getSelectedItem();
+
+					divisionSpinner = division.getID_DIVISION();
+					torneoSpinner = torneo.getID_TORNEO();
+					fechaSpinner = fecha.getID_FECHA();
+					anioSpiner = anio.getID_ANIO();
+
+					recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+
+				}
 			}
 		});
 		

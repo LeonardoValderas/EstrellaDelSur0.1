@@ -34,9 +34,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.estrelladelsur.estrelladelsur.DividerItemDecoration;
+import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.UtilityImage;
+import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerEquipo;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;

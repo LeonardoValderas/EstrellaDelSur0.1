@@ -1,11 +1,5 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -21,10 +15,18 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCancha;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerEquipo;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFecha;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
+import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
@@ -33,23 +35,23 @@ import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCancha;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerEquipo;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFecha;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 
-public class FragmentGenerarFixture extends Fragment {
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
-    private Spinner fixtureDivisionSpinner;
-    private Spinner fixtureTorneoSpinner;
-    private Spinner fixtureFechaSpinner;
+public class FragmentGenerarSancion extends Fragment {
+
+    private Spinner sancionDivisionSpinner;
+    private Spinner sancionJugadorSpinner;
+    private Spinner sancionAmarillaSpinner;
+    private Spinner sancionRojaSpinner;
     private Spinner fixtureCanchaSpinner;
-    private Spinner fixtureAnioSpinner;
     private Spinner fixtureLocalSpinner;
     private Spinner fixtureVisitaSpinner;
+    private TextView sancionTextAmarialla;
+    private TextView sancionTextRoja;
     private AdapterSpinnerTorneo adapterFixtureTorneo;
     private AdapterSpinnerDivision adapterFixtureDivision;
     private AdapterSpinnerFecha adapterFixtureFecha;
@@ -86,12 +88,12 @@ public class FragmentGenerarFixture extends Fragment {
     private int idFixtureExtra;
     private ArrayAdapter<String> adaptadorInicial;
 
-    public static FragmentGenerarFixture newInstance() {
-        FragmentGenerarFixture fragment = new FragmentGenerarFixture();
+    public static FragmentGenerarSancion newInstance() {
+        FragmentGenerarSancion fragment = new FragmentGenerarSancion();
         return fragment;
     }
 
-    public FragmentGenerarFixture() {
+    public FragmentGenerarSancion() {
         // Required empty public constructor
     }
 
@@ -114,29 +116,39 @@ public class FragmentGenerarFixture extends Fragment {
         View v = inflater.inflate(R.layout.fragment_generar_fixture, container,
                 false);
         // DIVISION
-        fixtureDivisionSpinner = (Spinner) v
+        sancionDivisionSpinner = (Spinner) v
                 .findViewById(R.id.fixtureDivisionSpinner);
-        // TORNEO
-        fixtureTorneoSpinner = (Spinner) v
+        // JUGADOR
+        sancionJugadorSpinner = (Spinner) v
                 .findViewById(R.id.fixtureTorneoSpinner);
-        // FECHA
-        fixtureFechaSpinner = (Spinner) v
+        // SANCION AMARILLA
+        sancionTextAmarialla = (TextView) v.findViewById(R.id.textAmarilla);
+        sancionTextAmarialla.setVisibility(View.VISIBLE);
+        sancionAmarillaSpinner = (Spinner) v
                 .findViewById(R.id.fixtureFechaSpinner);
-        // ANIO
-        fixtureAnioSpinner = (Spinner) v.findViewById(R.id.fixtureAnioSpinner);
+        // SANCION ROJA
+        sancionRojaSpinner = (Spinner) v.findViewById(R.id.fixtureAnioSpinner);
+        sancionTextRoja = (TextView) v.findViewById(R.id.textRoja);
+        sancionTextRoja.setVisibility(View.VISIBLE);
+
         // CANCHA
         fixtureCanchaSpinner = (Spinner) v
                 .findViewById(R.id.fixtureCanchaSpinner);
+        fixtureCanchaSpinner.setVisibility(View.GONE);
         // LOCAL
         fixtureLocalSpinner = (Spinner) v
                 .findViewById(R.id.fixtureLocalSpinner);
+        fixtureLocalSpinner.setVisibility(View.GONE);
         // VISITA
         fixtureVisitaSpinner = (Spinner) v
                 .findViewById(R.id.fixtureVisitaSpinner);
+        fixtureVisitaSpinner.setVisibility(View.GONE);
         // DIA
         btn_dia = (Button) v.findViewById(R.id.btn_dia);
+        btn_dia.setVisibility(View.GONE);
         // HORA
         btn_hora = (Button) v.findViewById(R.id.btn_hora);
+        btn_hora.setVisibility(View.GONE);
 
         return v;
     }
@@ -188,12 +200,12 @@ public class FragmentGenerarFixture extends Fragment {
             if (divisionArray.size() != 0) {
                 adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
                         R.layout.simple_spinner_dropdown_item, divisionArray);
-                fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
+                sancionDivisionSpinner.setAdapter(adapterFixtureDivision);
             } else {
                 //SPINNER HINT
                 adaptadorInicial = new ArrayAdapter<String>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
-                fixtureDivisionSpinner.setAdapter(adaptadorInicial);
+                sancionDivisionSpinner.setAdapter(adaptadorInicial);
             }
         } else {
             controladorAdeful.cerrarBaseDeDatos();
@@ -209,12 +221,12 @@ public class FragmentGenerarFixture extends Fragment {
                 // TORNEO SPINNER
                 adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
                         R.layout.simple_spinner_dropdown_item, torneoArray);
-                fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
+                sancionJugadorSpinner.setAdapter(adapterFixtureTorneo);
             } else {
                 //SPINNER HINT
                 adaptadorInicial = new ArrayAdapter<String>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
-                fixtureTorneoSpinner.setAdapter(adaptadorInicial);
+                sancionJugadorSpinner.setAdapter(adaptadorInicial);
             }
         } else {
             controladorAdeful.cerrarBaseDeDatos();
@@ -230,12 +242,12 @@ public class FragmentGenerarFixture extends Fragment {
                 // FECHA SPINNER
                 adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
                         R.layout.simple_spinner_dropdown_item, fechaArray);
-                fixtureFechaSpinner.setAdapter(adapterFixtureFecha);
+                sancionAmarillaSpinner.setAdapter(adapterFixtureFecha);
             } else {
                 //SPINNER HINT
                 adaptadorInicial = new ArrayAdapter<String>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerFecha));
-                fixtureFechaSpinner.setAdapter(adaptadorInicial);
+                sancionAmarillaSpinner.setAdapter(adaptadorInicial);
             }
         } else {
             controladorAdeful.cerrarBaseDeDatos();
@@ -251,12 +263,12 @@ public class FragmentGenerarFixture extends Fragment {
                 // ANIO SPINNER
                 adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
                         R.layout.simple_spinner_dropdown_item, anioArray);
-                fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
+                sancionRojaSpinner.setAdapter(adapterFixtureAnio);
             } else {
                 //SPINNER HINT
                 adaptadorInicial = new ArrayAdapter<String>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerAnio));
-                fixtureAnioSpinner.setAdapter(adaptadorInicial);
+                sancionRojaSpinner.setAdapter(adaptadorInicial);
             }
         } else {
             controladorAdeful.cerrarBaseDeDatos();
@@ -334,31 +346,29 @@ public class FragmentGenerarFixture extends Fragment {
 
             idFixtureExtra = getActivity().getIntent().getIntExtra("id_fixture", 0);
 
-            //DIVISION 0
-            fixtureDivisionSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("divisionSpinner",0),0));
-            // TORNEO 1
-            fixtureTorneoSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("torneoSpinner", 0), 1));
-            // FECHA 2
-            fixtureFechaSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("fechaSpinner", 0), 2));
-            // ANIO 3
-            fixtureAnioSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("anioSpiner", 0), 3));
-            // CANCHA 4
-            fixtureCanchaSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("canchaSpinner", 0), 4));
-            // LOCAL 5
-            fixtureLocalSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("localSpinner", 0), 5));
-            // VISITA 6
-            fixtureVisitaSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("visitaSpinner", 0), 5));
-            //DIA
+            //DIVISION
+            sancionDivisionSpinner.setSelection(getActivity().getIntent()
+                    .getIntExtra("divisionSpinner", 0) - 1);
+            // TORNEO
+            sancionJugadorSpinner.setSelection(getActivity().getIntent()
+                    .getIntExtra("torneoSpinner", 0) - 1);
+            // FECHA
+            sancionAmarillaSpinner.setSelection(getActivity().getIntent()
+                    .getIntExtra("fechaSpinner", 0) - 1);
+            // ANIO
+            sancionRojaSpinner.setSelection(getActivity().getIntent()
+                    .getIntExtra("anioSpiner", 0) - 1);
+            // CANCHA
+            fixtureCanchaSpinner.setSelection(getActivity().getIntent()
+                    .getIntExtra("canchaSpinner", 0) - 1);
+            // LOCAL
+            fixtureLocalSpinner.setSelection(getActivity().getIntent()
+                    .getIntExtra("localSpinner", 0) - 1);
+            // VISITA
+            fixtureVisitaSpinner.setSelection(getActivity().getIntent()
+                    .getIntExtra("visitaSpinner", 0) - 1);
             btn_dia.setText(getActivity().getIntent()
                     .getStringExtra("dia"));
-            //HORA
             btn_hora.setText(getActivity().getIntent()
                     .getStringExtra("hora"));
             insertar = false;
@@ -407,71 +417,6 @@ public class FragmentGenerarFixture extends Fragment {
         }
     };
 
-    private int getPositionSpinner(int idSpinner, int spinner) {
-
-        int index = 0;
-        switch (spinner) {
-            //DIVISION 0
-            case 0:
-                for (int i = 0; i < divisionArray.size(); i++) {
-                    if (divisionArray.get(i).getID_DIVISION() == (idSpinner)) {
-                        index = i;
-                    }
-                }
-            break;
-            // TORNEO 1
-            case 1:
-                for (int i = 0; i < torneoArray.size(); i++) {
-                    if (torneoArray.get(i).getID_TORNEO() == (idSpinner)) {
-                        index = i;
-                    }
-                }
-                break;
-            // FECHA 2
-            case 2:
-                for (int i = 0; i < fechaArray.size(); i++) {
-                    if (fechaArray.get(i).getID_FECHA() == (idSpinner)) {
-                        index = i;
-                    }
-                }
-                break;
-            // ANIO 3
-            case 3:
-                for (int i = 0; i < anioArray.size(); i++) {
-                    if (anioArray.get(i).getID_ANIO() == (idSpinner)) {
-                        index = i;
-                    }
-                }
-                break;
-            // CANCHA 4
-            case 4:
-                for (int i = 0; i < canchaArray.size(); i++) {
-                    if (canchaArray.get(i).getID_CANCHA() == (idSpinner)) {
-                        index = i;
-                    }
-                }
-                break;
-            // LOCAL 5
-            case 5:
-                for (int i = 0; i < equipoArray.size(); i++) {
-                    if (equipoArray.get(i).getID_EQUIPO() == (idSpinner)) {
-                        index = i;
-                    }
-                }
-                break;
-//            // VISITA 6
-//            case 6:
-//                for (int i = 0; i < anioArray.size(); i++) {
-//                    if (anioArray.get(i).getID_ANIO() == (idSpinner)) {
-//                        index = i;
-//                    }
-//                }
-//                break;
-        }
-
-        return index;
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -516,57 +461,57 @@ public class FragmentGenerarFixture extends Fragment {
         if (id == R.id.action_guardar) {
 
 
-            if (fixtureDivisionSpinner.getSelectedItem().toString().equals(getResources().
+            if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerDivision))) {
                 Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
                         Toast.LENGTH_SHORT).show();
-            } else if (fixtureTorneoSpinner.getSelectedItem().toString().equals(getResources().
+            }else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerTorneo))) {
                 Toast.makeText(getActivity(), "Debe agregar un torneo (Liga).",
                         Toast.LENGTH_SHORT).show();
-            } else if (fixtureFechaSpinner.getSelectedItem().toString().equals(getResources().
+            }else if (sancionAmarillaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerFecha))) {
                 Toast.makeText(getActivity(), "Debe agregar una fecha.",
                         Toast.LENGTH_SHORT).show();
-            } else if (fixtureAnioSpinner.getSelectedItem().toString().equals(getResources().
+            }else if (sancionRojaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerAnio))) {
                 Toast.makeText(getActivity(), "Debe agregar un año.",
                         Toast.LENGTH_SHORT).show();
-            } else if (fixtureLocalSpinner.getSelectedItem().toString().equals(getResources().
+            }else if (fixtureLocalSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerEquipo)) || fixtureVisitaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerEquipo))) {
                 Toast.makeText(getActivity(), "Debe agregar un equipo (Liga).",
                         Toast.LENGTH_SHORT).show();
-            } else if (fixtureCanchaSpinner.getSelectedItem().toString().equals(getResources().
+            }else if (fixtureCanchaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerCancha))) {
                 Toast.makeText(getActivity(), "Debe agregar una cancha (Liga).",
                         Toast.LENGTH_SHORT).show();
             } else if (btn_dia.getText()
                     .toString().equals("Día")) {
-                Toast.makeText(getActivity(), "Debe ingresar el día.",
-                        Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Debe ingresar el día.",
+                            Toast.LENGTH_SHORT).show();
             } else if (btn_hora.getText()
                     .toString().equals("Hora")) {
                 Toast.makeText(getActivity(), "Debe ingresar la hora.",
                         Toast.LENGTH_SHORT).show();
-            } else {
+            }else {
                 String usuario = "Administrador";
                 String fechaCreacion = controladorAdeful.getFechaOficial();
                 String fechaActualizacion = fechaCreacion;
 
-                division = (Division) fixtureDivisionSpinner.getSelectedItem();
+                division = (Division) sancionDivisionSpinner.getSelectedItem();
                 equipol = (Equipo) fixtureLocalSpinner.getSelectedItem();
                 equipov = (Equipo) fixtureVisitaSpinner.getSelectedItem();
-                torneo = (Torneo) fixtureTorneoSpinner.getSelectedItem();
+                torneo = (Torneo) sancionJugadorSpinner.getSelectedItem();
                 cancha = (Cancha) fixtureCanchaSpinner.getSelectedItem();
-                fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
-                anio = (Anio) fixtureAnioSpinner.getSelectedItem();
+                fecha = (Fecha) sancionAmarillaSpinner.getSelectedItem();
+                anio = (Anio) sancionRojaSpinner.getSelectedItem();
 
 
                 //FIXTURE NVO
                 if (insertar) {
-                    //    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                    //    Date d = format.parse();
+                //    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                //    Date d = format.parse();
                     fixture = new Fixture(0, equipol.getID_EQUIPO(),
                             equipov.getID_EQUIPO(), division.getID_DIVISION(),
                             torneo.getID_TORNEO(), cancha.getID_CANCHA(),

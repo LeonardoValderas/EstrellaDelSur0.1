@@ -29,7 +29,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.UtilityImage;
+import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.entidad.Cargo;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCargoComision;
@@ -39,7 +39,6 @@ import com.estrelladelsur.estrelladelsur.dialogo.DialogoMenuLista;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
