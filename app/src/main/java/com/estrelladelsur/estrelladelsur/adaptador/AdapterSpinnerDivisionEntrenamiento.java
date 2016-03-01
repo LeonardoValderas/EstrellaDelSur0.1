@@ -8,18 +8,18 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.entidad.Division;
-import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento_Division;
+import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
+import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoDivision;
 
 import java.util.ArrayList;
 
 
-public class AdapterSpinnerDivisionEntrenamiento extends ArrayAdapter<Entrenamiento_Division>
+public class AdapterSpinnerDivisionEntrenamiento extends ArrayAdapter<EntrenamientoDivision>
     {
         private Activity context;
-        ArrayList<Entrenamiento_Division> divisionArray = null;
+        ArrayList<EntrenamientoDivision> divisionArray = null;
 
-        public AdapterSpinnerDivisionEntrenamiento(Activity context, int resource, ArrayList<Entrenamiento_Division> divisionArray)
+        public AdapterSpinnerDivisionEntrenamiento(Activity context, int resource, ArrayList<EntrenamientoDivision> divisionArray)
         {
             super(context, resource, divisionArray);
             this.context = context;
@@ -43,7 +43,7 @@ public class AdapterSpinnerDivisionEntrenamiento extends ArrayAdapter<Entrenamie
                 row = inflater.inflate(R.layout.spinner_item_general, parent, false);
             }
 
-            Entrenamiento_Division division = divisionArray.get(position);
+            EntrenamientoDivision division = divisionArray.get(position);
 
             if(division != null)
             {   // Parse the data from each object and set it.

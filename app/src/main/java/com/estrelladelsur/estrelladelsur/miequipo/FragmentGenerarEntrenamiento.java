@@ -36,7 +36,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCancha;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoListCheck;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
-import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento_Division;
+import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoDivision;
 
 public class FragmentGenerarEntrenamiento extends Fragment {
 
@@ -57,12 +57,12 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     private ArrayList<Cancha> canchaArray;
     private AdapterSpinnerCancha adapterFixtureCancha;
     private RecyclerView recycleViewGeneral;
-    private ArrayList<Entrenamiento_Division> divisionArray;
-    private ArrayList<Entrenamiento_Division> divisionArrayExtra;
+    private ArrayList<EntrenamientoDivision> divisionArray;
+    private ArrayList<EntrenamientoDivision> divisionArrayExtra;
     private AdaptadorRecyclerDivisionEntrenamiento adaptadorRecyclerDivisionEntrenamiento;
     private Cancha lugar;
     private int id_x_division;
-    private Entrenamiento_Division entrenamiento_Division;
+    private EntrenamientoDivision entrenamiento_Division;
     private Entrenamiento entrenamiento;
     private boolean bandera = true;
     private ArrayAdapter<String> adaptadorInicial;
@@ -335,7 +335,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
 
         if (id == R.id.action_guardar) {
 
-            ArrayList<Entrenamiento_Division> listaDivisiones = adaptadorRecyclerDivisionEntrenamiento
+            ArrayList<EntrenamientoDivision> listaDivisiones = adaptadorRecyclerDivisionEntrenamiento
                     .getEntrenamientoList();
 
             if (spinnerLugarEntrenamiento.getSelectedItem().toString().equals(getResources().
@@ -357,7 +357,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                     id_divisin_array = new ArrayList<Integer>();
 
                     for (int i = 0; i < listaDivisiones.size(); i++) {
-                        Entrenamiento_Division entrenamientoDivision = listaDivisiones
+                        EntrenamientoDivision entrenamientoDivision = listaDivisiones
                                 .get(i);
                         if (entrenamientoDivision.isSelected() == true) {
                             bandera = true;
@@ -394,14 +394,18 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                             if (id_entrenamiento > 0) {
                                 for (int i = 0; i < id_divisin_array.size(); i++) {
 
-                                    entrenamiento_Division = new Entrenamiento_Division(
+                                    entrenamiento_Division = new EntrenamientoDivision(
                                             0, id_entrenamiento, id_divisin_array
                                             .get(i), "", true);
                                     controladorAdeful.abrirBaseDeDatos();
                                     if (!controladorAdeful
-                                            .insertEntrenamientoDivisionAdeful(entrenamiento_Division))
+                                            .insertEntrenamientoDivisionAdeful(entrenamiento_Division)) {
                                         break;
-                                    controladorAdeful.cerrarBaseDeDatos();
+                                    }else {
+                                        controladorAdeful.cerrarBaseDeDatos();
+                                        controladorAdeful.abrirBaseDeDatos();
+                                        if(controladorAdeful.insertAsistenciaEntrenamientoAdeful(entrenamiento_Division)){}
+                                    }
                                 }
                                 buttonFechaEntrenamiento.setText("Día");
                                 buttonHoraEntrenamiento.setText("Hora");
@@ -447,7 +451,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                                             break;
                                         } else {
 
-                                            entrenamiento_Division = new Entrenamiento_Division(
+                                            entrenamiento_Division = new EntrenamientoDivision(
                                                     0, idEntrenamientoExtra, id_divisin_array
                                                     .get(i), "", true);
                                             controladorAdeful.abrirBaseDeDatos();

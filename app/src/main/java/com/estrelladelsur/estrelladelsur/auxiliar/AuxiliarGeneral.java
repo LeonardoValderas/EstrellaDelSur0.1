@@ -18,6 +18,9 @@ public class AuxiliarGeneral {
             case "ENERO":
                 mesFormato="01";
                 break;
+            case "FEBRERO":
+                mesFormato="02";
+                break;
         }
 
 

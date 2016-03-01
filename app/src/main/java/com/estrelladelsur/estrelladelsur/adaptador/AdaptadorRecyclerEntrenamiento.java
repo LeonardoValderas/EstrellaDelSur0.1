@@ -11,8 +11,9 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
+import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoDivision;
 import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
-import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento_Division;
 
 import java.util.ArrayList;
 
@@ -22,9 +23,7 @@ public class AdaptadorRecyclerEntrenamiento extends
 
 	private View.OnClickListener listener;
 	private ArrayList<EntrenamientoRecycler> entrenamientoArray;
-	//private ArrayList<Entrenamiento_Division> entrenamientoDivisionArray;
 	private Context context;
-	//private ControladorAdeful controladorAdeful;
 
 	public static class EntrenamientoViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -38,7 +37,7 @@ public class AdaptadorRecyclerEntrenamiento extends
 		private TextView textRecyclerViewResultadoL;
         private String divisiones="";
 		private ControladorAdeful controladorAdeful;
-		private ArrayList<Entrenamiento_Division> entrenamientoDivisionArray;
+		private ArrayList<EntrenamientoDivision> entrenamientoDivisionArray;
 
 		public EntrenamientoViewHolder(View itemView) {
 			super(itemView);

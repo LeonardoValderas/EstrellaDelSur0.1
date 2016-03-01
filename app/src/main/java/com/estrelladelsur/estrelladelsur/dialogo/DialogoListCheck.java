@@ -61,13 +61,7 @@ public class DialogoListCheck {
         // LISTA
 		listViewGeneral = (ListView) layout.findViewById(R.id.listViewGeneral);
 		
-//
-//		ArrayAdapter adapterList = new ArrayAdapter<String>(context,
-//				R.layout.recyclerview_item_check, R.id.editTextPuesto, lista);
-
-//		listViewGeneral.setAdapter(adapterList);
-		
-		builder.setView(layout);
+    	builder.setView(layout);
 		alertDialog = builder.create();
 		alertDialog.show();
 	}

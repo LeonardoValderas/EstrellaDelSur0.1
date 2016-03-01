@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerAsistencia;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivisionEntrenamiento;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFechaEntrenamiento;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
@@ -28,8 +29,10 @@ import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerMes;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
+import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
+import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoAsistencia;
+import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoDivision;
 import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
-import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento_Division;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 
 import java.util.ArrayList;
@@ -50,13 +53,14 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
     private AdapterSpinnerAnio adapterSpinnerAnio;
     private AdapterSpinnerMes adapterSpinnerMes;
     private AdapterSpinnerFechaEntrenamiento adapterSpinnerFechaEntrenamiento;
-    //private ArrayList<EntrenamientoRecycler> arrayEntrenamiento;
+    private ArrayList<EntrenamientoAsistencia> arrayAsistencia;
     private ArrayList<EntrenamientoRecycler> entrenamientoArray;
-    private AdaptadorRecyclerEntrenamiento adaptadorEntrenamiento;
+    private AdaptadorRecyclerAsistencia adaptadorEntrenamiento;
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
-    private ArrayList<Entrenamiento_Division> entrenamientoDivisionArray;
+    private ArrayList<EntrenamientoDivision> entrenamientoDivisionArray;
     private AdapterSpinnerDivisionEntrenamiento adapterSpinnerDivisionEntrenamiento;
+    private AdaptadorRecyclerAsistencia adaptadorRecyclerAsistencia;
 
     public static FragmentAsistenciaEntrenamiento newInstance() {
         FragmentAsistenciaEntrenamiento fragment = new FragmentAsistenciaEntrenamiento();
@@ -82,7 +86,7 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_editar_entrenamiento,
+        View v = inflater.inflate(R.layout.fragment_editar_entrenamiento_asistencia,
                 container, false);
         // RECYCLER
         recycleViewGeneral = (RecyclerView) v
@@ -155,69 +159,6 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
         recycleViewGeneral.addItemDecoration(new DividerItemDecoration(
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recycleViewGeneral.setItemAnimator(new DefaultItemAnimator());
-        recycleViewGeneral.addOnItemTouchListener(new RecyclerTouchListener(
-                getActivity(), recycleViewGeneral, new ClickListener() {
-
-            @Override
-            public void onLongClick(View view, final int position) {
-
-                dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
-                        "Desea eliminar el entrenamiento?", null, null);
-                dialogoAlerta.btnAceptar.setText("Aceptar");
-                dialogoAlerta.btnCancelar.setText("Cancelar");
-
-                dialogoAlerta.btnAceptar
-                        .setOnClickListener(new View.OnClickListener() {
-
-                                                @Override
-                                                public void onClick(View v) {
-                                                    controladorAdeful.abrirBaseDeDatos();
-                                                    if (controladorAdeful.eliminarEntrenamientoAdeful(entrenamientoArray.get(position).getID_ENTRENAMIENTO())) {
-                                                        controladorAdeful.cerrarBaseDeDatos();
-                                                        recyclerViewLoadEntrenamiento("01");
-                                                        Toast.makeText(
-                                                                getActivity(),
-                                                                "Entrenamiento Eliminado Correctamente",
-                                                                Toast.LENGTH_SHORT).show();
-
-                                                        dialogoAlerta.alertDialog.dismiss();
-                                                    } else {
-                                                        controladorAdeful.cerrarBaseDeDatos();
-                                                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                                                Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            }
-                        );
-                dialogoAlerta.btnCancelar
-                        .setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    // TODO Auto-generated method stub
-                                                    dialogoAlerta.alertDialog.dismiss();
-                                                }
-                                            }
-                        );
-            }
-
-            @Override
-            public void onClick(View view, int position) {
-                // TODO Auto-generated method stub
-
-                Intent editarEntrenamiento = new Intent(getActivity(),
-                        TabsEntrenamiento.class);
-                editarEntrenamiento.putExtra("actualizar", true);
-                editarEntrenamiento.putExtra("id_entrenamiento",
-                        entrenamientoArray.get(position).getID_ENTRENAMIENTO());
-                editarEntrenamiento.putExtra("dia", entrenamientoArray.get(position).getDIA());
-                editarEntrenamiento.putExtra("hora", entrenamientoArray.get(position).getHORA());
-                editarEntrenamiento.putExtra("id_cancha", entrenamientoArray.get(position).getID_CANCHA());
-                editarEntrenamiento.putExtra("cancha", entrenamientoArray.get(position).getNOMBRE());
-
-                startActivity(editarEntrenamiento);
-            }
-        }
-        ));
 
         botonFloating.setOnClickListener(new View.OnClickListener() {
                                              public void onClick(View view) {
@@ -225,9 +166,6 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
                                                  fecha = auxiliarGeneral.setFormatoMes(
                                                          entrenamientoMesSpinner.getSelectedItem().toString()) + "-" + entrenamientoAnioSpinner.getSelectedItem().toString();
                                                  if (fecha != null)
-                                                     //     recyclerViewLoadEntrenamiento(fecha);
-
-
                                                      controladorAdeful.abrirBaseDeDatos();
                                                  entrenamientoArray = controladorAdeful.selectListaEntrenamientoAdeful(fecha);
                                                  if (entrenamientoArray != null) {
@@ -245,8 +183,6 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
                                              }
                                          }
         );
-
-
         entrenamientoFechahsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -281,24 +217,22 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long arg3) {
 
-                Toast.makeText(getActivity(),""+entrenamientoDivisionArray.get(position).getID_DIVISION(),Toast.LENGTH_SHORT).show();
+                //   Toast.makeText(getActivity(),""+entrenamientoDivisionArray.get(position).getID_DIVISION(),Toast.LENGTH_SHORT).show();
 
-//                controladorAdeful.abrirBaseDeDatos();
-//                entrenamientoDivisionArray = controladorAdeful.selectListaDivisionEntrenamientoAdefulId(entrenamientoArray.get(position).getID_ENTRENAMIENTO());
-//                if (entrenamientoDivisionArray != null) {
-//                    controladorAdeful.cerrarBaseDeDatos();
-//                    // MES ADAPTER
-//                    adapterSpinnerDivisionEntrenamiento = new AdapterSpinnerDivisionEntrenamiento(getActivity(),
-//                            R.layout.simple_spinner_dropdown_item, entrenamientoDivisionArray);
-//                    entrenamientoDivisionSpinner.setAdapter(adapterSpinnerDivisionEntrenamiento);
-//
-//
-//                } else {
-//                    controladorAdeful.cerrarBaseDeDatos();
-//                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-//                            Toast.LENGTH_SHORT).show();
-//                }
+                controladorAdeful.abrirBaseDeDatos();
+                arrayAsistencia = controladorAdeful.selectListaJugadoresEntrenamientoAdeful(entrenamientoDivisionArray.get(position).getID_DIVISION(), entrenamientoArray.get(position).getID_ENTRENAMIENTO());
+                if (arrayAsistencia != null) {
+                    controladorAdeful.cerrarBaseDeDatos();
+                    recyclerViewLoadEntrenamiento(arrayAsistencia);
+
+
+                } else {
+                    controladorAdeful.cerrarBaseDeDatos();
+                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
@@ -307,20 +241,10 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
     }
 
 
-    public void recyclerViewLoadEntrenamiento(String fecha) {
+    public void recyclerViewLoadEntrenamiento(ArrayList<EntrenamientoAsistencia> arrayAsistencia) {
 
-        controladorAdeful.abrirBaseDeDatos();
-        entrenamientoArray = controladorAdeful.selectListaEntrenamientoAdeful(fecha);
-        if (entrenamientoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-
-            adaptadorEntrenamiento = new AdaptadorRecyclerEntrenamiento(entrenamientoArray, getActivity());
-            recycleViewGeneral.setAdapter(adaptadorEntrenamiento);
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
-        }
+        adaptadorEntrenamiento = new AdaptadorRecyclerAsistencia(arrayAsistencia);
+        recycleViewGeneral.setAdapter(adaptadorEntrenamiento);
     }
 
     public void onCreate(Bundle savedInstanceState) {
