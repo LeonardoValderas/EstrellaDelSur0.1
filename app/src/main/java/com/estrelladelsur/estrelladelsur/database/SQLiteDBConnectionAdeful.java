@@ -184,6 +184,19 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " FOREIGN KEY(ID_ENTRENAMIENTO) REFERENCES ENTRENAMIENTO_ADEFUL(ID_ENTRENAMIENTO),"
             + " FOREIGN KEY(ID_JUGADOR) REFERENCES JUGADOR_ADEFUL(ID_JUGADOR));";
 
+    //SANCIONES
+    String TABLA_SANCION_ADEFUL = "CREATE TABLE IF NOT EXISTS SANCION_ADEFUL(ID_SANCION INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " ID_JUGADOR INTEGER,"
+            + " AMARILLA INTEGER,"
+            + " ROJA INTEGER,"
+            + " FECHA_SUSPENSION INTEGER,"
+            + " OBSERVACIONES VARCHAR(100),"
+            + " USUARIO_CREADOR VARCHAR(100),"
+            + " FECHA_CREACION VARCHAR(100),"
+            + " USUARIO_ACTUALIZACION VARCHAR(100),"
+            + " FECHA_ACTUALIZACION VARCHAR(100),"
+            + " FOREIGN KEY(ID_JUGADOR) REFERENCES JUGADOR_ADEFUL(ID_JUGADOR));";
+
     public SQLiteDBConnectionAdeful(Context context, String name,
                                     CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -217,6 +230,8 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL(TABLA_ENTRENAMIENTO_ADEFUL);
         db.execSQL(TABLA_ENTRENAMIENTO_DIVISION_ADEFUL);
         db.execSQL(TABLA_ENTRENAMIENTO_ASISTENCIA_ADEFUL);
+        db.execSQL(TABLA_SANCION_ADEFUL);
+
 
     }
 
@@ -247,6 +262,7 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS ENTRENAMIENTO_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS ENTRENAMIENTO_DIVISION_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS ENTRENAMIENTO_ASISTENCIA_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS SANCION_ADEFUL");
 
         //MODULO GENERAL
         db.execSQL(TABLA_TABLA_ADEFUL);
@@ -272,5 +288,6 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL(TABLA_ENTRENAMIENTO_ADEFUL);
         db.execSQL(TABLA_ENTRENAMIENTO_DIVISION_ADEFUL);
         db.execSQL(TABLA_ENTRENAMIENTO_ASISTENCIA_ADEFUL);
+        db.execSQL(TABLA_SANCION_ADEFUL);
     }
 }

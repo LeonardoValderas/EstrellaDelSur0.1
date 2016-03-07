@@ -11,9 +11,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -25,6 +28,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCancha;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerEquipo;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFecha;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerJugador;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
@@ -33,6 +37,8 @@ import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
+import com.estrelladelsur.estrelladelsur.entidad.Jugador;
+import com.estrelladelsur.estrelladelsur.entidad.JugadorRecycler;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
@@ -50,19 +56,20 @@ public class FragmentGenerarSancion extends Fragment {
     private Spinner fixtureCanchaSpinner;
     private Spinner fixtureLocalSpinner;
     private Spinner fixtureVisitaSpinner;
+    private Spinner cantidadFechasSpinner;
     private TextView sancionTextAmarialla;
     private TextView sancionTextRoja;
-    private AdapterSpinnerTorneo adapterFixtureTorneo;
+    private EditText observacionesSancion;
+    private LinearLayout linearSancion;
+    private AdapterSpinnerJugador adapterSpinnerJugador;
     private AdapterSpinnerDivision adapterFixtureDivision;
     private AdapterSpinnerFecha adapterFixtureFecha;
     private AdapterSpinnerAnio adapterFixtureAnio;
-    private AdapterSpinnerCancha adapterFixtureCancha;
-    private AdapterSpinnerEquipo adapterFixtureEquipo;
     private ArrayList<Division> divisionArray;
     private ArrayList<Torneo> torneoArray;
     private ArrayList<Fecha> fechaArray;
     private ArrayList<Anio> anioArray;
-    private ArrayList<Cancha> canchaArray;
+    private ArrayList<JugadorRecycler> jugadorArray;
     private ArrayList<Equipo> equipoArray;
     private Fecha fecha;
     private Anio anio;
@@ -87,6 +94,8 @@ public class FragmentGenerarSancion extends Fragment {
     private boolean insertar = true;
     private int idFixtureExtra;
     private ArrayAdapter<String> adaptadorInicial;
+    private ArrayAdapter<String> adaptadorTarjeta;
+    private int id_division;
 
     public static FragmentGenerarSancion newInstance() {
         FragmentGenerarSancion fragment = new FragmentGenerarSancion();
@@ -149,7 +158,15 @@ public class FragmentGenerarSancion extends Fragment {
         // HORA
         btn_hora = (Button) v.findViewById(R.id.btn_hora);
         btn_hora.setVisibility(View.GONE);
+        //OBSERVACION
+        observacionesSancion = (EditText) v.findViewById(R.id.observacionesSancion);
+        observacionesSancion.setVisibility(View.VISIBLE);
 
+        linearSancion = (LinearLayout) v.findViewById(R.id.linearSancion);
+        linearSancion.setVisibility(View.VISIBLE);
+
+        cantidadFechasSpinner = (Spinner) v
+                .findViewById(R.id.cantidadFechasSpinner);
         return v;
     }
 
@@ -212,130 +229,39 @@ public class FragmentGenerarSancion extends Fragment {
             Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                     Toast.LENGTH_SHORT).show();
         }
-        // TORNEO
-        controladorAdeful.abrirBaseDeDatos();
-        torneoArray = controladorAdeful.selectListaTorneoAdeful();
-        if (torneoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (torneoArray.size() != 0) {
-                // TORNEO SPINNER
-                adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, torneoArray);
-                sancionJugadorSpinner.setAdapter(adapterFixtureTorneo);
-            } else {
-                //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
-                sancionJugadorSpinner.setAdapter(adaptadorInicial);
-            }
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
-        }
-        // FECHA
-        controladorAdeful.abrirBaseDeDatos();
-        fechaArray = controladorAdeful.selectListaFecha();
-        if (fechaArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (fechaArray.size() != 0) {
-                // FECHA SPINNER
-                adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, fechaArray);
-                sancionAmarillaSpinner.setAdapter(adapterFixtureFecha);
-            } else {
-                //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerFecha));
-                sancionAmarillaSpinner.setAdapter(adaptadorInicial);
-            }
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
-        }
-        // ANIO
-        controladorAdeful.abrirBaseDeDatos();
-        anioArray = controladorAdeful.selectListaAnio();
-        if (anioArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (anioArray.size() != 0) {
-                // ANIO SPINNER
-                adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, anioArray);
-                sancionRojaSpinner.setAdapter(adapterFixtureAnio);
-            } else {
-                //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerAnio));
-                sancionRojaSpinner.setAdapter(adaptadorInicial);
-            }
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
-        }
-        // CANCHA
-        controladorAdeful.abrirBaseDeDatos();
-        canchaArray = controladorAdeful.selectListaCanchaAdeful();
-        if (canchaArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (canchaArray.size() != 0) {
-                // CANCHA SPINNER
-                adapterFixtureCancha = new AdapterSpinnerCancha(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, canchaArray);
-                fixtureCanchaSpinner.setAdapter(adapterFixtureCancha);
-            } else {
-                //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerCancha));
-                fixtureCanchaSpinner.setAdapter(adaptadorInicial);
-            }
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
-        }
-        // EQUIPO
-        controladorAdeful.abrirBaseDeDatos();
-        equipoArray = controladorAdeful.selectListaEquipoAdeful();
-        if (equipoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (equipoArray.size() != 0) {
-                // LOCAL SPINNER
-                adapterFixtureEquipo = new AdapterSpinnerEquipo(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, equipoArray);
-                fixtureLocalSpinner.setAdapter(adapterFixtureEquipo);
 
-                // VISITA SPINNER
-                adapterFixtureEquipo = new AdapterSpinnerEquipo(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, equipoArray);
-                fixtureVisitaSpinner.setAdapter(adapterFixtureEquipo);
-            } else {
-                //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerEquipo));
-                fixtureLocalSpinner.setAdapter(adaptadorInicial);
-                fixtureVisitaSpinner.setAdapter(adaptadorInicial);
-            }
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
-        }
-        // DIA
-        btn_dia.setOnClickListener(new View.OnClickListener() {
+        adaptadorTarjeta = new ArrayAdapter<String>(getActivity(),
+                R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.tarjetaArray));
+        sancionAmarillaSpinner.setAdapter(adaptadorTarjeta);
+
+        sancionRojaSpinner.setAdapter(adaptadorTarjeta);
+        cantidadFechasSpinner.setAdapter(adaptadorTarjeta);
+        sancionDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
             @Override
-            public void onClick(View arg0) {
-                setDate();
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int position, long arg3) {
+
+                id_division = divisionArray.get(position).getID_DIVISION();
+                controladorAdeful.abrirBaseDeDatos();
+                jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
+                if (jugadorArray != null) {
+                    controladorAdeful.cerrarBaseDeDatos();
+
+                    adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
+                            R.layout.simple_spinner_dropdown_item, jugadorArray);
+                    sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
+
+
+                } else {
+                    controladorAdeful.cerrarBaseDeDatos();
+                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
-        });
-        // HORA
-        btn_hora.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-                setTime();
+            public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
 
@@ -344,11 +270,11 @@ public class FragmentGenerarSancion extends Fragment {
         //Metodo Extra
         if (actualizar) {
 
-            idFixtureExtra = getActivity().getIntent().getIntExtra("id_fixture", 0);
+            idFixtureExtra = getActivity().getIntent().getIntExtra("id_sancion", 0);
 
             //DIVISION
             sancionDivisionSpinner.setSelection(getActivity().getIntent()
-                    .getIntExtra("divisionSpinner", 0) - 1);
+                    .getIntExtra("jugadorSpinner", 0) - 1);
             // TORNEO
             sancionJugadorSpinner.setSelection(getActivity().getIntent()
                     .getIntExtra("torneoSpinner", 0) - 1);
@@ -465,36 +391,36 @@ public class FragmentGenerarSancion extends Fragment {
                     getString(R.string.ceroSpinnerDivision))) {
                 Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
                         Toast.LENGTH_SHORT).show();
-            }else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
+            } else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerTorneo))) {
                 Toast.makeText(getActivity(), "Debe agregar un torneo (Liga).",
                         Toast.LENGTH_SHORT).show();
-            }else if (sancionAmarillaSpinner.getSelectedItem().toString().equals(getResources().
+            } else if (sancionAmarillaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerFecha))) {
                 Toast.makeText(getActivity(), "Debe agregar una fecha.",
                         Toast.LENGTH_SHORT).show();
-            }else if (sancionRojaSpinner.getSelectedItem().toString().equals(getResources().
+            } else if (sancionRojaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerAnio))) {
                 Toast.makeText(getActivity(), "Debe agregar un año.",
                         Toast.LENGTH_SHORT).show();
-            }else if (fixtureLocalSpinner.getSelectedItem().toString().equals(getResources().
+            } else if (fixtureLocalSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerEquipo)) || fixtureVisitaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerEquipo))) {
                 Toast.makeText(getActivity(), "Debe agregar un equipo (Liga).",
                         Toast.LENGTH_SHORT).show();
-            }else if (fixtureCanchaSpinner.getSelectedItem().toString().equals(getResources().
+            } else if (fixtureCanchaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerCancha))) {
                 Toast.makeText(getActivity(), "Debe agregar una cancha (Liga).",
                         Toast.LENGTH_SHORT).show();
             } else if (btn_dia.getText()
                     .toString().equals("Día")) {
-                    Toast.makeText(getActivity(), "Debe ingresar el día.",
-                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Debe ingresar el día.",
+                        Toast.LENGTH_SHORT).show();
             } else if (btn_hora.getText()
                     .toString().equals("Hora")) {
                 Toast.makeText(getActivity(), "Debe ingresar la hora.",
                         Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
                 String usuario = "Administrador";
                 String fechaCreacion = controladorAdeful.getFechaOficial();
                 String fechaActualizacion = fechaCreacion;
@@ -510,8 +436,8 @@ public class FragmentGenerarSancion extends Fragment {
 
                 //FIXTURE NVO
                 if (insertar) {
-                //    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                //    Date d = format.parse();
+                    //    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                    //    Date d = format.parse();
                     fixture = new Fixture(0, equipol.getID_EQUIPO(),
                             equipov.getID_EQUIPO(), division.getID_DIVISION(),
                             torneo.getID_TORNEO(), cancha.getID_CANCHA(),

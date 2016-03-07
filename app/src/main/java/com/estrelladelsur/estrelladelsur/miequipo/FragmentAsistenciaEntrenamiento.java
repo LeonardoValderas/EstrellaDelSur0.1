@@ -120,7 +120,7 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
         // DIVISION
         entrenamientoDivisionSpinner = (Spinner) v
                 .findViewById(R.id.entrenamientoDivisionSpinner);
-        entrenamientoDivisionSpinner.setVisibility(View.VISIBLE);
+     //   entrenamientoDivisionSpinner.setVisibility(View.VISIBLE);
 
 
         //BOTON FLOATING

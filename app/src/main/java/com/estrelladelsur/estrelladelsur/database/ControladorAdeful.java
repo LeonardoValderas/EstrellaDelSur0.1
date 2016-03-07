@@ -33,6 +33,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Posicion;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
 import com.estrelladelsur.estrelladelsur.entidad.ResultadoRecycler;
+import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
 public class ControladorAdeful {
@@ -2247,6 +2248,7 @@ public class ControladorAdeful {
         descripcion = null;
         return arrayDivision;
     }
+
     //ELIMINAR ENTRENAMIENTO
     public boolean eliminarEntrenamientoAdeful(int id) {
 
@@ -2268,6 +2270,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     //ELIMINAR DIVISION_ENTRENAMIENTO
     public boolean eliminarDivisionEntrenamientoAdeful(int id) {
 
@@ -2299,14 +2302,14 @@ public class ControladorAdeful {
         long valor = 0;
         try {
 
-          //  for (int i = 0; i < entrenamientoDivision..size();i ++) {
+            //  for (int i = 0; i < entrenamientoDivision..size();i ++) {
 
-                cv.put("ID_ENTRENAMIENTO", entrenamientoAsistencia.getID_ENTRENAMIENTO());
-                cv.put("ID_JUGADOR", entrenamientoAsistencia.getID_JUGADOR());
+            cv.put("ID_ENTRENAMIENTO", entrenamientoAsistencia.getID_ENTRENAMIENTO());
+            cv.put("ID_JUGADOR", entrenamientoAsistencia.getID_JUGADOR());
 
-                valor = database.insert("ENTRENAMIENTO_ASISTENCIA_ADEFUL", null,
-                        cv);
-        //    }
+            valor = database.insert("ENTRENAMIENTO_ASISTENCIA_ADEFUL", null,
+                    cv);
+            //    }
 
 
             if (valor > 0) {
@@ -2318,11 +2321,12 @@ public class ControladorAdeful {
             return false;
         }
     }
+
     //ELIMINAR ASISTENCIA ENTRENAMIENTO
-    public boolean eliminarAsistenciaEntrenamientoAdeful(int id_asistencia,int id_jugador) {
+    public boolean eliminarAsistenciaEntrenamientoAdeful(int id_asistencia, int id_jugador) {
 
         boolean res = false;
-        String sql = "DELETE FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO ="+id_asistencia+" AND ID_JUGADOR="+id_jugador;
+        String sql = "DELETE FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO =" + id_asistencia + " AND ID_JUGADOR=" + id_jugador;
 
         if (database != null && database.isOpen()) {
             try {
@@ -2339,14 +2343,15 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     //lISTA JUGADORES CITADOS POR ENTRENAMIENTO
     public ArrayList<EntrenamientoAsistencia> selectListaJugadoresEntrenamientoAdeful(int id_entrenamiento) {
 
-        String sql = "SELECT * FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO="+id_entrenamiento;
+        String sql = "SELECT * FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO=" + id_entrenamiento;
         ArrayList<EntrenamientoAsistencia> arrayAsistencia = new ArrayList<EntrenamientoAsistencia>();
 
-        int id, id_jugador,id_entre ;
-         Cursor cursor = null;
+        int id, id_jugador, id_entre;
+        Cursor cursor = null;
 
         if (database != null && database.isOpen()) {
             try {
@@ -2358,12 +2363,12 @@ public class ControladorAdeful {
                         EntrenamientoAsistencia entrenamientoAsistencia = null;
                         id = cursor.getInt(cursor
                                 .getColumnIndex("ID_ENTRENAMIENTO_ASISTENCIA"));
-                        id_entre= cursor.getInt(cursor
+                        id_entre = cursor.getInt(cursor
                                 .getColumnIndex("ID_ENTRENAMIENTO"));
                         id_jugador = cursor.getInt(cursor
                                 .getColumnIndex("ID_JUGADOR"));
 
-                        entrenamientoAsistencia = new EntrenamientoAsistencia(id,id_entre,id_jugador,"");
+                        entrenamientoAsistencia = new EntrenamientoAsistencia(id, id_entre, id_jugador, "");
 
                         arrayAsistencia.add(entrenamientoAsistencia);
                     }
@@ -2381,12 +2386,12 @@ public class ControladorAdeful {
     }
 
     //lISTA JUGADORES CITADOS POR ID DIVISION
-    public ArrayList<EntrenamientoAsistencia> selectListaJugadoresEntrenamientoAdeful(ArrayList<Integer> id_division_array,int id_entrenamiento) {
+    public ArrayList<EntrenamientoAsistencia> selectListaJugadoresEntrenamientoAdeful(ArrayList<Integer> id_division_array, int id_entrenamiento) {
 
-        String sql = "SELECT * FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO="+id_entrenamiento;
+        String sql = "SELECT * FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO=" + id_entrenamiento;
         ArrayList<EntrenamientoAsistencia> arrayAsistencia = new ArrayList<EntrenamientoAsistencia>();
 
-        int id, id_jugador,id_entre ;
+        int id, id_jugador, id_entre;
         Cursor cursor = null;
 
         if (database != null && database.isOpen()) {
@@ -2399,14 +2404,14 @@ public class ControladorAdeful {
                         EntrenamientoAsistencia entrenamientoAsistencia = null;
                         id = cursor.getInt(cursor
                                 .getColumnIndex("ID_ENTRENAMIENTO_ASISTENCIA"));
-                        id_entre= cursor.getInt(cursor
+                        id_entre = cursor.getInt(cursor
                                 .getColumnIndex("ID_ENTRENAMIENTO"));
                         id_jugador = cursor.getInt(cursor
                                 .getColumnIndex("ID_JUGADOR"));
 
 
                         entrenamientoAsistencia = new EntrenamientoAsistencia(id,
-                                id_entre,id_jugador, "");
+                                id_entre, id_jugador, "");
 
                         arrayAsistencia.add(entrenamientoAsistencia);
                     }
@@ -2420,18 +2425,18 @@ public class ControladorAdeful {
 
 
         String sqlId = null;
-        for (int ids=0; ids < id_division_array.size();ids++ ) {
-            if(id_division_array.size() !=1){
-                sqlId += sqlId+"AND ID_DIVISION="+id_division_array.get(ids);
-            }else{
-                sqlId =""+id_division_array.get(ids);
+        for (int ids = 0; ids < id_division_array.size(); ids++) {
+            if (id_division_array.size() != 1) {
+                sqlId += sqlId + "AND ID_DIVISION=" + id_division_array.get(ids);
+            } else {
+                sqlId = "" + id_division_array.get(ids);
             }
         }
 
-        String sqlJ = "SELECT * FROM JUGADOR_ADEFUL WHERE ID_DIVISION="+sqlId;
+        String sqlJ = "SELECT * FROM JUGADOR_ADEFUL WHERE ID_DIVISION=" + sqlId;
         ArrayList<EntrenamientoAsistencia> arrayAsistenciaJugador = new ArrayList<EntrenamientoAsistencia>();
 
-        int id_jug,id_divi;
+        int id_jug, id_divi;
         String nombre = null;
         Cursor cursorJ = null;
 
@@ -2451,7 +2456,7 @@ public class ControladorAdeful {
                                 .getColumnIndex("ID_DIVISION"));
 
                         entrenamientoAsistenciaJugador = new EntrenamientoAsistencia(0,
-                                0, id_divi, "",id_jug,nombre, false);
+                                0, id_divi, "", id_jug, nombre, false);
 
                         arrayAsistenciaJugador.add(entrenamientoAsistenciaJugador);
                     }
@@ -2464,25 +2469,20 @@ public class ControladorAdeful {
         }
 
 
-        if(arrayAsistencia!=null){
-            if(arrayAsistencia.size() > 0){
+        if (arrayAsistencia != null) {
+            if (arrayAsistencia.size() > 0) {
 
                 for (int i = 0; i < arrayAsistencia.size(); i++) {
-                    for (int j = 0; j <arrayAsistenciaJugador.size() ; j++) {
+                    for (int j = 0; j < arrayAsistenciaJugador.size(); j++) {
 
-                        if(arrayAsistencia.get(i).getID_JUGADOR()==arrayAsistenciaJugador.get(j).getID_JUGADOR()){
+                        if (arrayAsistencia.get(i).getID_JUGADOR() == arrayAsistenciaJugador.get(j).getID_JUGADOR()) {
 
                             arrayAsistenciaJugador.get(j).setSelected(true);
                             break;
                         }
                     }
-
-
                 }
-
-
             }
-
         }
 
         sql = null;
@@ -2493,58 +2493,9 @@ public class ControladorAdeful {
     }
 
     //lISTA JUGADORES CITADOS
-//    public ArrayList<EntrenamientoDivision> selectListaJugadoresEntrenamientoAdeful(ArrayList<Integer> id_division_array) {
-//
-//        String sqlId = null;
-//        for (int id=0; id < id_division_array.size();id++ ) {
-//            if(id !=1){
-//                sqlId += sqlId+"AND ID_JUGADOR="+id_division_array.get(id);
-//            }
-//        }
-//
-//        String sql = "SELECT * FROM JUGADOR WHERE ID_JUGADOR="+sqlId;
-//
-//        ArrayList<EntrenamientoDivision> arrayDivision = new ArrayList<EntrenamientoDivision>();
-//        int id, id_division;
-//        String descripcion = null;
-//        Cursor cursor = null;
-//
-//        if (database != null && database.isOpen()) {
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//
-//                    while (cursor.moveToNext()) {
-//
-//                        EntrenamientoDivision entrenamiento_division = null;
-//                        id = 0;
-//                        id_division = cursor.getInt(cursor
-//                                .getColumnIndex("ID_DIVISION"));
-//                        descripcion = cursor.getString(cursor
-//                                .getColumnIndex("DESCRIPCION"));
-//
-//                        entrenamiento_division = new EntrenamientoDivision(id,
-//                                id, id_division, descripcion, false);
-//
-//                        arrayDivision.add(entrenamiento_division);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayDivision = null;
-//            }
-//        } else {
-//            arrayDivision = null;
-//        }
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        descripcion = null;
-//        return arrayDivision;
-//    }
-    //lISTA JUGADORES CITADOS
-    public ArrayList<Integer>  selectListaIdDivisionEntrenamientoAdeful(int id_entrenamiento) {
+    public ArrayList<Integer> selectListaIdDivisionEntrenamientoAdeful(int id_entrenamiento) {
 
-        String sql = "SELECT ID_DIVISION FROM ENTRENAMIENTO_DIVISION_ADEFUL WHERE ID_ENTRENAMIENTO="+id_entrenamiento;
+        String sql = "SELECT ID_DIVISION FROM ENTRENAMIENTO_DIVISION_ADEFUL WHERE ID_ENTRENAMIENTO=" + id_entrenamiento;
         ArrayList<Integer> id_division_array = new ArrayList<>();
         int id_division;
         Cursor cursor = null;
@@ -2573,4 +2524,56 @@ public class ControladorAdeful {
         database = null;
         return id_division_array;
     }
+
+
+    // INSERTAR JUGADOR
+    public boolean insertSancionAdeful(Sancion sancion) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        try {
+            cv.put("ID_JUGADOR", sancion.getID_JUGADOR());
+            cv.put("AMARILLA", sancion.getAMARILLA());
+            cv.put("ROJA", sancion.getROJA());
+            cv.put("FECHA_SUSPENSION", sancion.getFECHA_SUSPENSION());
+            cv.put("OBSERVACIONES", sancion.getOBSERVACIONES());
+            cv.put("USUARIO_CREADOR", sancion.getUSUARIO_CREADOR());
+            cv.put("FECHA_CREACION", sancion.getFECHA_CREACION());
+            cv.put("USUARIO_ACTUALIZACION", sancion.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", sancion.getFECHA_ACTUALIZACION());
+
+            long valor = database.insert("SANCION_ADEFUL", null, cv);
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            return false;
+        }
+    }
+
+    // INSERTAR JUGADOR
+    public boolean actualizarSancionAdeful(Sancion sancion) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        try {
+            cv.put("ID_JUGADOR", sancion.getID_JUGADOR());
+            cv.put("AMARILLA", sancion.getAMARILLA());
+            cv.put("ROJA", sancion.getROJA());
+            cv.put("FECHA_SUSPENSION", sancion.getFECHA_SUSPENSION());
+            cv.put("OBSERVACIONES", sancion.getOBSERVACIONES());
+            cv.put("USUARIO_ACTUALIZACION", sancion.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", sancion.getFECHA_ACTUALIZACION());
+
+            long valor = database.update("SANCION_ADEFUL", cv, "ID_SANCION="+ sancion.getID_SANCION(), null);
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            return false;
+        }
+    }
+
 }

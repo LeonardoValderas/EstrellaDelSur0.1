@@ -34,6 +34,9 @@ public class JugadorRecycler {
 	public void setNOMBRE_JUGADOR(String nOMBRE_JUGADOR) {
 		NOMBRE_JUGADOR = nOMBRE_JUGADOR;
 	}
+	public String toString() {
+		return NOMBRE_JUGADOR;
+	}
 	public String getNOMBRE_DIVISION() {
 		return NOMBRE_DIVISION;
 	}
