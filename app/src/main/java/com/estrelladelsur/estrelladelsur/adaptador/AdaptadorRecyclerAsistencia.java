@@ -19,7 +19,7 @@ public class AdaptadorRecyclerAsistencia extends
 
 	private View.OnClickListener listener;
 	private ArrayList<EntrenamientoAsistencia> asistenciaArray;
-	private ArrayList<EntrenamientoAsistencia> noAsistenciaArray;
+	private ArrayList<EntrenamientoAsistencia> asistenciaTrueArray = new ArrayList<EntrenamientoAsistencia>();
 	public static class AsistenciaViewHolder extends RecyclerView.ViewHolder {
 		private TextView editTextDivision;
 		private CheckBox checkBoxEntrenamiento;
@@ -112,9 +112,20 @@ public class AdaptadorRecyclerAsistencia extends
 	public ArrayList<EntrenamientoAsistencia> getJugadoresAsistenciaList() {
 		return asistenciaArray;
 	}
-	//public ArrayList<EntrenamientoAsistencia> getJugadoresNoAsistenciaList() {
-//		return noAsistenciaArray;
-//	}
+	public ArrayList<EntrenamientoAsistencia> getJugadoresTrueAsistenciaList() {
+
+		for (int i = 0; i < asistenciaArray.size(); i++) {
+
+			if(asistenciaArray.get(i).isSelected()==true){
+//				EntrenamientoAsistencia e = new EntrenamientoAsistencia(asistenciaArray.get(i).getID_ENTRENAMIENTO_ASISTENCIA(),
+//						asistenciaArray.get(i).getID_ENTRENAMIENTO(),0,"",asistenciaArray.get(i).getID_JUGADOR(),"",true);
+//				asistenciaTrueArray.add(e);
+				asistenciaTrueArray.add(asistenciaArray.get(i));
+			}
+		}
+
+		return asistenciaTrueArray;
+	}
 	public void setOnClickListener(View.OnClickListener listener) {
 		this.listener = listener;
 	}

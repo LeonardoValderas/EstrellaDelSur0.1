@@ -212,10 +212,9 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
 
 
                     controladorAdeful.abrirBaseDeDatos();
-                    arrayAsistencia = controladorAdeful.selectListaJugadoresEntrenamientoAdeful(id_divisiones, entrenamientoArray.get(position).getID_ENTRENAMIENTO());
+                    arrayAsistencia = controladorAdeful.selectListaJugadoresEntrenamientoAdeful(id_divisiones, id_entrenamiento);
                     if (arrayAsistencia != null) {
                         controladorAdeful.cerrarBaseDeDatos();
-
 
                         recyclerViewLoadEntrenamiento(arrayAsistencia);
 
@@ -428,24 +427,28 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
 
                 Boolean insert_ok = true;
 
-                id_jugadores_asistencia = new ArrayList<Integer>();
-                //obtenemos los id de jugadores checked anterior
-                for (int i = 0; i < arrayAsistencia.size(); i++) {
-                    EntrenamientoAsistencia entrenamientoAsistencia = arrayAsistencia
-                            .get(i);
-                    if (entrenamientoAsistencia.isSelected() == true) {
-                        id_jugadores_asistencia.add(entrenamientoAsistencia
-                                .getID_JUGADOR());
-                    }
-                }
+                controladorAdeful.abrirBaseDeDatos();
+                arrayAsistenciaAnterior = controladorAdeful.selectListaJugadoresEntrenamientoAdeful(id_entrenamiento);
+                controladorAdeful.cerrarBaseDeDatos();
+
+//                id_jugadores_asistencia = new ArrayList<Integer>();
+//                //obtenemos los id de jugadores checked anterior
+//                for (int i = 0; i < arrayAsistencia.size(); i++) {
+//                    EntrenamientoAsistencia entrenamientoAsistencia = arrayAsistenciaAnterior
+//                            .get(i);
+//                    if (entrenamientoAsistencia.isSelected() == true) {
+//                        id_jugadores_asistencia.add(entrenamientoAsistencia
+//                                .getID_JUGADOR());
+//                    }
+//                }
                 //obtenrmos los id de los judores checked ahora
-                listaJugadoresAsistencia = adaptadorEntrenamiento.getJugadoresAsistenciaList();
-                if (arrayAsistencia.size() > 0) {
+                listaJugadoresAsistencia = adaptadorEntrenamiento.getJugadoresTrueAsistenciaList();
+                if (arrayAsistenciaAnterior.size() > 0) {
                 //compramos la lista nueva y la anterior
                     //si hay una checked nuevo se inserta en la base
                     for (int i = 0; i < listaJugadoresAsistencia.size(); i++) {
-                        for (int j = 0; j < id_jugadores_asistencia.size(); j++) {
-                            if (listaJugadoresAsistencia.get(i).getID_JUGADOR() == id_jugadores_asistencia.get(j)) {
+                        for (int j = 0; j < arrayAsistenciaAnterior.size(); j++) {
+                            if (listaJugadoresAsistencia.get(i).getID_JUGADOR() == arrayAsistenciaAnterior.get(j).getID_JUGADOR()) {
                                 break;
                             } else {
                                 entrenamientoAsistencia = new EntrenamientoAsistencia(id_entrenamiento,
@@ -465,29 +468,64 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
                     }
                     //comparamos la lista vieja con la nueva
                     //si hay una checked viejo la eliminamos
-                    for (int i = 0; i < id_jugadores_asistencia.size(); i++) {
-                        for (int j = 0; j < listaJugadoresAsistencia.size(); j++) {
-                            if (id_jugadores_asistencia.get(i) == listaJugadoresAsistencia.get(j).getID_JUGADOR()) {
-                                break;
-                            } else {
-                                controladorAdeful.abrirBaseDeDatos();
-                                if (controladorAdeful.eliminarAsistenciaEntrenamientoAdeful(id_entrenamiento, id_jugadores_asistencia.get(i))) {
-                                    controladorAdeful.cerrarBaseDeDatos();
+                    if (listaJugadoresAsistencia.size() > 0) {
+                        for (int i = 0; i < arrayAsistenciaAnterior.size(); i++) {
+                            for (int j = 0; j < listaJugadoresAsistencia.size(); j++) {
+                                if (arrayAsistenciaAnterior.get(i).getID_JUGADOR() == listaJugadoresAsistencia.get(j).getID_JUGADOR()) {
+                                    break;
                                 } else {
-                                    controladorAdeful.cerrarBaseDeDatos();
-                                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                            Toast.LENGTH_SHORT).show();
-                                    insert_ok=false;
+                                    controladorAdeful.abrirBaseDeDatos();
+                                    if (controladorAdeful.eliminarAsistenciaEntrenamientoAdeful(id_entrenamiento, arrayAsistenciaAnterior.get(i).getID_JUGADOR())) {
+                                        controladorAdeful.cerrarBaseDeDatos();
+                                    } else {
+                                        controladorAdeful.cerrarBaseDeDatos();
+                                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                                                Toast.LENGTH_SHORT).show();
+                                        insert_ok = false;
+                                    }
                                 }
                             }
                         }
+                    }else{
+                      //  for (int i = 0; i < arrayAsistenciaAnterior.size(); i++) {
+                            for (int j = 0; j < arrayAsistenciaAnterior.size(); j++) {
+                                    controladorAdeful.abrirBaseDeDatos();
+                                    if (controladorAdeful.eliminarAsistenciaEntrenamientoAdeful(id_entrenamiento, arrayAsistenciaAnterior.get(j).getID_JUGADOR())) {
+                                        controladorAdeful.cerrarBaseDeDatos();
+                                    } else {
+                                        controladorAdeful.cerrarBaseDeDatos();
+                                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                                                Toast.LENGTH_SHORT).show();
+                                        insert_ok = false;
+                                    }
+                                }
+                        //    }
                     }
-                    if(insert_ok){
-                        Toast.makeText(getActivity(), "Asistencia cargada correctamente",
-                                           Toast.LENGTH_SHORT).show();
+
+               }else {
+                //no hay lista anterior
+                    for (int i = 0; i < listaJugadoresAsistencia.size(); i++) {
+                        if (listaJugadoresAsistencia.get(i).isSelected() == true) {
+                            entrenamientoAsistencia = new EntrenamientoAsistencia(id_entrenamiento,
+                                    listaJugadoresAsistencia.get(i).getID_DIVISION(),
+                                    listaJugadoresAsistencia.get(i).getID_JUGADOR());
+                            controladorAdeful.abrirBaseDeDatos();
+                            if (controladorAdeful.insertAsistenciaEntrenamientoAdeful(entrenamientoAsistencia)) {
+                                controladorAdeful.cerrarBaseDeDatos();
+                            } else {
+                                controladorAdeful.cerrarBaseDeDatos();
+                                Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                                        Toast.LENGTH_SHORT).show();
+                                insert_ok = false;
+
+                            }
+                        }
                     }
                 }
-
+                if(insert_ok){
+                    Toast.makeText(getActivity(), "Asistencia cargada correctamente",
+                            Toast.LENGTH_SHORT).show();
+                }
 //
 //                if (listaJugadoresAsistencia != null) {
 //                    for (int i = 0; i < listaJugadoresAsistencia.size(); i++) {

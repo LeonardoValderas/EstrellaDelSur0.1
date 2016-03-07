@@ -2322,7 +2322,7 @@ public class ControladorAdeful {
     public boolean eliminarAsistenciaEntrenamientoAdeful(int id_asistencia,int id_jugador) {
 
         boolean res = false;
-        String sql = "DELETE FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO_ASISTENCIA = " + id_asistencia+"AND ID_JUGADOR="+id_jugador;
+        String sql = "DELETE FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO ="+id_asistencia+" AND ID_JUGADOR="+id_jugador;
 
         if (database != null && database.isOpen()) {
             try {
@@ -2339,107 +2339,46 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
-    //lISTA JUGADORES CITADOS POR ID DIVISION
-//    public ArrayList<EntrenamientoAsistencia> selectListaJugadoresEntrenamientoAdeful(int id_division,int id_entrenamiento) {
-//
-//        String sql = "SELECT * FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO="+id_entrenamiento;
-//        ArrayList<EntrenamientoAsistencia> arrayAsistencia = new ArrayList<EntrenamientoAsistencia>();
-//
-//        int id, id_jugador,id_div ;
-//         Cursor cursor = null;
-//
-//        if (database != null && database.isOpen()) {
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//
-//                    while (cursor.moveToNext()) {
-//
-//                        EntrenamientoAsistencia entrenamientoAsistencia = null;
-//                        id = cursor.getInt(cursor
-//                                .getColumnIndex("ID_ENTRENAMIENTO_ASISTENCIA"));
-//                        id_jugador = cursor.getInt(cursor
-//                                .getColumnIndex("ID_JUGADOR"));
-//                        id_div = cursor.getInt(cursor
-//                                .getColumnIndex("ID_DIVISION"));
-//
-//                        entrenamientoAsistencia = new EntrenamientoAsistencia(id,
-//                                0, id_div, "",id_jugador,"", true);
-//
-//                        arrayAsistencia.add(entrenamientoAsistencia);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayAsistencia = null;
-//            }
-//        } else {
-//            arrayAsistencia = null;
-//        }
-//
-//
-//        String sqlJ = "SELECT * FROM JUGADOR_ADEFUL WHERE ID_DIVISION="+id_division;
-//        ArrayList<EntrenamientoAsistencia> arrayAsistenciaJugador = new ArrayList<EntrenamientoAsistencia>();
-//
-//        int id_jug,id_divi;
-//        String nombre = null;
-//        Cursor cursorJ = null;
-//
-//        if (database != null && database.isOpen()) {
-//            try {
-//                cursorJ = database.rawQuery(sqlJ, null);
-//                if (cursorJ != null && cursorJ.getCount() > 0) {
-//
-//                    while (cursorJ.moveToNext()) {
-//
-//                        EntrenamientoAsistencia entrenamientoAsistenciaJugador = null;
-//                        id_jug = cursorJ.getInt(cursorJ
-//                                .getColumnIndex("ID_JUGADOR"));
-//                        nombre = cursorJ.getString(cursorJ
-//                                .getColumnIndex("NOMBRE_JUGADOR"));
-//                        id_divi = cursorJ.getInt(cursorJ
-//                                .getColumnIndex("ID_DIVISION"));
-//
-//                        entrenamientoAsistenciaJugador = new EntrenamientoAsistencia(0,
-//                                0, id_divi, "",id_jug,nombre, false);
-//
-//                        arrayAsistenciaJugador.add(entrenamientoAsistenciaJugador);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayAsistenciaJugador = null;
-//            }
-//        } else {
-//            arrayAsistenciaJugador = null;
-//        }
-//
-//
-//        if(arrayAsistencia!=null){
-//            if(arrayAsistencia.size() > 0){
-//
-//                for (int i = 0; i < arrayAsistencia.size(); i++) {
-//                    for (int j = 0; j <arrayAsistenciaJugador.size() ; j++) {
-//
-//                        if(arrayAsistencia.get(i).getID_JUGADOR()==arrayAsistenciaJugador.get(j).getID_JUGADOR()){
-//
-//                            arrayAsistenciaJugador.get(j).setSelected(true);
-//                            break;
-//                        }
-//                    }
-//
-//
-//                }
-//
-//
-//            }
-//
-//        }
-//
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        nombre = null;
-//        return arrayAsistenciaJugador;
-//    }
+    //lISTA JUGADORES CITADOS POR ENTRENAMIENTO
+    public ArrayList<EntrenamientoAsistencia> selectListaJugadoresEntrenamientoAdeful(int id_entrenamiento) {
+
+        String sql = "SELECT * FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO="+id_entrenamiento;
+        ArrayList<EntrenamientoAsistencia> arrayAsistencia = new ArrayList<EntrenamientoAsistencia>();
+
+        int id, id_jugador,id_entre ;
+         Cursor cursor = null;
+
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        EntrenamientoAsistencia entrenamientoAsistencia = null;
+                        id = cursor.getInt(cursor
+                                .getColumnIndex("ID_ENTRENAMIENTO_ASISTENCIA"));
+                        id_entre= cursor.getInt(cursor
+                                .getColumnIndex("ID_ENTRENAMIENTO"));
+                        id_jugador = cursor.getInt(cursor
+                                .getColumnIndex("ID_JUGADOR"));
+
+                        entrenamientoAsistencia = new EntrenamientoAsistencia(id,id_entre,id_jugador,"");
+
+                        arrayAsistencia.add(entrenamientoAsistencia);
+                    }
+                }
+            } catch (Exception e) {
+                arrayAsistencia = null;
+            }
+        } else {
+            arrayAsistencia = null;
+        }
+        sql = null;
+        cursor = null;
+        database = null;
+        return arrayAsistencia;
+    }
 
     //lISTA JUGADORES CITADOS POR ID DIVISION
     public ArrayList<EntrenamientoAsistencia> selectListaJugadoresEntrenamientoAdeful(ArrayList<Integer> id_division_array,int id_entrenamiento) {
@@ -2447,7 +2386,7 @@ public class ControladorAdeful {
         String sql = "SELECT * FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO="+id_entrenamiento;
         ArrayList<EntrenamientoAsistencia> arrayAsistencia = new ArrayList<EntrenamientoAsistencia>();
 
-        int id, id_jugador,id_div ;
+        int id, id_jugador,id_entre ;
         Cursor cursor = null;
 
         if (database != null && database.isOpen()) {
@@ -2460,13 +2399,14 @@ public class ControladorAdeful {
                         EntrenamientoAsistencia entrenamientoAsistencia = null;
                         id = cursor.getInt(cursor
                                 .getColumnIndex("ID_ENTRENAMIENTO_ASISTENCIA"));
+                        id_entre= cursor.getInt(cursor
+                                .getColumnIndex("ID_ENTRENAMIENTO"));
                         id_jugador = cursor.getInt(cursor
                                 .getColumnIndex("ID_JUGADOR"));
-                        id_div = cursor.getInt(cursor
-                                .getColumnIndex("ID_DIVISION"));
+
 
                         entrenamientoAsistencia = new EntrenamientoAsistencia(id,
-                                id_entrenamiento, id_div,"",id_jugador,"", true);
+                                id_entre,id_jugador, "");
 
                         arrayAsistencia.add(entrenamientoAsistencia);
                     }

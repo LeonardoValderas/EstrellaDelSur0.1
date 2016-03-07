@@ -10,9 +10,9 @@ public class EntrenamientoAsistencia {
 	private String NOMBRE;
 	private boolean ISSELECTED;
 
-	public EntrenamientoAsistencia(int entrenamiento_division, int id_entrenamiento, int id_division, String descricpion, int id_jugador, String nombre, boolean isSelected) {
+	public EntrenamientoAsistencia(int entrenamiento_asistencia, int id_entrenamiento, int id_division, String descricpion, int id_jugador, String nombre, boolean isSelected) {
 
-		ID_ENTRENAMIENTO_ASISTENCIA = entrenamiento_division;
+		ID_ENTRENAMIENTO_ASISTENCIA = entrenamiento_asistencia;
 		ID_ENTRENAMIENTO = id_entrenamiento;
 		ID_DIVISION = id_division;
 		DESCRIPCION = descricpion;
@@ -25,6 +25,11 @@ public class EntrenamientoAsistencia {
 		ID_ENTRENAMIENTO = id_entrenamiento;
 		ID_DIVISION = id_division;
 		ID_JUGADOR = id_jugador;
+	}
+	public EntrenamientoAsistencia(int id_entrenamiento_asistencia ,int id_entrenamiento, int id_jugador,String dato) {
+		ID_ENTRENAMIENTO_ASISTENCIA = id_entrenamiento_asistencia;
+		ID_ENTRENAMIENTO = id_entrenamiento;
+	    ID_JUGADOR = id_jugador;
 	}
 	public int getID_ENTRENAMIENTO_ASISTENCIA() {
 		return ID_ENTRENAMIENTO_ASISTENCIA;
