@@ -19,7 +19,7 @@ public class AdaptadorRecyclerAsistencia extends
 
 	private View.OnClickListener listener;
 	private ArrayList<EntrenamientoAsistencia> asistenciaArray;
-
+	private ArrayList<EntrenamientoAsistencia> noAsistenciaArray;
 	public static class AsistenciaViewHolder extends RecyclerView.ViewHolder {
 		private TextView editTextDivision;
 		private CheckBox checkBoxEntrenamiento;
@@ -34,25 +34,26 @@ public class AdaptadorRecyclerAsistencia extends
 			// SI
 			checkBoxEntrenamiento = (CheckBox) itemView
 					.findViewById(R.id.checkBoxEntrenamiento);
-			// NO
-			checkBoxEntrenamiento2 = (CheckBox) itemView
-					.findViewById(R.id.checkBoxEntrenamiento2);
-			checkBoxEntrenamiento2.setVisibility(View.INVISIBLE);
+//			// NO
+//			checkBoxEntrenamiento2 = (CheckBox) itemView
+//					.findViewById(R.id.checkBoxEntrenamiento2);
+//			checkBoxEntrenamiento2.setVisibility(View.VISIBLE);
 		}
 
 
 		public void bindTitular(EntrenamientoAsistencia entrenamientoAsistencia) {
 
 			editTextDivision.setText(entrenamientoAsistencia.getNOMBRE());
-			checkBoxEntrenamiento.setText("SI");
-			checkBoxEntrenamiento2.setText("NO");
+			//checkBoxEntrenamiento.setText("SI");
+			//checkBoxEntrenamiento2.setText("NO");
 			checkBoxEntrenamiento.setSelected(entrenamientoAsistencia.isSelected());
-			checkBoxEntrenamiento2.setSelected(entrenamientoAsistencia.isSelected());
+		//	checkBoxEntrenamiento2.setSelected(entrenamientoAsistencia.isSelected());
 		}
 	}
 
 	public AdaptadorRecyclerAsistencia(ArrayList<EntrenamientoAsistencia> asistenciaArray) {
 		this.asistenciaArray = asistenciaArray;
+		//this.noAsistenciaArray = asistenciaArray;
 	}
 
 	@Override
@@ -68,8 +69,6 @@ public class AdaptadorRecyclerAsistencia extends
 
 	@Override
 	public void onBindViewHolder(AsistenciaViewHolder viewHolder, int pos) {
-//		FixtureRecycler item = fixtureArray.get(pos);
-//		viewHolder.bindTitular(item);
 
 		final int position = pos;
 
@@ -88,19 +87,19 @@ public class AdaptadorRecyclerAsistencia extends
 				asistenciaArray.get(position).setSelected(cb.isChecked());
 			}
 		});
-	    viewHolder.checkBoxEntrenamiento2.setChecked(asistenciaArray.get(position).isSelected());
-
-		viewHolder.checkBoxEntrenamiento2.setTag(asistenciaArray.get(position));
-
-		viewHolder.checkBoxEntrenamiento2.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				CheckBox cb = (CheckBox) v;
-				EntrenamientoAsistencia entre = (EntrenamientoAsistencia) cb.getTag();
-
-				entre.setSelected(cb.isChecked());
-				asistenciaArray.get(position).setSelected(cb.isChecked());
-			}
-		});
+//	    viewHolder.checkBoxEntrenamiento2.setChecked(asistenciaArray.get(position).isSelected());
+//
+//		viewHolder.checkBoxEntrenamiento2.setTag(asistenciaArray.get(position));
+//
+//		viewHolder.checkBoxEntrenamiento2.setOnClickListener(new View.OnClickListener() {
+//			public void onClick(View v) {
+//				CheckBox cb = (CheckBox) v;
+//				EntrenamientoAsistencia entre = (EntrenamientoAsistencia) cb.getTag();
+//
+//				entre.setSelected(cb.isChecked());
+//				noAsistenciaArray.get(position).setSelected(cb.isChecked());
+//			}
+//		});
 
 	}
 
@@ -110,9 +109,12 @@ public class AdaptadorRecyclerAsistencia extends
 	}
 
 
-	public ArrayList<EntrenamientoAsistencia> getjugadoresList() {
+	public ArrayList<EntrenamientoAsistencia> getJugadoresAsistenciaList() {
 		return asistenciaArray;
 	}
+	//public ArrayList<EntrenamientoAsistencia> getJugadoresNoAsistenciaList() {
+//		return noAsistenciaArray;
+//	}
 	public void setOnClickListener(View.OnClickListener listener) {
 		this.listener = listener;
 	}

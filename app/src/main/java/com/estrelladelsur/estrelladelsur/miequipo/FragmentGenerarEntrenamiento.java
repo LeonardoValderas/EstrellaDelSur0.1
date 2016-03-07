@@ -403,8 +403,8 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                                         break;
                                     }else {
                                         controladorAdeful.cerrarBaseDeDatos();
-                                        controladorAdeful.abrirBaseDeDatos();
-                                        if(controladorAdeful.insertAsistenciaEntrenamientoAdeful(entrenamiento_Division)){}
+//                                        controladorAdeful.abrirBaseDeDatos();
+                                 //  if(controladorAdeful.insertAsistenciaEntrenamientoAdeful(entrenamiento_Division)){}
                                     }
                                 }
                                 buttonFechaEntrenamiento.setText("Día");

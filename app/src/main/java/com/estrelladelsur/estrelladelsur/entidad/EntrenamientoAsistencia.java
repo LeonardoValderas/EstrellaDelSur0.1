@@ -2,29 +2,35 @@ package com.estrelladelsur.estrelladelsur.entidad;
 
 public class EntrenamientoAsistencia {
 
-	private int ID_ENTRENAMIENTO_DIVISION;
+	private int ID_ENTRENAMIENTO_ASISTENCIA;
 	private int ID_ENTRENAMIENTO;
 	private int ID_DIVISION;
 	private String DESCRIPCION;
 	private int ID_JUGADOR;
 	private String NOMBRE;
-	private boolean isSelected;
+	private boolean ISSELECTED;
 
 	public EntrenamientoAsistencia(int entrenamiento_division, int id_entrenamiento, int id_division, String descricpion, int id_jugador, String nombre, boolean isSelected) {
 
-		ID_ENTRENAMIENTO_DIVISION = entrenamiento_division;
+		ID_ENTRENAMIENTO_ASISTENCIA = entrenamiento_division;
 		ID_ENTRENAMIENTO = id_entrenamiento;
 		ID_DIVISION = id_division;
 		DESCRIPCION = descricpion;
         ID_JUGADOR = id_jugador;
         NOMBRE = nombre;
-		isSelected=isSelected;
+		ISSELECTED=isSelected;
 	}
-	public int getID_ENTRENAMIENTO_DIVISION() {
-		return ID_ENTRENAMIENTO_DIVISION;
+	public EntrenamientoAsistencia(int id_entrenamiento, int id_division, int id_jugador) {
+
+		ID_ENTRENAMIENTO = id_entrenamiento;
+		ID_DIVISION = id_division;
+		ID_JUGADOR = id_jugador;
 	}
-	public void setID_ENTRENAMIENTO_DIVISION(int iD_ENTRENAMIENTO_DIVISION) {
-		ID_ENTRENAMIENTO_DIVISION = iD_ENTRENAMIENTO_DIVISION;	}
+	public int getID_ENTRENAMIENTO_ASISTENCIA() {
+		return ID_ENTRENAMIENTO_ASISTENCIA;
+	}
+	public void setID_ENTRENAMIENTO_ASISTENCIA(int iD_ENTRENAMIENTO_DIVISION) {
+		ID_ENTRENAMIENTO_ASISTENCIA = iD_ENTRENAMIENTO_DIVISION;	}
 	public int getID_ENTRENAMIENTO() {
 		return ID_ENTRENAMIENTO;
 	}
@@ -64,9 +70,9 @@ public class EntrenamientoAsistencia {
 		DESCRIPCION = dESCRIPCION;
 	}
 	public boolean isSelected() {
-		return isSelected;
+		return ISSELECTED;
 	}
 	public void setSelected(boolean isSelected) {
-		this.isSelected = isSelected;
+		this.ISSELECTED = isSelected;
 	}
 }

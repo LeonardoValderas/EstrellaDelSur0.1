@@ -21,6 +21,36 @@ public class AuxiliarGeneral {
             case "FEBRERO":
                 mesFormato="02";
                 break;
+            case "MARZO":
+                mesFormato="03";
+                break;
+            case "ABRIL":
+                mesFormato="04";
+                break;
+            case "MAYO":
+                mesFormato="05";
+                break;
+            case "JUNIO":
+                mesFormato="06";
+                break;
+            case "JULIO":
+                mesFormato="07";
+                break;
+            case "AGOSTO":
+                mesFormato="08";
+                break;
+            case "SEPTIEMBRE":
+                mesFormato="09";
+                break;
+            case "OCTUBRE":
+                mesFormato="10";
+                break;
+            case "NOVIEMBRE":
+                mesFormato="11";
+                break;
+            case "DICIEMBRE":
+                mesFormato="12";
+                break;
         }
 
 
