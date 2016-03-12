@@ -127,7 +127,7 @@ public class TabsSancion extends AppCompatActivity {
 				fragmentTab = FragmentGenerarSancion.newInstance();
 				break;
 			case 1:
-				fragmentTab = FragmentEditarFixture.newInstance();
+				fragmentTab = FragmentEditarSancion.newInstance();
 				break;
 			}
 			return fragmentTab;

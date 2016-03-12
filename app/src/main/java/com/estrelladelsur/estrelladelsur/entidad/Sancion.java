@@ -4,14 +4,18 @@ public class Sancion {
 
     private int ID_SANCION;
     private int ID_JUGADOR;
+    private int ID_DIVISION;
     private int AMARILLA;
     private int ROJA;
     private int FECHA_SUSPENSION;
+    private String NOMBRE_JUGADOR;
+    private String DESCRIPCION_DIVISION;
     private String OBSERVACIONES;
     private String USUARIO_CREADOR;
     private String FECHA_CREACION;
     private String USUARIO_ACTUALIZACION;
     private String FECHA_ACTUALIZACION;
+    private byte[] FOTO_JUGADOR;
 
     // SANCION
     public Sancion(int id, int id_jugador, int amarilla, int roja, int fecha, String observaciones, String usuario,
@@ -27,6 +31,55 @@ public class Sancion {
         FECHA_CREACION = fechaCreacion;
         USUARIO_ACTUALIZACION = usuario_act;
         FECHA_ACTUALIZACION = fechaActualizacion;
+    }
+
+    // SANCION RECYCLER
+    public Sancion(int id, int id_jugador, String nombre_jugador, byte[] foto,int id_division, String nombre_division,
+                   int amarilla, int roja, int fecha, String observaciones) {
+
+        ID_SANCION = id;
+        ID_JUGADOR = id_jugador;
+        NOMBRE_JUGADOR = nombre_jugador;
+        FOTO_JUGADOR = foto;
+        ID_DIVISION = id_division;
+        DESCRIPCION_DIVISION = nombre_division;
+        AMARILLA = amarilla;
+        ROJA = roja;
+        FECHA_SUSPENSION = fecha;
+        OBSERVACIONES = observaciones;
+    }
+
+    public byte[] getFOTO_JUGADOR() {
+        return FOTO_JUGADOR;
+    }
+
+    public void setFOTO_JUGADOR(byte[] FOTO_JUGADOR) {
+        this.FOTO_JUGADOR = FOTO_JUGADOR;
+    }
+
+    public int getID_DIVISION() {
+        return ID_DIVISION;
+
+    }
+
+    public void setID_DIVISION(int ID_DIVISION) {
+        this.ID_DIVISION = ID_DIVISION;
+    }
+
+    public String getNOMBRE_JUGADOR() {
+        return NOMBRE_JUGADOR;
+    }
+
+    public void setNOMBRE_JUGADOR(String NOMBRE_JUGADOR) {
+        this.NOMBRE_JUGADOR = NOMBRE_JUGADOR;
+    }
+
+    public String getDESCRIPCION_DIVISION() {
+        return DESCRIPCION_DIVISION;
+    }
+
+    public void setDESCRIPCION_DIVISION(String DESCRIPCION_DIVISION) {
+        this.DESCRIPCION_DIVISION = DESCRIPCION_DIVISION;
     }
 
     public int getID_SANCION() {

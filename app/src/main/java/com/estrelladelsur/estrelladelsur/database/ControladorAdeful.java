@@ -2529,6 +2529,7 @@ public class ControladorAdeful {
     // INSERTAR JUGADOR
     public boolean insertSancionAdeful(Sancion sancion) throws SQLiteException {
 
+        abrirBaseDeDatos();
         ContentValues cv = new ContentValues();
         try {
             cv.put("ID_JUGADOR", sancion.getID_JUGADOR());
@@ -2542,19 +2543,24 @@ public class ControladorAdeful {
             cv.put("FECHA_ACTUALIZACION", sancion.getFECHA_ACTUALIZACION());
 
             long valor = database.insert("SANCION_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
             if (valor > 0) {
                 return true;
+
+
             } else {
                 return false;
             }
         } catch (SQLiteException e) {
             return false;
         }
+
+
     }
 
-    // INSERTAR JUGADOR
+    // ACTUALIZAR SANCION
     public boolean actualizarSancionAdeful(Sancion sancion) throws SQLiteException {
-
+        abrirBaseDeDatos();
         ContentValues cv = new ContentValues();
         try {
             cv.put("ID_JUGADOR", sancion.getID_JUGADOR());
@@ -2565,7 +2571,8 @@ public class ControladorAdeful {
             cv.put("USUARIO_ACTUALIZACION", sancion.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", sancion.getFECHA_ACTUALIZACION());
 
-            long valor = database.update("SANCION_ADEFUL", cv, "ID_SANCION="+ sancion.getID_SANCION(), null);
+            long valor = database.update("SANCION_ADEFUL", cv, "ID_SANCION=" + sancion.getID_SANCION(), null);
+            cerrarBaseDeDatos();
             if (valor > 0) {
                 return true;
             } else {
@@ -2576,4 +2583,99 @@ public class ControladorAdeful {
         }
     }
 
+    //ELIMINAR SANCION JUGADOR
+    public boolean eliminarSancionAdeful(int id_sancion) {
+
+        boolean res = false;
+        String sql = "DELETE FROM SANCION_ADEFUL WHERE ID_SANCION =" + id_sancion;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
+    //LISTA FIXTURE RECYCLER
+    public ArrayList<Sancion> selectListaSancionAdeful(int division,
+                                                               int jugador, int fecha, int anio) {
+
+        String sql = "SELECT S.ID_SANCION AS ID,S.ID_JUGADOR, J.NOMBRE_JUGADOR,J.FOTO_JUGADOR, J.ID_DIVISION, D.DESCRIPCION, "
+                + "S.AMARILLA, S.ROJA, S.FECHA_SUSPENSION, S.OBSERVACIONES, "
+                + "FROM SANCION_ADEFUL S INNER JOIN JUGADOR_ADEFUL J ON J.ID_JUGADOR = S.ID_JUGADOR "
+                + "INNER JOIN DIVISION_ADEFUL D ON  D.ID_DIVISION =  S.ID_DIVISION "
+                + "WHERE ID_DIVISION="
+                + division
+                + " AND ID_JUGADOR="
+                + jugador
+                + " AND ID_FECHA=" + fecha + " AND ID_ANIO=" + anio + "";
+
+        ArrayList<Sancion> arraySancion = new ArrayList<Sancion>();
+        String nombre_jugador = null, descripcion_division = null, obsevaciones = null;
+        int id_sancion, id_jugador, id_division, amarilla, roja, fechas;
+        byte[] foto = null;
+        abrirBaseDeDatos();
+        Cursor cursor = null;
+
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        Sancion sancion = null;
+
+                        id_sancion = cursor.getInt(cursor.getColumnIndex("ID"));
+                        id_jugador = cursor.getInt(cursor
+                                .getColumnIndex("ID_JUGADOR"));
+                        nombre_jugador = cursor.getString(cursor
+                                .getColumnIndex("NOMBRE_JUGADOR"));
+                        foto = cursor.getBlob(cursor
+                                .getColumnIndex("FOTO_JUGADOR"));
+                        id_division = cursor.getInt(cursor
+                                .getColumnIndex("ID_DIVISION"));
+                        descripcion_division = cursor.getString(cursor
+                                .getColumnIndex("DESCRIPCION"));
+                        amarilla = cursor.getInt(cursor
+                                .getColumnIndex("AMARILLA"));
+                        roja = cursor.getInt(cursor
+                                .getColumnIndex("ROJA"));
+                        fechas = cursor.getInt(cursor
+                                .getColumnIndex("FECHA_SUSPENSION"));
+
+                        obsevaciones = cursor.getString(cursor
+                                .getColumnIndex("OBSERVACIONES"));
+
+
+                        sancion = new Sancion(id_sancion, id_jugador, nombre_jugador, foto, id_division, descripcion_division,
+                                amarilla, roja, fechas,obsevaciones);
+
+                        arraySancion.add(sancion);
+                    }
+                }
+            } catch (Exception e) {
+                arraySancion = null;
+            }
+        } else {
+            arraySancion = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        nombre_jugador = null;
+        descripcion_division = null;
+        obsevaciones = null;
+
+        return arraySancion;
+    }
 }

@@ -103,6 +103,12 @@
     </string-array>
     <!-- Array SPINNER POSICION  -->
     <string name="ceroSpinnerPosicion">Genere una posición.</string>
+    <!-- Array SPINNER JUGADOR  -->
+    <string-array name="ceroSpinnerJugador">
+        <item>Genere un jugador.</item>
+    </string-array>
+    <!-- Array SPINNER POSICION  -->
+    <string name="ceroSpinnerJugador">Genere un jugador.</string>
 
     <!-- Array fecha  -->
     <string-array name="fechaArray">

@@ -40,6 +40,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import com.estrelladelsur.estrelladelsur.entidad.JugadorRecycler;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
+import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
 import java.text.DateFormat;
@@ -66,15 +67,12 @@ public class FragmentGenerarSancion extends Fragment {
     private AdapterSpinnerFecha adapterFixtureFecha;
     private AdapterSpinnerAnio adapterFixtureAnio;
     private ArrayList<Division> divisionArray;
-    private ArrayList<Torneo> torneoArray;
     private ArrayList<Fecha> fechaArray;
     private ArrayList<Anio> anioArray;
     private ArrayList<JugadorRecycler> jugadorArray;
-    private ArrayList<Equipo> equipoArray;
     private Fecha fecha;
     private Anio anio;
-    private Mes mes;
-    //private DateFormat formate = DateFormat.getDateInstance();
+    private JugadorRecycler jugadorRecycler;
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
     private DateFormat form = DateFormat.getTimeInstance(DateFormat.SHORT);
@@ -82,21 +80,16 @@ public class FragmentGenerarSancion extends Fragment {
     private Calendar calenda = Calendar.getInstance();
     private Button btn_dia;
     private Button btn_hora;
-    private Fixture fixture;
     private Division division;
-    private Equipo equipol;
-    private Equipo equipov;
-    private Torneo torneo;
-    private Cancha cancha;
     private int CheckedPositionFragment;
     private ControladorAdeful controladorAdeful;
     private boolean actualizar = false;
     private boolean insertar = true;
-    private int idFixtureExtra;
+    private int idSancionExtra;
     private ArrayAdapter<String> adaptadorInicial;
     private ArrayAdapter<String> adaptadorTarjeta;
     private int id_division;
-
+    private Sancion sancion;
     public static FragmentGenerarSancion newInstance() {
         FragmentGenerarSancion fragment = new FragmentGenerarSancion();
         return fragment;
@@ -198,16 +191,6 @@ public class FragmentGenerarSancion extends Fragment {
             controladorAdeful.cerrarBaseDeDatos();
         }
 
-        // Mes ver donde implementar
-        for (int i = 0; i < getResources().getStringArray(R.array.mesArray).length; i++) {
-
-            mes = new Mes(i,
-                    getResources().getStringArray(R.array.mesArray)[i]);
-
-            controladorAdeful.abrirBaseDeDatos();
-            controladorAdeful.insertMes(mes);
-            controladorAdeful.cerrarBaseDeDatos();
-        }
         // DIVISION
         controladorAdeful.abrirBaseDeDatos();
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
@@ -232,31 +215,41 @@ public class FragmentGenerarSancion extends Fragment {
 
         adaptadorTarjeta = new ArrayAdapter<String>(getActivity(),
                 R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.tarjetaArray));
+        //AMARILLA
         sancionAmarillaSpinner.setAdapter(adaptadorTarjeta);
-
+        //ROJA
         sancionRojaSpinner.setAdapter(adaptadorTarjeta);
+        //FECHA
         cantidadFechasSpinner.setAdapter(adaptadorTarjeta);
+
+        //POPULATION SPINNER JUGADOR X ID DIVISION
         sancionDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long arg3) {
+                if (divisionArray.size() > 0) {
+                    id_division = divisionArray.get(position).getID_DIVISION();
+                    controladorAdeful.abrirBaseDeDatos();
+                    jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
+                    if (jugadorArray != null) {
+                        controladorAdeful.cerrarBaseDeDatos();
+                        if (jugadorArray.size() != 0) {
+                            adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
+                                    R.layout.simple_spinner_dropdown_item, jugadorArray);
+                            sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
+                        } else {
+                            //SPINNER HINT
+                            adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                                    R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerJugador));
+                            sancionJugadorSpinner.setAdapter(adaptadorInicial);
+                        }
 
-                id_division = divisionArray.get(position).getID_DIVISION();
-                controladorAdeful.abrirBaseDeDatos();
-                jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
-                if (jugadorArray != null) {
-                    controladorAdeful.cerrarBaseDeDatos();
-
-                    adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
-                            R.layout.simple_spinner_dropdown_item, jugadorArray);
-                    sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
-
-
-                } else {
-                    controladorAdeful.cerrarBaseDeDatos();
-                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                            Toast.LENGTH_SHORT).show();
+                    } else {
+                        controladorAdeful.cerrarBaseDeDatos();
+                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -270,82 +263,58 @@ public class FragmentGenerarSancion extends Fragment {
         //Metodo Extra
         if (actualizar) {
 
-            idFixtureExtra = getActivity().getIntent().getIntExtra("id_sancion", 0);
+            idSancionExtra = getActivity().getIntent().getIntExtra("id_sancion", 0);
 
-            //DIVISION
-            sancionDivisionSpinner.setSelection(getActivity().getIntent()
-                    .getIntExtra("jugadorSpinner", 0) - 1);
-            // TORNEO
-            sancionJugadorSpinner.setSelection(getActivity().getIntent()
-                    .getIntExtra("torneoSpinner", 0) - 1);
-            // FECHA
-            sancionAmarillaSpinner.setSelection(getActivity().getIntent()
-                    .getIntExtra("fechaSpinner", 0) - 1);
-            // ANIO
-            sancionRojaSpinner.setSelection(getActivity().getIntent()
-                    .getIntExtra("anioSpiner", 0) - 1);
-            // CANCHA
-            fixtureCanchaSpinner.setSelection(getActivity().getIntent()
-                    .getIntExtra("canchaSpinner", 0) - 1);
-            // LOCAL
-            fixtureLocalSpinner.setSelection(getActivity().getIntent()
-                    .getIntExtra("localSpinner", 0) - 1);
-            // VISITA
-            fixtureVisitaSpinner.setSelection(getActivity().getIntent()
-                    .getIntExtra("visitaSpinner", 0) - 1);
-            btn_dia.setText(getActivity().getIntent()
-                    .getStringExtra("dia"));
-            btn_hora.setText(getActivity().getIntent()
-                    .getStringExtra("hora"));
+            //DIVISION 0
+            sancionDivisionSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
+                    .getIntExtra("divisionSpinner", 0), 0));
+            // JUGADOR 1
+            sancionJugadorSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
+                    .getIntExtra("jugadorSpinner", 0), 1));
+            // AMARILLA 2
+            sancionAmarillaSpinner.setSelection(getActivity().getIntent().getIntExtra("amarillaSpinner", 0));
+            // ROJA 3
+            sancionRojaSpinner.setSelection(getActivity().getIntent().getIntExtra("rojaSpinner", 0));
+            // FECHAS 4
+            cantidadFechasSpinner.setSelection(getActivity().getIntent().getIntExtra("fechaSpinner", 0));
+
+            observacionesSancion.setText(getActivity().getIntent()
+                    .getStringExtra("observaciones"));
+
             insertar = false;
         }
     }
 
-    public void updatedate() {
-        btn_dia.setText(formate.format(calendar.getTime()));
-    }
-
-    public void updatetime() {
-        btn_hora.setText(form.format(calenda.getTime()));
-    }
-
-    public void setDate() {
-        new DatePickerDialog(getActivity(), d, calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)).show();
-    }
-
-    public void setTime() {
-        new TimePickerDialog(getActivity(), t,
-                calenda.get(Calendar.HOUR_OF_DAY),
-                calenda.get(Calendar.MINUTE), true).show();
-    }
-
-    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, monthOfYear);
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            updatedate();
-        }
-    };
-
-    TimePickerDialog.OnTimeSetListener t = new TimePickerDialog.OnTimeSetListener() {
-
-        @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            calenda.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            calenda.set(Calendar.MINUTE, minute);
-            updatetime();
-        }
-    };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    private int getPositionSpinner(int idSpinner, int spinner) {
+
+        int index = 0;
+        switch (spinner) {
+            //DIVISION 0
+            case 0:
+                for (int i = 0; i < divisionArray.size(); i++) {
+                    if (divisionArray.get(i).getID_DIVISION() == (idSpinner)) {
+                        index = i;
+                    }
+                }
+                break;
+            // JUGADOR 1
+            case 1:
+                for (int i = 0; i < jugadorArray.size(); i++) {
+                    if (jugadorArray.get(i).getID_DIVISION() == (idSpinner)) {
+                        index = i;
+                    }
+                }
+                break;
+
+        }
+
+        return index;
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -392,90 +361,60 @@ public class FragmentGenerarSancion extends Fragment {
                 Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
                         Toast.LENGTH_SHORT).show();
             } else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
-                    getString(R.string.ceroSpinnerTorneo))) {
-                Toast.makeText(getActivity(), "Debe agregar un torneo (Liga).",
+                    getString(R.string.ceroSpinnerJugador))) {
+                Toast.makeText(getActivity(), "Debe agregar un jugador.",
                         Toast.LENGTH_SHORT).show();
-            } else if (sancionAmarillaSpinner.getSelectedItem().toString().equals(getResources().
-                    getString(R.string.ceroSpinnerFecha))) {
-                Toast.makeText(getActivity(), "Debe agregar una fecha.",
-                        Toast.LENGTH_SHORT).show();
-            } else if (sancionRojaSpinner.getSelectedItem().toString().equals(getResources().
-                    getString(R.string.ceroSpinnerAnio))) {
-                Toast.makeText(getActivity(), "Debe agregar un año.",
-                        Toast.LENGTH_SHORT).show();
-            } else if (fixtureLocalSpinner.getSelectedItem().toString().equals(getResources().
-                    getString(R.string.ceroSpinnerEquipo)) || fixtureVisitaSpinner.getSelectedItem().toString().equals(getResources().
-                    getString(R.string.ceroSpinnerEquipo))) {
-                Toast.makeText(getActivity(), "Debe agregar un equipo (Liga).",
-                        Toast.LENGTH_SHORT).show();
-            } else if (fixtureCanchaSpinner.getSelectedItem().toString().equals(getResources().
-                    getString(R.string.ceroSpinnerCancha))) {
-                Toast.makeText(getActivity(), "Debe agregar una cancha (Liga).",
-                        Toast.LENGTH_SHORT).show();
-            } else if (btn_dia.getText()
-                    .toString().equals("Día")) {
-                Toast.makeText(getActivity(), "Debe ingresar el día.",
-                        Toast.LENGTH_SHORT).show();
-            } else if (btn_hora.getText()
-                    .toString().equals("Hora")) {
-                Toast.makeText(getActivity(), "Debe ingresar la hora.",
-                        Toast.LENGTH_SHORT).show();
-            } else {
+//            } else if (sancionAmarillaSpinner.getSelectedItem().toString().equals(getResources().
+//                    getString(R.string.ceroSpinnerFecha))) {
+//                Toast.makeText(getActivity(), "Debe agregar una fecha.",
+//                        Toast.LENGTH_SHORT).show();
+//            } else if (sancionRojaSpinner.getSelectedItem().toString().equals(getResources().
+//                    getString(R.string.ceroSpinnerAnio))) {
+//                Toast.makeText(getActivity(), "Debe agregar un año.",
+//                        Toast.LENGTH_SHORT).show();
+             } else {
                 String usuario = "Administrador";
                 String fechaCreacion = controladorAdeful.getFechaOficial();
                 String fechaActualizacion = fechaCreacion;
 
                 division = (Division) sancionDivisionSpinner.getSelectedItem();
-                equipol = (Equipo) fixtureLocalSpinner.getSelectedItem();
-                equipov = (Equipo) fixtureVisitaSpinner.getSelectedItem();
-                torneo = (Torneo) sancionJugadorSpinner.getSelectedItem();
-                cancha = (Cancha) fixtureCanchaSpinner.getSelectedItem();
-                fecha = (Fecha) sancionAmarillaSpinner.getSelectedItem();
-                anio = (Anio) sancionRojaSpinner.getSelectedItem();
+                jugadorRecycler = (JugadorRecycler) sancionJugadorSpinner.getSelectedItem();
 
-
-                //FIXTURE NVO
+                //SANCION NVO
                 if (insertar) {
-                    //    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                    //    Date d = format.parse();
-                    fixture = new Fixture(0, equipol.getID_EQUIPO(),
-                            equipov.getID_EQUIPO(), division.getID_DIVISION(),
-                            torneo.getID_TORNEO(), cancha.getID_CANCHA(),
-                            fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText().toString()
-                            , btn_hora.getText().toString(),
-                            usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                    controladorAdeful.abrirBaseDeDatos();
-                    if (controladorAdeful.insertFixtureAdeful(fixture)) {
-                        controladorAdeful.cerrarBaseDeDatos();
+                    sancion = new Sancion(0,jugadorRecycler.getID_JUGADOR(),sancionAmarillaSpinner.getSelectedItemPosition(),
+                            sancionRojaSpinner.getSelectedItemPosition(), cantidadFechasSpinner.getSelectedItemPosition(),observacionesSancion.getText().toString(),usuario, fechaCreacion,
+                            usuario, fechaActualizacion);
 
-                        Toast.makeText(getActivity(), "Partido Cargado Correctamente",
+               //     controladorAdeful.abrirBaseDeDatos();
+                    if (controladorAdeful.insertSancionAdeful(sancion)) {
+                     //   controladorAdeful.cerrarBaseDeDatos();
+
+                        Toast.makeText(getActivity(), "Sanción cargada correctamente",
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        controladorAdeful.cerrarBaseDeDatos();
+                        //controladorAdeful.cerrarBaseDeDatos();
                         Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                                 Toast.LENGTH_SHORT).show();
                     }
-                } else { //FIXTURE ACTUALIZAR
+                } else { //SANCION ACTUALIZAR
 
-                    fixture = new Fixture(idFixtureExtra, equipol.getID_EQUIPO(),
-                            equipov.getID_EQUIPO(), division.getID_DIVISION(),
-                            torneo.getID_TORNEO(), cancha.getID_CANCHA(),
-                            fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText()
-                            .toString(), btn_hora.getText().toString(),
-                            null, null, usuario, fechaActualizacion);
+                    sancion = new Sancion(idSancionExtra,jugadorRecycler.getID_JUGADOR(),sancionAmarillaSpinner.getId(),
+                            sancionRojaSpinner.getId(), cantidadFechasSpinner.getId(),observacionesSancion.getText().toString(),null, null,
+                            usuario, fechaActualizacion);
 
-                    controladorAdeful.abrirBaseDeDatos();
-                    if (controladorAdeful.actualizarFixtureAdeful(fixture)) {
-                        controladorAdeful.cerrarBaseDeDatos();
+                //    controladorAdeful.abrirBaseDeDatos();
+                    if (controladorAdeful.actualizarSancionAdeful(sancion)) {
+                   //     controladorAdeful.cerrarBaseDeDatos();
 
                         actualizar = false;
                         insertar = true;
-                        Toast.makeText(getActivity(), "Partido Actualizado Correctamente",
+                        Toast.makeText(getActivity(), "Sanción actualizada correctamente",
                                 Toast.LENGTH_SHORT).show();
 
                     } else {
-                        controladorAdeful.cerrarBaseDeDatos();
+                       // controladorAdeful.cerrarBaseDeDatos();
                         Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
                                 Toast.LENGTH_SHORT).show();
                     }
