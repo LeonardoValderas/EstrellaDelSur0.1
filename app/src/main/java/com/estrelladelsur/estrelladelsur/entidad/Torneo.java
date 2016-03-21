@@ -3,25 +3,44 @@ package com.estrelladelsur.estrelladelsur.entidad;
 public class Torneo {
 
 	private int ID_TORNEO;
+	private int ID_TORNEO_ACTUAL;
+	private Boolean ACTUAL;
 	private String DESCRIPCION;
 	private String USUARIO_CREADOR;
 	private String FECHA_CREACION;
 	private String USUARIO_ACTUALIZACION;
 	private String FECHA_ACTUALIZACION;
+	private int FECHA_ANIO;
 
-	public Torneo(int id, String descripcion, String usuario,
-			String fechaCreacion, String usuario_act, String fechaActualizacion) {
+	public Torneo(int id, String descripcion, boolean actual, String usuario,
+				  String fechaCreacion, String usuario_act, String fechaActualizacion) {
 
 		ID_TORNEO = id;
 		DESCRIPCION = descripcion;
+		ACTUAL = actual;
+	    USUARIO_CREADOR = usuario;
+		FECHA_CREACION = fechaCreacion;
+		USUARIO_ACTUALIZACION = usuario_act;
+		FECHA_ACTUALIZACION = fechaActualizacion;
+	}
+	public Torneo(int id, String descripcion, boolean actual,int anio, String usuario,
+				   String fechaCreacion, String usuario_act, String fechaActualizacion) {
+
+		ID_TORNEO = id;
+		DESCRIPCION = descripcion;
+		ACTUAL = actual;
+		FECHA_ANIO =anio;
 		USUARIO_CREADOR = usuario;
 		FECHA_CREACION = fechaCreacion;
 		USUARIO_ACTUALIZACION = usuario_act;
 		FECHA_ACTUALIZACION = fechaActualizacion;
-
+	}
+	public Torneo(int id, int id_torneo,int fecha_anio ) {
+		ID_TORNEO_ACTUAL = id;
+		ID_TORNEO = id_torneo;
+		FECHA_ANIO = fecha_anio;
 
 	}
-
 	public int getID_TORNEO() {
 		return ID_TORNEO;
 	}
@@ -74,4 +93,27 @@ public class Torneo {
 		FECHA_ACTUALIZACION = fECHA_ACTUALIZACION;
 	}
 
+	public int getID_TORNEO_ACTUAL() {
+		return ID_TORNEO_ACTUAL;
+	}
+
+	public void setID_TORNEO_ACTUAL(int ID_TORNEO_ACTUAL) {
+		this.ID_TORNEO_ACTUAL = ID_TORNEO_ACTUAL;
+	}
+
+	public int getFECHA_ANIO() {
+		return FECHA_ANIO;
+	}
+
+	public void setFECHA_ANIO(int FECHA_ANIO) {
+		this.FECHA_ANIO = FECHA_ANIO;
+	}
+
+	public Boolean getACTUAL() {
+		return ACTUAL;
+	}
+
+	public void setACTUAL(Boolean ACTUAL) {
+		this.ACTUAL = ACTUAL;
+	}
 }

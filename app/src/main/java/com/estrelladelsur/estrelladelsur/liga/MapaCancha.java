@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
@@ -26,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
@@ -43,448 +47,324 @@ import android.os.Message;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MapaCancha extends AppCompatActivity {
+public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback {
 
-	private ArrayList<Cancha> canchaAdefulArray;
-	private TextView tvAddress;
-	private GoogleMap mapa;
-	private AppLocationService appLocationService;
-	public static double latBache = -41.139755445793554;
-	public static double lonBache = -71.296729134343434;
-	private Toolbar toolbar;
-	private ActionBarDrawerToggle drawerToggle;
-	private TextView txtTitulo;
-	private TextView txtAbSubTitulo;
-	private String locationAddress;
-	private String longitud;
-	private String latitud;
-	private double longitudExtra;
-	private double latitudExtra;
-	private Cancha cancha;
-	private EditText editTextNombre;
-	private boolean actualizar = false;
-	private int posicion;
-	private String nombre = null;
-	private boolean insertar = true;
-	private ControladorAdeful controladorAdeful;
-	private TabsAdeful a;
-	/**
-	 * ATTENTION: This was auto-generated to implement the App Indexing API.
-	 * See https://g.co/AppIndexing/AndroidStudio for more information.
-	 */
-	private GoogleApiClient client;
-	//private Communicator comm;
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.mapa_cancha);
+    private ArrayList<Cancha> canchaAdefulArray;
+    private TextView tvAddress;
+    GoogleMap mapa;
+    private AppLocationService appLocationService;
+    public static double latBache = -41.139755445793554;
+    public static double lonBache = -71.296729134343434;
+    private Toolbar toolbar;
+    private ActionBarDrawerToggle drawerToggle;
+    private TextView txtTitulo;
+    private TextView txtAbSubTitulo;
+    private String locationAddress;
+    private String longitud;
+    private String latitud;
+    private double longitudExtra;
+    private double latitudExtra;
+    private Cancha cancha;
+    private EditText editTextNombre;
+    private boolean actualizar = false;
+    private int posicion;
+    private String nombre = null;
+    private boolean insertar = true;
+    private ControladorAdeful controladorAdeful;
+    private TabsAdeful a;
 
 
-		controladorAdeful = new ControladorAdeful(this);
-		//	comm= (Communicator)MapaCancha.this;
-		a = new TabsAdeful();
-		toolbar = (Toolbar) findViewById(R.id.appbar);
-		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    SupportMapFragment mapFragment;
 
-		txtTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-		txtTitulo.setText("MAPA CANCHA");
 
-		//txtAbSubTitulo = (TextView) toolbar.findViewById(R.id.txtAbSubTitulo);
-		//txtAbSubTitulo.setVisibility(View.INVISIBLE);
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+    //private Communicator comm;
 
-		actualizar = getIntent().getBooleanExtra("actualizar", false);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.mapa_cancha);
+
+//		try {
+//			MapsInitializer.initialize(this);
+//
+//		} catch (GooglePlayServicesNotAvailableException e){
+//			e.printStackTrace();
+//		}
+
+        controladorAdeful = new ControladorAdeful(this);
+        //	comm= (Communicator)MapaCancha.this;
+        a = new TabsAdeful();
+        toolbar = (Toolbar) findViewById(R.id.appbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        txtTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
+        txtTitulo.setText("MAPA CANCHA");
+
+        //txtAbSubTitulo = (TextView) toolbar.findViewById(R.id.txtAbSubTitulo);
+        //txtAbSubTitulo.setVisibility(View.INVISIBLE);
+
+        actualizar = getIntent().getBooleanExtra("actualizar", false);
 
 //		MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
 //		mapFragment.getMapAsync(MapaCancha.this);
 
 
-		init();
+        init();
 
 
-	}
+    }
 
-//	@Override
-//	public void onMapReady(GoogleMap map) {
-//
-//		mapa = map;
-//
-//		setUpMap();
-//
-//	}
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mapa = googleMap;
 
-//	public void setUpMap() {
-//
-//
-//		CameraPosition cameraPosition = new CameraPosition.Builder()
-//				.target(new LatLng(latBache, lonBache)).zoom(15).build();
-//		CameraUpdate cu = CameraUpdateFactory
-//				.newCameraPosition(cameraPosition);
-//		mapa.animateCamera(cu);
-//
-//		if (actualizar) {
-//
-//			longitud = getIntent().getStringExtra("longitud");
-//			latitud = getIntent().getStringExtra("latitud");
-//
-//			longitudExtra = Double.valueOf(longitud);
-//			latitudExtra = Double.valueOf(latitud);
-//			locationAddress = getIntent().getStringExtra("direccion");
-//			posicion = getIntent().getIntExtra("posicion", 0);
-//			nombre = getIntent().getStringExtra("nombre");
-//			editTextNombre.setText(nombre);
-//
-//			mapa.addMarker(new MarkerOptions().position(
-//					new LatLng(latitudExtra, longitudExtra)).title(
-//					"Dirección: \n" + locationAddress));
-//
-//			tvAddress.setText(locationAddress);
-//			insertar = false;
-//		}
-//
-//		// zoom long y lat de bariloche
-//
-//		// click en el mapa crea marker y muestra nombre de la calle
-//		mapa.setOnMapClickListener(new OnMapClickListener() {
-//			public void onMapClick(LatLng point) {
-//				Projection proj = mapa.getProjection();
-//				Point coord = proj.toScreenLocation(point);
-//
-//				mapa.clear();
-//				tvAddress.setText("");
-//				mapa.addMarker(new MarkerOptions().position(
-//						new LatLng(point.latitude, point.longitude)).title(
-//						"Dirección: \n" + tvAddress.getText().toString()));
-//
-//				LocationAddress locationAddress = new LocationAddress();
-//				locationAddress.getAddressFromLocation(point.latitude,
-//						point.longitude, getApplicationContext(),
-//						new GeocoderHandler());
-//			}
-//		});
-//
-//		mapa.setOnMapLongClickListener(new OnMapLongClickListener() {
-//
-//			@Override
-//			public void onMapLongClick(LatLng latLng) {
-//				mapa.clear();
-//				tvAddress.setText("");
-//			}
-//		});
-//
-////		mapa.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-////		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-////			// TODO: Consider calling
-////			mapa.setMyLocationEnabled(true);
-////		}
-////
-////		mapa.setTrafficEnabled(true);
-////		mapa.setIndoorEnabled(true);
-////		mapa.setBuildingsEnabled(true);
-////		mapa.getUiSettings().setZoomControlsEnabled(true);
-//	}
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(latBache, lonBache)).zoom(15).build();
+        CameraUpdate cu = CameraUpdateFactory
+                .newCameraPosition(cameraPosition);
+        mapa.animateCamera(cu);
 
-	public void init() {
-//		MapsInitializer.initialize(this);
-		mapa = ((SupportMapFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.map)).getMap();
+        mapa.setOnMapClickListener(new OnMapClickListener() {
+            public void onMapClick(LatLng point) {
+                Projection proj = mapa.getProjection();
+                Point coord = proj.toScreenLocation(point);
 
-		controladorAdeful.abrirBaseDeDatos();
-		canchaAdefulArray = controladorAdeful.selectListaCanchaAdeful();
-		if (canchaAdefulArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
-		} else {
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-							"\n Si el error persiste comuniquese con soporte.",
-					Toast.LENGTH_SHORT).show();
-		}
+                mapa.clear();
+                tvAddress.setText("");
+                mapa.addMarker(new MarkerOptions().position(
+                        new LatLng(point.latitude, point.longitude)).title(
+                        "Dirección: \n" + tvAddress.getText().toString()));
 
-		tvAddress = (TextView) findViewById(R.id.tvAddress);
-		editTextNombre = (EditText) findViewById(R.id.editTextNombre);
+                LocationAddress locationAddress = new LocationAddress();
+                locationAddress.getAddressFromLocation(point.latitude,
+                        point.longitude, getApplicationContext(),
+                        new GeocoderHandler());
+            }
+        });
 
-		CameraPosition cameraPosition = new CameraPosition.Builder()
-				.target(new LatLng(latBache, lonBache)).zoom(15).build();
-		CameraUpdate cu = CameraUpdateFactory
-				.newCameraPosition(cameraPosition);
-			mapa.animateCamera(cu);
+        mapa.setOnMapLongClickListener(new OnMapLongClickListener() {
 
-		if (actualizar) {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                mapa.clear();
+                tvAddress.setText("");
+            }
+        });
+    }
 
-			longitud = getIntent().getStringExtra("longitud");
-			latitud = getIntent().getStringExtra("latitud");
+    public void init() {
 
-			longitudExtra = Double.valueOf(longitud);
-			latitudExtra = Double.valueOf(latitud);
-			locationAddress = getIntent().getStringExtra("direccion");
-			posicion = getIntent().getIntExtra("posicion", 0);
-			nombre = getIntent().getStringExtra("nombre");
-			editTextNombre.setText(nombre);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
-			mapa.addMarker(new MarkerOptions().position(
-					new LatLng(latitudExtra, longitudExtra)).title(
-					"Dirección: \n" + locationAddress));
+        controladorAdeful.abrirBaseDeDatos();
+        canchaAdefulArray = controladorAdeful.selectListaCanchaAdeful();
+        if (canchaAdefulArray != null) {
+            controladorAdeful.cerrarBaseDeDatos();
+        } else {
+            controladorAdeful.cerrarBaseDeDatos();
+            Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
+                            "\n Si el error persiste comuniquese con soporte.",
+                    Toast.LENGTH_SHORT).show();
+        }
 
-			tvAddress.setText(locationAddress);
-			insertar = false;
-		}
+        tvAddress = (TextView) findViewById(R.id.tvAddress);
+        editTextNombre = (EditText) findViewById(R.id.editTextNombre);
 
-		// zoom long y lat de bariloche
+        if (actualizar) {
 
-		// click en el mapa crea marker y muestra nombre de la calle
-		mapa.setOnMapClickListener(new OnMapClickListener() {
-			public void onMapClick(LatLng point) {
-				Projection proj = mapa.getProjection();
-				Point coord = proj.toScreenLocation(point);
+            longitud = getIntent().getStringExtra("longitud");
+            latitud = getIntent().getStringExtra("latitud");
 
-				mapa.clear();
-				tvAddress.setText("");
-				mapa.addMarker(new MarkerOptions().position(
-						new LatLng(point.latitude, point.longitude)).title(
-						"Dirección: \n" + tvAddress.getText().toString()));
+            longitudExtra = Double.valueOf(longitud);
+            latitudExtra = Double.valueOf(latitud);
+            locationAddress = getIntent().getStringExtra("direccion");
+            posicion = getIntent().getIntExtra("posicion", 0);
+            nombre = getIntent().getStringExtra("nombre");
+            editTextNombre.setText(nombre);
 
-				LocationAddress locationAddress = new LocationAddress();
-				locationAddress.getAddressFromLocation(point.latitude,
-						point.longitude, getApplicationContext(),
-						new GeocoderHandler());
-			}
-		});
+            mapa.addMarker(new MarkerOptions().position(
+                    new LatLng(latitudExtra, longitudExtra)).title(
+                    "Dirección: \n" + locationAddress));
 
-		mapa.setOnMapLongClickListener(new OnMapLongClickListener() {
+            tvAddress.setText(locationAddress);
+            insertar = false;
+        }
+   }
 
-			@Override
-			public void onMapLongClick(LatLng latLng) {
-				mapa.clear();
-				tvAddress.setText("");
-			}
-		});
-	}
+    public boolean isGpsActivo() {
 
-	// mapa.setOnCameraChangeListener(new OnCameraChangeListener() {
-	// public void onCameraChange(CameraPosition position) {
-	//
-	//
-	// Toast.makeText(
-	// MainActivity.this,
-	// "Cambio C�mara\n" +
-	// "Lat: " + position.target.latitude + "\n" +
-	// "Lng: " + position.target.longitude + "\n" +
-	// "Zoom: " + position.zoom + "\n" +
-	// "Orientaci�n: " + position.bearing + "\n" +
-	// "�ngulo: " + position.tilt,
-	// Toast.LENGTH_LONG).show();
-	// }
-	// });
+        boolean gps = true;
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-	// }
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || !locationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            gps = false;
+        }
+        return gps;
+    }
 
-	public boolean isGpsActivo() {
+    private class GeocoderHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
 
-		boolean gps = true;
-		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            switch (message.what) {
+                case 1:
+                    Bundle bundle = message.getData();
+                    locationAddress = bundle.getString("address");
+                    longitud = String.valueOf(bundle.getDouble("longitud"));
+                    latitud = String.valueOf(bundle.getDouble("latitud"));
+                    break;
+                default:
+                    locationAddress = null;
+            }
+            tvAddress.setText(locationAddress);
+        }
+    }
 
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-				|| !locationManager
-				.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-			gps = false;
-		}
-		return gps;
-	}
+    @Override
+    public void onBackPressed() {
 
-//	@Override
-//	public void onStart() {
-//		super.onStart();
-//
-//		// ATTENTION: This was auto-generated to implement the App Indexing API.
-//		// See https://g.co/AppIndexing/AndroidStudio for more information.
-//		client.connect();
-//		Action viewAction = Action.newAction(
-//				Action.TYPE_VIEW, // TODO: choose an action type.
-//				"MapaCancha Page", // TODO: Define a title for the content shown.
-//				// TODO: If you have web page content that matches this app activity's content,
-//				// make sure this auto-generated web page URL is correct.
-//				// Otherwise, set the URL to null.
-//				Uri.parse("http://host/path"),
-//				// TODO: Make sure this auto-generated app deep link URI is correct.
-//				Uri.parse("android-app://com.estrelladelsur.estrelladelsur.liga/http/host/path")
-//		);
-//		AppIndex.AppIndexApi.start(client, viewAction);
-//	}
-//
-//	@Override
-//	public void onStop() {
-//		super.onStop();
-//
-//		// ATTENTION: This was auto-generated to implement the App Indexing API.
-//		// See https://g.co/AppIndexing/AndroidStudio for more information.
-//		Action viewAction = Action.newAction(
-//				Action.TYPE_VIEW, // TODO: choose an action type.
-//				"MapaCancha Page", // TODO: Define a title for the content shown.
-//				// TODO: If you have web page content that matches this app activity's content,
-//				// make sure this auto-generated web page URL is correct.
-//				// Otherwise, set the URL to null.
-//				Uri.parse("http://host/path"),
-//				// TODO: Make sure this auto-generated app deep link URI is correct.
-//				Uri.parse("android-app://com.estrelladelsur.estrelladelsur.liga/http/host/path")
-//		);
-//		AppIndex.AppIndexApi.end(client, viewAction);
-//		client.disconnect();
-//	}
-
-	private class GeocoderHandler extends Handler {
-		@Override
-		public void handleMessage(Message message) {
-
-			switch (message.what) {
-				case 1:
-					Bundle bundle = message.getData();
-					locationAddress = bundle.getString("address");
-					longitud = String.valueOf(bundle.getDouble("longitud"));
-					latitud = String.valueOf(bundle.getDouble("latitud"));
-					break;
-				default:
-					locationAddress = null;
-			}
-			tvAddress.setText(locationAddress);
-		}
-	}
-
-	@Override
-	public void onBackPressed() {
-
-		volver();
+        volver();
 
 //		Intent i = new Intent(MapaCancha.this, TabsAdeful.class);
 //		i.putExtra("restart", 1);
 //		startActivity(i);
-		super.onBackPressed();
-	}
+        super.onBackPressed();
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
-		menu.getItem(0).setVisible(false);// usuario
-		menu.getItem(1).setVisible(false);// permiso
-		menu.getItem(2).setVisible(false);// lifuba
-		menu.getItem(3).setVisible(false);// adeful
-		menu.getItem(4).setVisible(false);// puesto
-		menu.getItem(5).setVisible(false);// posicion
-		menu.getItem(6).setVisible(false);// cargo
-		menu.getItem(7).setVisible(false);// cerrar
-		// menu.getItem(8).setVisible(false);//gudar
-		menu.getItem(9).setVisible(false);// Subir
-		menu.getItem(10).setVisible(false); // eliminar
-		menu.getItem(11).setVisible(false); // consultar
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
+        menu.getItem(0).setVisible(false);// usuario
+        menu.getItem(1).setVisible(false);// permiso
+        menu.getItem(2).setVisible(false);// lifuba
+        menu.getItem(3).setVisible(false);// adeful
+        menu.getItem(4).setVisible(false);// puesto
+        menu.getItem(5).setVisible(false);// posicion
+        menu.getItem(6).setVisible(false);// cargo
+        menu.getItem(7).setVisible(false);// cerrar
+        // menu.getItem(8).setVisible(false);//gudar
+        menu.getItem(9).setVisible(false);// Subir
+        menu.getItem(10).setVisible(false); // eliminar
+        menu.getItem(11).setVisible(false); // consultar
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
 
-		// if (drawerToggle.onOptionsItemSelected(item)) {
-		// return true;
-		// }
+        // if (drawerToggle.onOptionsItemSelected(item)) {
+        // return true;
+        // }
 
-		int id = item.getItemId();
-		// noinspection SimplifiableIfStatement
-		if (id == R.id.action_guardar) {
+        int id = item.getItemId();
+        // noinspection SimplifiableIfStatement
+        if (id == R.id.action_guardar) {
 
-			if (editTextNombre.getText().toString().equals("")) {
-				Toast.makeText(this, "Ingrese el nombre de la cancha.",
-						Toast.LENGTH_SHORT).show();
+            if (editTextNombre.getText().toString().equals("")) {
+                Toast.makeText(this, "Ingrese el nombre de la cancha.",
+                        Toast.LENGTH_SHORT).show();
 
-			} else if (tvAddress.getText().toString().equals("")) {
+            } else if (tvAddress.getText().toString().equals("")) {
 
-				Toast.makeText(this, "Seleccione un punto en el mapa.",
-						Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Seleccione un punto en el mapa.",
+                        Toast.LENGTH_SHORT).show();
 
-			} else if (editTextNombre.getText().toString()
-					.equals(getResources().getString(R.string.error_internet))) {
+            } else if (editTextNombre.getText().toString()
+                    .equals(getResources().getString(R.string.error_internet))) {
 
-				Toast.makeText(this, "Verifique su conexión de Internet.",
-						Toast.LENGTH_SHORT).show();
-			} else {
+                Toast.makeText(this, "Verifique su conexión de Internet.",
+                        Toast.LENGTH_SHORT).show();
+            } else {
 
-				if (insertar) {
-					String usuario = "Administrador";
-					String fechaCreacion = controladorAdeful.getFechaOficial();
-					String fechaActualizacion = fechaCreacion;
+                if (insertar) {
+                    String usuario = "Administrador";
+                    String fechaCreacion = controladorAdeful.getFechaOficial();
+                    String fechaActualizacion = fechaCreacion;
 
-					cancha = new Cancha(0, editTextNombre.getText().toString(),
-							longitud, latitud, tvAddress.getText().toString(),
-							usuario, fechaCreacion, usuario, fechaActualizacion);
+                    cancha = new Cancha(0, editTextNombre.getText().toString(),
+                            longitud, latitud, tvAddress.getText().toString(),
+                            usuario, fechaCreacion, usuario, fechaActualizacion);
 
-					controladorAdeful.abrirBaseDeDatos();
-					if (controladorAdeful.insertCanchaAdeful(cancha)) {
-						controladorAdeful.cerrarBaseDeDatos();
-						mapa.clear();
-						editTextNombre.setText("");
-						tvAddress.setText("");
-						Toast.makeText(this, "Cancha guardada correctamente",
-								Toast.LENGTH_SHORT).show();
-						volver();
-					} else {
-						controladorAdeful.cerrarBaseDeDatos();
-						Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-										"\n Si el error persiste comuniquese con soporte.",
-								Toast.LENGTH_SHORT).show();
-					}
-				} else {
-					String usuario = "Administrador";
-					String fechaActualizacion = controladorAdeful.getFechaOficial();
+                    controladorAdeful.abrirBaseDeDatos();
+                    if (controladorAdeful.insertCanchaAdeful(cancha)) {
+                        controladorAdeful.cerrarBaseDeDatos();
+                        mapa.clear();
+                        editTextNombre.setText("");
+                        tvAddress.setText("");
+                        Toast.makeText(this, "Cancha guardada correctamente",
+                                Toast.LENGTH_SHORT).show();
+                        volver();
+                    } else {
+                        controladorAdeful.cerrarBaseDeDatos();
+                        Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
+                                        "\n Si el error persiste comuniquese con soporte.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    String usuario = "Administrador";
+                    String fechaActualizacion = controladorAdeful.getFechaOficial();
 
 
-					cancha = new Cancha(canchaAdefulArray.get(posicion)
-							.getID_CANCHA(), editTextNombre.getText()
-							.toString(), longitud, latitud, tvAddress.getText()
-							.toString(), null, null, usuario, fechaActualizacion);
+                    cancha = new Cancha(canchaAdefulArray.get(posicion)
+                            .getID_CANCHA(), editTextNombre.getText()
+                            .toString(), longitud, latitud, tvAddress.getText()
+                            .toString(), null, null, usuario, fechaActualizacion);
 
-					controladorAdeful.abrirBaseDeDatos();
-					if (controladorAdeful.actualizarCanchaAdeful(cancha)) {
-						controladorAdeful.cerrarBaseDeDatos();
-						mapa.clear();
-						editTextNombre.setText("");
-						tvAddress.setText("");
-						insertar = true;
+                    controladorAdeful.abrirBaseDeDatos();
+                    if (controladorAdeful.actualizarCanchaAdeful(cancha)) {
+                        controladorAdeful.cerrarBaseDeDatos();
+                        mapa.clear();
+                        editTextNombre.setText("");
+                        tvAddress.setText("");
+                        insertar = true;
 
-						Toast.makeText(this, "Cancha actualizada correctamente.",
-								Toast.LENGTH_SHORT).show();
-						volver();
-					} else {
-						controladorAdeful.cerrarBaseDeDatos();
-						Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-										"\n Si el error persiste comuniquese con soporte.",
-								Toast.LENGTH_SHORT).show();
-					}
-				}
-			}
-			return true;
-		}
+                        Toast.makeText(this, "Cancha actualizada correctamente.",
+                                Toast.LENGTH_SHORT).show();
+                        volver();
+                    } else {
+                        controladorAdeful.cerrarBaseDeDatos();
+                        Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
+                                        "\n Si el error persiste comuniquese con soporte.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            return true;
+        }
 
-		if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
 
-			// NavUtils.navigateUpFromSameTask(this);
+            // NavUtils.navigateUpFromSameTask(this);
 
-			//a.refreshs();
-			//comm.refresh();
-			volver();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+            //a.refreshs();
+            //comm.refresh();
+            volver();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	public void volver() {
+    public void volver() {
 
-		Intent i = new Intent(MapaCancha.this, TabsAdeful.class);
-		i.putExtra("restart", 1);
-		startActivity(i);
-	}
+        Intent i = new Intent(MapaCancha.this, TabsAdeful.class);
+        i.putExtra("restart", 1);
+        startActivity(i);
+    }
 
 }

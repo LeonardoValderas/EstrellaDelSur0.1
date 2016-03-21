@@ -24,6 +24,7 @@ public class AdaptadorRecyclerTorneo extends
 
 		private TextView textRecyclerView;
 		private ImageView imageViewEscudo;
+        private ImageView imageIsActual;
 
 		public TorneoViewHolder(View itemView) {
 			super(itemView);
@@ -34,10 +35,16 @@ public class AdaptadorRecyclerTorneo extends
 			imageViewEscudo = (ImageView) itemView
 					.findViewById(R.id.imageViewEscudo);
 			imageViewEscudo.setVisibility(View.GONE);
+			imageIsActual = (ImageView) itemView
+					.findViewById(R.id.imageIsActual);
 		}
 
 		public void bindTitular(Torneo torneo) {
 			textRecyclerView.setText(torneo.getDESCRIPCION());
+
+			if(torneo.getACTUAL()){
+				imageIsActual.setVisibility(View.VISIBLE);
+			}
 
 		}
 	}

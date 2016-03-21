@@ -43,7 +43,7 @@ public class FragmentGenerarArticulo extends Fragment {
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-//
+
         communicator= (Communicator)getActivity();
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
@@ -190,6 +190,7 @@ public class FragmentGenerarArticulo extends Fragment {
 
                 actualizar = false;
                 insertar = true;
+                communicator.refresh();
                 Toast.makeText(getActivity(), "Articulo Actualizado Correctamente",
                         Toast.LENGTH_SHORT).show();
                 }else {

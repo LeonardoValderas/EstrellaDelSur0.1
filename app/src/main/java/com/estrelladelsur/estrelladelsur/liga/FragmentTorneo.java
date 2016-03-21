@@ -18,12 +18,19 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerTorneo;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
@@ -38,11 +45,23 @@ public class FragmentTorneo extends Fragment {
     private ArrayList<Torneo> torneoArray;
     private Torneo torneo;
     private AdaptadorRecyclerTorneo adaptadorTorneo;
-   // private FloatingActionButton botonFloating;
     private EditText editTextTorneo;
+    private CheckBox checkboxTorneoActual;
+    private Spinner spinnerAnioTorneoActual;
     private ControladorAdeful controladorAdeful;
     private int CheckedPositionFragment;
     private ImageView imageButtonEquipo;
+    private boolean isActual;
+    private LinearLayout linearTorneoActual;
+    private boolean isChecked = false;
+    private AuxiliarGeneral auxiliarGeneral;
+    private ArrayList<Anio> anioArray;
+    private AdapterSpinnerAnio adapterSpinnerAnio;
+    private ArrayAdapter<String> adaptadorInicial;
+    private Anio anio;
+    String usuario = "Administrador";
+    String fechaCreacion = null;
+    String fechaActualizacion = fechaCreacion;
 
     public static FragmentTorneo newInstance() {
         FragmentTorneo fragment = new FragmentTorneo();
@@ -74,16 +93,18 @@ public class FragmentTorneo extends Fragment {
 
         imageButtonEquipo = (ImageView) v.findViewById(
                 R.id.imageButtonEquipo_Cancha);
-
+        checkboxTorneoActual = (CheckBox) v.findViewById(
+                R.id.checkboxTorneoActual);
+        spinnerAnioTorneoActual = (Spinner) v.findViewById(
+                R.id.spinnerAnioTorneoActual);
+        linearTorneoActual = (LinearLayout) v.findViewById(
+                R.id.linearTorneoActual);
+        linearTorneoActual.setVisibility(View.VISIBLE);
         recycleViewTorneo = (RecyclerView) v.findViewById(
                 R.id.recycleViewGeneral);
 
-       // botonFloating = (FloatingActionButton) v.findViewById(
-        //        R.id.botonFloating);
         return v;
-
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -92,76 +113,93 @@ public class FragmentTorneo extends Fragment {
     }
 
     private void init() {
-
-
+        fechaCreacion = controladorAdeful.getFechaOficial();
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextTorneo.setHint("Ingrese un Torneo");
         editTextTorneo.setHintTextColor(Color.GRAY);
-
-
+        //VERICAMOS SI HAY UN TORNEO MARCADO COMO ACTUAL
+        isActual = controladorAdeful.selectIsActualTorneoActualAdeful();
+        // SI ES TRUE OCULTAMOS
+        if (isActual) {
+            linearTorneoActual.setVisibility(View.GONE);
+        }
         imageButtonEquipo.setVisibility(View.GONE);
-
+        loadSpinnerAnio();
+        checkboxTorneoActual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isChecked) {
+                    spinnerAnioTorneoActual.setVisibility(View.GONE);
+                    isChecked = false;
+                } else {
+                    spinnerAnioTorneoActual.setVisibility(View.VISIBLE);
+                    isChecked = true;
+                }
+            }
+        });
 
         recyclerViewLoadTorneo();
-        recycleViewTorneo.addOnItemTouchListener(new RecyclerTouchListener(
-                getActivity(), recycleViewTorneo, new ClickListener() {
+        recycleViewTorneo.addOnItemTouchListener(new
 
-            @Override
-            public void onLongClick(View view, final int position) {
+                RecyclerTouchListener(getActivity(), recycleViewTorneo,
+                new ClickListener() {
 
-                dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
-                        "Desea eliminar el torneo?", null, null);
-                dialogoAlerta.btnAceptar.setText("Aceptar");
-                dialogoAlerta.btnCancelar.setText("Cancelar");
+                    @Override
+                    public void onLongClick(View view, final int position) {
 
-                dialogoAlerta.btnAceptar
-                        .setOnClickListener(new View.OnClickListener() {
+                        dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
+                                "Desea eliminar el torneo?", null, null);
+                        dialogoAlerta.btnAceptar.setText("Aceptar");
+                        dialogoAlerta.btnCancelar.setText("Cancelar");
 
-                            @Override
-                            public void onClick(View v) {
-                                // TODO Auto-generated method stub
-                                controladorAdeful.abrirBaseDeDatos();
-                               if(controladorAdeful.eliminarTorneoAdeful(
-                                        torneoArray.get(position)
-                                                .getID_TORNEO())) {
+                        dialogoAlerta.btnAceptar
+                                .setOnClickListener(new View.OnClickListener() {
 
-                                   recyclerViewLoadTorneo();
-                                   Toast.makeText(
-                                           getActivity(),
-                                           "Torneo Eliminado Correctamente",
-                                           Toast.LENGTH_SHORT).show();
-                                   dialogoAlerta.alertDialog.dismiss();
-                               }else{
-                                   controladorAdeful.cerrarBaseDeDatos();
-                                   Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                   "\n Si el error persiste comuniquese con soporte.",
-                                           Toast.LENGTH_SHORT).show();
-                               }
-                            }
-                        });
-                dialogoAlerta.btnCancelar
-                        .setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        // TODO Auto-generated method stub
+                                        if (controladorAdeful.eliminarTorneoAdeful(
+                                                torneoArray.get(position)
+                                                        .getID_TORNEO())) {
+                                            recyclerViewLoadTorneo();
+                                            Toast.makeText(
+                                                    getActivity(),
+                                                    "Torneo Eliminado Correctamente",
+                                                    Toast.LENGTH_SHORT).show();
+                                            dialogoAlerta.alertDialog.dismiss();
+                                        } else {
+                                            auxiliarGeneral.errorDataBase(getActivity());
+                                        }
+                                    }
+                                });
+                        dialogoAlerta.btnCancelar
+                                .setOnClickListener(new View.OnClickListener() {
 
-                            @Override
-                            public void onClick(View v) {
-                                // TODO Auto-generated method stub
-                                dialogoAlerta.alertDialog.dismiss();
-                            }
-                        });
+                                    @Override
+                                    public void onClick(View v) {
+                                        // TODO Auto-generated method stub
+                                        dialogoAlerta.alertDialog.dismiss();
+                                    }
+                                });
+                    }
 
-            }
+                    @Override
+                    public void onClick(View view, int position) {
+                        // TODO Auto-generated method stub
 
-            @Override
-            public void onClick(View view, int position) {
-                // TODO Auto-generated method stub
+                        insertar = false;
+                        isChecked = torneoArray.get(position).getACTUAL();
+                        if (isChecked) {
+                            linearTorneoActual.setVisibility(View.VISIBLE);
+                            checkboxTorneoActual.setChecked(isChecked);
+                        }
+                        editTextTorneo.setText(torneoArray.get(position)
+                                .getDESCRIPCION());
+                        posicion = position;
 
-                insertar = false;
-                editTextTorneo.setText(torneoArray.get(position)
-                        .getDESCRIPCION());
-
-                posicion = position;
-
-            }
-        }));
+                    }
+                }
+        ));
     }
 
     public void recyclerViewLoadTorneo() {
@@ -172,31 +210,79 @@ public class FragmentTorneo extends Fragment {
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recycleViewTorneo.setItemAnimator(new DefaultItemAnimator());
 
-        controladorAdeful.abrirBaseDeDatos();
         torneoArray = controladorAdeful.selectListaTorneoAdeful();
         if (torneoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-
             adaptadorTorneo = new AdaptadorRecyclerTorneo(torneoArray);
             adaptadorTorneo.notifyDataSetChanged();
             recycleViewTorneo.setAdapter(adaptadorTorneo);
         } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+    }
+
+    public void loadSpinnerAnio() {
+        anioArray = controladorAdeful.selectListaAnio();
+        if (anioArray != null) {
             controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\n Si el error persiste comuniquese con soporte.",
+            if (anioArray.size() != 0) {
+                // ANIO SPINNER
+                adapterSpinnerAnio = new AdapterSpinnerAnio(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, anioArray);
+                spinnerAnioTorneoActual.setAdapter(adapterSpinnerAnio);
+            } else {
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerAnio));
+                spinnerAnioTorneoActual.setAdapter(adaptadorInicial);
+            }
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+    }
+
+    public void guardarTorneo() {
+
+        anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
+        torneo = new Torneo(0, editTextTorneo.getText()
+                .toString(), isChecked, anio.getID_ANIO(), usuario, fechaCreacion, usuario,
+                fechaActualizacion);
+        if (controladorAdeful.insertTorneoAdeful(torneo)) {
+            recyclerViewLoadTorneo();
+            editTextTorneo.setText("");
+            if(checkboxTorneoActual.isChecked()){
+                checkboxTorneoActual.setChecked(false);
+                linearTorneoActual.setVisibility(View.GONE);
+            }
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+    }
+
+    public void actualizarTorneo() {
+        anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
+        torneo = new Torneo(torneoArray.get(posicion)
+                .getID_TORNEO(), editTextTorneo.getText()
+                .toString(), isChecked, anio.getID_ANIO(), null, null, usuario, fechaActualizacion);
+        if (controladorAdeful.actualizarTorneoAdeful(torneo)) {
+            recyclerViewLoadTorneo();
+            editTextTorneo.setText("");
+            insertar = true;
+            Toast.makeText(getActivity(),
+                    "Torneo actualizado correctamente.",
                     Toast.LENGTH_SHORT).show();
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
         }
     }
 
     public static interface ClickListener {
-
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
     static class RecyclerTouchListener implements
             RecyclerView.OnItemTouchListener {
-
         private GestureDetector detector;
         private ClickListener clickListener;
 
@@ -237,13 +323,11 @@ public class FragmentTorneo extends Fragment {
 
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
             // TODO Auto-generated method stub
-
         }
     }
 
@@ -270,6 +354,7 @@ public class FragmentTorneo extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -294,54 +379,24 @@ public class FragmentTorneo extends Fragment {
                 Toast.makeText(getActivity(),
                         "Ingrese el nombre del torneo.", Toast.LENGTH_SHORT)
                         .show();
+            } else if (checkboxTorneoActual.isChecked()) {
+                if (spinnerAnioTorneoActual.getSelectedItem().toString().equals(getResources().
+                        getString(R.string.ceroSpinnerAnio))) {
+                    Toast.makeText(getActivity(), "Debe agregar un año.",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    if (insertar) {
+                        guardarTorneo();
+                    } else {
+                        actualizarTorneo();
+                    }
+                }
             } else {
 
                 if (insertar) {
-                    String usuario = "Administrador";
-                    String fechaCreacion = controladorAdeful.getFechaOficial();
-                    String fechaActualizacion = fechaCreacion;
-
-                    torneo = new Torneo(0, editTextTorneo.getText()
-                            .toString(), usuario, fechaCreacion, usuario,
-                            fechaActualizacion);
-
-                    controladorAdeful.abrirBaseDeDatos();
-                    if (controladorAdeful.insertTorneoAdeful(torneo)) {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        recyclerViewLoadTorneo();
-                        editTextTorneo.setText("");
-                    } else {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                        "\n Si el error persiste comuniquese con soporte.",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    guardarTorneo();
                 } else {
-
-                    String usuario = "Administrador";
-                    String fechaActualizacion = controladorAdeful
-                            .getFechaOficial();
-
-                    torneo = new Torneo(torneoArray.get(posicion)
-                            .getID_TORNEO(), editTextTorneo.getText()
-                            .toString(), null, null, usuario, fechaActualizacion);
-
-                    controladorAdeful.abrirBaseDeDatos();
-                    if (controladorAdeful.actualizarTorneoAdeful(torneo)) {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        recyclerViewLoadTorneo();
-                        editTextTorneo.setText("");
-                        insertar = true;
-
-                        Toast.makeText(getActivity(),
-                                "Torneo actualizado correctamente.",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                        "\n Si el error persiste comuniquese con soporte.",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    actualizarTorneo();
                 }
             }
 

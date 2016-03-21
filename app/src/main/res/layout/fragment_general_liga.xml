@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:orientation="vertical">
-                             <!--app:layout_scrollFlags="scroll|enterAlways">-->
+            <!--app:layout_scrollFlags="scroll|enterAlways">-->
 
             <ImageView
                 android:id="@+id/imageButtonEquipo_Cancha"
@@ -50,6 +50,32 @@
 
                 <requestFocus />
             </EditText>
+
+            <LinearLayout
+                android:id="@+id/linearTorneoActual"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/torneo_actual" />
+                <CheckBox
+                    android:id="@+id/checkboxTorneoActual"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+            <Spinner
+                android:id="@+id/spinnerAnioTorneoActual"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -68,6 +94,6 @@
              android:layout_margin="16dp"
              android:src="@drawable/ic_buttonfloating"
              app:borderWidth="0dp" />-->
-     <!--</android.support.design.widget.CoordinatorLayout>-->
+    <!--</android.support.design.widget.CoordinatorLayout>-->
 
 </FrameLayout>

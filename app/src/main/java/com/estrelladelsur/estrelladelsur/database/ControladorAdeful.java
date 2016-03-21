@@ -1042,34 +1042,48 @@ public class ControladorAdeful {
 
     // INSERTAR TORNEO
     public boolean insertTorneoAdeful(Torneo torneo) {
-        boolean ban = false;
+        long valorActual = 0;
+        abrirBaseDeDatos();
+        ContentValues cv = new ContentValues();
+        try {
+            cv.put("DESCRIPCION", torneo.getDESCRIPCION());
+            cv.put("ACTUAL", torneo.getACTUAL());
+            cv.put("USUARIO_CREADOR", torneo.getUSUARIO_CREADOR());
+            cv.put("FECHA_CREACION", torneo.getFECHA_CREACION());
+            cv.put("USUARIO_ACTUALIZACION", torneo.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", torneo.getFECHA_ACTUALIZACION());
+            long valor = database.insert("TORNEO_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
 
-        String sql = "INSERT INTO TORNEO_ADEFUL ( DESCRIPCION, USUARIO_CREADOR, USUARIO_ACTUALIZACION, FECHA_CREACION, FECHA_ACTUALIZACION) VALUES ('"
-                + torneo.getDESCRIPCION()
-                + "', '"
-                + torneo.getUSUARIO_CREADOR()
-                + "', '"
-                + torneo.getFECHA_CREACION()
-                + "', '"
-                + torneo.getUSUARIO_ACTUALIZACION()
-                + "', '"
-                + torneo.getFECHA_ACTUALIZACION()
-                + "')";
-
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-            } catch (Exception e) {
-                ban = false;
+                if (torneo.getACTUAL()) {
+                    abrirBaseDeDatos();
+                    ContentValues cvA = new ContentValues();
+                    cvA.put("ID_TORNEO", valor);
+                    cvA.put("ID_ANIO", torneo.getFECHA_ANIO());
+                    cvA.put("ISACTUAL", true);
+                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL="
+                            + 1, null);
+                    cerrarBaseDeDatos();
+                    if (valorActual > 0) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }else{
+                    return true;
+                }
+//                if (valorActual > 0) {
+//                    return true;
+//                } else {
+//                    return false;
+//                }
+            } else {
+                return false;
             }
-        } else {
-            ban = false;
+        } catch (SQLiteException e) {
+            return false;
         }
-
-        sql = null;
-        database = null;
-        return ban;
     }
 
     //LISTA TORNEO
@@ -1079,8 +1093,9 @@ public class ControladorAdeful {
         ArrayList<Torneo> arrayTorneo = new ArrayList<Torneo>();
         String descripcion = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null, tabla = null;
         int id;
+        boolean isActual = false;
         Cursor cursor = null;
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 cursor = database.rawQuery(sql, null);
@@ -1095,6 +1110,7 @@ public class ControladorAdeful {
                                 .getColumnIndex("DESCRIPCION"));
                         usuario = cursor.getString(cursor
                                 .getColumnIndex("USUARIO_CREADOR"));
+                        isActual = cursor.getInt(cursor.getColumnIndex("ACTUAL")) > 0;
                         fechaCreacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_CREACION"));
                         usuario_act = cursor.getString(cursor
@@ -1102,9 +1118,10 @@ public class ControladorAdeful {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
 
-                        torneo = new Torneo(id, descripcion, usuario,
+                        torneo = new Torneo(id, descripcion, isActual, usuario,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         arrayTorneo.add(torneo);
+                        cerrarBaseDeDatos();
                     }
                 }
             } catch (Exception e) {
@@ -1129,30 +1146,25 @@ public class ControladorAdeful {
     //ACTUALIZAR TORNEO
     public boolean actualizarTorneoAdeful(Torneo torneo) {
 
-        boolean res = false;
+        abrirBaseDeDatos();
+        ContentValues cv = new ContentValues();
+        try {
+            cv.put("DESCRIPCION", torneo.getDESCRIPCION());
+            cv.put("ACTUAL", torneo.getACTUAL());
+            cv.put("USUARIO_ACTUALIZACION", torneo.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", torneo.getFECHA_ACTUALIZACION());
 
-        String sql = "UPDATE TORNEO_ADEFUL SET DESCRIPCION='"
-                + torneo.getDESCRIPCION() + "', USUARIO_ACTUALIZACION='"
-                + torneo.getUSUARIO_ACTUALIZACION() + "', FECHA_ACTUALIZACION='"
-                + torneo.getFECHA_ACTUALIZACION()
-                + "' WHERE ID_TORNEO ='" + torneo.getID_TORNEO() + "'";
-
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-                Log.e("actualizarTorneoAdeful", e.toString());
+            long valor = database.update("TORNEO_ADEFUL", cv, "ID_TORNEO_="
+                    + torneo.getID_TORNEO(), null);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
             }
-        } else {
-            res = false;
-            Log.e("actualizarTorneoAdeful", "Error Conexi�n Base de Datos");
+        } catch (SQLiteException e) {
+            return false;
         }
-
-        database = null;
-        sql = null;
-        return res;
     }
 
     //ELIMINAR TORNEO
@@ -1160,10 +1172,11 @@ public class ControladorAdeful {
 
         boolean res = false;
         String sql = "DELETE FROM TORNEO_ADEFUL WHERE ID_TORNEO = " + id;
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 database.execSQL(sql);
+                cerrarBaseDeDatos();
                 res = true;
             } catch (Exception e) {
                 res = false;
@@ -1175,6 +1188,59 @@ public class ControladorAdeful {
         database = null;
         sql = null;
         return res;
+    }
+
+    // ACTUALIZAR TORNEO ACTUAL
+    public boolean actualizarTorneoActualAdeful(Torneo torneo) throws SQLiteException {
+
+        abrirBaseDeDatos();
+        ContentValues cv = new ContentValues();
+        try {
+            cv.put("ID_TORNEO", torneo.getID_TORNEO());
+            cv.put("FECHA_ANIO", torneo.getFECHA_ANIO());
+
+            long valor = database.update("TORNEO_ACTUAL_ADEFUL", cv, "ID_TORNEO_ACTUAL="
+                    + 1, null);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            return false;
+        }
+    }
+
+    //ES TORNEO ACTUAL
+    public boolean selectIsActualTorneoActualAdeful() {
+
+        String sql = "SELECT ISACTUAL FROM TORNEO_ACTUAL_ADEFUL";
+        boolean isActual = false;
+        abrirBaseDeDatos();
+        Cursor cursor = null;
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+                        isActual = cursor.getInt(cursor.getColumnIndex("ISACTUAL")) > 0;
+                    }
+                }
+            } catch (Exception e) {
+                // isActual =null;
+            }
+        } else {
+            //   arrayTorneo = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+
+
+        return isActual;
     }
 
     // INSERTAR CANCHA
@@ -1416,7 +1482,7 @@ public class ControladorAdeful {
         String anioo = null;
         int id;
         Cursor cursor = null;
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 cursor = database.rawQuery(sql, null);
@@ -1430,6 +1496,7 @@ public class ControladorAdeful {
                         anio = new Anio(id, anioo);
 
                         arrayAnio.add(anio);
+                        cerrarBaseDeDatos();
                     }
                 }
             } catch (Exception e) {
@@ -1554,8 +1621,6 @@ public class ControladorAdeful {
             cv.put("ID_ANIO", fixture.getID_ANIO());
             cv.put("DIA", fixture.getDIA());
             cv.put("HORA", fixture.getHORA());
-            cv.put("USUARIO_CREADOR", fixture.getUSUARIO_CREACION());
-            cv.put("FECHA_CREACION", fixture.getFECHA_CREACION());
             cv.put("USUARIO_ACTUALIZACION", fixture.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", fixture.getFECHA_ACTUALIZACION());
 
@@ -1657,27 +1722,27 @@ public class ControladorAdeful {
         return arrayFixture;
     }
 
-    // ELIMINAR FIXTURE
-    public boolean eliminarFixtureAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM FIXTURE_ADEFUL WHERE ID_FIXTURE = " + id;
-
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-
-        database = null;
-        sql = null;
-        return res;
-    }
+//    // ELIMINAR FIXTURE
+//    public boolean eliminarFixtureAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM FIXTURE_ADEFUL WHERE ID_FIXTURE = " + id;
+//
+//        if (database != null && database.isOpen()) {
+//            try {
+//                database.execSQL(sql);
+//                res = true;
+//            } catch (Exception e) {
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
 
     ////RESULTADOS////
     //ACTUALIZAR RESULTADO/FIXTURE
@@ -2604,9 +2669,10 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     //LISTA FIXTURE RECYCLER
     public ArrayList<Sancion> selectListaSancionAdeful(int division,
-                                                               int jugador, int fecha, int anio) {
+                                                       int jugador, int fecha, int anio) {
 
         String sql = "SELECT S.ID_SANCION AS ID,S.ID_JUGADOR, J.NOMBRE_JUGADOR,J.FOTO_JUGADOR, J.ID_DIVISION, D.DESCRIPCION, "
                 + "S.AMARILLA, S.ROJA, S.FECHA_SUSPENSION, S.OBSERVACIONES, "
@@ -2657,7 +2723,7 @@ public class ControladorAdeful {
 
 
                         sancion = new Sancion(id_sancion, id_jugador, nombre_jugador, foto, id_division, descripcion_division,
-                                amarilla, roja, fechas,obsevaciones);
+                                amarilla, roja, fechas, obsevaciones);
 
                         arraySancion.add(sancion);
                     }

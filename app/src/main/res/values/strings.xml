@@ -73,6 +73,7 @@
         <item>Genere un torneo.</item>
     </string-array>
     <string name="ceroSpinnerTorneo">Genere un torneo.</string>
+    <string name="torneo_actual">Torneo actual</string>
     <!-- Array SPINNER FECHA  -->
     <string-array name="ceroSpinnerFecha">
         <item>Genere un fecha.</item>
