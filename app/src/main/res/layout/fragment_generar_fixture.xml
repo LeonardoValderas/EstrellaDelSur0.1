@@ -110,12 +110,13 @@
             <EditText
                 android:id="@+id/observacionesSancion"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:gravity="center"
                 android:hint="Observaciones"
                 android:inputType="textMultiLine"
+                android:lines="5"
                 android:textSize="25dp"
                 android:visibility="gone" />
 

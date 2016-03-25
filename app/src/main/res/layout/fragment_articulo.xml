@@ -52,12 +52,13 @@
         <EditText
                     android:id="@+id/articuloEditArticulo"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:lines="5"
                     android:gravity="center"
                     android:hint="ARTICULO"
-                    android:inputType="textMultiLine"
                     android:textSize="25dp" />
 
             </LinearLayout>

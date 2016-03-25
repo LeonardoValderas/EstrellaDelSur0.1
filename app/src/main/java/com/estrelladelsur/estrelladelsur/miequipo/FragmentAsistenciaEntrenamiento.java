@@ -177,27 +177,29 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
         recycleViewGeneral.setItemAnimator(new DefaultItemAnimator());
 
         botonFloating.setOnClickListener(new View.OnClickListener() {
-                                             public void onClick(View view) {
-                                                 String fecha = null;
-                                                 fecha = auxiliarGeneral.setFormatoMes(
-                                                         entrenamientoMesSpinner.getSelectedItem().toString()) + "-" + entrenamientoAnioSpinner.getSelectedItem().toString();
-                                                 if (fecha != null)
-                                                     controladorAdeful.abrirBaseDeDatos();
-                                                 entrenamientoArray = controladorAdeful.selectListaEntrenamientoAdeful(fecha);
-                                                 if (entrenamientoArray != null) {
-                                                     controladorAdeful.cerrarBaseDeDatos();
+            public void onClick(View view) {
+                String fecha = null;
+                fecha = auxiliarGeneral.setFormatoMes(
+                        entrenamientoMesSpinner.getSelectedItem().toString()) + "-" + entrenamientoAnioSpinner.getSelectedItem().toString();
+                recyclerViewCleanEntrenamiento();
+                if (fecha != null && !fecha.equals(""))
+                    controladorAdeful.abrirBaseDeDatos();
+                entrenamientoArray = controladorAdeful.selectListaEntrenamientoAdeful(fecha);
+                if (entrenamientoArray != null) {
+                    controladorAdeful.cerrarBaseDeDatos();
 
-                                                     // MES ADAPTER
-                                                     adapterSpinnerFechaEntrenamiento = new AdapterSpinnerFechaEntrenamiento(getActivity(),
-                                                             R.layout.simple_spinner_dropdown_item, entrenamientoArray);
-                                                     entrenamientoFechahsSpinner.setAdapter(adapterSpinnerFechaEntrenamiento);
-                                                 } else {
-                                                     controladorAdeful.cerrarBaseDeDatos();
-                                                     Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                                             Toast.LENGTH_SHORT).show();
-                                                 }
-                                             }
-                                         }
+                    // MES ADAPTER
+                    adapterSpinnerFechaEntrenamiento = new AdapterSpinnerFechaEntrenamiento(getActivity(),
+                            R.layout.simple_spinner_dropdown_item, entrenamientoArray);
+                    entrenamientoFechahsSpinner.setAdapter(adapterSpinnerFechaEntrenamiento);
+
+                } else {
+                    controladorAdeful.cerrarBaseDeDatos();
+                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+            }
         );
         entrenamientoFechahsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -249,7 +251,10 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-            }
+                    Toast.makeText(getActivity(), "Sin datos.",
+                            Toast.LENGTH_SHORT).show();
+                }
+
         });
 
 //        entrenamientoDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -302,8 +307,14 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
 
         adaptadorEntrenamiento = new AdaptadorRecyclerAsistencia(arrayAsistencia);
         recycleViewGeneral.setAdapter(adaptadorEntrenamiento);
-    }
 
+    }
+    public void recyclerViewCleanEntrenamiento() {
+        arrayAsistencia = new ArrayList<EntrenamientoAsistencia>();
+        adaptadorEntrenamiento = new AdaptadorRecyclerAsistencia(arrayAsistencia);
+        recycleViewGeneral.setAdapter(adaptadorEntrenamiento);
+
+    }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);

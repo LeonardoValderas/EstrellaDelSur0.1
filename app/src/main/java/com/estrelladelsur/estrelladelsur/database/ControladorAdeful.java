@@ -2489,10 +2489,14 @@ public class ControladorAdeful {
         }
 
 
-        String sqlId = null;
+        String sqlId = "";
         for (int ids = 0; ids < id_division_array.size(); ids++) {
             if (id_division_array.size() != 1) {
-                sqlId += sqlId + "AND ID_DIVISION=" + id_division_array.get(ids);
+                if(ids==0){
+                    sqlId =""+ id_division_array.get(0);
+                }else{sqlId += " OR ID_DIVISION=" + id_division_array.get(ids);}
+               // sqlId += sqlId +" "+ "AND ID_DIVISION=" + id_division_array.get(ids);
+
             } else {
                 sqlId = "" + id_division_array.get(ids);
             }

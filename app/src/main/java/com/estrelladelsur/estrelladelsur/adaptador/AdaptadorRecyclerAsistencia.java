@@ -22,6 +22,7 @@ public class AdaptadorRecyclerAsistencia extends
 	private ArrayList<EntrenamientoAsistencia> asistenciaTrueArray = new ArrayList<EntrenamientoAsistencia>();
 	public static class AsistenciaViewHolder extends RecyclerView.ViewHolder {
 		private TextView editTextDivision;
+		private TextView textViewDivision;
 		private CheckBox checkBoxEntrenamiento;
 		private CheckBox checkBoxEntrenamiento2;
 
@@ -34,26 +35,25 @@ public class AdaptadorRecyclerAsistencia extends
 			// SI
 			checkBoxEntrenamiento = (CheckBox) itemView
 					.findViewById(R.id.checkBoxEntrenamiento);
-//			// NO
-//			checkBoxEntrenamiento2 = (CheckBox) itemView
-//					.findViewById(R.id.checkBoxEntrenamiento2);
-//			checkBoxEntrenamiento2.setVisibility(View.VISIBLE);
+			//DIVISION
+			textViewDivision = (TextView) itemView
+					.findViewById(R.id.textViewDivision);
+			textViewDivision.setVisibility(View.VISIBLE);
+
 		}
 
 
 		public void bindTitular(EntrenamientoAsistencia entrenamientoAsistencia) {
 
 			editTextDivision.setText(entrenamientoAsistencia.getNOMBRE());
-			//checkBoxEntrenamiento.setText("SI");
-			//checkBoxEntrenamiento2.setText("NO");
 			checkBoxEntrenamiento.setSelected(entrenamientoAsistencia.isSelected());
-		//	checkBoxEntrenamiento2.setSelected(entrenamientoAsistencia.isSelected());
+			textViewDivision.setText(entrenamientoAsistencia.getDESCRIPCION());
 		}
 	}
 
 	public AdaptadorRecyclerAsistencia(ArrayList<EntrenamientoAsistencia> asistenciaArray) {
 		this.asistenciaArray = asistenciaArray;
-		//this.noAsistenciaArray = asistenciaArray;
+
 	}
 
 	@Override
@@ -87,20 +87,6 @@ public class AdaptadorRecyclerAsistencia extends
 				asistenciaArray.get(position).setSelected(cb.isChecked());
 			}
 		});
-//	    viewHolder.checkBoxEntrenamiento2.setChecked(asistenciaArray.get(position).isSelected());
-//
-//		viewHolder.checkBoxEntrenamiento2.setTag(asistenciaArray.get(position));
-//
-//		viewHolder.checkBoxEntrenamiento2.setOnClickListener(new View.OnClickListener() {
-//			public void onClick(View v) {
-//				CheckBox cb = (CheckBox) v;
-//				EntrenamientoAsistencia entre = (EntrenamientoAsistencia) cb.getTag();
-//
-//				entre.setSelected(cb.isChecked());
-//				noAsistenciaArray.get(position).setSelected(cb.isChecked());
-//			}
-//		});
-
 	}
 
 	@Override
@@ -117,9 +103,6 @@ public class AdaptadorRecyclerAsistencia extends
 		for (int i = 0; i < asistenciaArray.size(); i++) {
 
 			if(asistenciaArray.get(i).isSelected()==true){
-//				EntrenamientoAsistencia e = new EntrenamientoAsistencia(asistenciaArray.get(i).getID_ENTRENAMIENTO_ASISTENCIA(),
-//						asistenciaArray.get(i).getID_ENTRENAMIENTO(),0,"",asistenciaArray.get(i).getID_JUGADOR(),"",true);
-//				asistenciaTrueArray.add(e);
 				asistenciaTrueArray.add(asistenciaArray.get(i));
 			}
 		}
