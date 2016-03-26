@@ -51,6 +51,7 @@ public class FragmentTorneo extends Fragment {
     private ControladorAdeful controladorAdeful;
     private int CheckedPositionFragment;
     private ImageView imageButtonEquipo;
+    private Torneo torneoActual;
     private boolean isActual;
     private LinearLayout linearTorneoActual;
     private boolean isChecked = false;
@@ -62,6 +63,7 @@ public class FragmentTorneo extends Fragment {
     String usuario = "Administrador";
     String fechaCreacion = null;
     String fechaActualizacion = fechaCreacion;
+    private boolean checkedAnterior = false;
 
     public static FragmentTorneo newInstance() {
         FragmentTorneo fragment = new FragmentTorneo();
@@ -118,11 +120,7 @@ public class FragmentTorneo extends Fragment {
         editTextTorneo.setHint("Ingrese un Torneo");
         editTextTorneo.setHintTextColor(Color.GRAY);
         //VERICAMOS SI HAY UN TORNEO MARCADO COMO ACTUAL
-        isActual = controladorAdeful.selectIsActualTorneoActualAdeful();
-        // SI ES TRUE OCULTAMOS
-        if (isActual) {
-            linearTorneoActual.setVisibility(View.GONE);
-        }
+        getIsActual();
         imageButtonEquipo.setVisibility(View.GONE);
         loadSpinnerAnio();
         checkboxTorneoActual.setOnClickListener(new View.OnClickListener() {
@@ -189,9 +187,14 @@ public class FragmentTorneo extends Fragment {
 
                         insertar = false;
                         isChecked = torneoArray.get(position).getACTUAL();
+                        checkedAnterior = torneoArray.get(position).getACTUAL();
                         if (isChecked) {
+
                             linearTorneoActual.setVisibility(View.VISIBLE);
                             checkboxTorneoActual.setChecked(isChecked);
+                            spinnerAnioTorneoActual.setVisibility(View.VISIBLE);
+                            //ANIO
+                            spinnerAnioTorneoActual.setSelection(getPositionSpinner(torneoActual.getFECHA_ANIO()));
                         }
                         editTextTorneo.setText(torneoArray.get(position)
                                 .getDESCRIPCION());
@@ -240,18 +243,29 @@ public class FragmentTorneo extends Fragment {
         }
     }
 
+    private int getPositionSpinner(int anio) {
+
+        int index = 0;
+                   for (int i = 0; i < anioArray.size(); i++) {
+                    if (anioArray.get(i).getID_ANIO()== anio) {
+                        index = i;
+                    }
+                }
+
+        return index;
+    }
     public void guardarTorneo() {
 
         anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
         torneo = new Torneo(0, editTextTorneo.getText()
-                .toString(), isChecked, anio.getID_ANIO(), usuario, fechaCreacion, usuario,
+                .toString(), isChecked,isChecked, anio.getID_ANIO(), usuario, fechaCreacion, usuario,
                 fechaActualizacion);
         if (controladorAdeful.insertTorneoAdeful(torneo)) {
             recyclerViewLoadTorneo();
             editTextTorneo.setText("");
             if(checkboxTorneoActual.isChecked()){
-                checkboxTorneoActual.setChecked(false);
-                linearTorneoActual.setVisibility(View.GONE);
+                OcultarLayoutIsActual();
+                getIsActual();
             }
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
@@ -262,11 +276,15 @@ public class FragmentTorneo extends Fragment {
         anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
         torneo = new Torneo(torneoArray.get(posicion)
                 .getID_TORNEO(), editTextTorneo.getText()
-                .toString(), isChecked, anio.getID_ANIO(), null, null, usuario, fechaActualizacion);
+                .toString(), isChecked,checkedAnterior, anio.getID_ANIO(), null, null, usuario, fechaActualizacion);
         if (controladorAdeful.actualizarTorneoAdeful(torneo)) {
             recyclerViewLoadTorneo();
             editTextTorneo.setText("");
             insertar = true;
+            if(checkboxTorneoActual.isChecked()){
+                OcultarLayoutIsActual();
+                getIsActual();
+            }
             Toast.makeText(getActivity(),
                     "Torneo actualizado correctamente.",
                     Toast.LENGTH_SHORT).show();
@@ -274,7 +292,23 @@ public class FragmentTorneo extends Fragment {
             auxiliarGeneral.errorDataBase(getActivity());
         }
     }
+public void OcultarLayoutIsActual(){
+        checkboxTorneoActual.setChecked(false);
+        linearTorneoActual.setVisibility(View.GONE);
+        spinnerAnioTorneoActual.setVisibility(View.GONE);
+}
 
+    public void getIsActual(){
+        torneoActual = controladorAdeful.selectActualTorneoAdeful();
+        if(torneoActual!=null){
+            // SI ES TRUE OCULTAMOS
+            if (torneoActual.getISACTUAL()) {
+                linearTorneoActual.setVisibility(View.GONE);
+            }
+        }else{
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+    }
     public static interface ClickListener {
         public void onClick(View view, int position);
 

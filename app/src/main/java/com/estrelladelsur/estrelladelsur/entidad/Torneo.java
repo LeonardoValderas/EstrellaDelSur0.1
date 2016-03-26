@@ -5,6 +5,8 @@ public class Torneo {
 	private int ID_TORNEO;
 	private int ID_TORNEO_ACTUAL;
 	private Boolean ACTUAL;
+	private Boolean ISACTUAL;
+	private Boolean ISACTUAL_ANTERIOR;
 	private String DESCRIPCION;
 	private String USUARIO_CREADOR;
 	private String FECHA_CREACION;
@@ -23,22 +25,24 @@ public class Torneo {
 		USUARIO_ACTUALIZACION = usuario_act;
 		FECHA_ACTUALIZACION = fechaActualizacion;
 	}
-	public Torneo(int id, String descripcion, boolean actual,int anio, String usuario,
+	public Torneo(int id, String descripcion, boolean actual,boolean actual_anterior, int anio, String usuario,
 				   String fechaCreacion, String usuario_act, String fechaActualizacion) {
 
 		ID_TORNEO = id;
 		DESCRIPCION = descripcion;
 		ACTUAL = actual;
+		ISACTUAL_ANTERIOR = actual_anterior;
 		FECHA_ANIO =anio;
 		USUARIO_CREADOR = usuario;
 		FECHA_CREACION = fechaCreacion;
 		USUARIO_ACTUALIZACION = usuario_act;
 		FECHA_ACTUALIZACION = fechaActualizacion;
 	}
-	public Torneo(int id, int id_torneo,int fecha_anio ) {
+	public Torneo(int id, int id_torneo,int fecha_anio,boolean isActual ) {
 		ID_TORNEO_ACTUAL = id;
 		ID_TORNEO = id_torneo;
 		FECHA_ANIO = fecha_anio;
+		ISACTUAL = isActual;
 
 	}
 	public int getID_TORNEO() {
@@ -115,5 +119,13 @@ public class Torneo {
 
 	public void setACTUAL(Boolean ACTUAL) {
 		this.ACTUAL = ACTUAL;
+	}
+
+	public Boolean getISACTUAL() {
+		return ISACTUAL;
+	}
+
+	public Boolean getISACTUAL_ANTERIOR() {
+		return ISACTUAL_ANTERIOR;
 	}
 }

@@ -1073,11 +1073,6 @@ public class ControladorAdeful {
                 }else{
                     return true;
                 }
-//                if (valorActual > 0) {
-//                    return true;
-//                } else {
-//                    return false;
-//                }
             } else {
                 return false;
             }
@@ -1145,7 +1140,8 @@ public class ControladorAdeful {
 
     //ACTUALIZAR TORNEO
     public boolean actualizarTorneoAdeful(Torneo torneo) {
-
+        long valorActual = 0;
+        boolean updateOK = true;
         abrirBaseDeDatos();
         ContentValues cv = new ContentValues();
         try {
@@ -1154,17 +1150,68 @@ public class ControladorAdeful {
             cv.put("USUARIO_ACTUALIZACION", torneo.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", torneo.getFECHA_ACTUALIZACION());
 
-            long valor = database.update("TORNEO_ADEFUL", cv, "ID_TORNEO_="
+            long valor = database.update("TORNEO_ADEFUL", cv, "ID_TORNEO="
                     + torneo.getID_TORNEO(), null);
             cerrarBaseDeDatos();
             if (valor > 0) {
-                return true;
+
+                if (!torneo.getACTUAL() && torneo.getISACTUAL_ANTERIOR()) {
+                    abrirBaseDeDatos();
+                    ContentValues cvA = new ContentValues();
+                    cvA.put("ID_TORNEO", 0);
+                    cvA.put("ID_ANIO", 0);
+                    cvA.put("ISACTUAL", false);
+                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL="
+                            + 1, null);
+                    cerrarBaseDeDatos();
+
+                    if (valorActual > 0) {
+                        updateOK = true;
+                    } else {
+                        updateOK = false;
+                    }
+                }
+                if (torneo.getACTUAL() && torneo.getISACTUAL_ANTERIOR()) {
+                    abrirBaseDeDatos();
+                    ContentValues cvA = new ContentValues();
+                    cvA.put("ID_ANIO", torneo.getFECHA_ANIO());
+                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL="
+                            + 1, null);
+                    cerrarBaseDeDatos();
+
+
+                    if (valorActual > 0) {
+                        updateOK = true;
+                    } else {
+                        updateOK = false;
+                    }
+                }
+
+                if (torneo.getACTUAL() && !torneo.getISACTUAL_ANTERIOR()) {
+                    abrirBaseDeDatos();
+                    ContentValues cvA = new ContentValues();
+                    cvA.put("ID_ANIO", torneo.getFECHA_ANIO());
+                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL="
+                            + 1, null);
+                    cerrarBaseDeDatos();
+
+
+                if (valorActual > 0) {
+                    updateOK = true;
+                } else {
+                    updateOK = false;
+                }
+            }
+                if(!torneo.getACTUAL() && !torneo.getISACTUAL_ANTERIOR()){
+                    updateOK = true;
+                }
             } else {
-                return false;
+                updateOK = false;
             }
         } catch (SQLiteException e) {
-            return false;
+            updateOK = false;
         }
+    return updateOK;
     }
 
     //ELIMINAR TORNEO
@@ -1190,34 +1237,14 @@ public class ControladorAdeful {
         return res;
     }
 
-    // ACTUALIZAR TORNEO ACTUAL
-    public boolean actualizarTorneoActualAdeful(Torneo torneo) throws SQLiteException {
+      //ES TORNEO ACTUAL
+    public Torneo selectActualTorneoAdeful() {
 
-        abrirBaseDeDatos();
-        ContentValues cv = new ContentValues();
-        try {
-            cv.put("ID_TORNEO", torneo.getID_TORNEO());
-            cv.put("FECHA_ANIO", torneo.getFECHA_ANIO());
-
-            long valor = database.update("TORNEO_ACTUAL_ADEFUL", cv, "ID_TORNEO_ACTUAL="
-                    + 1, null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            return false;
-        }
-    }
-
-    //ES TORNEO ACTUAL
-    public boolean selectIsActualTorneoActualAdeful() {
-
-        String sql = "SELECT ISACTUAL FROM TORNEO_ACTUAL_ADEFUL";
+        String sql = "SELECT * FROM TORNEO_ACTUAL_ADEFUL";
+        Torneo torneo = null;
         boolean isActual = false;
         abrirBaseDeDatos();
+        int id,id_torneo,id_anio;
         Cursor cursor = null;
         if (database != null && database.isOpen()) {
             try {
@@ -1225,22 +1252,29 @@ public class ControladorAdeful {
                 if (cursor != null && cursor.getCount() > 0) {
 
                     while (cursor.moveToNext()) {
+
+                        id = cursor.getInt(cursor.getColumnIndex("ID_TORNEO_ACTUAL"));
+                        id_torneo = cursor.getInt(cursor.getColumnIndex("ID_TORNEO"));
+                        id_anio = cursor.getInt(cursor.getColumnIndex("ID_ANIO"));
                         isActual = cursor.getInt(cursor.getColumnIndex("ISACTUAL")) > 0;
+
+                        torneo = new Torneo(id, id_torneo, id_anio, isActual);
+                       // arrayTorneo.add(torneo);
+                        cerrarBaseDeDatos();
                     }
                 }
             } catch (Exception e) {
-                // isActual =null;
+                torneo=null;
             }
         } else {
-            //   arrayTorneo = null;
+            torneo = null;
         }
-        cerrarBaseDeDatos();
+
         sql = null;
         cursor = null;
         database = null;
 
-
-        return isActual;
+        return torneo;
     }
 
     // INSERTAR CANCHA

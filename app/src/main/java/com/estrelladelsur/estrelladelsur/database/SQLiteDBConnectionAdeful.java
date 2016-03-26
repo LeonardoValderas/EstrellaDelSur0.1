@@ -289,7 +289,7 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL(TABLA_DIVISION_ADEFUL);
         db.execSQL(TABLA_TORNEO_ADEFUL);
         db.execSQL(TABLA_TORNEO_ACTUAL_ADEFUL);
-        db.execSQL(INSERT_TORNEO_ACTUAL_ADEFUL);
+
         db.execSQL(TABLA_CANCHA_ADEFUL);
         //MODULO MI EQUIPO
         db.execSQL(TABLA_FIXTURE_ADEFUL);
