@@ -25,6 +25,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
@@ -85,6 +86,7 @@ public class FragmentGenerarFixture extends Fragment {
     private boolean insertar = true;
     private int idFixtureExtra;
     private ArrayAdapter<String> adaptadorInicial;
+    private AuxiliarGeneral auxiliarGeneral;
 
     public static FragmentGenerarFixture newInstance() {
         FragmentGenerarFixture fragment = new FragmentGenerarFixture();
@@ -148,25 +150,20 @@ public class FragmentGenerarFixture extends Fragment {
     }
 
     private void init() {
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
 //		// Fecha ver donde implementar
         for (int i = 0; i < getResources().getStringArray(R.array.fechaArray).length; i++) {
 
             fecha = new Fecha(i, getResources().getStringArray(
                     R.array.fechaArray)[i]);
-            controladorAdeful.abrirBaseDeDatos();
             controladorAdeful.insertFecha(fecha);
-            controladorAdeful.cerrarBaseDeDatos();
         }
 //		// Anio ver donde implementar
         for (int i = 0; i < getResources().getStringArray(R.array.anioArray).length; i++) {
 
             anio = new Anio(i,
                     getResources().getStringArray(R.array.anioArray)[i]);
-
-            controladorAdeful.abrirBaseDeDatos();
             controladorAdeful.insertAnio(anio);
-            controladorAdeful.cerrarBaseDeDatos();
         }
 
         // Mes ver donde implementar
@@ -175,15 +172,11 @@ public class FragmentGenerarFixture extends Fragment {
             mes = new Mes(i,
                     getResources().getStringArray(R.array.mesArray)[i]);
 
-            controladorAdeful.abrirBaseDeDatos();
             controladorAdeful.insertMes(mes);
-            controladorAdeful.cerrarBaseDeDatos();
         }
         // DIVISION
-        controladorAdeful.abrirBaseDeDatos();
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
             // DIVSION SPINNER
             if (divisionArray.size() != 0) {
                 adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
@@ -196,15 +189,11 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureDivisionSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(getActivity());
         }
         // TORNEO
-        controladorAdeful.abrirBaseDeDatos();
         torneoArray = controladorAdeful.selectListaTorneoAdeful();
         if (torneoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
             if (torneoArray.size() != 0) {
                 // TORNEO SPINNER
                 adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
@@ -217,9 +206,7 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureTorneoSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(getActivity());
         }
         // FECHA
         controladorAdeful.abrirBaseDeDatos();
@@ -336,7 +323,7 @@ public class FragmentGenerarFixture extends Fragment {
 
             //DIVISION 0
             fixtureDivisionSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("divisionSpinner",0),0));
+                    .getIntExtra("divisionSpinner", 0), 0));
             // TORNEO 1
             fixtureTorneoSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
                     .getIntExtra("torneoSpinner", 0), 1));
@@ -418,7 +405,7 @@ public class FragmentGenerarFixture extends Fragment {
                         index = i;
                     }
                 }
-            break;
+                break;
             // TORNEO 1
             case 1:
                 for (int i = 0; i < torneoArray.size(); i++) {

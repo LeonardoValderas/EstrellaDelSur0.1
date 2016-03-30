@@ -196,6 +196,8 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
     //SANCIONES
     String TABLA_SANCION_ADEFUL = "CREATE TABLE IF NOT EXISTS SANCION_ADEFUL(ID_SANCION INTEGER PRIMARY KEY AUTOINCREMENT,"
             + " ID_JUGADOR INTEGER,"
+            + " ID_TORNEO INTEGER,"
+            + " ID_ANIO INTEGER,"
             + " AMARILLA INTEGER,"
             + " ROJA INTEGER,"
             + " FECHA_SUSPENSION INTEGER,"
@@ -204,7 +206,9 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " FECHA_CREACION VARCHAR(100),"
             + " USUARIO_ACTUALIZACION VARCHAR(100),"
             + " FECHA_ACTUALIZACION VARCHAR(100),"
-            + " FOREIGN KEY(ID_JUGADOR) REFERENCES JUGADOR_ADEFUL(ID_JUGADOR));";
+            + " FOREIGN KEY(ID_JUGADOR) REFERENCES JUGADOR_ADEFUL(ID_JUGADOR),"
+            + " FOREIGN KEY(ID_TORNEO) REFERENCES TORNEO_ADEFUL(ID_TORNEO),"
+            + " FOREIGN KEY(ID_ANIO) REFERENCES ANIO(ID_ANIO));";
 
     public SQLiteDBConnectionAdeful(Context context, String name,
                                     CursorFactory factory, int version) {

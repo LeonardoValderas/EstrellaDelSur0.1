@@ -1,22 +1,24 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
     android:layout_width="150dp"
     android:layout_height="80dp"
     android:layout_gravity="center_horizontal"
+    card_view:contentPaddingLeft="-3dp"
+    card_view:contentPaddingRight="-3dp"
+    card_view:contentPaddingTop="-3dp"
+    card_view:contentPaddingBottom="-3dp"
     card_view:cardCornerRadius="10dp"
-    card_view:cardElevation="4dp" >
-
+    card_view:cardElevation="4dp">
 
 
     <LinearLayout
         android:id="@+id/recyclerCargaList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:layout_marginTop="2dp"
         android:orientation="horizontal"
         android:padding="16dp" >
-
-
 
         <ImageView
             android:id="@+id/imageView"
@@ -37,7 +39,5 @@
             android:text="Dummy Text" />
 
     </LinearLayout>
-
-
 
 </android.support.v7.widget.CardView>

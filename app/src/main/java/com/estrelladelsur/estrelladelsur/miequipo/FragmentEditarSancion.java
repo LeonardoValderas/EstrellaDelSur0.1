@@ -24,6 +24,8 @@ import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFecha;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerJugador;
+import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
@@ -32,37 +34,39 @@ import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.JugadorRecycler;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
+import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
 import java.util.ArrayList;
 
 public class FragmentEditarSancion extends Fragment {
 
     private Division division;
-    private Fecha fecha;
+    private Torneo torneo;
     private Anio anio;
     private JugadorRecycler jugadorRecycler;
     private ArrayList<Division> divisionArray;
     private ArrayList<JugadorRecycler> jugadorArray;
-    private ArrayList<Fecha> fechaArray;
+    private ArrayList<Torneo> torneoArray;
     private ArrayList<Anio> anioArray;
     private ArrayList<Sancion> sancionArray;
     private Spinner sancionDivisionSpinner;
     private Spinner sancionJugadorSpinner;
-    private Spinner fixtureFechaSpinner;
+    private Spinner sancionTorneoSpinner;
     private Spinner fixtureAnioSpinner;
     private AdapterSpinnerJugador adapterSpinnerJugador;
     private AdapterSpinnerDivision adapterFixtureDivision;
-    private AdapterSpinnerFecha adapterFixtureFecha;
+    private AdapterSpinnerTorneo adapterFixtureTorneo;
     private AdapterSpinnerAnio adapterFixtureAnio;
     private AdaptadorEditarSancion adaptadorEditarSancion;
     private RecyclerView recyclerViewSancion;
     private FloatingActionButton botonFloating;
     private ControladorAdeful controladorAdeful;
     private int CheckedPositionFragment;
-    private int divisionSpinner, jugadorSpinner, fechaSpinner, anioSpiner;
+    private int divisionSpinner, jugadorSpinner, torneoSpinner, anioSpiner;
     private DialogoAlerta dialogoAlerta;
     private ArrayAdapter<String> adaptadorInicial;
     private int id_division;
+    private AuxiliarGeneral auxiliarGeneral;
 
     public static FragmentEditarSancion newInstance() {
         FragmentEditarSancion fragment = new FragmentEditarSancion();
@@ -93,8 +97,8 @@ public class FragmentEditarSancion extends Fragment {
         View v = inflater.inflate(R.layout.fragment_editar_fixture,
                 container, false);
 
-        // FECHA
-        fixtureFechaSpinner = (Spinner) v
+        // TORNEO
+        sancionTorneoSpinner = (Spinner) v
                 .findViewById(R.id.fixtureFechaSpinner);
         // ANIO
         fixtureAnioSpinner = (Spinner) v.findViewById(R.id.fixtureAnioSpinner);
@@ -102,7 +106,7 @@ public class FragmentEditarSancion extends Fragment {
         // DIVISION
         sancionDivisionSpinner = (Spinner) v
                 .findViewById(R.id.fixtureDivisionSpinner);
-        // TORNEO
+        // JUGADOR
         sancionJugadorSpinner = (Spinner) v
                 .findViewById(R.id.fixtureTorneoSpinner);
         // FLOATING BUTTON
@@ -121,12 +125,10 @@ public class FragmentEditarSancion extends Fragment {
     }
 
     private void init() {
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         // DIVISION
-        controladorAdeful.abrirBaseDeDatos();
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
             // DIVSION SPINNER
             if (divisionArray.size() != 0) {
                 adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
@@ -139,39 +141,35 @@ public class FragmentEditarSancion extends Fragment {
                 sancionDivisionSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(getActivity());
         }
-
-
-        // FECHA
-        controladorAdeful.abrirBaseDeDatos();
-        fechaArray = controladorAdeful.selectListaFecha();
-        if (fechaArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            // FECHA SPINNER
-            adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
-                    R.layout.simple_spinner_dropdown_item, fechaArray);
-            fixtureFechaSpinner.setAdapter(adapterFixtureFecha);
+        // TORNEO
+        torneoArray = controladorAdeful.selectListaTorneoAdeful();
+        if (torneoArray != null) {
+            if (torneoArray.size() != 0) {
+                // TORNEO SPINNER
+                adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, torneoArray);
+                sancionTorneoSpinner.setAdapter(adapterFixtureTorneo);
+            } else {
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
+                sancionTorneoSpinner.setAdapter(adaptadorInicial);
+            }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(getActivity());
         }
+
         // ANIO
-        controladorAdeful.abrirBaseDeDatos();
         anioArray = controladorAdeful.selectListaAnio();
         if (anioArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
             // ANIO SPINNER
             adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
                     R.layout.simple_spinner_dropdown_item, anioArray);
             fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(getActivity());
         }
         //POPULATION SPINNER JUGADOR X ID DIVISION
         sancionDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -181,32 +179,18 @@ public class FragmentEditarSancion extends Fragment {
                                        int position, long arg3) {
                 if (divisionArray.size() > 0) {
                     id_division = divisionArray.get(position).getID_DIVISION();
-                    controladorAdeful.abrirBaseDeDatos();
-                    jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
-                    if (jugadorArray != null) {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        if (jugadorArray.size() != 0) {
-                            adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
-                                    R.layout.simple_spinner_dropdown_item, jugadorArray);
-                            sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
-                        } else {
-                            //SPINNER HINT
-                            adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                                    R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerJugador));
-                            sancionJugadorSpinner.setAdapter(adaptadorInicial);
-                        }
-
-                    } else {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    populationSpinnerJugador(id_division);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
+
+
+
+
         // RECLYCLER
         recyclerViewSancion.setLayoutManager(new LinearLayoutManager(
                 getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -214,37 +198,35 @@ public class FragmentEditarSancion extends Fragment {
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerViewSancion.setItemAnimator(new DefaultItemAnimator());
 
-        botonFloating.setOnClickListener(new View.OnClickListener()
+        botonFloating.setOnClickListener(new View.OnClickListener(){
 
-        {
+         @Override
+         public void onClick(View v) {
 
-        @Override
-        public void onClick(View v) {
+             if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
+                     getString(R.string.ceroSpinnerDivision))) {
+                 Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
+                         Toast.LENGTH_SHORT).show();
+             } else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
+                     getString(R.string.ceroSpinnerTorneo))) {
+                 Toast.makeText(getActivity(), "Debe agregar un jugador.",
+                         Toast.LENGTH_SHORT).show();
+             } else {
+                 division = (Division) sancionDivisionSpinner.getSelectedItem();
+                 jugadorRecycler = (JugadorRecycler) sancionJugadorSpinner.getSelectedItem();
+                 torneo = (Torneo) sancionTorneoSpinner.getSelectedItem();
+                 anio = (Anio) fixtureAnioSpinner.getSelectedItem();
 
-            if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
-                    getString(R.string.ceroSpinnerDivision))) {
-                Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
-                        Toast.LENGTH_SHORT).show();
-            } else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
-                    getString(R.string.ceroSpinnerTorneo))) {
-                Toast.makeText(getActivity(), "Debe agregar un jugador.",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                division = (Division) sancionDivisionSpinner.getSelectedItem();
-                jugadorRecycler = (JugadorRecycler) sancionJugadorSpinner.getSelectedItem();
-                fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
-                anio = (Anio) fixtureAnioSpinner.getSelectedItem();
+                 divisionSpinner = division.getID_DIVISION();
+                 jugadorSpinner = jugadorRecycler.getID_JUGADOR();
+                 torneoSpinner = torneo.getID_TORNEO();
+                 anioSpiner = anio.getID_ANIO();
 
-                divisionSpinner = division.getID_DIVISION();
-                jugadorSpinner = jugadorRecycler.getID_JUGADOR();
-                fechaSpinner = fecha.getID_FECHA();
-                anioSpiner = anio.getID_ANIO();
+                 recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, torneoSpinner, anioSpiner);
 
-                recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, fechaSpinner, anioSpiner);
-
-            }
-        }
-                                         }
+             }
+                                             }
+         }
 
         );
 
@@ -261,7 +243,7 @@ public class FragmentEditarSancion extends Fragment {
                         // TODO Auto-generated method stub
 
                         Intent editarSancion = new Intent(getActivity(),
-                                TabsFixture.class);
+                                TabsSancion.class);
                         editarSancion.putExtra("actualizar", true);
                         editarSancion.putExtra("id_sancion",
                                 sancionArray.get(position).getID_SANCION());
@@ -271,7 +253,7 @@ public class FragmentEditarSancion extends Fragment {
                         editarSancion.putExtra("rojaSpinner", sancionArray.get(position).getROJA());
                         editarSancion.putExtra("fechaSpinner", sancionArray.get(position).getFECHA_SUSPENSION());
                         editarSancion.putExtra("observaciones", sancionArray.get(position).getOBSERVACIONES());
-                        // editarSancion.putExtra("anioSpiner", anioSpiner);
+                        editarSancion.putExtra("anioSpinner", anioSpiner);
 
                         startActivity(editarSancion);
                     }
@@ -292,21 +274,16 @@ public class FragmentEditarSancion extends Fragment {
                                     public void onClick(View v) {
                                         // TODO Auto-generated method stub
 
-                                        //controladorAdeful.abrirBaseDeDatos();
                                         if (controladorAdeful.eliminarSancionAdeful(sancionArray.get(position)
                                                 .getID_SANCION())) {
-                                            //  controladorAdeful.cerrarBaseDeDatos();
-                                            recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, fechaSpinner, anioSpiner);
+                                            recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, torneoSpinner, anioSpiner);
                                             Toast.makeText(
                                                     getActivity(),
                                                     "Sanción eliminada correctamente",
                                                     Toast.LENGTH_SHORT).show();
                                             dialogoAlerta.alertDialog.dismiss();
                                         } else {
-                                            //  controladorAdeful.cerrarBaseDeDatos();
-                                            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                            "\n Si el error persiste comuniquese con soporte.",
-                                                    Toast.LENGTH_SHORT).show();
+                                            auxiliarGeneral.errorDataBase(getActivity());
                                         }
                                     }
                                 });
@@ -325,24 +302,38 @@ public class FragmentEditarSancion extends Fragment {
         ));
     }
 
+    public void populationSpinnerJugador(int id_division) {
+
+        jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
+        if (jugadorArray != null) {
+            if (jugadorArray.size() != 0) {
+                adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, jugadorArray);
+                sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
+            } else {
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerJugador));
+                sancionJugadorSpinner.setAdapter(adaptadorInicial);
+            }
+
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+    }
     //LOAD RECYCLER
 
     public void recyclerViewLoadSancion(int division, int jugador, int fecha,
                                         int anio) {
 
         //controladorAdeful.abrirBaseDeDatos();
-      sancionArray = controladorAdeful.selectListaSancionAdeful(division,
+        sancionArray = controladorAdeful.selectListaSancionAdeful(division,
                 id_division, fecha, anio);
         if (sancionArray != null) {
-            //controladorAdeful.cerrarBaseDeDatos();
-
             adaptadorEditarSancion = new AdaptadorEditarSancion(sancionArray);
             recyclerViewSancion.setAdapter(adaptadorEditarSancion);
         } else {
-           // controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\n Si el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(getActivity());
         }
     }
 

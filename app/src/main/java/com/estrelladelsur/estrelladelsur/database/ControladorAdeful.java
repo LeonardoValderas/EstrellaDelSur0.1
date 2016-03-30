@@ -942,7 +942,7 @@ public class ControladorAdeful {
         String descripcion = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null;
         int id;
         Cursor cursor = null;
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
 
             try {
@@ -976,7 +976,7 @@ public class ControladorAdeful {
         } else {
             arrayDivision = null;
         }
-
+        cerrarBaseDeDatos();
         sql = null;
         cursor = null;
         database = null;
@@ -1070,7 +1070,7 @@ public class ControladorAdeful {
                     } else {
                         return false;
                     }
-                }else{
+                } else {
                     return true;
                 }
             } else {
@@ -1196,13 +1196,13 @@ public class ControladorAdeful {
                     cerrarBaseDeDatos();
 
 
-                if (valorActual > 0) {
-                    updateOK = true;
-                } else {
-                    updateOK = false;
+                    if (valorActual > 0) {
+                        updateOK = true;
+                    } else {
+                        updateOK = false;
+                    }
                 }
-            }
-                if(!torneo.getACTUAL() && !torneo.getISACTUAL_ANTERIOR()){
+                if (!torneo.getACTUAL() && !torneo.getISACTUAL_ANTERIOR()) {
                     updateOK = true;
                 }
             } else {
@@ -1211,7 +1211,7 @@ public class ControladorAdeful {
         } catch (SQLiteException e) {
             updateOK = false;
         }
-    return updateOK;
+        return updateOK;
     }
 
     //ELIMINAR TORNEO
@@ -1223,7 +1223,6 @@ public class ControladorAdeful {
         if (database != null && database.isOpen()) {
             try {
                 database.execSQL(sql);
-                cerrarBaseDeDatos();
                 res = true;
             } catch (Exception e) {
                 res = false;
@@ -1231,21 +1230,22 @@ public class ControladorAdeful {
         } else {
             res = false;
         }
-
+        cerrarBaseDeDatos();
         database = null;
         sql = null;
         return res;
     }
 
-      //ES TORNEO ACTUAL
+    //ES TORNEO ACTUAL
     public Torneo selectActualTorneoAdeful() {
 
         String sql = "SELECT * FROM TORNEO_ACTUAL_ADEFUL";
         Torneo torneo = null;
         boolean isActual = false;
         abrirBaseDeDatos();
-        int id,id_torneo,id_anio;
+        int id, id_torneo, id_anio;
         Cursor cursor = null;
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 cursor = database.rawQuery(sql, null);
@@ -1259,17 +1259,17 @@ public class ControladorAdeful {
                         isActual = cursor.getInt(cursor.getColumnIndex("ISACTUAL")) > 0;
 
                         torneo = new Torneo(id, id_torneo, id_anio, isActual);
-                       // arrayTorneo.add(torneo);
+                        // arrayTorneo.add(torneo);
                         cerrarBaseDeDatos();
                     }
                 }
             } catch (Exception e) {
-                torneo=null;
+                torneo = null;
             }
         } else {
             torneo = null;
         }
-
+        cerrarBaseDeDatos();
         sql = null;
         cursor = null;
         database = null;
@@ -1298,7 +1298,7 @@ public class ControladorAdeful {
                 + "', '"
                 + cancha.getFECHA_ACTUALIZACION()
                 + "')";
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 database.execSQL(sql);
@@ -1309,7 +1309,7 @@ public class ControladorAdeful {
         } else {
             ban = false;
         }
-
+        cerrarBaseDeDatos();
         sql = null;
         database = null;
         return ban;
@@ -1323,7 +1323,7 @@ public class ControladorAdeful {
         String nombre = null, longitud = null, latitud = null, direccion = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null;
         int id;
         Cursor cursor = null;
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
 
             try {
@@ -1364,7 +1364,7 @@ public class ControladorAdeful {
         } else {
             arrayCancha = null;
         }
-
+        cerrarBaseDeDatos();
         sql = null;
         cursor = null;
         database = null;
@@ -1388,7 +1388,7 @@ public class ControladorAdeful {
                 + cancha.getUSUARIO_ACTUALIZACION() + "', FECHA_ACTUALIZACION='"
                 + cancha.getFECHA_ACTUALIZACION()
                 + "' WHERE ID_CANCHA ='" + cancha.getID_CANCHA() + "'";
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 database.execSQL(sql);
@@ -1399,7 +1399,7 @@ public class ControladorAdeful {
         } else {
             res = false;
         }
-
+        cerrarBaseDeDatos();
         database = null;
         sql = null;
         return res;
@@ -1410,7 +1410,7 @@ public class ControladorAdeful {
 
         boolean res = false;
         String sql = "DELETE FROM CANCHA_ADEFUL WHERE ID_CANCHA = " + id;
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 database.execSQL(sql);
@@ -1421,7 +1421,7 @@ public class ControladorAdeful {
         } else {
             res = false;
         }
-
+        cerrarBaseDeDatos();
         database = null;
         sql = null;
         return res;
@@ -1435,11 +1435,12 @@ public class ControladorAdeful {
 
         String sql = "INSERT INTO FECHA ( FECHA) VALUES ('" + fecha.getFECHA()
                 + "')";
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 database.execSQL(sql);
                 ban = true;
+                cerrarBaseDeDatos();
             } catch (Exception e) {
                 ban = false;
             }
@@ -1459,7 +1460,7 @@ public class ControladorAdeful {
         String fechaa = null;
         int id;
         Cursor cursor = null;
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 cursor = database.rawQuery(sql, null);
@@ -1480,6 +1481,7 @@ public class ControladorAdeful {
         } else {
             arrayFecha = null;
         }
+        cerrarBaseDeDatos();
         sql = null;
         cursor = null;
         database = null;
@@ -1493,16 +1495,19 @@ public class ControladorAdeful {
 
         String sql = "INSERT INTO ANIO ( ANIO) VALUES ('" + anio.getANIO()
                 + "')";
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 database.execSQL(sql);
                 ban = true;
+
             } catch (Exception e) {
                 ban = false;
             }
         } else {
             ban = false;
         }
+        cerrarBaseDeDatos();
         sql = null;
         database = null;
         return ban;
@@ -1553,7 +1558,7 @@ public class ControladorAdeful {
 
         String sql = "INSERT INTO MES ( MES) VALUES ('" + mes.getMES()
                 + "')";
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
                 database.execSQL(sql);
@@ -1564,7 +1569,7 @@ public class ControladorAdeful {
         } else {
             ban = false;
         }
-
+        cerrarBaseDeDatos();
         sql = null;
         database = null;
         return ban;
@@ -1922,7 +1927,7 @@ public class ControladorAdeful {
         int id_division;
         int id_posicion;
         Cursor cursor = null;
-
+        abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
 
             try {
@@ -1958,7 +1963,7 @@ public class ControladorAdeful {
         } else {
             arrayJugador = null;
         }
-
+        cerrarBaseDeDatos();
         sql = null;
         cursor = null;
         database = null;
@@ -2526,10 +2531,12 @@ public class ControladorAdeful {
         String sqlId = "";
         for (int ids = 0; ids < id_division_array.size(); ids++) {
             if (id_division_array.size() != 1) {
-                if(ids==0){
-                    sqlId =""+ id_division_array.get(0);
-                }else{sqlId += " OR ID_DIVISION=" + id_division_array.get(ids);}
-               // sqlId += sqlId +" "+ "AND ID_DIVISION=" + id_division_array.get(ids);
+                if (ids == 0) {
+                    sqlId = "" + id_division_array.get(0);
+                } else {
+                    sqlId += " OR ID_DIVISION=" + id_division_array.get(ids);
+                }
+                // sqlId += sqlId +" "+ "AND ID_DIVISION=" + id_division_array.get(ids);
 
             } else {
                 sqlId = "" + id_division_array.get(ids);
@@ -2632,10 +2639,12 @@ public class ControladorAdeful {
     // INSERTAR JUGADOR
     public boolean insertSancionAdeful(Sancion sancion) throws SQLiteException {
 
-        abrirBaseDeDatos();
         ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
         try {
             cv.put("ID_JUGADOR", sancion.getID_JUGADOR());
+            cv.put("ID_TORNEO", sancion.getID_TORNEO());
+            cv.put("ID_ANIO", sancion.getID_ANIO());
             cv.put("AMARILLA", sancion.getAMARILLA());
             cv.put("ROJA", sancion.getROJA());
             cv.put("FECHA_SUSPENSION", sancion.getFECHA_SUSPENSION());
@@ -2667,6 +2676,8 @@ public class ControladorAdeful {
         ContentValues cv = new ContentValues();
         try {
             cv.put("ID_JUGADOR", sancion.getID_JUGADOR());
+            cv.put("ID_TORNEO", sancion.getID_TORNEO());
+            cv.put("ID_ANIO", sancion.getID_ANIO());
             cv.put("AMARILLA", sancion.getAMARILLA());
             cv.put("ROJA", sancion.getROJA());
             cv.put("FECHA_SUSPENSION", sancion.getFECHA_SUSPENSION());
@@ -2710,17 +2721,17 @@ public class ControladorAdeful {
 
     //LISTA FIXTURE RECYCLER
     public ArrayList<Sancion> selectListaSancionAdeful(int division,
-                                                       int jugador, int fecha, int anio) {
+                                                       int jugador, int torneo, int anio) {
 
         String sql = "SELECT S.ID_SANCION AS ID,S.ID_JUGADOR, J.NOMBRE_JUGADOR,J.FOTO_JUGADOR, J.ID_DIVISION, D.DESCRIPCION, "
-                + "S.AMARILLA, S.ROJA, S.FECHA_SUSPENSION, S.OBSERVACIONES, "
+                + "S.AMARILLA, S.ROJA, S.FECHA_SUSPENSION, S.OBSERVACIONES "
                 + "FROM SANCION_ADEFUL S INNER JOIN JUGADOR_ADEFUL J ON J.ID_JUGADOR = S.ID_JUGADOR "
-                + "INNER JOIN DIVISION_ADEFUL D ON  D.ID_DIVISION =  S.ID_DIVISION "
-                + "WHERE ID_DIVISION="
+                + "INNER JOIN DIVISION_ADEFUL D ON D.ID_DIVISION = J.ID_DIVISION "
+                + "WHERE D.ID_DIVISION="
                 + division
-                + " AND ID_JUGADOR="
+                + " AND J.ID_JUGADOR="
                 + jugador
-                + " AND ID_FECHA=" + fecha + " AND ID_ANIO=" + anio + "";
+                + " AND S.ID_TORNEO=" + torneo + " AND S.ID_ANIO=" + anio + "";
 
         ArrayList<Sancion> arraySancion = new ArrayList<Sancion>();
         String nombre_jugador = null, descripcion_division = null, obsevaciones = null;

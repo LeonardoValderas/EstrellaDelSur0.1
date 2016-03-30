@@ -26,52 +26,32 @@ public class AdaptadorEditarSancion extends
 	public static class SancionViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewFotoJugador;
 		private TextView textRecyclerViewNombre;
-		private ImageView imageViewEscudoV; // no se usa
-		private TextView textRecyclerViewEquipoV; // no se usa
 		private TextView textRecyclerViewTarjetas;
 		private TextView textRecyclerViewFecha;
 		private TextView textRecyclerViewObs;
-		private TextView textRecyclerViewResultadoV;// no se usa
-		private TextView textRecyclerViewResultadoL;// no se usa
 
 		public SancionViewHolder(View itemView) {
 			super(itemView);
 
 			// FOTO JUGADOR
 			imageViewFotoJugador = (ImageView) itemView
-					.findViewById(R.id.imageViewEscudoL);
+					.findViewById(R.id.imageViewJugador);
             // NOMBRE JUGADOR
 			textRecyclerViewNombre = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewEquipoL);
+					.findViewById(R.id.textRecyclerViewNombre);
 		   // TARJETAS
 			textRecyclerViewTarjetas = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewDia);
+					.findViewById(R.id.textRecyclerViewTarjetas);
 			// FECHAS
 			textRecyclerViewFecha = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewHora);
+					.findViewById(R.id.textRecyclerViewFechas);
 			// OBSERVACIONES
 			textRecyclerViewObs = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewCancha);
-			// RESULTADO LOCAL
-			textRecyclerViewResultadoL = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewResultadoL);
-			textRecyclerViewResultadoL.setVisibility(View.GONE);
-			// RESULTADO VISITA
-			textRecyclerViewResultadoV = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewResultadoV);
-			textRecyclerViewResultadoV.setVisibility(View.GONE);
-			// ESCUDO VISITA
-			imageViewEscudoV = (ImageView) itemView
-					.findViewById(R.id.imageViewEscudoV);
-			imageViewEscudoV.setVisibility(View.GONE);
-			// EQUIPO VISITA
-			textRecyclerViewEquipoV = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewEquipoV);
-			textRecyclerViewEquipoV.setVisibility(View.GONE);
+					.findViewById(R.id.textRecyclerViewObservacion);
 		}
 
 		public void bindTitular(Sancion sancion) {
-			// ESCUDO EQUIPO LOCAL
+			// Jugador
 			byte[] foto = sancion.getFOTO_JUGADOR();
 			if (foto == null) {
 				imageViewFotoJugador.setImageResource(R.mipmap.ic_foto_galery);
@@ -84,10 +64,10 @@ public class AdaptadorEditarSancion extends
 				imageViewFotoJugador.setImageBitmap(escudoLocalBitmap);
 			}
 			textRecyclerViewNombre.setText(sancion.getNOMBRE_JUGADOR());
-			String tarjetas = "Amarrilas: "+sancion.getAMARILLA()+" rojas: "+sancion.getROJA();
+			String tarjetas = "Amarrilas: "+sancion.getAMARILLA()+" Rojas: "+sancion.getROJA();
 			textRecyclerViewTarjetas.setText(tarjetas);
-			textRecyclerViewFecha.setText(sancion.getFECHA_ACTUALIZACION());
-			textRecyclerViewObs.setText(sancion.getOBSERVACIONES());
+			textRecyclerViewFecha.setText("Fechas: "+sancion.getFECHA_SUSPENSION());
+			textRecyclerViewObs.setText("*"+sancion.getOBSERVACIONES());
 		}
 	}
 
@@ -99,7 +79,7 @@ public class AdaptadorEditarSancion extends
 	public SancionViewHolder onCreateViewHolder(ViewGroup viewGroup,
 			int viewType) {
 		View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
-				R.layout.recyclerview_item_fixture, viewGroup, false);
+				R.layout.recyclerview_item_sancion, viewGroup, false);
 		itemView.setOnClickListener(this);
 		SancionViewHolder tvh = new SancionViewHolder(itemView);
 		return tvh;

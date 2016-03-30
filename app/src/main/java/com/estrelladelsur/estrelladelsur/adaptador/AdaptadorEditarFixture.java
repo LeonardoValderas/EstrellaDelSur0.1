@@ -9,16 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 import com.estrelladelsur.estrelladelsur.entidad.FixtureRecycler;
 
 public class AdaptadorEditarFixture extends
 		RecyclerView.Adapter<AdaptadorEditarFixture.FixtureViewHolder> implements
 		View.OnClickListener {
-
-	// private final static Context context;
 
 	private View.OnClickListener listener;
 	private ArrayList<FixtureRecycler> fixtureArray;

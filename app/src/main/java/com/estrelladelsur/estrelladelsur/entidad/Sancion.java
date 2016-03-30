@@ -5,6 +5,8 @@ public class Sancion {
     private int ID_SANCION;
     private int ID_JUGADOR;
     private int ID_DIVISION;
+    private int ID_TORNEO;
+    private int ID_ANIO;
     private int AMARILLA;
     private int ROJA;
     private int FECHA_SUSPENSION;
@@ -18,11 +20,13 @@ public class Sancion {
     private byte[] FOTO_JUGADOR;
 
     // SANCION
-    public Sancion(int id, int id_jugador, int amarilla, int roja, int fecha, String observaciones, String usuario,
+    public Sancion(int id, int id_jugador, int torneo, int anio, int amarilla, int roja, int fecha, String observaciones, String usuario,
                    String fechaCreacion, String usuario_act, String fechaActualizacion) {
 
         ID_SANCION = id;
         ID_JUGADOR = id_jugador;
+        ID_TORNEO = torneo;
+        ID_ANIO = anio;
         AMARILLA = amarilla;
         ROJA = roja;
         FECHA_SUSPENSION = fecha;
@@ -160,5 +164,13 @@ public class Sancion {
 
     public void setFECHA_ACTUALIZACION(String FECHA_ACTUALIZACION) {
         this.FECHA_ACTUALIZACION = FECHA_ACTUALIZACION;
+    }
+
+    public int getID_TORNEO() {
+        return ID_TORNEO;
+    }
+
+    public int getID_ANIO() {
+        return ID_ANIO;
     }
 }
