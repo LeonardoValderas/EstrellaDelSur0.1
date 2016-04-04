@@ -6,9 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
 
 import java.util.ArrayList;
@@ -45,7 +43,6 @@ public class AdapterSpinnerFechaEntrenamiento extends ArrayAdapter<Entrenamiento
 
             if(entrenamientoRecycler != null)
             {   // Parse the data from each object and set it.
-
                 TextView spinnerGeneral = (TextView) row.findViewById(R.id.descripcionTextGeneral);
                 if(spinnerGeneral != null)
                 	spinnerGeneral.setText(entrenamientoRecycler.getDIAHORA().toString());

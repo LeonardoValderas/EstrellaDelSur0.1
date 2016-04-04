@@ -9,15 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 
 public class AdaptadorRecyclerEquipo extends
 		RecyclerView.Adapter<AdaptadorRecyclerEquipo.EquipoAdefulViewHolder> implements
 		View.OnClickListener {
-
-	// private final static Context context;
 
 	private View.OnClickListener listener;
 	private ArrayList<Equipo> datosEquipoArray;
@@ -58,7 +55,6 @@ public class AdaptadorRecyclerEquipo extends
 		this.datosEquipoArray = datosEquipoArray;
 		// notifyItemInserted(datosEquipoArray);
 	}
-
 	@Override
 	public EquipoAdefulViewHolder onCreateViewHolder(ViewGroup viewGroup,
 			int viewType) {
@@ -68,13 +64,11 @@ public class AdaptadorRecyclerEquipo extends
 		EquipoAdefulViewHolder tvh = new EquipoAdefulViewHolder(itemView);
 		return tvh;
 	}
-
 	@Override
 	public void onBindViewHolder(EquipoAdefulViewHolder viewHolder, int pos) {
 		Equipo item = datosEquipoArray.get(pos);
 		viewHolder.bindTitular(item);
 	}
-
 	@Override
 	public int getItemCount() {
 		return datosEquipoArray.size();
@@ -83,7 +77,6 @@ public class AdaptadorRecyclerEquipo extends
 	public void setOnClickListener(View.OnClickListener listener) {
 		this.listener = listener;
 	}
-
 	@Override
 	public void onClick(View view) {
 		if (listener != null)

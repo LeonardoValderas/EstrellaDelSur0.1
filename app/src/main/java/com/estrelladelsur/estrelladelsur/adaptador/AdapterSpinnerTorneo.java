@@ -36,7 +36,6 @@ public class AdapterSpinnerTorneo extends ArrayAdapter<Torneo>
             if(row == null)
             {
                 LayoutInflater inflater = context.getLayoutInflater();
-              //  LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.spinner_item_general, parent, false);
             }
 
@@ -44,17 +43,11 @@ public class AdapterSpinnerTorneo extends ArrayAdapter<Torneo>
 
             if(torneo != null)
             {   // Parse the data from each object and set it.
-              // ImageView myFlag = (ImageView) row.findViewById(R.id.imageIcon);
                 TextView spinnerGeneral = (TextView) row.findViewById(R.id.descripcionTextGeneral);
-//                if(myFlag != null)
-//                {
-//                    myFlag.setBackgroundDrawable(getResources().getDrawable(item.getCountryFlag()));
-//                }
-                if(spinnerGeneral != null)
+
+                  if(spinnerGeneral != null)
                 	spinnerGeneral.setText(torneo.getDESCRIPCION());
-
             }
-
             return row;
         }
     }

@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,7 +33,6 @@ public class UtilityImage {
 				+ Math.random();
 		return Random_Image_Text;
 	}
-
 	// Copy your image into specific folder
 	public static File copyFile(File current_location, File destination_location) {
 		Copy_sourceLocation = new File("" + current_location);
@@ -54,7 +52,6 @@ public class UtilityImage {
 					Log.i("Purchase-File", "Move file failed.");
 				}
 			}
-
 			// we will copy the file
 			else {
 				// make sure the target file exists
@@ -109,7 +106,6 @@ public class UtilityImage {
 				height_tmp /= 2;
 				scale++;
 			}
-
 			BitmapFactory.Options o2 = new BitmapFactory.Options();
 			o2.inSampleSize = scale;
 			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
@@ -118,7 +114,6 @@ public class UtilityImage {
 		}
 		return null;
 	}
-
 	// Create New Dir (folder) if not exist
 	public static File Create_MY_IMAGES_DIR() {
 		try {

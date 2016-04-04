@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 
@@ -52,13 +51,11 @@ public class AdaptadorRecyclerDivision extends
 		DivisionViewHolder tvh = new DivisionViewHolder(itemView);
 		return tvh;
 	}
-
 	@Override
 	public void onBindViewHolder(DivisionViewHolder viewHolder, int pos) {
 		Division item = divisionArray.get(pos);
 		viewHolder.bindTitular(item);
 	}
-
 	@Override
 	public int getItemCount() {
 		return divisionArray.size();
@@ -67,7 +64,6 @@ public class AdaptadorRecyclerDivision extends
 	public void setOnClickListener(View.OnClickListener listener) {
 		this.listener = listener;
 	}
-
 	@Override
 	public void onClick(View view) {
 		if (listener != null)

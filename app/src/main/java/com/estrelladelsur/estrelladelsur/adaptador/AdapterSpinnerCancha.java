@@ -8,10 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
-
 
 public class AdapterSpinnerCancha extends ArrayAdapter<Cancha>
     {

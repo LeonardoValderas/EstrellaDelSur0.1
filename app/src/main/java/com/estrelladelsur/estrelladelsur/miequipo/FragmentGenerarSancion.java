@@ -1,7 +1,5 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -13,41 +11,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCancha;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerEquipo;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFecha;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerJugador;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
-import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
-import com.estrelladelsur.estrelladelsur.entidad.Equipo;
-import com.estrelladelsur.estrelladelsur.entidad.Fecha;
-import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
-import com.estrelladelsur.estrelladelsur.entidad.JugadorRecycler;
-import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class FragmentGenerarSancion extends Fragment {
 
@@ -67,9 +49,9 @@ public class FragmentGenerarSancion extends Fragment {
     private ArrayList<Torneo> torneoArray;
     private ArrayList<Anio> anioArray;
 
-    private ArrayList<JugadorRecycler> jugadorArray;
+    private ArrayList<Jugador> jugadorArray;
     private Anio anio;
-    private JugadorRecycler jugadorRecycler;
+    private Jugador jugadorRecycler;
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
     private Division division;
@@ -410,7 +392,7 @@ public class FragmentGenerarSancion extends Fragment {
                 division = (Division) sancionDivisionSpinner.getSelectedItem();
                 torneo = (Torneo) sancionTorneoSpinner.getSelectedItem();
                 anio = (Anio) sancionAnioSpinner.getSelectedItem();
-                jugadorRecycler = (JugadorRecycler) sancionJugadorSpinner.getSelectedItem();
+                jugadorRecycler = (Jugador) sancionJugadorSpinner.getSelectedItem();
 
                 //SANCION NVO
                 if (insertar) {

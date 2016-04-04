@@ -3,13 +3,10 @@ package com.estrelladelsur.estrelladelsur.auxiliar;
 import android.content.Context;
 import android.widget.Toast;
 
-/**
- * Created by LEO on 31/1/2016.
- */
 public class AuxiliarGeneral {
     private Context context;
-    public  AuxiliarGeneral(Context context){
 
+    public  AuxiliarGeneral(Context context){
         this.context = context;
     }
 
@@ -57,7 +54,6 @@ public class AuxiliarGeneral {
     }
 
     public void errorDataBase(Context context){
-
         Toast.makeText(context, "Error en la base de datos interna, vuelva a intentar." +
                         "\n Si el error persiste comuniquese con soporte.",
                 Toast.LENGTH_SHORT).show();

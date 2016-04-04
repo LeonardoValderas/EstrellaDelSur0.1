@@ -1,6 +1,5 @@
 package com.estrelladelsur.estrelladelsur.institucion;
 
-
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,7 +39,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 
 public class FragmentGenerarComision extends Fragment {
 

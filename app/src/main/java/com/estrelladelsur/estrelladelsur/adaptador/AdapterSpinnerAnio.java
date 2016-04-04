@@ -1,8 +1,6 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
-
-
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
-
 
 public class AdapterSpinnerAnio extends ArrayAdapter<Anio>
     {

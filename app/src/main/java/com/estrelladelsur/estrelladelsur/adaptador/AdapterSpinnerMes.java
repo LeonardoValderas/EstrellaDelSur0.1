@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 
@@ -24,7 +23,7 @@ public class AdapterSpinnerMes extends ArrayAdapter<Mes> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-																		
+
 		return super.getView(position, convertView, parent);
 	}
 
@@ -43,12 +42,9 @@ public class AdapterSpinnerMes extends ArrayAdapter<Mes> {
 		if (mes != null) {
 			TextView spinnerGeneral = (TextView) row
 					.findViewById(R.id.descripcionTextGeneral);
-
 			if (spinnerGeneral != null)
 				spinnerGeneral.setText(mes.getMES());
-
 		}
-
 		return row;
 	}
 }

@@ -1,10 +1,8 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
-
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +12,6 @@ import android.widget.TextView;
 public class AdaptadorRecyclerArticulo extends
         RecyclerView.Adapter<AdaptadorRecyclerArticulo.ArticuloViewHolder> implements
         View.OnClickListener {
-
-    // private final static Context context;
 
     private View.OnClickListener listener;
     private ArrayList<Articulo> articuloArray;
@@ -33,10 +29,7 @@ public class AdaptadorRecyclerArticulo extends
                     .findViewById(R.id.textRecyclerViewTitulo);
             textRecyclerViewFecha = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewFecha);
-
         }
-
-
         public void bindTitular(Articulo articulo) {
             textRecyclerViewTitulo.setText(articulo.getTITULO());
             textRecyclerViewFecha.setText("ult.act: "+articulo.getFECHA_ACTUALIZACION());

@@ -22,7 +22,6 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorEditarSancion;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFecha;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerJugador;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
@@ -31,8 +30,7 @@ import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
-import com.estrelladelsur.estrelladelsur.entidad.Fecha;
-import com.estrelladelsur.estrelladelsur.entidad.JugadorRecycler;
+import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
@@ -43,9 +41,9 @@ public class FragmentEditarSancion extends Fragment {
     private Division division;
     private Torneo torneo;
     private Anio anio;
-    private JugadorRecycler jugadorRecycler;
+    private Jugador jugadorRecycler;
     private ArrayList<Division> divisionArray;
-    private ArrayList<JugadorRecycler> jugadorArray;
+    private ArrayList<Jugador> jugadorArray;
     private ArrayList<Torneo> torneoArray;
     private ArrayList<Anio> anioArray;
     private ArrayList<Sancion> sancionArray;
@@ -213,7 +211,7 @@ public class FragmentEditarSancion extends Fragment {
                          Toast.LENGTH_SHORT).show();
              } else {
                  division = (Division) sancionDivisionSpinner.getSelectedItem();
-                 jugadorRecycler = (JugadorRecycler) sancionJugadorSpinner.getSelectedItem();
+                 jugadorRecycler = (Jugador) sancionJugadorSpinner.getSelectedItem();
                  torneo = (Torneo) sancionTorneoSpinner.getSelectedItem();
                  anio = (Anio) fixtureAnioSpinner.getSelectedItem();
 

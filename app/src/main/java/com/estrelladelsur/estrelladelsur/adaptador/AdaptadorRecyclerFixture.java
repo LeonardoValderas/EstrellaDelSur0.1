@@ -11,14 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
-import com.estrelladelsur.estrelladelsur.entidad.FixtureRecycler;
 
 public class AdaptadorRecyclerFixture extends
 		RecyclerView.Adapter<AdaptadorRecyclerFixture.FixtureViewHolder> implements
 		View.OnClickListener {
 
 	private View.OnClickListener listener;
-	private ArrayList<FixtureRecycler> fixtureArray;
+	private ArrayList<Fixture> fixtureArray;
 
 	public static class FixtureViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -66,7 +65,7 @@ public class AdaptadorRecyclerFixture extends
 		}
 
 
-		public void bindTitular(FixtureRecycler fixtureRecycler) {
+		public void bindTitular(Fixture fixtureRecycler) {
 			// ESCUDO EQUIPO LOCAL
 			byte[] escudoLocal = fixtureRecycler.getESCUDOLOCAL();
 			if (escudoLocal == null) {
@@ -96,8 +95,7 @@ public class AdaptadorRecyclerFixture extends
 			textRecyclerViewDia.setText(fixtureRecycler.getDIA());
 			textRecyclerViewHora.setText(fixtureRecycler.getHORA());
 			textRecyclerViewCancha.setText(fixtureRecycler.getCANCHA());
-			//String rl = fixtureRecycler.getRESULTADO_LOCAL().toString();
-			//String rv = fixtureRecycler.getRESULTADO_VISITA().toString();
+
 			if(fixtureRecycler.getRESULTADO_LOCAL() != null){
 				textRecyclerViewResultadoL.setText(fixtureRecycler.getRESULTADO_LOCAL());
 			}else{
@@ -111,7 +109,7 @@ public class AdaptadorRecyclerFixture extends
 		}
 	}
 
-	public AdaptadorRecyclerFixture(ArrayList<FixtureRecycler> fixtureArray) {
+	public AdaptadorRecyclerFixture(ArrayList<Fixture> fixtureArray) {
 		this.fixtureArray = fixtureArray;
 	}
 
@@ -128,7 +126,7 @@ public class AdaptadorRecyclerFixture extends
 
 	@Override
 	public void onBindViewHolder(FixtureViewHolder viewHolder, int pos) {
-		FixtureRecycler item = fixtureArray.get(pos);
+		Fixture item = fixtureArray.get(pos);
 		viewHolder.bindTitular(item);
 	}
 

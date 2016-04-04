@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 
@@ -17,8 +16,6 @@ import java.util.ArrayList;
 public class AdaptadorEditarSancion extends
 		RecyclerView.Adapter<AdaptadorEditarSancion.SancionViewHolder> implements
 		View.OnClickListener {
-
-	// private final static Context context;
 
 	private View.OnClickListener listener;
 	private ArrayList<Sancion> sancionArray;

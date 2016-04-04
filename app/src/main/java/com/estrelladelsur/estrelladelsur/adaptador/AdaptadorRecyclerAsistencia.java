@@ -6,10 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
-import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoAsistencia;
 
 import java.util.ArrayList;
 
@@ -18,8 +16,8 @@ public class AdaptadorRecyclerAsistencia extends
 		View.OnClickListener {
 
 	private View.OnClickListener listener;
-	private ArrayList<EntrenamientoAsistencia> asistenciaArray;
-	private ArrayList<EntrenamientoAsistencia> asistenciaTrueArray = new ArrayList<EntrenamientoAsistencia>();
+	private ArrayList<Entrenamiento> asistenciaArray;
+	private ArrayList<Entrenamiento> asistenciaTrueArray = new ArrayList<Entrenamiento>();
 	public static class AsistenciaViewHolder extends RecyclerView.ViewHolder {
 		private TextView editTextDivision;
 		private TextView textViewDivision;
@@ -43,7 +41,7 @@ public class AdaptadorRecyclerAsistencia extends
 		}
 
 
-		public void bindTitular(EntrenamientoAsistencia entrenamientoAsistencia) {
+		public void bindTitular(Entrenamiento entrenamientoAsistencia) {
 
 			editTextDivision.setText(entrenamientoAsistencia.getNOMBRE());
 			checkBoxEntrenamiento.setSelected(entrenamientoAsistencia.isSelected());
@@ -51,7 +49,7 @@ public class AdaptadorRecyclerAsistencia extends
 		}
 	}
 
-	public AdaptadorRecyclerAsistencia(ArrayList<EntrenamientoAsistencia> asistenciaArray) {
+	public AdaptadorRecyclerAsistencia(ArrayList<Entrenamiento> asistenciaArray) {
 		this.asistenciaArray = asistenciaArray;
 
 	}
@@ -81,7 +79,7 @@ public class AdaptadorRecyclerAsistencia extends
 		viewHolder.checkBoxEntrenamiento.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				CheckBox cb = (CheckBox) v;
-				EntrenamientoAsistencia entre = (EntrenamientoAsistencia) cb.getTag();
+				Entrenamiento entre = (Entrenamiento) cb.getTag();
 
 				entre.setSelected(cb.isChecked());
 				asistenciaArray.get(position).setSelected(cb.isChecked());
@@ -95,10 +93,10 @@ public class AdaptadorRecyclerAsistencia extends
 	}
 
 
-	public ArrayList<EntrenamientoAsistencia> getJugadoresAsistenciaList() {
+	public ArrayList<Entrenamiento> getJugadoresAsistenciaList() {
 		return asistenciaArray;
 	}
-	public ArrayList<EntrenamientoAsistencia> getJugadoresTrueAsistenciaList() {
+	public ArrayList<Entrenamiento> getJugadoresTrueAsistenciaList() {
 
 		for (int i = 0; i < asistenciaArray.size(); i++) {
 

@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
@@ -26,7 +27,6 @@ import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
-import com.estrelladelsur.estrelladelsur.entidad.JugadorRecycler;
 
 public class FragmentEditarJugador extends Fragment {
 
@@ -39,10 +39,11 @@ public class FragmentEditarJugador extends Fragment {
 	private FloatingActionButton botonFloating;
     private Division division;
     private int divisionSpinner;
-    private ArrayList<JugadorRecycler> jugadorArray;
+    private ArrayList<Jugador> jugadorArray;
     private DialogoAlerta dialogoAlerta;
     private AdaptadorRecyclerJugador adaptadorEditarJugador;
 	private ArrayAdapter<String> adaptadorInicial;
+	private AuxiliarGeneral auxiliarGeneral;
 
 	public static FragmentEditarJugador newInstance() {
 		FragmentEditarJugador fragment = new FragmentEditarJugador();
@@ -92,12 +93,10 @@ public class FragmentEditarJugador extends Fragment {
 	}
 
 	private void init() {
-
+      auxiliarGeneral = new AuxiliarGeneral(getActivity());
 		// DIVISION
-		controladorAdeful.abrirBaseDeDatos();
 		divisionArray = controladorAdeful.selectListaDivisionAdeful();
 		if(divisionArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
 			// DIVSION SPINNER
 			if (divisionArray.size() != 0) {
 				adapterSpinnerDivision = new AdapterSpinnerDivision(getActivity(),
@@ -109,11 +108,8 @@ public class FragmentEditarJugador extends Fragment {
 						R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
 				jugadoresDivisionSpinner.setAdapter(adaptadorInicial);
 			}
-
 		}else{
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-					Toast.LENGTH_SHORT).show();
+		auxiliarGeneral.errorDataBase(getActivity());
 		}
 		// RECLYCLER
 		recyclerViewJugador.setLayoutManager(new LinearLayoutManager(
@@ -178,13 +174,9 @@ public class FragmentEditarJugador extends Fragment {
 
 													@Override
 													public void onClick(View v) {
-														// TODO Auto-generated method stub
-														
-														controladorAdeful.abrirBaseDeDatos();
-														controladorAdeful.eliminarJugadorAdeful(jugadorArray.get(position)
+										controladorAdeful.eliminarJugadorAdeful(jugadorArray.get(position)
 																.getID_JUGADOR());
-														controladorAdeful.cerrarBaseDeDatos();
-														recyclerViewLoadJugador(divisionSpinner);
+										recyclerViewLoadJugador(divisionSpinner);
 														Toast.makeText(
 																getActivity(),
 																"Jugador Eliminado Correctamente",
@@ -209,23 +201,16 @@ public class FragmentEditarJugador extends Fragment {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 	}
-	
-	
+
 	public void recyclerViewLoadJugador(int division) {
 
-		controladorAdeful.abrirBaseDeDatos();
 		jugadorArray = controladorAdeful.selectListaJugadorAdeful(division);
 		if(jugadorArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
-
 			adaptadorEditarJugador = new AdaptadorRecyclerJugador(jugadorArray);
 			adaptadorEditarJugador.notifyDataSetChanged();
 			recyclerViewJugador.setAdapter(adaptadorEditarJugador);
 		}else {
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-							"\nSi el error persiste comuniquese con soporte.",
-					Toast.LENGTH_SHORT).show();
+        auxiliarGeneral.errorDataBase(getActivity());
 		}
 	}
 

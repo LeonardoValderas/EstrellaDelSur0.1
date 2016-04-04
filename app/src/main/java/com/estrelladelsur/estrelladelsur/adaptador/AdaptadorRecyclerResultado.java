@@ -9,17 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
-import com.estrelladelsur.estrelladelsur.entidad.ResultadoRecycler;
 
 public class AdaptadorRecyclerResultado extends
 		RecyclerView.Adapter<AdaptadorRecyclerResultado.FixtureViewHolder> implements
 		View.OnClickListener {
 
 	private View.OnClickListener listener;
-	private ArrayList<ResultadoRecycler> resultadoArray;
+	private ArrayList<Resultado> resultadoArray;
 
 	public static class FixtureViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -67,7 +65,7 @@ public class AdaptadorRecyclerResultado extends
 
 		}
 
-    	public void bindTitular(ResultadoRecycler resultadoRecycler) {
+    	public void bindTitular(Resultado resultadoRecycler) {
 			// ESCUDO EQUIPO LOCAL
 			byte[] escudoLocal = resultadoRecycler.getESCUDOLOCAL();
 			if (escudoLocal == null) {
@@ -115,7 +113,7 @@ public class AdaptadorRecyclerResultado extends
 		}
 	}
 
-	public AdaptadorRecyclerResultado(ArrayList<ResultadoRecycler> resultadoArray) {
+	public AdaptadorRecyclerResultado(ArrayList<Resultado> resultadoArray) {
 		this.resultadoArray = resultadoArray;
 	}
 
@@ -133,7 +131,7 @@ public class AdaptadorRecyclerResultado extends
 
 	@Override
 	public void onBindViewHolder(FixtureViewHolder viewHolder, int pos) {
-		ResultadoRecycler item = resultadoArray.get(pos);
+		Resultado item = resultadoArray.get(pos);
 		viewHolder.bindTitular(item);
 	}
 

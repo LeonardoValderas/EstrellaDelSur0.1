@@ -3,7 +3,6 @@ package com.estrelladelsur.estrelladelsur.miequipo;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,8 +29,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
@@ -72,6 +71,7 @@ public class FragmentGenerarJugador extends Fragment {
     private String fechaActualizacion = null;
     private ArrayAdapter<Posicion> posicionAdapter;
     private ArrayAdapter<String> adaptadorInicial;
+    private AuxiliarGeneral auxiliarGeneral;
 
     public static FragmentGenerarJugador newInstance() {
         FragmentGenerarJugador fragment = new FragmentGenerarJugador();
@@ -122,17 +122,15 @@ public class FragmentGenerarJugador extends Fragment {
     }
 
     private void init() {
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         usuario = "Administrador";
         fechaCreacion = controladorAdeful.getFechaOficial();
         fechaActualizacion = fechaCreacion;
 
         // DIVISION
-        controladorAdeful.abrirBaseDeDatos();
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            // DIVSION SPINNER
+             // DIVSION SPINNER
             if (divisionArray.size() != 0) {
                 adapterSpinnerDivision = new AdapterSpinnerDivision(getActivity(),
                         R.layout.simple_spinner_dropdown_item, divisionArray);
@@ -144,9 +142,7 @@ public class FragmentGenerarJugador extends Fragment {
                 jugadoresDivisionSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+                auxiliarGeneral.errorDataBase(getActivity());
         }
         // POSICION
         loadSpinnerPosicion();
@@ -178,7 +174,6 @@ public class FragmentGenerarJugador extends Fragment {
             }
             insertar = false;
         }
-
         imageJugador.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -188,7 +183,6 @@ public class FragmentGenerarJugador extends Fragment {
             }
         });
     }
-
     public void ImageDialogjugador() {
 
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(
@@ -215,8 +209,6 @@ public class FragmentGenerarJugador extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
-            // data contains result
-            // Do some task
             SeleccionarImagen(data);
         }
     }
@@ -236,7 +228,6 @@ public class FragmentGenerarJugador extends Fragment {
     public void SeleccionarImagen(Intent data) {
         try {
             UtilityImage.uri = data.getData();
-
             if (UtilityImage.uri != null) {
 
                 Cursor cursor = getActivity().getContentResolver().query(
@@ -318,14 +309,10 @@ public class FragmentGenerarJugador extends Fragment {
     public ArrayList<Posicion> selectPosicionList() {
 
         //POSICION
-        controladorAdeful.abrirBaseDeDatos();
         posicionArray = controladorAdeful.selectListaPosicionAdeful();
         if (posicionArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+        auxiliarGeneral.errorDataBase(getActivity());
         }
         return posicionArray;
     }
@@ -394,10 +381,7 @@ public class FragmentGenerarJugador extends Fragment {
                             division.getID_DIVISION(),
                             posicion.getID_POSICION(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                    controladorAdeful.abrirBaseDeDatos();
                     if (controladorAdeful.insertJugadorAdeful(jugador)) {
-                        controladorAdeful.cerrarBaseDeDatos();
-
                         if (imageJugadorByte != null) {
                             imageJugador
                                     .setImageResource(R.mipmap.ic_foto_galery);
@@ -409,9 +393,7 @@ public class FragmentGenerarJugador extends Fragment {
                                 Toast.LENGTH_SHORT).show();
                         imageJugadorByte = null;
                     } else {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                Toast.LENGTH_SHORT).show();
+                    auxiliarGeneral.errorDataBase(getActivity());
                     }
 
                 } else {
@@ -419,11 +401,7 @@ public class FragmentGenerarJugador extends Fragment {
                             .toString(), imageJugadorByte,
                             division.getID_DIVISION(),
                             posicion.getID_POSICION(), null, null, usuario, fechaActualizacion);
-
-                    controladorAdeful.abrirBaseDeDatos();
                     if (controladorAdeful.actualizarJugadorAdeful(jugador)) {
-                        controladorAdeful.cerrarBaseDeDatos();
-
                         if (imageJugadorByte != null) {
                             imageJugador
                                     .setImageResource(R.mipmap.ic_foto_galery);
@@ -437,15 +415,12 @@ public class FragmentGenerarJugador extends Fragment {
                         actualizar = false;
                         insertar = true;
                     } else {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                Toast.LENGTH_SHORT).show();
+                        auxiliarGeneral.errorDataBase(getActivity());
                     }
                 }
             }
             return true;
         }
-
         if (id == R.id.action_lifuba) {
 
             return true;
@@ -465,58 +440,45 @@ public class FragmentGenerarJugador extends Fragment {
                         @Override
                         public void onClick(View v) {
                             // TODO Auto-generated method stub
-                            dialogoAlerta.mensaje.setVisibility(View.GONE);
-                            dialogoAlerta.editTextUno.setVisibility(View.VISIBLE);
-                            dialogoAlerta.btnAceptar.setText("Aceptar");
-                            dialogoAlerta.btnCancelar.setText("Cancelar");
+             dialogoAlerta.mensaje.setVisibility(View.GONE);
+             dialogoAlerta.editTextUno.setVisibility(View.VISIBLE);
+             dialogoAlerta.btnAceptar.setText("Aceptar");
+             dialogoAlerta.btnCancelar.setText("Cancelar");
 
                             // Crear la Posicion
-                            dialogoAlerta.btnAceptar
+             dialogoAlerta.btnAceptar
                                     .setOnClickListener(new View.OnClickListener() {
 
                                         @Override
                                         public void onClick(View v) {
                                             // TODO Auto-generated method stub
-                                            if (!dialogoAlerta.editTextUno
-                                                    .getText().toString()
-                                                    .equals("")) {
+               if (!dialogoAlerta.editTextUno.getText().toString().equals("")) {
 
-                                                posicion = new Posicion(0,
-                                                        dialogoAlerta.editTextUno
-                                                                .getText()
-                                                                .toString(), usuario, fechaCreacion,
-                                                        usuario, fechaActualizacion);
-
-                                                controladorAdeful
-                                                        .abrirBaseDeDatos();
-                                                if (controladorAdeful
-                                                        .insertPosicionAdeful(posicion)) {
-                                                    controladorAdeful
-                                                            .cerrarBaseDeDatos();
-                                                    loadSpinnerPosicion();
-                                                    Toast.makeText(
-                                                            getActivity(),
-                                                            "Posición Cargada Correctamente.",
-                                                            Toast.LENGTH_SHORT)
-                                                            .show();
-                                                    dialogoAlerta.alertDialog
-                                                            .dismiss();
-                                                } else {
-                                                    controladorAdeful.cerrarBaseDeDatos();
-                                                    Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                                            Toast.LENGTH_SHORT).show();
-                                                }
-
-                                            } else {
-                                                Toast.makeText(
-                                                        getActivity(),
-                                                        "Ingrese una Posición.",
-                                                        Toast.LENGTH_SHORT)
-                                                        .show();
-                                            }
-                                        }
+              posicion = new Posicion(0,dialogoAlerta.editTextUno.getText().toString(),
+                      usuario, fechaCreacion, usuario, fechaActualizacion);
+                   if (controladorAdeful
+                           .insertPosicionAdeful(posicion)) {
+                       loadSpinnerPosicion();
+                       Toast.makeText(
+                               getActivity(),
+                               "Posición Cargada Correctamente.",
+                               Toast.LENGTH_SHORT)
+                               .show();
+                       dialogoAlerta.alertDialog
+                               .dismiss();
+                   } else {
+                   auxiliarGeneral.errorDataBase(getActivity());
+                    }
+                    } else {
+                   Toast.makeText(
+                           getActivity(),
+                           "Ingrese una Posición.",
+                           Toast.LENGTH_SHORT)
+                           .show();
+                    }
+                       }
                                     });
-                            dialogoAlerta.btnCancelar
+                    dialogoAlerta.btnCancelar
                                     .setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -538,10 +500,7 @@ public class FragmentGenerarJugador extends Fragment {
 
                             dialogoMenuLista.btnAceptar.setText("Aceptar");
                             dialogoMenuLista.btnCancelar.setText("Cancelar");
-
                             loadListViewMenu();
-
-
                             dialogoMenuLista.listViewGeneral.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
@@ -569,12 +528,8 @@ public class FragmentGenerarJugador extends Fragment {
                                                     dialogoAlertaEditar.editTextUno.getText().toString(),
                                                     null, null, usuario, controladorAdeful.getFechaOficial());
 
-                                            controladorAdeful
-                                                    .abrirBaseDeDatos();
                                             if (controladorAdeful
                                                     .actualizarPosicionAdeful(posicion)) {
-                                                controladorAdeful
-                                                        .cerrarBaseDeDatos();
                                                 loadListViewMenu();
                                                 loadSpinnerPosicion();
                                                 dialogoAlertaEditar.alertDialog.dismiss();
@@ -583,9 +538,7 @@ public class FragmentGenerarJugador extends Fragment {
                                                         "Posición Actualizada Correctamente.",
                                                         Toast.LENGTH_SHORT).show();
                                             } else {
-                                                controladorAdeful.cerrarBaseDeDatos();
-                                                Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                                        Toast.LENGTH_SHORT).show();
+                                            auxiliarGeneral.errorDataBase(getActivity());
                                             }
                                         }
                                     });

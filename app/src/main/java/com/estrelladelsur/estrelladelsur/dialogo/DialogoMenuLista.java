@@ -11,7 +11,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 
 public class DialogoMenuLista {
@@ -53,7 +52,4 @@ public class DialogoMenuLista {
         alertDialog = builder.create();
         alertDialog.show();
     }
-
-
-
 }

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 
@@ -68,7 +67,6 @@ public class AdaptadorRecyclerCancha extends
 		Cancha item = canchaArray.get(pos);
 		viewHolder.bindTitular(item);
 	}
-
 	@Override
 	public int getItemCount() {
 		return canchaArray.size();

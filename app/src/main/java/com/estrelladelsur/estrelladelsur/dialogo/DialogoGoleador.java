@@ -11,10 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
-
 import java.util.ArrayList;
 
 public class DialogoGoleador {
@@ -77,24 +75,7 @@ public class DialogoGoleador {
 				.findViewById(R.id.alerGenericoBtnCancelar);
 		btnCancelar.setText("Cerrar");
 
-
-//		mensaje = (TextView) layout
-//				.findViewById(R.id.alertGenericoTxtMensaje);
-//		tableroEditActualizarBolilla = (EditText)layout.findViewById(R.id.tableroEditActualizarBolilla);
-//		tableroTextErrorVacio = (TextView) layout
-//				.findViewById(R.id.tableroTextErrorVacio);
-		
-       //String[] listview = new String[] { "Presidente","Vice Presidente","Tesorero" };
-		
-
-//		spinnerLugar  = (Spinner) layout.findViewById(R.id.spinnerLugar);
-//		ArrayAdapter adapterList = new ArrayAdapter<String>(context,
-//				R.layout.spinner_item_articulo, R.id.jugadaSpinner, jugadores);
-//
-//		spinnerLugar.setAdapter(adapterList);
-//		
-		
-		builder.setView(layout);
+    	builder.setView(layout);
 		alertDialog = builder.create();
 		alertDialog.show();
 	}

@@ -18,13 +18,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
-import com.estrelladelsur.estrelladelsur.entidad.FixtureRecycler;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerFixture;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
@@ -44,7 +44,7 @@ public class FragmentEditarFixture extends Fragment {
 	private ArrayList<Torneo> torneoArray;
 	private ArrayList<Fecha> fechaArray;
 	private ArrayList<Anio> anioArray;
-	private ArrayList<FixtureRecycler> fixtureArray;
+	private ArrayList<Fixture> fixtureArray;
 	private Spinner fixtureDivisionSpinner;
 	private Spinner fixtureTorneoSpinner;
 	private Spinner fixtureFechaSpinner;
@@ -61,16 +61,15 @@ public class FragmentEditarFixture extends Fragment {
 	private int divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner;
 	private DialogoAlerta dialogoAlerta;
 	private ArrayAdapter<String> adaptadorInicial;
+    private AuxiliarGeneral auxiliarGeneral;
 
 	public static FragmentEditarFixture newInstance() {
 		FragmentEditarFixture fragment = new FragmentEditarFixture();
 		return fragment;
 	}
-
 	public FragmentEditarFixture() {
 		// Required empty public constructor
 	}
-
 	@Override
 	public void onActivityCreated(Bundle state) {
 		super.onActivityCreated(state);
@@ -117,13 +116,11 @@ public class FragmentEditarFixture extends Fragment {
 	}
 
 	private void init() {
-
+		auxiliarGeneral = new AuxiliarGeneral(getActivity());
 		// DIVISION
-		controladorAdeful.abrirBaseDeDatos();
 		divisionArray = controladorAdeful.selectListaDivisionAdeful();
 		if(divisionArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
-     		// DIVSION SPINNER
+			// DIVSION SPINNER
 			if (divisionArray.size() != 0) {
 				adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
 						R.layout.simple_spinner_dropdown_item, divisionArray);
@@ -135,15 +132,11 @@ public class FragmentEditarFixture extends Fragment {
 				fixtureDivisionSpinner.setAdapter(adaptadorInicial);
 			}
 		}else{
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-					Toast.LENGTH_SHORT).show();
+		auxiliarGeneral.errorDataBase(getActivity());
 		}
 		// TORNEO
-		controladorAdeful.abrirBaseDeDatos();
-		torneoArray = controladorAdeful.selectListaTorneoAdeful();
+	    torneoArray = controladorAdeful.selectListaTorneoAdeful();
 		if(torneoArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
 			// TORNEO SPINNER
 			if (torneoArray.size() != 0) {
 				// TORNEO SPINNER
@@ -157,12 +150,9 @@ public class FragmentEditarFixture extends Fragment {
 				fixtureTorneoSpinner.setAdapter(adaptadorInicial);
 			}
 		}else{
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-					Toast.LENGTH_SHORT).show();
+		auxiliarGeneral.errorDataBase(getActivity());
 		}
 		// FECHA
-		controladorAdeful.abrirBaseDeDatos();
 		fechaArray = controladorAdeful.selectListaFecha();
 		if(fechaArray != null) {
 			controladorAdeful.cerrarBaseDeDatos();
@@ -171,24 +161,18 @@ public class FragmentEditarFixture extends Fragment {
 					R.layout.simple_spinner_dropdown_item, fechaArray);
 			fixtureFechaSpinner.setAdapter(adapterFixtureFecha);
 		}else{
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-					Toast.LENGTH_SHORT).show();
+		auxiliarGeneral.errorDataBase(getActivity());
 		}
 		// ANIO
-		controladorAdeful.abrirBaseDeDatos();
-		anioArray = controladorAdeful.selectListaAnio();
+	    anioArray = controladorAdeful.selectListaAnio();
 		if(anioArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
 			// ANIO SPINNER
 			adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
 					R.layout.simple_spinner_dropdown_item, anioArray);
 			fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
 		}else{
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-					Toast.LENGTH_SHORT).show();
-		}
+			auxiliarGeneral.errorDataBase(getActivity());
+	}
 
 		// RECLYCLER
 		recyclerViewFixture.setLayoutManager(new LinearLayoutManager(
@@ -198,7 +182,7 @@ public class FragmentEditarFixture extends Fragment {
 		recyclerViewFixture.setItemAnimator(new DefaultItemAnimator());
 
 		botonFloating.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 
@@ -226,128 +210,110 @@ public class FragmentEditarFixture extends Fragment {
 				}
 			}
 		});
-		
-		recyclerViewFixture.addOnItemTouchListener(new 
-				RecyclerTouchListener(getActivity(), 
-						recyclerViewFixture, new ClickListener() {
+
+		recyclerViewFixture.addOnItemTouchListener(new
+				RecyclerTouchListener(getActivity(),
+
+				recyclerViewFixture, new ClickListener() {
+
+			@Override
+			public void onClick(View view, int position) {
+				// TODO Auto-generated method stub
+
+				Intent editarFixture = new Intent(getActivity(),
+						TabsFixture.class);
+				editarFixture.putExtra("actualizar", true);
+				editarFixture.putExtra("id_fixture",
+						fixtureArray.get(position).getID_FIXTURE());
+				editarFixture.putExtra("divisionSpinner", divisionSpinner);
+				editarFixture.putExtra("torneoSpinner", torneoSpinner);
+				editarFixture.putExtra("fechaSpinner", fechaSpinner);
+				editarFixture.putExtra("anioSpiner", anioSpiner);
+				editarFixture.putExtra("localSpinner",
+						fixtureArray.get(position).getID_EQUIPO_LOCAL());
+				editarFixture.putExtra("visitaSpinner",
+						fixtureArray.get(position).getID_EQUIPO_VISITA());
+				editarFixture.putExtra("canchaSpinner",
+						fixtureArray.get(position).getID_CANCHA());
+				editarFixture.putExtra("dia",
+						fixtureArray.get(position).getDIA());
+				editarFixture.putExtra("hora",
+						fixtureArray.get(position).getHORA());
+				startActivity(editarFixture);
+			}
+
+			@Override
+			public void onLongClick(View view, final int position) {
+				// TODO Auto-generated method stub
+
+				dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
+						"Desea eliminar el Partido?", null, null);
+				dialogoAlerta.btnAceptar.setText("Aceptar");
+				dialogoAlerta.btnCancelar.setText("Cancelar");
+
+				dialogoAlerta.btnAceptar
+						.setOnClickListener(new View.OnClickListener() {
 
 							@Override
-							public void onClick(View view, int position) {
-								// TODO Auto-generated method stub
-								
-								Intent editarFixture = new Intent(getActivity(),
-										TabsFixture.class);
-								editarFixture.putExtra("actualizar", true);
-								editarFixture.putExtra("id_fixture",
-										fixtureArray.get(position).getID_FIXTURE());
-								editarFixture.putExtra("divisionSpinner",divisionSpinner);
-								editarFixture.putExtra("torneoSpinner",torneoSpinner);
-								editarFixture.putExtra("fechaSpinner",fechaSpinner);
-								editarFixture.putExtra("anioSpiner",anioSpiner);
-								editarFixture.putExtra("localSpinner",
-										fixtureArray.get(position).getID_EQUIPO_LOCAL());
-								editarFixture.putExtra("visitaSpinner",
-										fixtureArray.get(position).getID_EQUIPO_VISITA());
-								editarFixture.putExtra("canchaSpinner",
-										fixtureArray.get(position).getID_CANCHA());
-								editarFixture.putExtra("dia",
-										fixtureArray.get(position).getDIA());
-								editarFixture.putExtra("hora",
-										fixtureArray.get(position).getHORA());
-								startActivity(editarFixture);
+							public void onClick(View v) {
+								if (controladorAdeful.eliminarEquipoAdeful(fixtureArray.get(position)
+										.getID_FIXTURE())) {
+				     				recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+									Toast.makeText(
+											getActivity(),
+											"Fixture Eliminado Correctamente",
+											Toast.LENGTH_SHORT).show();
+									dialogoAlerta.alertDialog.dismiss();
+								} else {
+							auxiliarGeneral.errorDataBase(getActivity());
+								}
 							}
+						});
+				dialogoAlerta.btnCancelar
+						.setOnClickListener(new View.OnClickListener() {
+
 							@Override
-							public void onLongClick(View view, final int position) {
+							public void onClick(View v) {
 								// TODO Auto-generated method stub
-
-								dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
-										"Desea eliminar el Partido?", null, null);
-								dialogoAlerta.btnAceptar.setText("Aceptar");
-								dialogoAlerta.btnCancelar.setText("Cancelar");
-
-								dialogoAlerta.btnAceptar
-										.setOnClickListener(new View.OnClickListener() {
-
-											@Override
-											public void onClick(View v) {
-												// TODO Auto-generated method stub
-
-												controladorAdeful.abrirBaseDeDatos();
-												if (controladorAdeful.eliminarEquipoAdeful(fixtureArray.get(position)
-														.getID_FIXTURE())) {
-													controladorAdeful.cerrarBaseDeDatos();
-													recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
-													Toast.makeText(
-															getActivity(),
-															"Fixture Eliminado Correctamente",
-															Toast.LENGTH_SHORT).show();
-													dialogoAlerta.alertDialog.dismiss();
-												} else {
-													controladorAdeful.cerrarBaseDeDatos();
-													Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-																	"\n Si el error persiste comuniquese con soporte.",
-															Toast.LENGTH_SHORT).show();
-												}
-											}
-										});
-								dialogoAlerta.btnCancelar
-										.setOnClickListener(new View.OnClickListener() {
-
-											@Override
-											public void onClick(View v) {
-												// TODO Auto-generated method stub
-												dialogoAlerta.alertDialog.dismiss();
-											}
-										});
+								dialogoAlerta.alertDialog.dismiss();
 							}
-				}));
+						});
+			}
+		}));
 	}
 
    //LOAD RECYCLER
 	public void recyclerViewLoadDivision(int division, int torneo, int fecha,
 			int anio) {
-
-		controladorAdeful.abrirBaseDeDatos();
 		fixtureArray = controladorAdeful.selectListaFixtureAdeful(division,
 				torneo, fecha, anio);
 		if(fixtureArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
-
 			adaptadorFixtureEdit = new AdaptadorRecyclerFixture(fixtureArray);
 			adaptadorFixtureEdit.notifyDataSetChanged();
 			recyclerViewFixture.setAdapter(adaptadorFixtureEdit);
 		}else{
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-							"\n Si el error persiste comuniquese con soporte.",
-					Toast.LENGTH_SHORT).show();
+		auxiliarGeneral.errorDataBase(getActivity());
 		}
 	}
-
 	public static interface ClickListener {
-
 		public void onClick(View view, int position);
 		public void onLongClick(View view, int position);
 	}
 
 	static class RecyclerTouchListener implements
 			RecyclerView.OnItemTouchListener {
-
 		private GestureDetector detector;
 		private ClickListener clickListener;
-
 		public RecyclerTouchListener(Context context,
 				final RecyclerView recyclerView,
 				final ClickListener clickListener) {
 			this.clickListener = clickListener;
 			detector = new GestureDetector(context,
 					new GestureDetector.SimpleOnGestureListener() {
-
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
 							return true;
 						}
-
 						@Override
 						public void onLongPress(MotionEvent e) {
 							View child = recyclerView.findChildViewUnder(
@@ -372,11 +338,9 @@ public class FragmentEditarFixture extends Fragment {
 		}
 		@Override
 		public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
 		}
 		@Override
 		public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-			// TODO Auto-generated method stub
 		}
 	}
 }

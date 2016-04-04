@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 
 public class DialogoAlerta {
@@ -57,5 +56,4 @@ public class DialogoAlerta {
 
         alertDialog.show();
     }
-
 }

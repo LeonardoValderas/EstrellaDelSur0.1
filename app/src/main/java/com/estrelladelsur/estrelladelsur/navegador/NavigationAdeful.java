@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur;
+package com.estrelladelsur.estrelladelsur.navegador;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
 import com.estrelladelsur.estrelladelsur.institucion.TabsArticulo;
 import com.estrelladelsur.estrelladelsur.institucion.TabsComision;
@@ -26,6 +27,9 @@ import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsJugador;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsSancion;
+import com.estrelladelsur.estrelladelsur.social.TabsFoto;
+import com.estrelladelsur.estrelladelsur.social.TabsNoticia;
+import com.estrelladelsur.estrelladelsur.social.TabsNotificacion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -164,20 +168,20 @@ private TextView txtAbSubTitulo;
                     } else if (groupPosition == 3) {
                         switch (childPosition) {
                             case 0:
-                              //  Intent notificacion  = new Intent(NavigationDrawerAdeful.this,TabsNotificacion.class);
-                              //  startActivity(notificacion);
+                                Intent notificacion  = new Intent(NavigationAdeful.this,TabsNotificacion.class);
+                                startActivity(notificacion);
                                 tituloClickFragment = social.get(childPosition)
                                         .toString();
                                 break;
                             case 1:
-                              //  Intent noticia  = new Intent(NavigationDrawerAdeful.this,TabsNoticia.class);
-                              //  startActivity(noticia);
+                                Intent noticia  = new Intent(NavigationAdeful.this,TabsNoticia.class);
+                                startActivity(noticia);
                                 tituloClickFragment = social.get(childPosition)
                                         .toString();
                                 break;
                             case 2:
-                                //Intent foto  = new Intent(NavigationDrawerAdeful.this,TabsFoto.class);
-                                //startActivity(foto);
+                                Intent foto  = new Intent(NavigationAdeful.this,TabsFoto.class);
+                                startActivity(foto);
                                 tituloClickFragment = social.get(childPosition)
                                         .toString();
                                 break;

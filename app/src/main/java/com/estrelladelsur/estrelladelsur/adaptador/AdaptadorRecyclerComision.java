@@ -8,17 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
-
 import java.util.ArrayList;
 
 public class AdaptadorRecyclerComision extends
         RecyclerView.Adapter<AdaptadorRecyclerComision.ComisionViewHolder> implements
         View.OnClickListener {
-
-    // private final static Context context;
 
     private View.OnClickListener listener;
     private ArrayList<Comision> comisionArray;
@@ -45,7 +41,6 @@ public class AdaptadorRecyclerComision extends
                     .findViewById(R.id.imageRecyclerViewFoto);
 
         }
-
 
         public void bindTitular(Comision comision) {
             textRecyclerViewNombre.setText(comision.getNOMBRE_COMISION().toString());

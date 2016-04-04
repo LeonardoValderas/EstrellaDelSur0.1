@@ -1,6 +1,5 @@
 package com.estrelladelsur.estrelladelsur.institucion;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -12,11 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-
 
 public class FragmentGenerarArticulo extends Fragment {
 

@@ -1,9 +1,7 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
 import com.estrelladelsur.estrelladelsur.R;
-
 import java.util.ArrayList;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,12 +22,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
-import com.estrelladelsur.estrelladelsur.entidad.ResultadoRecycler;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerResultado;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
@@ -72,9 +70,10 @@ public class ActivityResultado extends AppCompatActivity {
     private AdapterSpinnerAnio adapterFixtureAnio;
     private AdaptadorRecyclerResultado adaptadorResultado;
     private int posicionRecycler;
-    private ArrayList<ResultadoRecycler> arrayResultado;
+    private ArrayList<Resultado> arrayResultado;
     private DialogoAlerta dialogoAlerta;
     private ArrayAdapter<String> adaptadorInicial;
+    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,13 +121,11 @@ public class ActivityResultado extends AppCompatActivity {
     }
 
     private void init() {
-
+        auxiliarGeneral = new AuxiliarGeneral(ActivityResultado.this);
         // DIVISION
-        controladorAdeful.abrirBaseDeDatos();
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (divisionArray.size() != 0) {
+           if (divisionArray.size() != 0) {
                 // DIVSION SPINNER
                 adapterFixtureDivision = new AdapterSpinnerDivision(
                         ActivityResultado.this, R.layout.simple_spinner_dropdown_item,
@@ -141,17 +138,12 @@ public class ActivityResultado extends AppCompatActivity {
                 resultadoDivisionSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(this, getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+        auxiliarGeneral.errorDataBase(ActivityResultado.this);
         }
         // TORNEO
-        controladorAdeful.abrirBaseDeDatos();
         torneoArray = controladorAdeful.selectListaTorneoAdeful();
         if (torneoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-
-            if (torneoArray.size() != 0) {
+          if (torneoArray.size() != 0) {
                 // TORNEO SPINNER
                 adapterFixtureTorneo = new AdapterSpinnerTorneo(ActivityResultado.this,
                         R.layout.simple_spinner_dropdown_item, torneoArray);
@@ -163,39 +155,28 @@ public class ActivityResultado extends AppCompatActivity {
                 resultadoTorneoSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(this, getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(ActivityResultado.this);
         }
         // FECHA
-        controladorAdeful.abrirBaseDeDatos();
         fechaArray = controladorAdeful.selectListaFecha();
         if (fechaArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            // FECHA SPINNER
+           // FECHA SPINNER
             adapterFixtureFecha = new AdapterSpinnerFecha(ActivityResultado.this,
                     R.layout.simple_spinner_dropdown_item, fechaArray);
             resultadoFechaSpinner.setAdapter(adapterFixtureFecha);
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(this, getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(ActivityResultado.this);
         }
         // ANIO
-        controladorAdeful.abrirBaseDeDatos();
         anioArray = controladorAdeful.selectListaAnio();
         if (anioArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            // ANIO SPINNER
+           // ANIO SPINNER
             adapterFixtureAnio = new AdapterSpinnerAnio(ActivityResultado.this,
                     R.layout.simple_spinner_dropdown_item, anioArray);
             resultadoAnioSpinner.setAdapter(adapterFixtureAnio);
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(this, getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(ActivityResultado.this);
         }
-
         botonFloating.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -210,8 +191,6 @@ public class ActivityResultado extends AppCompatActivity {
                     Toast.makeText(ActivityResultado.this, "Debe agregar un torneo (Liga).",
                             Toast.LENGTH_SHORT).show();
                 } else {
-
-
                     division = (Division) resultadoDivisionSpinner
                             .getSelectedItem();
                     torneo = (Torneo) resultadoTorneoSpinner.getSelectedItem();
@@ -262,21 +241,7 @@ public class ActivityResultado extends AppCompatActivity {
 
                                     @Override
                                     public void onClick(View v) {
-                                        // TODO Auto-generated method stub
-//										dialogoGoleador = new DialogoGoleador(
-//												ActivityResultado.this,
-//												"GOLEADORES", "1", jugadores);
-//										dialogoGoleador.btnAceptar
-//												.setOnClickListener(new View.OnClickListener() {
-//
-//													@Override
-//													public void onClick(View v) {
-//														// TODO Auto-generated
-//														// method stub
-//														dialogoGoleador.alertDialog
-//																.dismiss();
-//													}
-//												});
+
                                     }
                                 });
 
@@ -296,8 +261,6 @@ public class ActivityResultado extends AppCompatActivity {
                                             String usuario = "Administrador";
                                             String fechaCreacion = controladorAdeful.getFechaOficial();
                                             String fechaActualizacion = fechaCreacion;
-                                            controladorAdeful
-                                                    .abrirBaseDeDatos();
                                             if(controladorAdeful
                                                     .actualizarResultadoAdeful(
                                                             arrayResultado
@@ -309,18 +272,14 @@ public class ActivityResultado extends AppCompatActivity {
                                                             dialogoResultado.resultadoVisita
                                                                     .getText()
                                                                     .toString(), usuario, fechaActualizacion)) {
-                                                controladorAdeful
-                                                        .cerrarBaseDeDatos();
-                                                recyclerViewLoadResultado(
+                                              recyclerViewLoadResultado(
                                                         divisionSpinner,
                                                         torneoSpinner,
                                                         fechaSpinner, anioSpiner);
                                                 dialogoResultado.alertDialog
                                                         .dismiss();
                                             }else{
-                                                controladorAdeful.cerrarBaseDeDatos();
-                                                Toast.makeText(ActivityResultado.this,getResources().getString(R.string.error_data_base),
-                                                        Toast.LENGTH_SHORT).show();
+                                                auxiliarGeneral.errorDataBase(ActivityResultado.this);
                                             }
                                         } else {
 
@@ -364,23 +323,18 @@ public class ActivityResultado extends AppCompatActivity {
                                         String fechaCreacion = controladorAdeful.getFechaOficial();
                                         String fechaActualizacion = fechaCreacion;
 
-                                        controladorAdeful.abrirBaseDeDatos();
                                         if (controladorAdeful
                                                 .actualizarResultadoAdeful(
                                                         arrayResultado
                                                                 .get(position)
                                                                 .getID_FIXTURE(),
                                                         null, null, usuario, fechaActualizacion)){
-                                        controladorAdeful.cerrarBaseDeDatos();
-
-                                            recyclerViewLoadResultado(
+                                        recyclerViewLoadResultado(
                                                     divisionSpinner, torneoSpinner,
                                                     fechaSpinner, anioSpiner);
                                             dialogoAlerta.alertDialog.dismiss();
                                         }else{
-                                            controladorAdeful.cerrarBaseDeDatos();
-                                            Toast.makeText(ActivityResultado.this, getResources().getString(R.string.error_data_base),
-                                                    Toast.LENGTH_SHORT).show();
+                                            auxiliarGeneral.errorDataBase(ActivityResultado.this);
                                         }
                                     }
                                 });
@@ -401,20 +355,14 @@ public class ActivityResultado extends AppCompatActivity {
     // POPULATION RECYCLER
     public void recyclerViewLoadResultado(int division, int torneo, int fecha,
                                           int anio) {
-
-        controladorAdeful.abrirBaseDeDatos();
         arrayResultado = controladorAdeful.selectListaResultadoAdeful(division,
                 torneo, fecha, anio);
         if (arrayResultado != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-
             adaptadorResultado = new AdaptadorRecyclerResultado(arrayResultado);
             adaptadorResultado.notifyDataSetChanged();
             recyclerViewResultado.setAdapter(adaptadorResultado);
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(ActivityResultado.this,getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(ActivityResultado.this);
         }
     }
 

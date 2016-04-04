@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur;
+package com.estrelladelsur.estrelladelsur.navegador;
 
 public class InformationRecycler {
 	int iconId;

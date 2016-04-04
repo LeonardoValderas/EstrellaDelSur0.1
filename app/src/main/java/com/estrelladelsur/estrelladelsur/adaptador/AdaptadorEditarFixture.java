@@ -10,14 +10,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.entidad.FixtureRecycler;
+import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 
 public class AdaptadorEditarFixture extends
 		RecyclerView.Adapter<AdaptadorEditarFixture.FixtureViewHolder> implements
 		View.OnClickListener {
 
 	private View.OnClickListener listener;
-	private ArrayList<FixtureRecycler> fixtureArray;
+	private ArrayList<Fixture> fixtureArray;
 
 	public static class FixtureViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -64,7 +64,7 @@ public class AdaptadorEditarFixture extends
 			textRecyclerViewResultadoV.setVisibility(View.INVISIBLE);
 		}
 
-		public void bindTitular(FixtureRecycler fixtureRecycler) {
+		public void bindTitular(Fixture fixtureRecycler) {
 			// ESCUDO EQUIPO LOCAL
 			byte[] escudoLocal = fixtureRecycler.getESCUDOLOCAL();
 			if (escudoLocal == null) {
@@ -97,7 +97,7 @@ public class AdaptadorEditarFixture extends
 		}
 	}
 
-	public AdaptadorEditarFixture(ArrayList<FixtureRecycler> fixtureArray) {
+	public AdaptadorEditarFixture(ArrayList<Fixture> fixtureArray) {
 		this.fixtureArray = fixtureArray;
 	}
 
@@ -113,7 +113,7 @@ public class AdaptadorEditarFixture extends
 
 	@Override
 	public void onBindViewHolder(FixtureViewHolder viewHolder, int pos) {
-		FixtureRecycler item = fixtureArray.get(pos);
+		Fixture item = fixtureArray.get(pos);
 		viewHolder.bindTitular(item);
 	}
 

@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 
-
 public class AdapterSpinnerEquipo extends ArrayAdapter<Equipo>
     {
         private Activity context;
@@ -51,26 +50,19 @@ public class AdapterSpinnerEquipo extends ArrayAdapter<Equipo>
                  imageViewEscudo.setVisibility(View.VISIBLE);
                 TextView spinnerGeneral = (TextView) row.findViewById(R.id.descripcionTextGeneral);
                
-                
                 if (equipo.getESCUDO() != null) {
 					Bitmap theImage = BitmapFactory
 							.decodeByteArray(
 									equipo.getESCUDO(), 0,
 									equipo.getESCUDO().length);
-				//	Drawable escudo = new BitmapDrawable(theImage);
 					imageViewEscudo.setImageBitmap(theImage);
 				}else{
 
                     imageViewEscudo.setImageResource(R.mipmap.ic_escudo_equipo);
-				/*	imageViewEscudo.setImageResource(ResourcesCompat
-							.getDrawable(context.getResources(),
-									R.drawable.escudo_equipo_gris, null));*/
 				}
                 if(spinnerGeneral != null)
                 	spinnerGeneral.setText(equipo.getNOMBRE_EQUIPO());
-
             }
-
             return row;
         }
     }

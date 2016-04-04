@@ -21,32 +21,17 @@ public class EntrenamientoRecycler {
     public int getID_ENTRENAMIENTO() {
         return ID_ENTRENAMIENTO;
     }
-    public void setID_ENTRENAMIENTO(int iD_ENTRENAMIENTO) {
-        ID_ENTRENAMIENTO = iD_ENTRENAMIENTO;
-    }
     public int getID_CANCHA() {
         return ID_CANCHA;
-    }
-    public void setID_CANCHA(int iD_CANCHA) {
-        ID_CANCHA = iD_CANCHA;
     }
     public String getNOMBRE() {
         return NOMBRE;
     }
-    public void setNOMBRE(String nOMBRE) {
-        NOMBRE = nOMBRE;
-    }
     public String getDIA() {
         return DIA;
     }
-    public void setDIA(String dIA) {
-        DIA = dIA;
-    }
     public String getHORA() {
         return HORA;
-    }
-    public void setHORA(String hORA) {
-        HORA = hORA;
     }
     public String getDIAHORA() {
         return DIA + " " +HORA;

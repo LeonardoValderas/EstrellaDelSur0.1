@@ -30,9 +30,9 @@
 
 
         <activity
-            android:name=".NavigationAdeful"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".navegador.NavigationAdeful">
+         <!--//   android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,83 +40,103 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".institucion.TabsArticulo"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".institucion.TabsArticulo">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".NavigationAdeful" />
+                android:value=".navegador.NavigationAdeful" />
         </activity>
         <activity
-            android:name=".institucion.TabsComision"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".institucion.TabsComision">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".NavigationAdeful" />
+                android:value=".navegador.NavigationAdeful" />
         </activity>
         <activity
-            android:name=".institucion.TabsDireccion"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".institucion.TabsDireccion">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".NavigationAdeful" />
+                android:value=".navegador.NavigationAdeful" />
         </activity>
         <activity
-            android:name=".liga.TabsAdeful"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".liga.TabsAdeful">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".NavigationAdeful" />
-        </activity>
-
-        <activity
-            android:name=".liga.MapaCancha"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.TabsAdeful" />
+                android:value=".navegador.NavigationAdeful" />
         </activity>
 
         <activity
-            android:name=".miequipo.TabsFixture"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".liga.MapaCancha">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.TabsAdeful" />
+        </activity>
+
+        <activity
+            android:name=".miequipo.TabsFixture">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".liga.TabsAdeful" />
         </activity>
         <activity
-            android:name=".miequipo.ActivityResultado"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".miequipo.ActivityResultado">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".liga.TabsAdeful" />
         </activity>
         <activity
-            android:name=".miequipo.TabsJugador"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".miequipo.TabsJugador">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".liga.TabsAdeful" />
         </activity>
         <activity
-            android:name=".miequipo.TabsEntrenamiento"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".miequipo.TabsEntrenamiento">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".liga.TabsAdeful" />
         </activity>
         <activity
-            android:name=".miequipo.TabsSancion"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".miequipo.TabsSancion">
+            <!--android:label="@string/app_name"-->
+            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.TabsAdeful" />
+        </activity>
+        <!--MODULO SOCIAL-->
+        <activity
+            android:name=".social.TabsNotificacion">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.TabsAdeful" />
+        </activity>
+
+        <activity
+            android:name=".social.TabsNoticia">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.TabsAdeful" />
+        </activity>
+        <activity
+            android:name=".social.TabsFoto">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".liga.TabsAdeful" />

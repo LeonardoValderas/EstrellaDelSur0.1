@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 
 
-public class TabsAdeful extends AppCompatActivity implements Communicator {
+public class TabsAdeful extends AppCompatActivity {
 
 	private Toolbar toolbar;
 	private ActionBarDrawerToggle drawerToggle;
@@ -183,31 +183,6 @@ public class TabsAdeful extends AppCompatActivity implements Communicator {
 		}
 	}
 
-	@Override
-	public void refresh() {
-		// TODO Auto-generated method stub
-
-//		FragmentManager manager = getSupportFragmentManager();
-//		FragmentCancha fragment = (FragmentCancha) manager
-//				.findFragmentByTag("android:switcher:" + viewPager.getId()
-//						+ ":" + 3);
-//
-//		fragment.recyclerViewLoadCancha();
-	}
-	
-	
-	//@Override
-	public void refreshs() {
-		// TODO Auto-generated method stub
-
-//		FragmentManager manager = getSupportFragmentManager();
-//		FragmentCancha fragment = (FragmentCancha) manager
-//				.findFragmentByTag("android:switcher:" + viewPager.getId()
-//						+ ":" + 3);
-//
-//		fragment.recyclerViewLoadCancha();
-	}
-	
 	
 	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

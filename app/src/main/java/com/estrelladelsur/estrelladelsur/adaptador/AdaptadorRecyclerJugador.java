@@ -9,19 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
-import com.estrelladelsur.estrelladelsur.entidad.JugadorRecycler;
 
 public class AdaptadorRecyclerJugador extends
 		RecyclerView.Adapter<AdaptadorRecyclerJugador.JugadorViewHolder> implements
 		View.OnClickListener {
 
-	// private final static Context context;
-
 	private View.OnClickListener listener;
-	private ArrayList<JugadorRecycler> jugadorArray;
+	private ArrayList<Jugador> jugadorArray;
 
 	public static class JugadorViewHolder extends RecyclerView.ViewHolder {
 		private TextView textRecyclerViewNombre;
@@ -44,7 +40,7 @@ public class AdaptadorRecyclerJugador extends
 					.findViewById(R.id.imageRecyclerViewFoto);
 		}
 
-		public void bindTitular(JugadorRecycler jugador) {
+		public void bindTitular(Jugador jugador) {
 			// ESCUDO EQUIPO LOCAL
 			foto = jugador.getFOTO_JUGADOR();
 			if (foto == null) {
@@ -65,7 +61,7 @@ public class AdaptadorRecyclerJugador extends
 			textRecyclerViewDivision.setText(jugador.getNOMBRE_DIVISION());
 		}
 	}
-	public AdaptadorRecyclerJugador(ArrayList<JugadorRecycler> jugadorArray) {
+	public AdaptadorRecyclerJugador(ArrayList<Jugador> jugadorArray) {
 		this.jugadorArray = jugadorArray;
 	}
 
@@ -83,7 +79,7 @@ public class AdaptadorRecyclerJugador extends
 
 	@Override
 	public void onBindViewHolder(JugadorViewHolder viewHolder, int pos) {
-		JugadorRecycler item = jugadorArray.get(pos);
+		Jugador item = jugadorArray.get(pos);
 
 		viewHolder.bindTitular(item);
 	}

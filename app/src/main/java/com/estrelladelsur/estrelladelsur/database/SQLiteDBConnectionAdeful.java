@@ -210,6 +210,40 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " FOREIGN KEY(ID_TORNEO) REFERENCES TORNEO_ADEFUL(ID_TORNEO),"
             + " FOREIGN KEY(ID_ANIO) REFERENCES ANIO(ID_ANIO));";
 
+    /**
+     *
+      DATA BASE SOCIAL
+     */
+
+    //NOTIFICACION
+
+    String TABLA_NOTIFICACION_ADEFUL = "CREATE TABLE IF NOT EXISTS NOTIFICACION_ADEFUL (ID_NOTIFICACION INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " TITULO VARCHAR(200),"
+            + " NOTIFICACION VARCHAR(700),"
+            + " USUARIO_CREADOR VARCHAR(100),"
+            + " FECHA_CREACION VARCHAR(100),"
+            + " USUARIO_ACTUALIZACION VARCHAR(100),"
+            + " FECHA_ACTUALIZACION VARCHAR(100));";
+    //NOTICIA
+    String TABLA_NOTICIA_ADEFUL = "CREATE TABLE IF NOT EXISTS NOTICIA_ADEFUL (ID_NOTICIA INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " TITULO VARCHAR(200),"
+            + " DESCRIPCION VARCHAR(700),"
+            + " LINK VARCHAR(200),"
+            + " USUARIO_CREADOR VARCHAR(100),"
+            + " FECHA_CREACION VARCHAR(100),"
+            + " USUARIO_ACTUALIZACION VARCHAR(100),"
+            + " FECHA_ACTUALIZACION VARCHAR(100));";
+
+    //FOTO
+    String TABLA_FOTO_ADEFUL = "CREATE TABLE IF NOT EXISTS FOTO_ADEFUL (ID_FOTO INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " TITULO VARCHAR(200),"
+            + " FOTO BLOB,"
+            + " USUARIO_CREADOR VARCHAR(100),"
+            + " FECHA_CREACION VARCHAR(100),"
+            + " USUARIO_ACTUALIZACION VARCHAR(100),"
+            + " FECHA_ACTUALIZACION VARCHAR(100));";
+
+
     public SQLiteDBConnectionAdeful(Context context, String name,
                                     CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -246,6 +280,10 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL(TABLA_ENTRENAMIENTO_DIVISION_ADEFUL);
         db.execSQL(TABLA_ENTRENAMIENTO_ASISTENCIA_ADEFUL);
         db.execSQL(TABLA_SANCION_ADEFUL);
+        //MODULO SOCIAL
+        db.execSQL(TABLA_NOTIFICACION_ADEFUL);
+        db.execSQL(TABLA_NOTICIA_ADEFUL);
+        db.execSQL(TABLA_FOTO_ADEFUL);
 
 
     }
@@ -279,6 +317,11 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS ENTRENAMIENTO_DIVISION_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS ENTRENAMIENTO_ASISTENCIA_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS SANCION_ADEFUL");
+        //MODULO SOCIAL
+        db.execSQL("DROP TABLE IF EXISTS NOTIFICACION_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS NOTICIA_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS FOTO_ADEFUL");
+
 
         //MODULO GENERAL
         db.execSQL(TABLA_TABLA_ADEFUL);
@@ -307,5 +350,9 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL(TABLA_ENTRENAMIENTO_DIVISION_ADEFUL);
         db.execSQL(TABLA_ENTRENAMIENTO_ASISTENCIA_ADEFUL);
         db.execSQL(TABLA_SANCION_ADEFUL);
+        //MODULO SOCIAL
+        db.execSQL(TABLA_NOTIFICACION_ADEFUL);
+        db.execSQL(TABLA_NOTICIA_ADEFUL);
+        db.execSQL(TABLA_FOTO_ADEFUL);
     }
 }

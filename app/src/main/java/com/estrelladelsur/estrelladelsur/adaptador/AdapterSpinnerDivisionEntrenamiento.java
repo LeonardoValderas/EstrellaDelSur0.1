@@ -6,20 +6,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
-import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoDivision;
 
 import java.util.ArrayList;
 
-
-public class AdapterSpinnerDivisionEntrenamiento extends ArrayAdapter<EntrenamientoDivision>
+public class AdapterSpinnerDivisionEntrenamiento extends ArrayAdapter<Entrenamiento>
     {
         private Activity context;
-        ArrayList<EntrenamientoDivision> divisionArray = null;
+        ArrayList<Entrenamiento> divisionArray = null;
 
-        public AdapterSpinnerDivisionEntrenamiento(Activity context, int resource, ArrayList<EntrenamientoDivision> divisionArray)
+        public AdapterSpinnerDivisionEntrenamiento(Activity context, int resource, ArrayList<Entrenamiento> divisionArray)
         {
             super(context, resource, divisionArray);
             this.context = context;
@@ -39,22 +36,17 @@ public class AdapterSpinnerDivisionEntrenamiento extends ArrayAdapter<Entrenamie
             if(row == null)
             {
                 LayoutInflater inflater = context.getLayoutInflater();
-              //  LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.spinner_item_general, parent, false);
             }
 
-            EntrenamientoDivision division = divisionArray.get(position);
+            Entrenamiento division = divisionArray.get(position);
 
             if(division != null)
             {   // Parse the data from each object and set it.
-              // ImageView myFlag = (ImageView) row.findViewById(R.id.imageIcon);
                 TextView spinnerGeneral = (TextView) row.findViewById(R.id.descripcionTextGeneral);
-
-                if(spinnerGeneral != null)
+               if(spinnerGeneral != null)
                 	spinnerGeneral.setText(division.getDESCRIPCION());
-
             }
-
             return row;
         }
     }

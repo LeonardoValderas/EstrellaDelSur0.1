@@ -7,15 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
 public class AdaptadorRecyclerTorneo extends
 		RecyclerView.Adapter<AdaptadorRecyclerTorneo.TorneoViewHolder> implements
 		View.OnClickListener {
-
-	// private final static Context context;
 
 	private View.OnClickListener listener;
 	private ArrayList<Torneo> torneoArray;
@@ -45,7 +42,6 @@ public class AdaptadorRecyclerTorneo extends
 			if(torneo.getACTUAL()){
 				imageIsActual.setVisibility(View.VISIBLE);
 			}
-
 		}
 	}
 
@@ -59,19 +55,16 @@ public class AdaptadorRecyclerTorneo extends
 				R.layout.recyclerview_item_liga, viewGroup, false);
 
 		itemView.setOnClickListener(this);
-
 		TorneoViewHolder tvh = new TorneoViewHolder(itemView);
 
 		return tvh;
 	}
-
 	@Override
 	public void onBindViewHolder(TorneoViewHolder viewHolder, int pos) {
 		Torneo item = torneoArray.get(pos);
 
 		viewHolder.bindTitular(item);
 	}
-
 	@Override
 	public int getItemCount() {
 		return torneoArray.size();
@@ -80,7 +73,6 @@ public class AdaptadorRecyclerTorneo extends
 	public void setOnClickListener(View.OnClickListener listener) {
 		this.listener = listener;
 	}
-
 	@Override
 	public void onClick(View view) {
 		if (listener != null)

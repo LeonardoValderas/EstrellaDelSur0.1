@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Posicion;
-
 
 public class AdapterSpinnerPosicion extends ArrayAdapter<Posicion>
     {
@@ -37,21 +35,16 @@ public class AdapterSpinnerPosicion extends ArrayAdapter<Posicion>
             if(row == null)
             {
                 LayoutInflater inflater = context.getLayoutInflater();
-              //  LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.spinner_item_general, parent, false);
             }
 
             Posicion puesto = puestoArray.get(position);
-
             if(puesto != null)
             {
                 TextView spinnerGeneral = (TextView) row.findViewById(R.id.descripcionTextGeneral);
-
                 if(spinnerGeneral != null)
                 	spinnerGeneral.setText(puesto.getDESCRIPCION());
-
             }
-
             return row;
         }
     }

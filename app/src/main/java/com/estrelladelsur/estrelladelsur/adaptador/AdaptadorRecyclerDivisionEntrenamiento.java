@@ -7,17 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
-import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoDivision;
 
 public class AdaptadorRecyclerDivisionEntrenamiento extends
 		RecyclerView.Adapter<AdaptadorRecyclerDivisionEntrenamiento.DivisionViewHolder> implements
 		View.OnClickListener {
 
 	private View.OnClickListener listener;
-	private ArrayList<EntrenamientoDivision> divisionArray;
+	private ArrayList<Entrenamiento> divisionArray;
 
 	public static class DivisionViewHolder extends RecyclerView.ViewHolder {
 
@@ -34,17 +32,15 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 					.findViewById(R.id.checkBoxEntrenamiento);
 		}
 
-
-		public void bindTitular(EntrenamientoDivision entrenamientoXDivision) {
+		public void bindTitular(Entrenamiento entrenamientoXDivision) {
 			textViewDivision.setText(entrenamientoXDivision.getDESCRIPCION());
 			checkBoxEntrenamiento.setSelected(entrenamientoXDivision.isSelected());
 		}
 	}
 
-	public AdaptadorRecyclerDivisionEntrenamiento(ArrayList<EntrenamientoDivision> divisionArray) {
+	public AdaptadorRecyclerDivisionEntrenamiento(ArrayList<Entrenamiento> divisionArray) {
 		this.divisionArray = divisionArray;
 	}
-
 	@Override
 	public DivisionViewHolder onCreateViewHolder(ViewGroup viewGroup,
 			int viewType) {
@@ -71,7 +67,7 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 		viewHolder.checkBoxEntrenamiento.setOnClickListener(new View.OnClickListener() {
 			   public void onClick(View v) {
 			    CheckBox cb = (CheckBox) v;
-				   EntrenamientoDivision entre = (EntrenamientoDivision) cb.getTag();
+				   Entrenamiento entre = (Entrenamiento) cb.getTag();
 
 			    entre.setSelected(cb.isChecked());
 			    divisionArray.get(position).setSelected(cb.isChecked());
@@ -84,7 +80,7 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 		return divisionArray.size();
 	}
 
-	public ArrayList<EntrenamientoDivision> getEntrenamientoList() {
+	public ArrayList<Entrenamiento> getEntrenamientoList() {
 		  return divisionArray;
 		 }
 	public void setOnClickListener(View.OnClickListener listener) {

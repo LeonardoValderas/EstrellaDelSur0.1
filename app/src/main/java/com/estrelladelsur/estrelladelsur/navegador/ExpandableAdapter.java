@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur;
+package com.estrelladelsur.estrelladelsur.navegador;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+
+import com.estrelladelsur.estrelladelsur.R;
 
 import java.util.HashMap;
 import java.util.List;

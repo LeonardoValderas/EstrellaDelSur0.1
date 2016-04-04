@@ -8,13 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
-import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoDivision;
 import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
-
 import java.util.ArrayList;
 
 public class AdaptadorRecyclerEntrenamiento extends
@@ -37,7 +34,7 @@ public class AdaptadorRecyclerEntrenamiento extends
 		private TextView textRecyclerViewResultadoL;
         private String divisiones="";
 		private ControladorAdeful controladorAdeful;
-		private ArrayList<EntrenamientoDivision> entrenamientoDivisionArray;
+		private ArrayList<Entrenamiento> entrenamientoDivisionArray;
 
 		public EntrenamientoViewHolder(View itemView) {
 			super(itemView);
@@ -102,7 +99,6 @@ public class AdaptadorRecyclerEntrenamiento extends
 			this.entrenamientoArray = entrenamientoArray;
 			this.context = c;
 	}
-
 	@Override
 	public EntrenamientoViewHolder onCreateViewHolder(ViewGroup viewGroup,
 			int viewType) {
@@ -112,13 +108,11 @@ public class AdaptadorRecyclerEntrenamiento extends
 		EntrenamientoViewHolder tvh = new EntrenamientoViewHolder(itemView);
 		return tvh;
 	}
-
 	@Override
 	public void onBindViewHolder(EntrenamientoViewHolder viewHolder, int pos) {
 		EntrenamientoRecycler item = entrenamientoArray.get(pos);
 		viewHolder.bindTitular(item,context);
 	}
-
 	@Override
 	public int getItemCount() {
 		return entrenamientoArray.size();
@@ -127,7 +121,6 @@ public class AdaptadorRecyclerEntrenamiento extends
 	public void setOnClickListener(View.OnClickListener listener) {
 		this.listener = listener;
 	}
-
 	@Override
 	public void onClick(View view) {
 		if (listener != null)

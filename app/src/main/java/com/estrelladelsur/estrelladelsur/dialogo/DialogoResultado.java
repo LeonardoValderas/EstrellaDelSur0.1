@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 
 public class DialogoResultado {

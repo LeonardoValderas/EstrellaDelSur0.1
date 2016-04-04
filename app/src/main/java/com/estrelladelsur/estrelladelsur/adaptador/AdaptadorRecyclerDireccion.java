@@ -16,8 +16,6 @@ public class AdaptadorRecyclerDireccion extends
         RecyclerView.Adapter<AdaptadorRecyclerDireccion.DireccionViewHolder> implements
         View.OnClickListener {
 
-    // private final static Context context;
-
     private View.OnClickListener listener;
     private ArrayList<Direccion> direccionArray;
 
@@ -43,7 +41,6 @@ public class AdaptadorRecyclerDireccion extends
                     .findViewById(R.id.imageRecyclerViewFoto);
 
         }
-
 
         public void bindTitular(Direccion direccion) {
             textRecyclerViewNombre.setText(direccion.getNOMBRE_DIRECCION().toString());
