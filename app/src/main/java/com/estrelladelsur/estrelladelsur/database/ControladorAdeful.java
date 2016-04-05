@@ -27,6 +27,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Noticia;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
 import com.estrelladelsur.estrelladelsur.entidad.Posicion;
+import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
@@ -3181,6 +3182,142 @@ cerrarBaseDeDatos();
 
         boolean res = false;
         String sql = "DELETE FROM FOTO_ADEFUL WHERE ID_FOTO = " + id;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
+
+    //PUBLICIDAD
+    // INSERTAR PUBLICIDAD
+    public boolean insertPublicidadAdeful(Publicidad publicidad) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("TITULO", publicidad.getTITULO());
+            cv.put("LOGO", publicidad.getLOGO());
+            cv.put("OTROS", publicidad.getOTROS());
+            cv.put("USUARIO_CREADOR", publicidad.getUSUARIO_CREACION());
+            cv.put("FECHA_CREACION", publicidad.getFECHA_CREACION());
+            cv.put("USUARIO_ACTUALIZACION", publicidad.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", publicidad.getFECHA_ACTUALIZACION());
+
+            long valor = database.insert("PUBLICIDAD_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
+
+    // LISTA PUBLICIDAD
+    public ArrayList<Publicidad> selectListaPublicidadAdeful() {
+
+        String sql = "SELECT * FROM PUBLICIDAD_ADEFUL";
+        ArrayList<Publicidad> arrayPublicidad = new ArrayList<Publicidad>();
+        String titulo = null, otros = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
+        int id;
+        byte[] logo_byte = null;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+
+                        Publicidad publicidad = null;
+
+                        id = cursor.getInt(cursor.getColumnIndex("ID_PUBLICIDAD"));
+                        titulo = cursor.getString(cursor
+                                .getColumnIndex("TITULO"));
+                        logo_byte = cursor.getBlob(cursor
+                                .getColumnIndex("LOGO"));
+                        otros = cursor.getString(cursor
+                                .getColumnIndex("OTROS"));
+                        creador = cursor.getString(cursor
+                                .getColumnIndex("USUARIO_CREADOR"));
+                        fechaCreacion = cursor.getString(cursor
+                                .getColumnIndex("FECHA_CREACION"));
+                        usuario_act = cursor.getString(cursor
+                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+                        fechaActualizacion = cursor.getString(cursor
+                                .getColumnIndex("FECHA_ACTUALIZACION"));
+                        publicidad = new Publicidad(id, titulo, logo_byte, otros, creador, fechaCreacion, usuario_act,
+                                fechaActualizacion);
+                        arrayPublicidad.add(publicidad);
+                    }
+                }
+            } catch (Exception e) {
+                arrayPublicidad = null;
+            }
+        } else {
+            arrayPublicidad = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        titulo = null;
+        logo_byte = null;
+        otros = null;
+        fechaCreacion = null;
+        fechaActualizacion = null;
+        usuario_act = null;
+        creador = null;
+        return arrayPublicidad;
+    }
+
+    //ACTUALIZAR PUBLICIDAD
+    public boolean actualizarPublicidadAdeful(Publicidad publicidad)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("TITULO", publicidad.getTITULO());
+            cv.put("LOGO", publicidad.getLOGO());
+            cv.put("OTROS", publicidad.getOTROS());
+            cv.put("USUARIO_ACTUALIZACION", publicidad.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", publicidad.getFECHA_ACTUALIZACION());
+
+            long valor = database.update("PUBLICIDAD_ADEFUL", cv, "ID_PUBLICIDAD="
+                    + publicidad.getID_PUBLICIDAD(), null);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
+
+    //ELIMINAR PUBLICIDAD
+    public boolean eliminarPublicidadAdeful(int id) {
+
+        boolean res = false;
+        String sql = "DELETE FROM PUBLICIDAD_ADEFUL WHERE ID_PUBLICIDAD = " + id;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {

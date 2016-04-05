@@ -243,6 +243,17 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " USUARIO_ACTUALIZACION VARCHAR(100),"
             + " FECHA_ACTUALIZACION VARCHAR(100));";
 
+    //PUBLICIDAD
+    String TABLA_PUBLICIDAD_ADEFUL = "CREATE TABLE IF NOT EXISTS PUBLICIDAD_ADEFUL (ID_PUBLICIDAD INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " TITULO VARCHAR(200),"
+            + " LOGO BLOB,"
+            + " OTROS VARCHAR(200),"
+            + " USUARIO_CREADOR VARCHAR(100),"
+            + " FECHA_CREACION VARCHAR(100),"
+            + " USUARIO_ACTUALIZACION VARCHAR(100),"
+            + " FECHA_ACTUALIZACION VARCHAR(100));";
+
+
 
     public SQLiteDBConnectionAdeful(Context context, String name,
                                     CursorFactory factory, int version) {
@@ -284,6 +295,8 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL(TABLA_NOTIFICACION_ADEFUL);
         db.execSQL(TABLA_NOTICIA_ADEFUL);
         db.execSQL(TABLA_FOTO_ADEFUL);
+        db.execSQL(TABLA_PUBLICIDAD_ADEFUL);
+
 
 
     }
@@ -321,6 +334,7 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS NOTIFICACION_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS NOTICIA_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS FOTO_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS PUBLICIDAD_ADEFUL");
 
 
         //MODULO GENERAL
@@ -354,5 +368,6 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL(TABLA_NOTIFICACION_ADEFUL);
         db.execSQL(TABLA_NOTICIA_ADEFUL);
         db.execSQL(TABLA_FOTO_ADEFUL);
+        db.execSQL(TABLA_PUBLICIDAD_ADEFUL);
     }
 }

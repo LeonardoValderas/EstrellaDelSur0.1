@@ -30,6 +30,7 @@ import com.estrelladelsur.estrelladelsur.miequipo.TabsSancion;
 import com.estrelladelsur.estrelladelsur.social.TabsFoto;
 import com.estrelladelsur.estrelladelsur.social.TabsNoticia;
 import com.estrelladelsur.estrelladelsur.social.TabsNotificacion;
+import com.estrelladelsur.estrelladelsur.social.TabsPublicidad;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -187,8 +188,8 @@ private TextView txtAbSubTitulo;
                                 break;
 
                             case 3:
-                               // Intent publicidad  = new Intent(NavigationDrawerAdeful.this,TabsPublicidad.class);
-                              //  startActivity(publicidad);
+                               Intent publicidad  = new Intent(NavigationAdeful.this,TabsPublicidad.class);
+                                startActivity(publicidad);
                                 tituloClickFragment = social.get(childPosition)
                                         .toString();
                                 break;

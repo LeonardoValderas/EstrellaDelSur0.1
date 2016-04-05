@@ -141,7 +141,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".liga.TabsAdeful" />
         </activity>
-
+        <activity
+            android:name=".social.TabsPublicidad">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.TabsAdeful" />
+        </activity>
 
     </application>
 
