@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
@@ -36,6 +37,7 @@ public class FragmentEditarArticulo extends Fragment {
     private ArrayList<Articulo> articuloArray;
     private AdaptadorRecyclerArticulo adaptadorRecyclerArticulo;
     private DialogoAlerta dialogoAlerta;
+    private AuxiliarGeneral auxiliarGeneral;
 
     public static FragmentEditarArticulo newInstance() {
         FragmentEditarArticulo fragment = new FragmentEditarArticulo();
@@ -81,7 +83,7 @@ public class FragmentEditarArticulo extends Fragment {
 
 
     private void init() {
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         recyclerArticulo.setLayoutManager(new LinearLayoutManager(
                 getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerArticulo.addItemDecoration(new DividerItemDecoration(
@@ -110,7 +112,6 @@ public class FragmentEditarArticulo extends Fragment {
                 editarArticulo.putExtra("fecha_actualizacion", articuloArray.get(position).getFECHA_ACTUALIZACION());
 
                 startActivity(editarArticulo);
-
             }
 
             @Override
@@ -128,28 +129,17 @@ public class FragmentEditarArticulo extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                // TODO Auto-generated method stub
-
-                                controladorAdeful.abrirBaseDeDatos();
-                                if (controladorAdeful.eliminarArticuloAdeful(articuloArray.get(position)
+                                    if (controladorAdeful.eliminarArticuloAdeful(articuloArray.get(position)
                                         .getID_ARTICULO())) {
-                                    controladorAdeful.cerrarBaseDeDatos();
-//
                                     recyclerViewLoadArticulo();
 
                                     Toast.makeText(
                                             getActivity(),
-                                            "Articulo Eliminado Correctamente",
+                                            "Articulo eliminado correctamente",
                                             Toast.LENGTH_SHORT).show();
-
                                     dialogoAlerta.alertDialog.dismiss();
-
                                 } else {
-
-                                    controladorAdeful.cerrarBaseDeDatos();
-                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                    "\n Si el error persiste comuniquese con soporte.",
-                                            Toast.LENGTH_SHORT).show();
+                                auxiliarGeneral.errorDataBase(getActivity());
                                 }
                             }
                         });
@@ -173,29 +163,19 @@ public class FragmentEditarArticulo extends Fragment {
     }
 
     public void recyclerViewLoadArticulo() {
-
-        controladorAdeful.abrirBaseDeDatos();
         articuloArray = controladorAdeful.selectListaArticuloAdeful();
         if(articuloArray!= null) {
-            controladorAdeful.cerrarBaseDeDatos();
-
             adaptadorRecyclerArticulo = new AdaptadorRecyclerArticulo(articuloArray);
             adaptadorRecyclerArticulo.notifyDataSetChanged();
             recyclerArticulo.setAdapter(adaptadorRecyclerArticulo);
         }else{
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\n Si el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
+        auxiliarGeneral.errorDataBase(getActivity());
         }
     }
 
     public static interface ClickListener {
-
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
-
     }
 
     static class RecyclerTouchListener implements

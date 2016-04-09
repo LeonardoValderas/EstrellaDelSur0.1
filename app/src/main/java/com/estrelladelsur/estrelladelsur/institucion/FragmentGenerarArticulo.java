@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 
@@ -27,6 +28,10 @@ public class FragmentGenerarArticulo extends Fragment {
     private boolean actualizar = false;
     private int idArticuloExtra;
     private String fechaCreacionExtra;
+    private AuxiliarGeneral auxiliarGeneral;
+    private String GUARDAR_USUARIO = "Articulo cargado correctamente";
+    private String ACTUALIZAR_USUARIO= "Articulo actualizado correctamente";
+
 
     public static FragmentGenerarArticulo newInstance() {
         FragmentGenerarArticulo fragment = new FragmentGenerarArticulo();
@@ -57,11 +62,9 @@ public class FragmentGenerarArticulo extends Fragment {
         // EDITTEXT TITULO
         articuloEditTituto = (EditText) v
                 .findViewById(R.id.articuloEditTituto);
-
         // EDITTEXT ARTICULO
         articuloEditArticulo = (EditText) v
                 .findViewById(R.id.articuloEditArticulo);
-
         return v;
     }
 
@@ -74,13 +77,11 @@ public class FragmentGenerarArticulo extends Fragment {
     private void init() {
         // VER DONDE EJECUCTAR ESTA LINEA
         controladorAdeful = new ControladorAdeful(getActivity());
-
-
+        auxiliarGeneral= new AuxiliarGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
         if (actualizar) {
-
             idArticuloExtra = getActivity().getIntent().getIntExtra("id_articulo", 0);
             articuloEditTituto.setText(getActivity().getIntent()
                     .getStringExtra("titulo"));
@@ -89,11 +90,18 @@ public class FragmentGenerarArticulo extends Fragment {
             fechaCreacionExtra = getActivity().getIntent()
                     .getStringExtra("fecha_creacion");
             insertar = false;
-
         }
-
     }
 
+    public void inicializarControles(String mensaje){
+
+        articuloEditTituto.setText("");
+        articuloEditArticulo.setText("");
+        communicator.refresh();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+
+    }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -119,13 +127,6 @@ public class FragmentGenerarArticulo extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        // if (drawerToggle.onOptionsItemSelected(item)) {
-        // return true;
-        // }
 
         int id = item.getItemId();
         // noinspection SimplifiableIfStatement
@@ -149,7 +150,6 @@ public class FragmentGenerarArticulo extends Fragment {
             String fechaActualizacion = fechaCreacion;
 
             if(articuloEditTituto.getText().toString().equals("")|| articuloEditArticulo.getText().toString().equals("")){
-
                 Toast.makeText(getActivity(), "Debe completar todos los campos.",
                         Toast.LENGTH_SHORT).show();
             }else if(insertar){
@@ -157,22 +157,12 @@ public class FragmentGenerarArticulo extends Fragment {
                         articuloEditArticulo.getText().toString(),
                         usuario, fechaCreacion,usuario,fechaActualizacion);
 
-                controladorAdeful.abrirBaseDeDatos();
                if(controladorAdeful.insertArticuloAdeful(articulo)) {
-                   controladorAdeful.cerrarBaseDeDatos();
-                   articuloEditTituto.setText("");
-                   articuloEditArticulo.setText("");
-                   communicator.refresh();
-                   Toast.makeText(getActivity(), "Articulo Cargado Correctamente",
-                           Toast.LENGTH_SHORT).show();
+               inicializarControles(GUARDAR_USUARIO);
                }else {
-                    controladorAdeful.cerrarBaseDeDatos();
-                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                    "\n Si el error persiste comuniquese con soporte.",
-                            Toast.LENGTH_SHORT).show();
+                   auxiliarGeneral.errorDataBase(getActivity());
                 }
-                }else{ //FIXTURE ACTUALIZAR
-
+                }else{ //ACTUALIZAR ACTUALIZAR
 
                 articulo = new Articulo(idArticuloExtra, articuloEditTituto.getText().toString(),
                         articuloEditArticulo.getText().toString(),
@@ -181,20 +171,11 @@ public class FragmentGenerarArticulo extends Fragment {
                 controladorAdeful.abrirBaseDeDatos();
                 if(controladorAdeful.actualizarArticuloAdeful(articulo)){
                 controladorAdeful.cerrarBaseDeDatos();
-
-                articuloEditTituto.setText("");
-                articuloEditArticulo.setText("");
-
                 actualizar = false;
                 insertar = true;
-                communicator.refresh();
-                Toast.makeText(getActivity(), "Articulo Actualizado Correctamente",
-                        Toast.LENGTH_SHORT).show();
+                inicializarControles(ACTUALIZAR_USUARIO);
                 }else {
-                controladorAdeful.cerrarBaseDeDatos();
-                Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                "\n Si el error persiste comuniquese con soporte.",
-                        Toast.LENGTH_SHORT).show();
+                auxiliarGeneral.errorDataBase(getActivity());
                 }
             }
             return true;

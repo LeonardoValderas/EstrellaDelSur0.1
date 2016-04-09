@@ -30,6 +30,7 @@ import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsJugador;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsSancion;
+import com.estrelladelsur.estrelladelsur.permiso.TabsUsuario;
 import com.estrelladelsur.estrelladelsur.social.TabsFoto;
 import com.estrelladelsur.estrelladelsur.social.TabsNoticia;
 import com.estrelladelsur.estrelladelsur.social.TabsNotificacion;
@@ -50,11 +51,12 @@ public class NavigationAdeful extends AppCompatActivity {
     private ExpandableAdapter listAdapter;
     private ExpandableListView expListView;
     private List<String> listDataHeader;
-    private List<String> cargaGeneral;
-    private List<String> ligaDatos;
-    private List<String> social;
+    private List<String> mi_equipoChild;
+    private List<String> ligaChild;
+    private List<String> socialChild;
+    private List<String> permisoChild;
     private HashMap<String, List<String>> listDataChild;
-    private List<String> institucionalList;
+    private List<String> institucionalChild;
     private TextView txtAbSubTitulo;
     //private AlertsMenu alertMenu;
 //private AlertPermisos alertPermisos;
@@ -106,52 +108,53 @@ public class NavigationAdeful extends AppCompatActivity {
                         case 0:
                             Intent estrella = new Intent(NavigationAdeful.this, TabsArticulo.class);
                             startActivity(estrella);
+                            tituloClickFragment = institucionalChild.get(
+                                    childPosition).toString();
                             break;
                         case 1:
                             Intent comision = new Intent(NavigationAdeful.this, TabsComision.class);
                             startActivity(comision);
-                            tituloClickFragment = institucionalList.get(
+                            tituloClickFragment = institucionalChild.get(
                                     childPosition).toString();
                             break;
 
                         case 2:
                             Intent direccion = new Intent(NavigationAdeful.this, TabsDireccion.class);
                             startActivity(direccion);
-                            tituloClickFragment = institucionalList.get(
+                            tituloClickFragment = institucionalChild.get(
                                     childPosition).toString();
                             break;
                     }
                 } else if (groupPosition == 1) {
                     switch (childPosition) {
                         case 0:
-
                             Intent fixture = new Intent(NavigationAdeful.this, TabsFixture.class);
                             startActivity(fixture);
-                            tituloClickFragment = cargaGeneral.get(childPosition)
+                            tituloClickFragment = mi_equipoChild.get(childPosition)
                                     .toString();
                             break;
                         case 1:
                             Intent resultado = new Intent(NavigationAdeful.this, ActivityResultado.class);
                             startActivity(resultado);
-                            tituloClickFragment = cargaGeneral.get(childPosition)
+                            tituloClickFragment = mi_equipoChild.get(childPosition)
                                     .toString();
                             break;
                         case 2:
                             Intent jugadores = new Intent(NavigationAdeful.this, TabsJugador.class);
                             startActivity(jugadores);
-                            tituloClickFragment = cargaGeneral.get(childPosition)
+                            tituloClickFragment = mi_equipoChild.get(childPosition)
                                     .toString();
                             break;
                         case 3:
                             Intent entrenamiento = new Intent(NavigationAdeful.this, TabsEntrenamiento.class);
                             startActivity(entrenamiento);
-                            tituloClickFragment = cargaGeneral.get(childPosition)
+                            tituloClickFragment = mi_equipoChild.get(childPosition)
                                     .toString();
                             break;
                         case 4:
                             Intent sanciones = new Intent(NavigationAdeful.this, TabsSancion.class);
                             startActivity(sanciones);
-                            tituloClickFragment = cargaGeneral.get(childPosition)
+                            tituloClickFragment = mi_equipoChild.get(childPosition)
                                     .toString();
                             break;
                     }
@@ -161,7 +164,7 @@ public class NavigationAdeful extends AppCompatActivity {
                         case 0:
                             Intent liga = new Intent(NavigationAdeful.this, TabsAdeful.class);
                             startActivity(liga);
-                            tituloClickFragment = ligaDatos.get(childPosition)
+                            tituloClickFragment = ligaChild.get(childPosition)
                                     .toString();
                             break;
                     }
@@ -170,32 +173,74 @@ public class NavigationAdeful extends AppCompatActivity {
                         case 0:
                             Intent notificacion = new Intent(NavigationAdeful.this, TabsNotificacion.class);
                             startActivity(notificacion);
-                            tituloClickFragment = social.get(childPosition)
+                            tituloClickFragment = ligaChild.get(childPosition)
                                     .toString();
                             break;
                         case 1:
                             Intent noticia = new Intent(NavigationAdeful.this, TabsNoticia.class);
                             startActivity(noticia);
-                            tituloClickFragment = social.get(childPosition)
+                            tituloClickFragment = ligaChild.get(childPosition)
                                     .toString();
                             break;
                         case 2:
                             Intent foto = new Intent(NavigationAdeful.this, TabsFoto.class);
                             startActivity(foto);
-                            tituloClickFragment = social.get(childPosition)
+                            tituloClickFragment = ligaChild.get(childPosition)
                                     .toString();
                             break;
 
                         case 3:
                             Intent publicidad = new Intent(NavigationAdeful.this, TabsPublicidad.class);
                             startActivity(publicidad);
-                            tituloClickFragment = social.get(childPosition)
+                            tituloClickFragment = socialChild.get(childPosition)
                                     .toString();
                             break;
                     }
+                 }else if (groupPosition == 3) {
+                        switch (childPosition) {
+                            case 0:
+                                Intent notificacion = new Intent(NavigationAdeful.this, TabsNotificacion.class);
+                                startActivity(notificacion);
+                                tituloClickFragment = socialChild.get(childPosition)
+                                        .toString();
+                                break;
+                            case 1:
+                                Intent noticia = new Intent(NavigationAdeful.this, TabsNoticia.class);
+                                startActivity(noticia);
+                                tituloClickFragment = socialChild.get(childPosition)
+                                        .toString();
+                                break;
+                            case 2:
+                                Intent foto = new Intent(NavigationAdeful.this, TabsFoto.class);
+                                startActivity(foto);
+                                tituloClickFragment = socialChild.get(childPosition)
+                                        .toString();
+                                break;
 
-                }
+                            case 3:
+                                Intent publicidad = new Intent(NavigationAdeful.this, TabsPublicidad.class);
+                                startActivity(publicidad);
+                                tituloClickFragment = socialChild.get(childPosition)
+                                        .toString();
+                                break;
+                        }
 
+                }else if (groupPosition == 4) {
+                        switch (childPosition) {
+                            case 0:
+                                Intent usuario = new Intent(NavigationAdeful.this, TabsUsuario.class);
+                                startActivity(usuario);
+                                tituloClickFragment = permisoChild.get(childPosition)
+                                        .toString();
+                                break;
+                            case 1:
+                                Intent noticia = new Intent(NavigationAdeful.this, TabsNoticia.class);
+                                startActivity(noticia);
+                                tituloClickFragment = permisoChild.get(childPosition)
+                                        .toString();
+                                break;
+                        }
+                    }
                 expListView.setItemChecked(childPosition, true);
                 drawerLayout.openDrawer(sifl);
 
@@ -257,45 +302,51 @@ public class NavigationAdeful extends AppCompatActivity {
 //            listDataHeader.add("SOCIAL");
 
         // Adding child data
-        institucionalList = new ArrayList<String>();
+        institucionalChild = new ArrayList<String>();
 
         for (int i = 0; i < getResources().getStringArray(
                 R.array.NavigationInstitucion).length; i++) {
 
-            institucionalList.add(getResources().getStringArray(
+            institucionalChild.add(getResources().getStringArray(
                     R.array.NavigationInstitucion)[i]);
         }
 
-        cargaGeneral = new ArrayList<String>();
+        mi_equipoChild = new ArrayList<String>();
 
         for (int i = 0; i < getResources().getStringArray(
                 R.array.NavigationCarga).length; i++) {
 
-            cargaGeneral.add(getResources().getStringArray(
+            mi_equipoChild.add(getResources().getStringArray(
                     R.array.NavigationCarga)[i]);
         }
 
-        ligaDatos = new ArrayList<String>();
+        ligaChild = new ArrayList<String>();
         for (int i = 0; i < getResources().getStringArray(
                 R.array.NavigationLigaAdeful).length; i++) {
 
-            ligaDatos.add(getResources().getStringArray(
+            ligaChild.add(getResources().getStringArray(
                     R.array.NavigationLigaAdeful)[i]);
         }
 
-        social = new ArrayList<String>();
+        socialChild = new ArrayList<String>();
         for (int i = 0; i < getResources().getStringArray(
                 R.array.NavigationSocial).length; i++) {
 
-            social.add(getResources().getStringArray(R.array.NavigationSocial)[i]);
+            socialChild.add(getResources().getStringArray(R.array.NavigationSocial)[i]);
+        }
+        permisoChild = new ArrayList<String>();
+
+        for (int i = 0; i < getResources().getStringArray(
+                R.array.NavigationPermiso).length; i++) {
+
+            permisoChild.add(getResources().getStringArray(R.array.NavigationPermiso)[i]);
         }
 
-        listDataChild.put(listDataHeader.get(0), institucionalList); // Header,
-        // Child
-        // data
-        listDataChild.put(listDataHeader.get(1), cargaGeneral);
-        listDataChild.put(listDataHeader.get(2), ligaDatos);
-        listDataChild.put(listDataHeader.get(3), social);
+        listDataChild.put(listDataHeader.get(0), institucionalChild);
+        listDataChild.put(listDataHeader.get(1), mi_equipoChild);
+        listDataChild.put(listDataHeader.get(2), ligaChild);
+        listDataChild.put(listDataHeader.get(3), socialChild);
+        listDataChild.put(listDataHeader.get(4), permisoChild);
     }
 
     //	/**
@@ -356,6 +407,10 @@ public class NavigationAdeful extends AppCompatActivity {
                     controladorAdeful.insertSubModuloAdeful(submodulo);
                 }
                 if (key >= 11 && key <= 14) {
+                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
+                    controladorAdeful.insertSubModuloAdeful(submodulo);
+                }
+                if (key >= 15 && key <= 16) {
                     SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
                     controladorAdeful.insertSubModuloAdeful(submodulo);
                 }

@@ -20,10 +20,12 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerArticulo;
+import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerUsuario;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.entidad.Articulo;
+import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.institucion.TabsArticulo;
 
 import java.util.ArrayList;
@@ -34,9 +36,10 @@ public class FragmentEditarUsuario extends Fragment {
     private int CheckedPositionFragment;
     private RecyclerView recyclerArticulo;
     private ControladorAdeful controladorAdeful;
-    private ArrayList<Articulo> articuloArray;
-    private AdaptadorRecyclerArticulo adaptadorRecyclerArticulo;
+    private ArrayList<Usuario> usuarioArray;
+    private AdaptadorRecyclerUsuario adaptadorRecyclerUsuario;
     private DialogoAlerta dialogoAlerta;
+    private AuxiliarGeneral auxiliarGeneral;
 
     public static FragmentEditarUsuario newInstance() {
         FragmentEditarUsuario fragment = new FragmentEditarUsuario();
@@ -82,14 +85,14 @@ public class FragmentEditarUsuario extends Fragment {
 
 
     private void init() {
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         recyclerArticulo.setLayoutManager(new LinearLayoutManager(
                 getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerArticulo.addItemDecoration(new DividerItemDecoration(
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerArticulo.setItemAnimator(new DefaultItemAnimator());
 
-        recyclerViewLoadArticulo();
+        recyclerViewLoadUsuario();
 
         recyclerArticulo.addOnItemTouchListener(new
                 RecyclerTouchListener(getActivity(),
@@ -99,28 +102,21 @@ public class FragmentEditarUsuario extends Fragment {
             public void onClick(View view, int position) {
                 // TODO Auto-generated method stub
 
-                Intent editarArticulo = new Intent(getActivity(),
-                        TabsArticulo.class);
-                editarArticulo.putExtra("actualizar", true);
-                editarArticulo.putExtra("id_articulo",
-                        articuloArray.get(position).getID_ARTICULO());
-                editarArticulo.putExtra("titulo", articuloArray.get(position).getTITULO());
-                editarArticulo.putExtra("articulo", articuloArray.get(position).getARTICULO());
-                editarArticulo.putExtra("creador", articuloArray.get(position).getUSUARIO_CREADOR());
-                editarArticulo.putExtra("fecha_creacion", articuloArray.get(position).getFECHA_CREACION());
-                editarArticulo.putExtra("fecha_actualizacion", articuloArray.get(position).getFECHA_ACTUALIZACION());
-
-                startActivity(editarArticulo);
-
+                Intent editarUsuario = new Intent(getActivity(),
+                        TabsUsuario.class);
+                editarUsuario.putExtra("actualizar", true);
+                editarUsuario.putExtra("id_usuario",
+                        usuarioArray.get(position).getID_USUARIO());
+                editarUsuario.putExtra("user", usuarioArray.get(position).getUSUARIO());
+                editarUsuario.putExtra("pass", usuarioArray.get(position).getPASSWORD());
+                startActivity(editarUsuario);
             }
 
             @Override
             public void onLongClick(View view, final int position) {
-                // TODO Auto-generated method stub
-
 
                 dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
-                        "Desea Eliminar el Articulo?", null, null);
+                        "Desea eliminar el usuario?", null, null);
                 dialogoAlerta.btnAceptar.setText("Aceptar");
                 dialogoAlerta.btnCancelar.setText("Cancelar");
 
@@ -129,29 +125,17 @@ public class FragmentEditarUsuario extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                // TODO Auto-generated method stub
 
-                                controladorAdeful.abrirBaseDeDatos();
-                                if (controladorAdeful.eliminarArticuloAdeful(articuloArray.get(position)
-                                        .getID_ARTICULO())) {
-                                    controladorAdeful.cerrarBaseDeDatos();
-//
-                                    recyclerViewLoadArticulo();
-
+                                if (controladorAdeful.eliminarUsuarioAdeful(usuarioArray.get(position)
+                                        .getID_USUARIO())) {
+                                    recyclerViewLoadUsuario();
                                     Toast.makeText(
                                             getActivity(),
-                                            "Articulo Eliminado Correctamente",
+                                            "Usuario eliminado correctamente",
                                             Toast.LENGTH_SHORT).show();
-
                                     dialogoAlerta.alertDialog.dismiss();
-
                                 } else {
-
-                                    controladorAdeful.cerrarBaseDeDatos();
-                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                    "\n Si el error persiste comuniquese con soporte.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
+                        auxiliarGeneral.errorDataBase(getActivity());                                }
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -165,7 +149,6 @@ public class FragmentEditarUsuario extends Fragment {
                         });
             }
         }));
-
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -173,30 +156,20 @@ public class FragmentEditarUsuario extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    public void recyclerViewLoadArticulo() {
+    public void recyclerViewLoadUsuario() {
 
-        controladorAdeful.abrirBaseDeDatos();
-        articuloArray = controladorAdeful.selectListaArticuloAdeful();
-        if(articuloArray!= null) {
-            controladorAdeful.cerrarBaseDeDatos();
-
-            adaptadorRecyclerArticulo = new AdaptadorRecyclerArticulo(articuloArray);
-            adaptadorRecyclerArticulo.notifyDataSetChanged();
-            recyclerArticulo.setAdapter(adaptadorRecyclerArticulo);
+        usuarioArray = controladorAdeful.selectListaUsuarioAdeful();
+        if(usuarioArray != null) {
+            adaptadorRecyclerUsuario = new AdaptadorRecyclerUsuario(usuarioArray);
+            recyclerArticulo.setAdapter(adaptadorRecyclerUsuario);
         }else{
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\n Si el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
+        auxiliarGeneral.errorDataBase(getActivity());
         }
     }
 
     public static interface ClickListener {
-
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
-
     }
 
     static class RecyclerTouchListener implements
@@ -204,19 +177,16 @@ public class FragmentEditarUsuario extends Fragment {
 
         private GestureDetector detector;
         private ClickListener clickListener;
-
         public RecyclerTouchListener(Context context,
                                      final RecyclerView recyclerView,
                                      final ClickListener clickListener) {
             this.clickListener = clickListener;
             detector = new GestureDetector(context,
                     new GestureDetector.SimpleOnGestureListener() {
-
                         @Override
                         public boolean onSingleTapUp(MotionEvent e) {
                             return true;
                         }
-
                         @Override
                         public void onLongPress(MotionEvent e) {
                             View child = recyclerView.findChildViewUnder(
@@ -243,17 +213,11 @@ public class FragmentEditarUsuario extends Fragment {
 
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
-
         }
-
     }
-
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -290,13 +254,9 @@ public class FragmentEditarUsuario extends Fragment {
         if (id == R.id.action_permisos) {
             return true;
         }
-
-
         if (id == R.id.action_lifuba) {
-
             return true;
         }
-
         if (id == android.R.id.home) {
 
             NavUtils.navigateUpFromSameTask(getActivity());

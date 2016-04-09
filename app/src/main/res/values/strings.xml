@@ -12,6 +12,8 @@
         <item>MI EQUIPO</item>
         <item>LIGA</item>
         <item>SOCIAL</item>
+        <item>PERMISO</item>
+
     </string-array>
 
     <!-- Array SubModulo -->
@@ -34,6 +36,9 @@
         <item>Noticias</item>
         <item>Fotos</item>
         <item>Publicidad</item>
+        <!--5-->
+        <item>Usuarios</item>
+        <item>Permisos</item>
     </string-array>
 
 
@@ -71,6 +76,11 @@
         <item>Publicidad</item>
     </string-array>
 
+    <!-- Array ListView PermisoAdeful -->
+    <string-array name="NavigationPermiso">
+        <item>Usuarios</item>
+        <item>Permisos</item>
+    </string-array>
     <!-- menu -->
     <string name="action_usuario">USUARIO</string>
     <string name="action_permisos">PERMISOS</string>

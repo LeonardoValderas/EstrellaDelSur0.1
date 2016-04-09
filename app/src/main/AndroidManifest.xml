@@ -147,6 +147,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".liga.TabsAdeful" />
         </activity>
+        <activity
+            android:name=".permiso.TabsUsuario">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.TabsAdeful" />
+        </activity>
+        <activity
+            android:name=".permiso.TabsPermiso">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.TabsAdeful" />
+        </activity>
 
     </application>
 
