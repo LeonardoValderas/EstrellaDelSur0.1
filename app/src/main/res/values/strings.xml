@@ -6,6 +6,37 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- Array Modulo  -->
+    <string-array name="moduloArray">
+        <item>INSTITUCION</item>
+        <item>MI EQUIPO</item>
+        <item>LIGA</item>
+        <item>SOCIAL</item>
+    </string-array>
+
+    <!-- Array SubModulo -->
+    <string-array name="subModuloArray">
+        <!--1-->
+        <item>Articulos</item>
+        <item>Comisión Directiva</item>
+        <item>Dirección Técnica</item>
+        <!--2-->
+        <item>Fixture</item>
+        <item>Resultados</item>
+        <item>Jugadores</item>
+        <item>Entrenamientos</item>
+        <item>Sancionados</item>
+        <!--3-->
+        <item>Adeful</item>
+        <item>Lifuba</item>
+        <!--4-->
+        <item>Notificación</item>
+        <item>Noticias</item>
+        <item>Fotos</item>
+        <item>Publicidad</item>
+    </string-array>
+
+
     <!-- Array ListView Estrella -->
     <string-array name="NavigationInstitucion">
         <item>Articulos</item>
@@ -24,12 +55,12 @@
 
     <!-- Array ListView LigaAdeful -->
     <string-array name="NavigationLigaAdeful">
-        <item>ADEFUL</item>
+        <item>Adeful</item>
     </string-array>
 
     <!-- Array ListView LigaAdeful -->
     <string-array name="NavigationLigaLifuba">
-        <item>LIFUBA</item>
+        <item>Lifuba</item>
     </string-array>
 
     <!-- Array ListView LigaAdeful -->

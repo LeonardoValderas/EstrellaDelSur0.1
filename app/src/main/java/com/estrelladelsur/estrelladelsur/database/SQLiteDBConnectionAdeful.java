@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.estrelladelsur.estrelladelsur.R;
+
 public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
 
     ///////MODULO GENERAL ADEFUL/////////
@@ -13,11 +15,30 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " NOMBRE VARCHAR(200));";
     //MODULOS
     String TABLA_MODULO_ADEFUL = "CREATE TABLE IF NOT EXISTS MODULO_ADEFUL (ID_MODULO INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + " NOMBRE VARCHAR(200),"
-            + " ID_TABLA INTEGER,"
+            + " NOMBRE VARCHAR(200));";
+    //SUBMODULOS
+    String TABLA_SUBMODULO_ADEFUL = "CREATE TABLE IF NOT EXISTS SUBMODULO_ADEFUL (ID_SUBMODULO INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " NOMBRE VARCHAR(200), ID_MODULO INTEGER,"
+            + " FOREIGN KEY(ID_MODULO) REFERENCES MODULO_ADEFUL(ID_MODULO));";
+    //USUARIOS
+    String TABLA_USUARIO_ADEFUL = "CREATE TABLE IF NOT EXISTS USUARIO_ADEFUL (ID_USUARIO INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " USUARIO VARCHAR(200), PASSWORD VARCHAR(200),"
+            + " USUARIO_CREADOR VARCHAR(100),"
+            + " FECHA_CREACION VARCHAR(100),"
+            + " USUARIO_ACTUALIZACION VARCHAR(100),"
             + " FECHA_ACTUALIZACION VARCHAR(100));";
 
-    ///////MODULO INSTITUCION ADEFUL/////////
+    String TABLA_PERMISO_ADEFUL = "CREATE TABLE IF NOT EXISTS PERMISO_ADEFUL (ID_PERMISO INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " ID_USUARIO INTEGER, ID_MODULO INTEGER,"
+            + " ID_SUBMODULO INTEGER,"
+            + " USUARIO_CREADOR VARCHAR(100),"
+            + " FECHA_CREACION VARCHAR(100),"
+            + " USUARIO_ACTUALIZACION VARCHAR(100),"
+            + " FECHA_ACTUALIZACION VARCHAR(100),"
+            + " FOREIGN KEY(ID_USUARIO) REFERENCES MODULO_ADEFUL(ID_USUARIO)"
+            + " FOREIGN KEY(ID_SUBMODULO) REFERENCES SUBMODULO_ADEFUL(ID_SUBMODULO));";
+
+     ///////MODULO INSTITUCION ADEFUL/////////
     //ARTICULO
     String TABLA_ARTICULO_ADEFUL = "CREATE TABLE IF NOT EXISTS ARTICULO_ADEFUL (ID_ARTICULO INTEGER PRIMARY KEY AUTOINCREMENT,"
             + " TITULO VARCHAR(200),"
@@ -26,7 +47,6 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " FECHA_CREACION VARCHAR(100),"
             + " USUARIO_ACTUALIZACION VARCHAR(100),"
             + " FECHA_ACTUALIZACION VARCHAR(100));";
-
     //CARGO COMISION
     String TABLA_CARGO_ADEFUL = "CREATE TABLE IF NOT EXISTS CARGO_ADEFUL (ID_CARGO INTEGER PRIMARY KEY AUTOINCREMENT,"
             + " CARGO VARCHAR(200),"
@@ -39,7 +59,6 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " NOMBRE_COMISION VARCHAR(100),"
             + " FOTO_COMISION BLOB,"
             + " ID_CARGO INTEGER,"
-
             + " PERIODO_DESDE VARCHAR(100),"
             + " PERIODO_HASTA VARCHAR(100),"
             + " USUARIO_CREADOR VARCHAR(100),"
@@ -47,7 +66,6 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " USUARIO_ACTUALIZACION VARCHAR(100),"
             + " FECHA_ACTUALIZACION VARCHAR(100),"
             + " FOREIGN KEY(ID_CARGO) REFERENCES CARGO_ADEFUL(ID_CARGO));";
-
     //DIRECCION
     String TABLA_DIRECCION_ADEFUL = "CREATE TABLE IF NOT EXISTS DIRECCION_ADEFUL(ID_DIRECCION INTEGER PRIMARY KEY AUTOINCREMENT,"
             + " NOMBRE_DIRECCION VARCHAR(100),"
@@ -60,8 +78,6 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " USUARIO_ACTUALIZACION VARCHAR(100),"
             + " FECHA_ACTUALIZACION VARCHAR(100),"
             + " FOREIGN KEY(ID_CARGO) REFERENCES CARGO_ADEFUL(ID_CARGO));";
-
-
     //////MODULO LIGA ADEFUL/////////
     //EQUIPO
     String TABLA_EQUIPO_ADEFUL = "CREATE TABLE IF NOT EXISTS EQUIPO_ADEFUL (ID_EQUIPO INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -214,7 +230,6 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
      *
       DATA BASE SOCIAL
      */
-
     //NOTIFICACION
 
     String TABLA_NOTIFICACION_ADEFUL = "CREATE TABLE IF NOT EXISTS NOTIFICACION_ADEFUL (ID_NOTIFICACION INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -253,20 +268,26 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
             + " USUARIO_ACTUALIZACION VARCHAR(100),"
             + " FECHA_ACTUALIZACION VARCHAR(100));";
 
+    String[] a = new String[5];
 
 
     public SQLiteDBConnectionAdeful(Context context, String name,
                                     CursorFactory factory, int version) {
         super(context, name, factory, version);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         // TODO Auto-generated method stub
+
+
         //MODUDLO GENERAL
         db.execSQL(TABLA_TABLA_ADEFUL);
         db.execSQL(TABLA_MODULO_ADEFUL);
+        db.execSQL(TABLA_SUBMODULO_ADEFUL);
+        db.execSQL(TABLA_USUARIO_ADEFUL);
+        db.execSQL(TABLA_PERMISO_ADEFUL);
+
         //MODULO INSTITUCION
         db.execSQL(TABLA_ARTICULO_ADEFUL);
         db.execSQL(TABLA_CARGO_ADEFUL);
@@ -296,9 +317,6 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         db.execSQL(TABLA_NOTICIA_ADEFUL);
         db.execSQL(TABLA_FOTO_ADEFUL);
         db.execSQL(TABLA_PUBLICIDAD_ADEFUL);
-
-
-
     }
 
     @Override
@@ -307,6 +325,9 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         //MODULO GENERAL
         db.execSQL("DROP TABLE IF EXISTS TABLA_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS MODULO_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS SUBMODULO_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS USUARIO_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS PERMISO_ADEFUL");
         //MODULO INSTITUCION
         db.execSQL("DROP TABLE IF EXISTS ARTICULO_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS CARGO_ADEFUL");
@@ -340,6 +361,9 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
         //MODULO GENERAL
         db.execSQL(TABLA_TABLA_ADEFUL);
         db.execSQL(TABLA_MODULO_ADEFUL);
+        db.execSQL(TABLA_SUBMODULO_ADEFUL);
+        db.execSQL(TABLA_USUARIO_ADEFUL);
+        db.execSQL(TABLA_PERMISO_ADEFUL);
         //MODULO INSTITUCION
         db.execSQL(TABLA_ARTICULO_ADEFUL);
         db.execSQL(TABLA_CARGO_ADEFUL);

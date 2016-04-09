@@ -18,6 +18,9 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
+import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.entidad.Modulo;
+import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.institucion.TabsArticulo;
 import com.estrelladelsur.estrelladelsur.institucion.TabsComision;
 import com.estrelladelsur.estrelladelsur.institucion.TabsDireccion;
@@ -37,286 +40,330 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class NavigationAdeful extends AppCompatActivity{
+public class NavigationAdeful extends AppCompatActivity {
 
-private DrawerLayout drawerLayout;
-private ScrimInsetsFrameLayout sifl;
-private Toolbar toolbar;
-private ActionBarDrawerToggle drawerToggle;
-private String tituloClickFragment;
-private ExpandableAdapter listAdapter;
-private ExpandableListView expListView;
-private List<String> listDataHeader;
-private List<String> cargaGeneral;
-private List<String> ligaDatos;
-private List<String> social;
-private HashMap<String, List<String>> listDataChild;
-private List<String> institucionalList;
-private TextView txtAbSubTitulo;
-//private AlertsMenu alertMenu;
+    private DrawerLayout drawerLayout;
+    private ScrimInsetsFrameLayout sifl;
+    private Toolbar toolbar;
+    private ActionBarDrawerToggle drawerToggle;
+    private String tituloClickFragment;
+    private ExpandableAdapter listAdapter;
+    private ExpandableListView expListView;
+    private List<String> listDataHeader;
+    private List<String> cargaGeneral;
+    private List<String> ligaDatos;
+    private List<String> social;
+    private HashMap<String, List<String>> listDataChild;
+    private List<String> institucionalList;
+    private TextView txtAbSubTitulo;
+    //private AlertsMenu alertMenu;
 //private AlertPermisos alertPermisos;
-//private ControladorAdeful controladorAdeful;
+    private ControladorAdeful controladorAdeful;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.navigation_drawer);
-           // controladorAdeful = new ControladorAdeful(this);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.navigation_drawer);
+        controladorAdeful = new ControladorAdeful(this);
 
+        init();
+        drawerLayout.openDrawer(GravityCompat.START);
+        iniciarModulos();
 
-           // loadSpinner();
-
-            init();
-
-            drawerLayout.openDrawer(GravityCompat.START);
-
-        }
+    }
 
 
+    public void init() {
 
-        public void init() {
+        // Referencia al ScrimInsetsFrameLayout
+        sifl = (ScrimInsetsFrameLayout) findViewById(R.id.scrimInsetsFrameLayout);
 
-            // Referencia al ScrimInsetsFrameLayout
-            sifl = (ScrimInsetsFrameLayout) findViewById(R.id.scrimInsetsFrameLayout);
+        // Toolbar
+        toolbar = (Toolbar) findViewById(R.id.appbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        txtAbSubTitulo = (TextView) toolbar.findViewById(R.id.txtAbSubTitulo);
 
-            // Toolbar
-            toolbar = (Toolbar) findViewById(R.id.appbar);
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-            txtAbSubTitulo = (TextView) toolbar.findViewById(R.id.txtAbSubTitulo);
+        expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
-            expListView = (ExpandableListView) findViewById(R.id.lvExp);
+        // preparing list data
+        prepareListData();
 
-            // preparing list data
-            prepareListData();
+        listAdapter = new ExpandableAdapter(this, listDataHeader, listDataChild);
 
-            listAdapter = new ExpandableAdapter(this, listDataHeader, listDataChild);
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
 
-            // setting list adapter
-            expListView.setAdapter(listAdapter);
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
-            expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
 
-                @Override
-                public boolean onChildClick(ExpandableListView parent, View v,
-                                            int groupPosition, int childPosition, long id) {
+                Fragment fragment = null;
+                if (groupPosition == 0) {
+                    switch (childPosition) {
+                        case 0:
+                            Intent estrella = new Intent(NavigationAdeful.this, TabsArticulo.class);
+                            startActivity(estrella);
+                            break;
+                        case 1:
+                            Intent comision = new Intent(NavigationAdeful.this, TabsComision.class);
+                            startActivity(comision);
+                            tituloClickFragment = institucionalList.get(
+                                    childPosition).toString();
+                            break;
 
-                    Fragment fragment = null;
-                    if (groupPosition == 0) {
-                        switch (childPosition) {
-                            case 0:
-                                Intent estrella = new Intent(NavigationAdeful.this,TabsArticulo.class);
-                                startActivity(estrella);
-                                break;
-                            case 1:
-                                Intent comision  = new Intent(NavigationAdeful.this,TabsComision.class);
-                                startActivity(comision);
-                                tituloClickFragment = institucionalList.get(
-                                        childPosition).toString();
-                                break;
+                        case 2:
+                            Intent direccion = new Intent(NavigationAdeful.this, TabsDireccion.class);
+                            startActivity(direccion);
+                            tituloClickFragment = institucionalList.get(
+                                    childPosition).toString();
+                            break;
+                    }
+                } else if (groupPosition == 1) {
+                    switch (childPosition) {
+                        case 0:
 
-                            case 2:
-                               Intent direccion  = new Intent(NavigationAdeful.this,TabsDireccion.class);
-                               startActivity(direccion);
-                               tituloClickFragment = institucionalList.get(
-                                        childPosition).toString();
-                                break;
-                        }
-                    } else if (groupPosition == 1) {
-                        switch (childPosition) {
-                            case 0:
-
-                                Intent fixture  = new Intent(NavigationAdeful.this,TabsFixture.class);
-                                startActivity(fixture);
-                                tituloClickFragment = cargaGeneral.get(childPosition)
-                                        .toString();
-                                break;
-                            case 1:
-                                Intent resultado  = new Intent(NavigationAdeful.this,ActivityResultado.class);
-                                startActivity(resultado);
-                                tituloClickFragment = cargaGeneral.get(childPosition)
-                                        .toString();
-                                break;
-                            case 2:
-                                Intent jugadores  = new Intent(NavigationAdeful.this,TabsJugador.class);
-                                startActivity(jugadores);
-                                tituloClickFragment = cargaGeneral.get(childPosition)
-                                        .toString();
-                                break;
-                            case 3:
-                                Intent entrenamiento  = new Intent(NavigationAdeful.this,TabsEntrenamiento.class);
-                                startActivity(entrenamiento);
-                                tituloClickFragment = cargaGeneral.get(childPosition)
-                                        .toString();
-                                break;
-                            case 4:
-                                Intent sanciones  = new Intent(NavigationAdeful.this,TabsSancion.class);
-                                startActivity(sanciones);
-                                tituloClickFragment = cargaGeneral.get(childPosition)
-                                        .toString();
-                                break;
-                        }
-
-                    } else if (groupPosition == 2) {
-                        switch (childPosition) {
-                            case 0:
-                                Intent liga  = new Intent(NavigationAdeful.this,TabsAdeful.class);
-                               startActivity(liga);
-                                tituloClickFragment = ligaDatos.get(childPosition)
-                                        .toString();
-                                break;
-                        }
-                    } else if (groupPosition == 3) {
-                        switch (childPosition) {
-                            case 0:
-                                Intent notificacion  = new Intent(NavigationAdeful.this,TabsNotificacion.class);
-                                startActivity(notificacion);
-                                tituloClickFragment = social.get(childPosition)
-                                        .toString();
-                                break;
-                            case 1:
-                                Intent noticia  = new Intent(NavigationAdeful.this,TabsNoticia.class);
-                                startActivity(noticia);
-                                tituloClickFragment = social.get(childPosition)
-                                        .toString();
-                                break;
-                            case 2:
-                                Intent foto  = new Intent(NavigationAdeful.this,TabsFoto.class);
-                                startActivity(foto);
-                                tituloClickFragment = social.get(childPosition)
-                                        .toString();
-                                break;
-
-                            case 3:
-                               Intent publicidad  = new Intent(NavigationAdeful.this,TabsPublicidad.class);
-                                startActivity(publicidad);
-                                tituloClickFragment = social.get(childPosition)
-                                        .toString();
-                                break;
-                        }
-
+                            Intent fixture = new Intent(NavigationAdeful.this, TabsFixture.class);
+                            startActivity(fixture);
+                            tituloClickFragment = cargaGeneral.get(childPosition)
+                                    .toString();
+                            break;
+                        case 1:
+                            Intent resultado = new Intent(NavigationAdeful.this, ActivityResultado.class);
+                            startActivity(resultado);
+                            tituloClickFragment = cargaGeneral.get(childPosition)
+                                    .toString();
+                            break;
+                        case 2:
+                            Intent jugadores = new Intent(NavigationAdeful.this, TabsJugador.class);
+                            startActivity(jugadores);
+                            tituloClickFragment = cargaGeneral.get(childPosition)
+                                    .toString();
+                            break;
+                        case 3:
+                            Intent entrenamiento = new Intent(NavigationAdeful.this, TabsEntrenamiento.class);
+                            startActivity(entrenamiento);
+                            tituloClickFragment = cargaGeneral.get(childPosition)
+                                    .toString();
+                            break;
+                        case 4:
+                            Intent sanciones = new Intent(NavigationAdeful.this, TabsSancion.class);
+                            startActivity(sanciones);
+                            tituloClickFragment = cargaGeneral.get(childPosition)
+                                    .toString();
+                            break;
                     }
 
-                    expListView.setItemChecked(childPosition, true);
-                    drawerLayout.openDrawer(sifl);
+                } else if (groupPosition == 2) {
+                    switch (childPosition) {
+                        case 0:
+                            Intent liga = new Intent(NavigationAdeful.this, TabsAdeful.class);
+                            startActivity(liga);
+                            tituloClickFragment = ligaDatos.get(childPosition)
+                                    .toString();
+                            break;
+                    }
+                } else if (groupPosition == 3) {
+                    switch (childPosition) {
+                        case 0:
+                            Intent notificacion = new Intent(NavigationAdeful.this, TabsNotificacion.class);
+                            startActivity(notificacion);
+                            tituloClickFragment = social.get(childPosition)
+                                    .toString();
+                            break;
+                        case 1:
+                            Intent noticia = new Intent(NavigationAdeful.this, TabsNoticia.class);
+                            startActivity(noticia);
+                            tituloClickFragment = social.get(childPosition)
+                                    .toString();
+                            break;
+                        case 2:
+                            Intent foto = new Intent(NavigationAdeful.this, TabsFoto.class);
+                            startActivity(foto);
+                            tituloClickFragment = social.get(childPosition)
+                                    .toString();
+                            break;
 
-                    return false;
+                        case 3:
+                            Intent publicidad = new Intent(NavigationAdeful.this, TabsPublicidad.class);
+                            startActivity(publicidad);
+                            tituloClickFragment = social.get(childPosition)
+                                    .toString();
+                            break;
+                    }
+
                 }
-            });
 
-            drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+                expListView.setItemChecked(childPosition, true);
+                drawerLayout.openDrawer(sifl);
 
-            drawerLayout.setStatusBarBackgroundColor(getResources().getColor(
-                    R.color.color_primary_dark));
+                return false;
+            }
+        });
 
-            drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                    R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-                @Override
-                public void onDrawerOpened(View drawerView) {
-                    super.onDrawerOpened(drawerView);
-                }
+        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(
+                R.color.color_primary_dark));
 
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    super.onDrawerClosed(drawerView);
-                }
-            };
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
-            drawerLayout.setDrawerListener(drawerToggle);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+
+        drawerLayout.setDrawerListener(drawerToggle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private void prepareListData() {
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<String>>();
+
+        for (int i = 0; i < getResources().getStringArray(R.array.moduloArray).length; i++) {
+
+            listDataHeader.add(getResources().getStringArray(R.array.moduloArray)[i]);
 
         }
 
-        @Override
-        protected void onPostCreate(Bundle savedInstanceState) {
-            super.onPostCreate(savedInstanceState);
-            drawerToggle.syncState();
+        // Adding child data
+//            listDataHeader.add("INSTITUCION");
+//            listDataHeader.add("MI EQUIPO");
+//            listDataHeader.add("LIGA");
+//            listDataHeader.add("SOCIAL");
+
+        // Adding child data
+        institucionalList = new ArrayList<String>();
+
+        for (int i = 0; i < getResources().getStringArray(
+                R.array.NavigationInstitucion).length; i++) {
+
+            institucionalList.add(getResources().getStringArray(
+                    R.array.NavigationInstitucion)[i]);
         }
 
-        @Override
-        public void onConfigurationChanged(Configuration newConfig) {
-            super.onConfigurationChanged(newConfig);
-            drawerToggle.onConfigurationChanged(newConfig);
+        cargaGeneral = new ArrayList<String>();
+
+        for (int i = 0; i < getResources().getStringArray(
+                R.array.NavigationCarga).length; i++) {
+
+            cargaGeneral.add(getResources().getStringArray(
+                    R.array.NavigationCarga)[i]);
         }
 
-        private void prepareListData() {
-            listDataHeader = new ArrayList<String>();
-            listDataChild = new HashMap<String, List<String>>();
+        ligaDatos = new ArrayList<String>();
+        for (int i = 0; i < getResources().getStringArray(
+                R.array.NavigationLigaAdeful).length; i++) {
 
-            // Adding child data
-            listDataHeader.add("INSTITUCION");
-            listDataHeader.add("MI EQUIPO");
-            listDataHeader.add("LIGA");
-            listDataHeader.add("SOCIAL");
-
-            // Adding child data
-            institucionalList = new ArrayList<String>();
-
-            for (int i = 0; i < getResources().getStringArray(
-                    R.array.NavigationInstitucion).length; i++) {
-
-                institucionalList.add(getResources().getStringArray(
-                        R.array.NavigationInstitucion)[i]);
-            }
-
-            cargaGeneral = new ArrayList<String>();
-
-            for (int i = 0; i < getResources().getStringArray(
-                    R.array.NavigationCarga).length; i++) {
-
-                cargaGeneral.add(getResources().getStringArray(
-                        R.array.NavigationCarga)[i]);
-            }
-
-            ligaDatos = new ArrayList<String>();
-            for (int i = 0; i < getResources().getStringArray(
-                    R.array.NavigationLigaAdeful).length; i++) {
-
-                ligaDatos.add(getResources().getStringArray(
-                        R.array.NavigationLigaAdeful)[i]);
-            }
-
-            social = new ArrayList<String>();
-            for (int i = 0; i < getResources().getStringArray(
-                    R.array.NavigationSocial).length; i++) {
-
-                social.add(getResources().getStringArray(R.array.NavigationSocial)[i]);
-            }
-
-            listDataChild.put(listDataHeader.get(0), institucionalList); // Header,
-            // Child
-            // data
-            listDataChild.put(listDataHeader.get(1), cargaGeneral);
-            listDataChild.put(listDataHeader.get(2), ligaDatos);
-            listDataChild.put(listDataHeader.get(3), social);
+            ligaDatos.add(getResources().getStringArray(
+                    R.array.NavigationLigaAdeful)[i]);
         }
 
-//	/**
+        social = new ArrayList<String>();
+        for (int i = 0; i < getResources().getStringArray(
+                R.array.NavigationSocial).length; i++) {
+
+            social.add(getResources().getStringArray(R.array.NavigationSocial)[i]);
+        }
+
+        listDataChild.put(listDataHeader.get(0), institucionalList); // Header,
+        // Child
+        // data
+        listDataChild.put(listDataHeader.get(1), cargaGeneral);
+        listDataChild.put(listDataHeader.get(2), ligaDatos);
+        listDataChild.put(listDataHeader.get(3), social);
+    }
+
+    //	/**
 //	 * metodo que pasa icono y string al adapter Recycler 15/08/2015
 //	 *
 //	 */
-	public static List<InformationRecycler> getData(Context c) {
+    public static List<InformationRecycler> getData(Context c) {
 
-		List<InformationRecycler> dato = new ArrayList<>();
+        List<InformationRecycler> dato = new ArrayList<>();
 
-		// ver si voy a usar diferentes iconos
-		int[] icons = { R.drawable.ic_pelota_futbol,
-				R.drawable.ic_pelota_futbol, R.drawable.ic_pelota_futbol };
-		String[] stringArray = c.getResources().getStringArray(
-				R.array.NavigationCarga);
+        // ver si voy a usar diferentes iconos
+        int[] icons = {R.drawable.ic_pelota_futbol,
+                R.drawable.ic_pelota_futbol, R.drawable.ic_pelota_futbol};
+        String[] stringArray = c.getResources().getStringArray(
+                R.array.NavigationCarga);
 
-		for (int i = 0; i < stringArray.length; i++) {
+        for (int i = 0; i < stringArray.length; i++) {
 
-			InformationRecycler current = new InformationRecycler();
-			// current.iconId = icons[i];
-			current.title = stringArray[i];
-			dato.add(current);
-		}
-		return dato;
+            InformationRecycler current = new InformationRecycler();
+            // current.iconId = icons[i];
+            current.title = stringArray[i];
+            dato.add(current);
+        }
+        return dato;
 
-	}
+    }
+
+    public void iniciarModulos() {
+
+        ArrayList<Modulo> arrayModulo = new ArrayList<Modulo>();
+        ArrayList<SubModulo> arraySubModulo = new ArrayList<SubModulo>();
+        arrayModulo = controladorAdeful.selectListaModuloAdeful();
+        arraySubModulo = controladorAdeful.selectListaSubModuloAdeful();
+        if (arrayModulo.isEmpty()) {
+
+
+            for (int i = 0; i < getResources().getStringArray(R.array.moduloArray).length; i++) {
+
+                Modulo modulo = new Modulo(0, getResources().getStringArray(R.array.moduloArray)[i]);
+                controladorAdeful.insertModuloAdeful(modulo);
+            }
+        }
+
+        if (arraySubModulo.isEmpty()) {
+
+            for (int i = 0; i < getResources().getStringArray(R.array.subModuloArray).length; i++) {
+                int key = i + 1;
+                if (key >= 1 && key <= 3) {
+                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 1);
+                    controladorAdeful.insertSubModuloAdeful(submodulo);
+                }
+                if (key >= 4 && key <= 8) {
+                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 2);
+                    controladorAdeful.insertSubModuloAdeful(submodulo);
+                }
+                if (key >= 9 && key <= 10) {
+                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 3);
+                    controladorAdeful.insertSubModuloAdeful(submodulo);
+                }
+                if (key >= 11 && key <= 14) {
+                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
+                    controladorAdeful.insertSubModuloAdeful(submodulo);
+                }
+
+            }
+        }
+    }
+
 
      /*   public void loadSpinner(){
 
@@ -354,24 +401,24 @@ private TextView txtAbSubTitulo;
             }
         }*/
 
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.menu_main, menu);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
-            if (drawerToggle.onOptionsItemSelected(item)) {
-                return true;
-            }
-
-            int id = item.getItemId();
-
-            // noinspection SimplifiableIfStatement
-            if (id == R.id.action_permisos) {
+        // noinspection SimplifiableIfStatement
+        if (id == R.id.action_permisos) {
 
 
                /* alertMenu = new AlertsMenu(this, "PERMISOS", "En esta opción puede agreagar o editar un Permiso","Ingrese nombre",null);
@@ -388,10 +435,10 @@ private TextView txtAbSubTitulo;
                 });*/
 
 
-                return true;
-            }
-
-            return super.onOptionsItemSelected(item);
+            return true;
         }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 }

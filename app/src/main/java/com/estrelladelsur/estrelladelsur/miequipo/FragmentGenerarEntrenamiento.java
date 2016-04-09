@@ -117,7 +117,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
         outState.putInt("curChoice", CheckedPositionFragment);
     }
     private void init() {
-        auxiliarGeneral.errorDataBase(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         // CANCHA
