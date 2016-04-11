@@ -21,15 +21,14 @@ public class Usuario {
         USUARIO_ACTUALIZACION = usuario_act;
         FECHA_ACTUALIZACION = fechaActualizacion;
     }
-    public int getID_USUARIO() {
-        return ID_USUARIO;
-    }
+    public int getID_USUARIO() { return ID_USUARIO;}
     public String getUSUARIO() {
         return USUARIO;
     }
-    public String getPASSWORD() {
-        return PASSWORD;
+    public String toString() {
+        return USUARIO;
     }
+    public String getPASSWORD() { return PASSWORD;}
     public String getUSUARIO_CREADOR() { return USUARIO_CREADOR; }
     public String getFECHA_CREACION() {
         return FECHA_CREACION;

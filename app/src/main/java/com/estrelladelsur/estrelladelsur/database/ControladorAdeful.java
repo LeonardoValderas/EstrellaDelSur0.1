@@ -29,6 +29,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Modulo;
 import com.estrelladelsur.estrelladelsur.entidad.Noticia;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
+import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import com.estrelladelsur.estrelladelsur.entidad.Posicion;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
@@ -130,6 +131,47 @@ public class ControladorAdeful {
         return arrayModuloAdeful;
     }
 
+    // ACTUALIZAR SUBMODULO TRUE
+    public boolean actualizarSubModuloSelectedTrueAdeful(int id_submodulo)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("ISSELECTED", true);
+            long valor = database.update("SUBMODULO_ADEFUL", cv, "ID_SUBMODULO=" + id_submodulo, null);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
+    // ACTUALIZAR SUBMODULO FALSE
+    public boolean actualizarSubModuloSelectedFalseAdeful(int id_submodulo)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("ISSELECTED", false);
+            long valor = database.update("SUBMODULO_ADEFUL", cv, "ID_SUBMODULO=" + id_submodulo, null);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
+
     // INSERTAR SUBMODULO
     public boolean insertSubModuloAdeful(SubModulo Submodulo)
             throws SQLiteException {
@@ -139,7 +181,7 @@ public class ControladorAdeful {
         try {
             cv.put("NOMBRE", Submodulo.getSUBMODULO());
             cv.put("ID_MODULO", Submodulo.getID_MODULO());
-
+            cv.put("ISSELECTED", false);
             long valor = database.insert("SUBMODULO_ADEFUL", null, cv);
             cerrarBaseDeDatos();
             if (valor > 0) {
@@ -178,6 +220,98 @@ public class ControladorAdeful {
                                 .getColumnIndex("NOMBRE"));
                         //CLASE AUX
                         submodulo = new SubModulo(id, nombre, id_sub);
+                        //ARRAY SUBMODULO
+                        arraySubModuloAdeful.add(submodulo);
+                    }
+                }
+            } catch (Exception e) {
+                arraySubModuloAdeful = null;
+            }
+        } else {
+            arraySubModuloAdeful = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        nombre = null;
+        return arraySubModuloAdeful;
+    }
+    //LISTA SUBMODULO
+    public ArrayList<SubModulo> selectListaSubModuloPermisoAdeful(int id_permiso) {
+
+        String sql = "SELECT P.ID_PERMISO_MODULO, P.ID_SUBMODULO, S.NOMBRE FROM PERMISO_MODULO_ADEFUL P "
+                +    "INNER JOIN SUBMODULO_ADEFUL S ON S.ID_SUBMODULO = P.ID_SUBMODULO "
+                +    "WHERE P.ID_PERMISO = "+id_permiso;
+        ArrayList<SubModulo> arraySubModuloAdeful = new ArrayList<SubModulo>();
+        String nombre = null;
+        int id,id_sub;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        SubModulo submodulo = null;
+                        id = cursor.getInt(cursor.getColumnIndex("ID_PERMISO_MODULO"));
+                        id_sub = cursor.getInt(cursor.getColumnIndex("ID_SUBMODULO"));
+                        nombre = cursor.getString(cursor
+                                .getColumnIndex("NOMBRE"));
+                        //CLASE AUX
+                        submodulo = new SubModulo(id, id_sub, nombre,true );
+                        //ARRAY SUBMODULO
+                        arraySubModuloAdeful.add(submodulo);
+                    }
+                }
+            } catch (Exception e) {
+                arraySubModuloAdeful = null;
+            }
+        } else {
+            arraySubModuloAdeful = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        nombre = null;
+        return arraySubModuloAdeful;
+    }
+
+    //LISTA MODULO SUBMODULO
+    public ArrayList<SubModulo> selectListaModuloSubModuloFalseAdeful() {
+
+        String sql = "SELECT S.ID_SUBMODULO, S.ID_MODULO, S.NOMBRE, M.NOMBRE AS MODNOMBRE,S.ISSELECTED " +
+                "FROM SUBMODULO_ADEFUL S, MODULO_ADEFUL M WHERE M.ID_MODULO = S.ID_MODULO AND S.ISSELECTED = 0 ";
+        ArrayList<SubModulo> arraySubModuloAdeful = new ArrayList<SubModulo>();
+        String nombre = null, modnombre = null;
+        int id, id_sub;
+        boolean isselected;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        SubModulo submodulo = null;
+
+                        id = cursor.getInt(cursor.getColumnIndex("ID_SUBMODULO"));
+                        id_sub = cursor.getInt(cursor.getColumnIndex("ID_MODULO"));
+                        nombre = cursor.getString(cursor
+                                .getColumnIndex("NOMBRE"));
+                        modnombre = cursor.getString(cursor
+                                .getColumnIndex("MODNOMBRE"));
+                        isselected = cursor.getInt(cursor
+                                .getColumnIndex("ISSELECTED")) > 0;
+                        //CLASE AUX
+                        submodulo = new SubModulo(id, nombre, id_sub, modnombre,isselected);
                         //ARRAY SUBMODULO
                         arraySubModuloAdeful.add(submodulo);
                     }
@@ -311,6 +445,274 @@ public class ControladorAdeful {
 
         boolean res = false;
         String sql = "DELETE FROM USUARIO_ADEFUL WHERE ID_USUARIO = " + id;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                database.execSQL(sql);
+                res = true;
+
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
+
+    public int insertPermisosAdeful(Permiso permiso)
+            throws SQLiteException {
+        int id_permiso = 0;
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("ID_USUARIO", permiso.getID_USUARIO());
+            cv.put("USUARIO_CREADOR", permiso.getUSUARIO_CREADOR());
+            cv.put("FECHA_CREACION", permiso.getFECHA_CREACION());
+            cv.put("USUARIO_ACTUALIZACION", permiso.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", permiso.getFECHA_ACTUALIZACION());
+
+            long valor = database.insert("PERMISO_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return id_permiso = (int) valor;
+            } else {
+                return id_permiso;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return id_permiso;
+        }
+    }
+
+    public boolean insertPermisoModuloAdeful(Permiso permiso)
+            throws SQLiteException {
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("ID_PERMISO", permiso.getID_PERMISO());
+            cv.put("ID_MODULO", permiso.getID_MODULO());
+            cv.put("ID_SUBMODULO", permiso.getID_SUBMODULO());
+
+            long valor = database.insert("PERMISO_MODULO_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
+
+    public boolean actualizarPermisosAdeful(Permiso permiso)
+            throws SQLiteException {
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("USUARIO_ACTUALIZACION", permiso.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", permiso.getFECHA_ACTUALIZACION());
+
+            long valor = database.update("PERMISO_ADEFUL", cv, "ID_PERMISO=" + permiso.getID_PERMISO(), null);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
+
+    //LISTA permisos
+    public ArrayList<Permiso> selectListaPermisoAdeful() {
+
+        String sql = "SELECT P.ID_PERMISO, P.ID_USUARIO,U.USUARIO"
+                + " FROM PERMISO_ADEFUL P"
+                + " INNER JOIN USUARIO_ADEFUL U ON"
+                + " U.ID_USUARIO = P.ID_USUARIO";
+
+        Cursor cursor = null;
+        ArrayList<Permiso> arrayPermiso = new ArrayList<Permiso>();
+        int id, id_usuario, id_modulo,id_sub ;
+        String nombre = null, subnombre = null, usuario = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        Permiso permiso = null;
+                        id = cursor.getInt(cursor
+                                .getColumnIndex("ID_PERMISO"));
+                        id_usuario = cursor.getInt(cursor
+                                .getColumnIndex("ID_USUARIO"));
+                        usuario = cursor.getString(cursor
+                                .getColumnIndex("USUARIO"));
+                        permiso = new Permiso(id,id_usuario, usuario);
+                        arrayPermiso.add(permiso);
+                    }
+                }
+            } catch (Exception e) {
+                arrayPermiso = null;
+            }
+        } else {
+            arrayPermiso = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        usuario = null;
+        database = null;
+        return arrayPermiso;
+    }
+    //ELIMINAR PERMISO
+    public boolean eliminarPermisoModuloAdeful(int id) {
+
+        boolean res = false;
+        String sql = "DELETE FROM PERMISO_MODULO_ADEFUL WHERE ID_PERMISO_MODULO = " + id;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                database.execSQL(sql);
+                res = true;
+
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
+    //LISTA permisos
+    public ArrayList<Permiso> selectListaPermisoAdefulId( int id_permiso) {
+
+        String sql = "SELECT P.ID_MODULO, M.NOMBRE, P.ID_SUBMODULO, S.NOMBRE AS SUBNOMBRE"
+                + " FROM PERMISO_MODULO_ADEFUL P INNER JOIN MODULO_ADEFUL M ON"
+                + " P.ID_MODULO = M.ID_MODULO"
+                + " INNER JOIN SUBMODULO_ADEFUL S ON"
+                + " S.ID_SUBMODULO = P.ID_SUBMODULO WHERE P.ID_PERMISO = "+id_permiso+"";
+
+        Cursor cursor = null;
+        ArrayList<Permiso> arrayPermiso = new ArrayList<Permiso>();
+        int id_modulo, id_sub ;
+        String nombre = null, subnombre = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        Permiso permiso = null;
+                        id_modulo = cursor.getInt(cursor
+                                .getColumnIndex("ID_MODULO"));
+                        nombre = cursor.getString(cursor
+                                .getColumnIndex("NOMBRE"));
+                        id_sub = cursor.getInt(cursor
+                                .getColumnIndex("ID_SUBMODULO"));
+                        subnombre = cursor.getString(cursor
+                                .getColumnIndex("SUBNOMBRE"));
+                        permiso = new Permiso(id_modulo, nombre, id_sub, subnombre);
+                        arrayPermiso.add(permiso);
+                    }
+                }
+            } catch (Exception e) {
+                arrayPermiso = null;
+            }
+        } else {
+            arrayPermiso = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        nombre = null;
+        subnombre = null;
+        database = null;
+        return arrayPermiso;
+    }
+    //LISTA id submodulos
+    public ArrayList<Integer> selectListaIdModulosAdefulId( int id_permiso) {
+
+        String sql = "SELECT ID_SUBMODULO FROM PERMISO_MODULO_ADEFUL WHERE ID_PERMISO = "+id_permiso;
+
+        Cursor cursor = null;
+        ArrayList<Integer> arrayIdSubmodulo = new ArrayList<Integer>();
+        int id_sub ;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+
+                        id_sub = cursor.getInt(cursor
+                                .getColumnIndex("ID_SUBMODULO"));
+                        arrayIdSubmodulo.add(id_sub);
+                    }
+                }
+            } catch (Exception e) {
+                arrayIdSubmodulo = null;
+            }
+        } else {
+            arrayIdSubmodulo = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        return arrayIdSubmodulo;
+    }
+    //LISTA permisos por Id
+    public int isPermiso(int id_user) {
+        int isPermiso = 0;
+
+        String sql = "SELECT ID_USUARIO FROM PERMISO_ADEFUL WHERE ID_USUARIO = " + id_user + "";
+
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    isPermiso = 0;
+                }else{
+                    isPermiso = 1;
+                }
+            } catch (Exception e) {
+                isPermiso = 2;
+            }
+        } else {
+            isPermiso = 2;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        return isPermiso;
+    }
+
+    //ELIMINAR USUARIO
+    public boolean eliminarPermisoAdeful(int id) {
+
+        boolean res = false;
+        String sql = "DELETE FROM PERMISO_ADEFUL WHERE ID_PERMISO = " + id;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
 

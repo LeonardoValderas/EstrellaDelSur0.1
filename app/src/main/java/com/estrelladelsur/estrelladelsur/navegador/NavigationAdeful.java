@@ -30,6 +30,7 @@ import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsJugador;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsSancion;
+import com.estrelladelsur.estrelladelsur.permiso.TabsPermiso;
 import com.estrelladelsur.estrelladelsur.permiso.TabsUsuario;
 import com.estrelladelsur.estrelladelsur.social.TabsFoto;
 import com.estrelladelsur.estrelladelsur.social.TabsNoticia;
@@ -234,8 +235,8 @@ public class NavigationAdeful extends AppCompatActivity {
                                         .toString();
                                 break;
                             case 1:
-                                Intent noticia = new Intent(NavigationAdeful.this, TabsNoticia.class);
-                                startActivity(noticia);
+                                Intent permiso = new Intent(NavigationAdeful.this, TabsPermiso.class);
+                                startActivity(permiso);
                                 tituloClickFragment = permisoChild.get(childPosition)
                                         .toString();
                                 break;

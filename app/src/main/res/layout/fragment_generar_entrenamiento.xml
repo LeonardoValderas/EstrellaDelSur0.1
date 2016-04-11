@@ -4,18 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
-    <!--<android.support.design.widget.CoordinatorLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:fitsSystemWindows="true" >-->
-
-        <!--<android.support.design.widget.AppBarLayout-->
-            <!--android:id="@+id/appbarLayout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="@android:color/transparent"-->
-            <!--android:fitsSystemWindows="true" >-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,17 +76,5 @@
                 android:layout_height="wrap_content"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" >
             </android.support.v7.widget.RecyclerView>
-
-        <!--</android.support.design.widget.AppBarLayout>-->
-
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/botonFloating"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="end|bottom"-->
-            <!--android:layout_margin="16dp"-->
-            <!--android:src="@drawable/ic_buttonfloating"-->
-            <!--app:borderWidth="0dp" />-->
-    <!--</android.support.design.widget.CoordinatorLayout>-->
 
 </LinearLayout>

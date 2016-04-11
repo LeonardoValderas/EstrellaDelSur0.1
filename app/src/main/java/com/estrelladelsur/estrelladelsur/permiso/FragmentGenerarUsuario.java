@@ -178,7 +178,6 @@ public class FragmentGenerarUsuario extends Fragment {
                 Toast.makeText(getActivity(), "Debe completar todos los campos.",
                         Toast.LENGTH_SHORT).show();
             } else if(validarUsuario(usuarioEditUser.getText().toString())){
-
                 Toast.makeText(getActivity(), "El usuario ya existe.",
                         Toast.LENGTH_SHORT).show();
             }else if (insertar) {
@@ -191,7 +190,6 @@ public class FragmentGenerarUsuario extends Fragment {
                     auxiliarGeneral.errorDataBase(getActivity());
                 }
             } else { //USUARIO ACTUALIZAR
-
                 usuario = new Usuario(idUsuarioExtra, usuarioEditUser.getText().toString(),
                         usuarioEditPass.getText().toString(),
                         null, null, usuarios, fechaActualizacion);
@@ -206,14 +204,10 @@ public class FragmentGenerarUsuario extends Fragment {
             }
             return true;
         }
-
         if (id == R.id.action_lifuba) {
-
             return true;
         }
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }
