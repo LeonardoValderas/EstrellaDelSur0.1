@@ -99,7 +99,7 @@
     <!--COMISION-->
     <!-- Array SPINNER CARGO/DIRECCION  -->
     <string-array name="ceroSpinnerCargo">
-        <item>Genere un cargo.</item>
+        <item><font fgcolor="#FF33B5E5">Genere un cargo.</font></item>
     </string-array>
 
     <!--FIXTURE-->

@@ -6,18 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.estrelladelsur.estrelladelsur.liga.TabsAdeful">
 
-    <!--<android.support.design.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:fitsSystemWindows="true">-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,19 +16,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:orientation="vertical">
-            <!--app:layout_scrollFlags="scroll|enterAlways">-->
 
             <ImageView
                 android:id="@+id/imageButtonEquipo_Cancha"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
+                android:background="@drawable/border_circle"
                 android:clickable="true" />
 
             <EditText
                 android:id="@+id/editTextDescripcion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:ems="10"
                 android:gravity="center"
                 android:hint="Ingrese el Equipo"
@@ -55,27 +44,29 @@
                 android:id="@+id/linearTorneoActual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/torneo_actual" />
+
                 <CheckBox
                     android:id="@+id/checkboxTorneoActual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
             </LinearLayout>
+
             <Spinner
                 android:id="@+id/spinnerAnioTorneoActual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -84,16 +75,4 @@
             android:layout_height="wrap_content"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </LinearLayout>
-    <!--</android.support.design.widget.AppBarLayout>-->
-
-    <!--     <android.support.design.widget.FloatingActionButton
-             android:id="@+id/botonFloating"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_gravity="end|bottom"
-             android:layout_margin="16dp"
-             android:src="@drawable/ic_buttonfloating"
-             app:borderWidth="0dp" />-->
-    <!--</android.support.design.widget.CoordinatorLayout>-->
-
 </FrameLayout>

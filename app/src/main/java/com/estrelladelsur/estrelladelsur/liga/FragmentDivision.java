@@ -3,6 +3,7 @@ package com.estrelladelsur.estrelladelsur.liga;
 import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -19,8 +20,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
@@ -41,7 +44,11 @@ public class FragmentDivision extends Fragment {
 	private ControladorAdeful controladorAdeful;
 	private int CheckedPositionFragment;
 	private ImageView imageButtonEquipo ;
-	
+	private String GUARDAR_USUARIO = "División cargada correctamente";
+	private String ACTUALIZAR_USUARIO = "División actualizada correctamente";
+	private Typeface editTextFont;
+	private AuxiliarGeneral auxiliarGeneral;
+	private LinearLayout linearEscudo;
 	public static FragmentDivision newInstance() {
 		FragmentDivision fragment = new FragmentDivision();
 		return fragment;
@@ -68,10 +75,13 @@ public class FragmentDivision extends Fragment {
 			Bundle savedInstanceState) {
 		View v= inflater.inflate(R.layout.fragment_general_liga, container,
 				false);
+		editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
 		editTextDivision = (EditText) v.findViewById(
 				R.id.editTextDescripcion);
+		editTextDivision.setTypeface(editTextFont);
 		imageButtonEquipo= (ImageView) v.findViewById(
 				R.id.imageButtonEquipo_Cancha);
+		imageButtonEquipo.setVisibility(View.GONE);
 		recycleViewDivision = (RecyclerView) v.findViewById(
 				R.id.recycleViewGeneral);
 		return v;
@@ -85,15 +95,12 @@ public class FragmentDivision extends Fragment {
 	
 	
 	private void init() {
-
+		auxiliarGeneral = new AuxiliarGeneral(getActivity());
 		editTextDivision.setHint("Ingrese una División");
 		editTextDivision.setHintTextColor(Color.GRAY);
-		imageButtonEquipo.setVisibility(View.GONE);
-
 		recyclerViewLoadDivision();
 		recycleViewDivision.addOnItemTouchListener(new RecyclerTouchListener(
 				getActivity(), recycleViewDivision, new ClickListener() {
-
 			@Override
 			public void onLongClick(View view, final int position) {
 
@@ -107,24 +114,17 @@ public class FragmentDivision extends Fragment {
 
 							@Override
 							public void onClick(View v) {
-								// TODO Auto-generated method stub
-
-								controladorAdeful.abrirBaseDeDatos();
-								if (controladorAdeful.eliminarDivisionAdeful(divisionArray.get(position)
+						if (controladorAdeful.eliminarDivisionAdeful(divisionArray.get(position)
 										.getID_DIVISION())) {
-									controladorAdeful.cerrarBaseDeDatos();
 									recyclerViewLoadDivision();
 									Toast.makeText(
 											getActivity(),
-											"División Eliminada Correctamente",
+											"División eliminada correctamente",
 											Toast.LENGTH_SHORT).show();
 									dialogoAlerta.alertDialog.dismiss();
 
 								} else {
-									controladorAdeful.cerrarBaseDeDatos();
-									Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-													"\n Si el error persiste comuniquese con soporte.",
-											Toast.LENGTH_SHORT).show();
+						        auxiliarGeneral.errorDataBase(getActivity());
 								}
 							}
 						});
@@ -133,20 +133,15 @@ public class FragmentDivision extends Fragment {
 
 							@Override
 							public void onClick(View v) {
-								// TODO Auto-generated method stub
 								dialogoAlerta.alertDialog.dismiss();
 							}
 						});
 			}
-
 			@Override
 			public void onClick(View view, int position) {
-				// TODO Auto-generated method stub
-
 				insertar = false;
 				editTextDivision.setText(divisionArray.get(position)
 						.getDESCRIPCION());
-
 				posicion = position;
 			}
 		}));
@@ -159,32 +154,21 @@ public class FragmentDivision extends Fragment {
 				getActivity(), DividerItemDecoration.VERTICAL_LIST));
 		recycleViewDivision.setItemAnimator(new DefaultItemAnimator());
 
-		controladorAdeful.abrirBaseDeDatos();
 		divisionArray = controladorAdeful.selectListaDivisionAdeful();
 		if(divisionArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
-
-			adaptadorDivision = new AdaptadorRecyclerDivision(divisionArray);
-			adaptadorDivision.notifyDataSetChanged();
+			adaptadorDivision = new AdaptadorRecyclerDivision(divisionArray, getActivity());
 			recycleViewDivision.setAdapter(adaptadorDivision);
 		}else{
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-							"\n Si el error persiste comuniquese con soporte.",
-					Toast.LENGTH_SHORT).show();
+        auxiliarGeneral.errorDataBase(getActivity());
 		}
 	}
-
 	public static interface ClickListener {
-
 		public void onClick(View view, int position);
 		public void onLongClick(View view, int position);
-
 	}
 
 	static class RecyclerTouchListener implements
 			RecyclerView.OnItemTouchListener {
-
 		private GestureDetector detector;
 		private ClickListener clickListener;
 
@@ -194,7 +178,6 @@ public class FragmentDivision extends Fragment {
 			this.clickListener = clickListener;
 			detector = new GestureDetector(context,
 					new GestureDetector.SimpleOnGestureListener() {
-
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
 							return true;
@@ -214,7 +197,6 @@ public class FragmentDivision extends Fragment {
 
 		@Override
 		public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-			// TODO Auto-generated method stub
 			View child = rv.findChildViewUnder(e.getX(), e.getY());
 			if (child != null && clickListener != null
 					&& detector.onTouchEvent(e)) {
@@ -225,14 +207,17 @@ public class FragmentDivision extends Fragment {
 
 		@Override
 		public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
 		}
-
 		@Override
 		public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-			// TODO Auto-generated method stub
-
 		}
+	}
+	public void inicializarControles(String mensaje) {
+		recyclerViewLoadDivision();
+		editTextDivision.setText("");
+		Toast.makeText(getActivity(),
+				mensaje,
+				Toast.LENGTH_SHORT).show();
 	}
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -243,12 +228,12 @@ public class FragmentDivision extends Fragment {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		inflater.inflate(R.menu.menu_administrador_general, menu);
 		// menu.getItem(0).setVisible(false);//usuario
-		// menu.getItem(1).setVisible(false);//permiso
-		// menu.getItem(2).setVisible(false);//lifuba
+		menu.getItem(1).setVisible(false);//permiso
+		menu.getItem(2).setVisible(false);//lifuba
 		menu.getItem(3).setVisible(false);// adeful
 		menu.getItem(4).setVisible(false);// puesto
 		menu.getItem(5).setVisible(false);// posicion
-		// menu.getItem(6).setVisible(false);// cargo
+		menu.getItem(6).setVisible(false);// cargo
 		// menu.getItem(7).setVisible(false);//cerrar
 		// menu.getItem(8).setVisible(false);// guardar
 		menu.getItem(9).setVisible(false);// Subir
@@ -277,35 +262,22 @@ public class FragmentDivision extends Fragment {
 
 		if (id == R.id.action_guardar) {
 			if (editTextDivision.getText().toString().equals("")) {
-				Toast.makeText(getActivity(), "Ingrese la División.",
+				Toast.makeText(getActivity(), "Ingrese una división.",
 						Toast.LENGTH_SHORT).show();
-
 			} else {
-
 				if (insertar) {
 
 					String usuario = "Administrador";
 					String fechaCreacion = controladorAdeful.getFechaOficial();
 					String fechaActualizacion = fechaCreacion;
-
-
 					division = new Division(0, editTextDivision.getText()
 							.toString(), usuario, fechaCreacion,
 							usuario,fechaActualizacion);
 
-					controladorAdeful.abrirBaseDeDatos();
 					if(controladorAdeful.insertDivisionAdeful(division)) {
-						controladorAdeful.cerrarBaseDeDatos();
-						recyclerViewLoadDivision();
-						editTextDivision.setText("");
-						Toast.makeText(getActivity(),
-								"División cargada correctamente.",
-								Toast.LENGTH_SHORT).show();
+				    inicializarControles(GUARDAR_USUARIO);
 					}else{
-						controladorAdeful.cerrarBaseDeDatos();
-						Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-										"\n Si el error persiste comuniquese con soporte.",
-								Toast.LENGTH_SHORT).show();
+		            auxiliarGeneral.errorDataBase(getActivity());
 					}
 				} else {
 
@@ -317,20 +289,11 @@ public class FragmentDivision extends Fragment {
 							.getID_DIVISION(), editTextDivision.getText()
 							.toString(), null, null, usuario,fechaActualizacion);
 
-					controladorAdeful.abrirBaseDeDatos();
 					if(controladorAdeful.actualizarDivisionAdeful(division)) {
-						controladorAdeful.cerrarBaseDeDatos();
-						recyclerViewLoadDivision();
-						editTextDivision.setText("");
 						insertar = true;
-						Toast.makeText(getActivity(),
-								"División actualizada correctamente.",
-								Toast.LENGTH_SHORT).show();
+						inicializarControles(ACTUALIZAR_USUARIO);
 					}else{
-						controladorAdeful.cerrarBaseDeDatos();
-						Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-										"\n Si el error persiste comuniquese con soporte.",
-								Toast.LENGTH_SHORT).show();
+				    auxiliarGeneral.errorDataBase(getActivity());
 					}
 				}
 			}

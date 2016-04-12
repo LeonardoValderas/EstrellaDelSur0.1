@@ -1,12 +1,12 @@
 package com.estrelladelsur.estrelladelsur.institucion;
 
-
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -26,9 +26,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.entidad.Cargo;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
@@ -36,13 +37,11 @@ import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCargoComision;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoMenuLista;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 
 public class FragmentGenerarDireccion extends Fragment {
 
@@ -59,7 +58,6 @@ public class FragmentGenerarDireccion extends Fragment {
     private Communicator communicator;
     private boolean actualizar = false;
     private int idDireccionExtra;
-    private String fechaCreacionExtra;
     private ArrayList<Cargo> cargoArray;
     private AdapterSpinnerCargoComision adapterSpinnerCargoComision;
     private DialogoAlerta dialogoAlerta;
@@ -70,20 +68,23 @@ public class FragmentGenerarDireccion extends Fragment {
     private ByteArrayOutputStream baos;
     private Direccion direccion;
     private ArrayList<Direccion> direccionArray;
-    //private DateFormat formate = DateFormat.getDateInstance();
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
     private Calendar calendar = Calendar.getInstance();
     private boolean botonFecha = false;
     private ArrayAdapter<String> adaptadorInicial;
+    private String GUARDAR_USUARIO = "Integrante ingresado correctamente";
+    private String ACTUALIZAR_USUARIO = "Integrante actualizado correctamente";
+    private Typeface editTextFont;
+    private Typeface textViewFont;
+    private AuxiliarGeneral auxiliarGeneral;
+    private TextView tituloTextPeriodo;
 
     public static FragmentGenerarDireccion newInstance() {
         FragmentGenerarDireccion fragment = new FragmentGenerarDireccion();
         return fragment;
     }
-
     public FragmentGenerarDireccion() {
-        // Required empty public constructor
     }
 
     @Override
@@ -102,21 +103,29 @@ public class FragmentGenerarDireccion extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generar_comision_direccion, container, false);
+        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
+        textViewFont = Typeface.createFromAsset(getActivity().getAssets(), "aspace_demo.otf");
         //FOTO INTEGRANTE
         fotoImageDireccion = (ImageView) v
                 .findViewById(R.id.fotoImageComisionDireccion);
         //NOMBRE INTEGRANTE
         nombreEditDireccion = (EditText) v
                 .findViewById(R.id.nombreEditComisionDireccion);
+        nombreEditDireccion.setTypeface(editTextFont);
         //CARGO SPINNER INTEGRANTE
         puestoSpinnerDireccion = (Spinner) v
                 .findViewById(R.id.puestoSpinnerComisionDireccion);
         //DESDE
         desdeButtonDireccion = (Button) v
                 .findViewById(R.id.desdeEditComisionDireccion);
+        desdeButtonDireccion.setTypeface(editTextFont,Typeface.BOLD);
         //HASTA
         hastaButtonDireccion = (Button) v
                 .findViewById(R.id.hastaEditComisionDireccion);
+        hastaButtonDireccion.setTypeface(editTextFont,Typeface.BOLD);
+        tituloTextPeriodo = (TextView) v
+                .findViewById(R.id.tituloTextPeriodo);
+        tituloTextPeriodo.setTypeface(textViewFont);
 
         return v;
     }
@@ -130,7 +139,7 @@ public class FragmentGenerarDireccion extends Fragment {
     private void init() {
         // VER DONDE EJECUCTAR ESTA LINEA
         controladorAdeful = new ControladorAdeful(getActivity());
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         // LOAD SPINNER
@@ -141,11 +150,8 @@ public class FragmentGenerarDireccion extends Fragment {
             idDireccionExtra = getActivity().getIntent().getIntExtra("id_direccion", 0);
 
             // DIRECCION POR ID
-            controladorAdeful.abrirBaseDeDatos();
             direccionArray = controladorAdeful.selectDireccionAdeful(idDireccionExtra);
             if (direccionArray != null) {
-                controladorAdeful.cerrarBaseDeDatos();
-
                 nombreEditDireccion.setText(direccionArray.get(0).getNOMBRE_DIRECCION().toString());
                 desdeButtonDireccion.setText(direccionArray.get(0).getPERIODO_DESDE().toString());
                 hastaButtonDireccion.setText(direccionArray.get(0).getPERIODO_HASTA().toString());
@@ -163,20 +169,15 @@ public class FragmentGenerarDireccion extends Fragment {
 
                 insertar = false;
             } else {
-                controladorAdeful.cerrarBaseDeDatos();
-                Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                "\n Si el error persiste comuniquese con soporte.",
-                        Toast.LENGTH_SHORT).show();
+                 auxiliarGeneral.errorDataBase(getActivity());
             }
         }
-
         // CLICK IMAGEN
         fotoImageDireccion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Alerta galeria
                 ImageDialogDireccion();
-
             }
         });
 
@@ -187,7 +188,6 @@ public class FragmentGenerarDireccion extends Fragment {
                 // TODO Auto-generated method stub
                 botonFecha = true;
                 setDate();
-
             }
         });
         hastaButtonDireccion.setOnClickListener(new View.OnClickListener() {
@@ -197,11 +197,9 @@ public class FragmentGenerarDireccion extends Fragment {
                 // TODO Auto-generated method stub
                 botonFecha = false;
                 setDate();
-
             }
         });
     }
-
     //Alerta galeria
     public void ImageDialogDireccion() {
 
@@ -210,7 +208,7 @@ public class FragmentGenerarDireccion extends Fragment {
         myAlertDialog.setTitle("Galeria");
         myAlertDialog.setMessage("Seleccione una Foto.");
 
-        myAlertDialog.setPositiveButton("Gallery",
+        myAlertDialog.setPositiveButton("Galeria",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         UtilityImage.pictureActionIntent = new Intent(
@@ -223,16 +221,11 @@ public class FragmentGenerarDireccion extends Fragment {
                                 UtilityImage.GALLERY_PICTURE);
                     }
                 });
-
         myAlertDialog.show();
-
     }
-
     //get posicion en el spinner del cargo.
     private int getPositionCargo(int idCargo) {
-
         int index = 0;
-
         for (int i = 0; i < cargoArray.size(); i++) {
             if (cargoArray.get(i).getID_CARGO() == (idCargo)) {
                 index = i;
@@ -244,110 +237,23 @@ public class FragmentGenerarDireccion extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
-            // data contains result
-            // Do some task
-            SeleccionarImagen(data);
-        }
-
-    }
-
-    public static Bitmap createDrawableFromView(View view) {
-
-        view.setDrawingCacheEnabled(true);
-        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-        view.buildDrawingCache(true);
-        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
-        view.setDrawingCacheEnabled(false);
-
-        return bitmap;
-    }
-
-    public void SeleccionarImagen(Intent data) {
-        try {
-            UtilityImage.uri = data.getData();
-
-            if (UtilityImage.uri != null) {
-
-                Cursor cursor = getActivity().getContentResolver().query(
-                        UtilityImage.uri, null, null, null, null);
-
-                cursor.moveToFirst();
-                String document_id = cursor.getString(0);
-                document_id = document_id.substring(document_id
-                        .lastIndexOf(":") + 1);
-
-                cursor = getActivity()
-                        .getContentResolver()
-                        .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                null, MediaStore.Images.Media._ID + " = ? ",
-                                new String[]{document_id}, null);
-                cursor.moveToFirst();
-                String path = cursor.getString(cursor
-                        .getColumnIndex(MediaStore.Images.Media.DATA));
-                cursor.close();
-
-                // Assign string path to File
-                UtilityImage.Default_DIR = new File(path);
-
-                // Create new dir MY_IMAGES_DIR if not created and copy image
-                // into that dir and store that image path in valid_photo
-                UtilityImage.Create_MY_IMAGES_DIR();
-
-                // Copy your image
-                UtilityImage.copyFile(UtilityImage.Default_DIR,
-                        UtilityImage.MY_IMG_DIR);
-
-                // Get new image path and decode it
-                Bitmap b = UtilityImage
-                        .decodeFile(UtilityImage.Paste_Target_Location);
-
-                // use new copied path and use anywhere
-                String valid_photo = UtilityImage.Paste_Target_Location
-                        .toString();
-                b = Bitmap.createScaledBitmap(b, 150, 150, true);
-
-                // set bitmap a imagenView
+            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity());
+            if (b != null)
                 fotoImageDireccion.setImageBitmap(b);
-                cursor.close();
-
-                //Pasar bitmap a byte[]
-                baos = new ByteArrayOutputStream();
-                b.compress(Bitmap.CompressFormat.PNG, 0, baos);
-                imageDireccion = baos.toByteArray();
-
-            } else {
-                Toast toast = Toast.makeText(getActivity(),
-                        "No se selecciono una foto.", Toast.LENGTH_LONG);
-                toast.show();
-            }
-        } catch (Exception e) {
-            // you get this when you will not select any single image
-            Log.e("onActivityResult", "" + e);
-
+            imageDireccion = auxiliarGeneral.pasarBitmapByte(b);
         }
     }
 
     public ArrayList<Cargo> selectCargoList() {
-
         // CARGO
-        controladorAdeful.abrirBaseDeDatos();
         cargoArray = controladorAdeful.selectListaCargoAdeful();
-        if (cargoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\nSi el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
-        }
+        if (cargoArray == null)auxiliarGeneral.errorDataBase(getActivity());
+
         return cargoArray;
     }
 
     // POPULATION SPINNER
     public void loadSpinnerCargo() {
-
         if(selectCargoList().size()!=0){
             // CARGO SPINNER
             adapterSpinnerCargoComision = new AdapterSpinnerCargoComision(getActivity(),
@@ -371,17 +277,14 @@ public class FragmentGenerarDireccion extends Fragment {
     public void dateDesde() {
         desdeButtonDireccion.setText(formate.format(calendar.getTime()));
     }
-
     public void dateHasta() {
         hastaButtonDireccion.setText(formate.format(calendar.getTime()));
     }
-
     public void setDate() {
         new DatePickerDialog(getActivity(), d, calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
-
     DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
 
         @Override
@@ -390,16 +293,23 @@ public class FragmentGenerarDireccion extends Fragment {
             calendar.set(Calendar.YEAR, year);
             calendar.set(Calendar.MONTH, monthOfYear);
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
             if (botonFecha) {
                 dateDesde();
             } else {
-
                 dateHasta();
             }
         }
     };
-
+    public void inicializarControles(String mensaje) {
+        nombreEditDireccion.setText("");
+        desdeButtonDireccion.setText("Desde");
+        hastaButtonDireccion.setText("Hasta");
+        imageDireccion = null;
+        fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
+        communicator.refresh();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -409,8 +319,8 @@ public class FragmentGenerarDireccion extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
@@ -425,9 +335,7 @@ public class FragmentGenerarDireccion extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
-
         if (id == R.id.action_usuario) {
 
             /*Intent usuario = new Intent(getActivity(),
@@ -461,25 +369,10 @@ public class FragmentGenerarDireccion extends Fragment {
                 direccion = new Direccion(0, nombreEditDireccion.getText().toString(),
                         imageDireccion, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
                         hastaButtonDireccion.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
-
-                controladorAdeful.abrirBaseDeDatos();
                 if (controladorAdeful.insertDireccionAdeful(direccion)) {
-
-                    controladorAdeful.cerrarBaseDeDatos();
-                    nombreEditDireccion.setText("");
-                    desdeButtonDireccion.setText("Desde");
-                    hastaButtonDireccion.setText("Hasta");
-                    imageDireccion = null;
-                    fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
-                    communicator.refresh();
-                    Toast.makeText(getActivity(), "Integrante ingresado correctamente",
-                            Toast.LENGTH_SHORT).show();
+                    inicializarControles(GUARDAR_USUARIO);
                 } else {
-                    controladorAdeful.cerrarBaseDeDatos();
-                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                    "\nSi el error persiste comuniquese con soporte.",
-                            Toast.LENGTH_SHORT).show();
-
+                auxiliarGeneral.errorDataBase(getActivity());
                 }
             } else { //DIRECCION ACTUALIZAR
                 cargoSpinner = (Cargo) puestoSpinnerDireccion.getSelectedItem();
@@ -487,27 +380,12 @@ public class FragmentGenerarDireccion extends Fragment {
                         imageDireccion, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
                         hastaButtonDireccion.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                controladorAdeful.abrirBaseDeDatos();
                 if (controladorAdeful.actualizarDireccionAdeful(direccion)) {
-                    controladorAdeful.cerrarBaseDeDatos();
-
-                    nombreEditDireccion.setText("");
-                    desdeButtonDireccion.setText("Desde");
-                    hastaButtonDireccion.setText("Hasta");
-                    imageDireccion = null;
-                    fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
-
                     actualizar = false;
                     insertar = true;
-                    communicator.refresh();
-                    Toast.makeText(getActivity(), "Integrante actualizado correctamente.",
-                            Toast.LENGTH_SHORT).show();
+                    inicializarControles(ACTUALIZAR_USUARIO);
                 } else {
-                    controladorAdeful.cerrarBaseDeDatos();
-                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                    "\n Si el error persiste comuniquese con soporte.",
-                            Toast.LENGTH_SHORT).show();
-                }
+                    auxiliarGeneral.errorDataBase(getActivity());                }
             }
             return true;
         }
@@ -534,10 +412,9 @@ public class FragmentGenerarDireccion extends Fragment {
                             // TODO Auto-generated method stub
                             dialogoAlerta.mensaje.setVisibility(View.GONE);
                             dialogoAlerta.editTextUno.setVisibility(View.VISIBLE);
-                            dialogoAlerta.editTextUno.setHint("Ingrese un Cargo ");
+                            dialogoAlerta.editTextUno.setHint("Ingrese un cargo ");
                             dialogoAlerta.btnAceptar.setText("Aceptar");
                             dialogoAlerta.btnCancelar.setText("Cancelar");
-
                             // Crear la Cargo
                             dialogoAlerta.btnAceptar
                                     .setOnClickListener(new View.OnClickListener() {
@@ -557,39 +434,30 @@ public class FragmentGenerarDireccion extends Fragment {
                                                         dialogoAlerta.editTextUno
                                                                 .getText()
                                                                 .toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
-
-                                                controladorAdeful
-                                                        .abrirBaseDeDatos();
                                                 if (controladorAdeful
                                                         .insertCargoAdeful(cargo)) {
-                                                    controladorAdeful
-                                                            .cerrarBaseDeDatos();
-                                                    //SPINNER
+                                                     //SPINNER
                                                     loadSpinnerCargo();
 
                                                     Toast.makeText(
                                                             getActivity(),
-                                                            "Cargo Generado Correctamente.",
+                                                            "Cargo generado correctamente.",
                                                             Toast.LENGTH_SHORT)
                                                             .show();
                                                     dialogoAlerta.alertDialog
                                                             .dismiss();
                                                 } else {
-                                                    controladorAdeful.cerrarBaseDeDatos();
-                                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                                    "\nSi el error persiste comuniquese con soporte.",
-                                                            Toast.LENGTH_SHORT).show();
+                                                auxiliarGeneral.errorDataBase(getActivity());
                                                 }
                                             } else {
                                                 Toast.makeText(
                                                         getActivity(),
-                                                        "Ingrese un Cargo.",
+                                                        "Ingrese un cargo.",
                                                         Toast.LENGTH_SHORT)
                                                         .show();
                                             }
                                         }
                                     });
-
                             dialogoAlerta.btnCancelar
                                     .setOnClickListener(new View.OnClickListener() {
 
@@ -598,20 +466,16 @@ public class FragmentGenerarDireccion extends Fragment {
                                             // TODO Auto-generated method stub
 
                                             dialogoAlerta.alertDialog.dismiss();
-
                                         }
                                     });
                         }
                     });
-
             //EDITAR UN CARGO
             dialogoAlerta.btnCancelar
                     .setOnClickListener(new View.OnClickListener() {
 
                         @Override
                         public void onClick(View v) {
-                            // TODO Auto-generated method stub
-
                             dialogoMenuLista = new DialogoMenuLista(getActivity(),
                                     "CARGOS");
 
@@ -637,37 +501,33 @@ public class FragmentGenerarDireccion extends Fragment {
 
                                         @Override
                                         public void onClick(View v) {
-                                            // TODO Auto-generated method stub
+                                            if (!dialogoAlertaEditar.editTextUno.getText().toString().equals("")) {
+                                                String usuario = "Administrador";
+                                                cargo = new Cargo(
+                                                        cargoArray.get(position).getID_CARGO(),
+                                                        dialogoAlertaEditar.editTextUno.getText().toString(),
+                                                        usuario, null, usuario, controladorAdeful.getFechaOficial());
+                                                if (controladorAdeful
+                                                        .actualizarCargoAdeful(cargo)) {
+                                                    loadListViewMenu();
+                                                    loadSpinnerCargo();
+                                                    dialogoAlertaEditar.alertDialog.dismiss();
+                                                    Toast.makeText(
+                                                            getActivity(),
+                                                            "Cargo actualizado correctamente.",
+                                                            Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    auxiliarGeneral.errorDataBase(getActivity());
+                                                }
 
-                                            String usuario = "Administrador";
-                                            cargo = new Cargo(
-                                                    cargoArray.get(position).getID_CARGO(),
-                                                    dialogoAlertaEditar.editTextUno.getText().toString(),
-                                                    usuario, null, usuario, controladorAdeful.getFechaOficial());
-
-                                            controladorAdeful
-                                                    .abrirBaseDeDatos();
-                                            if (controladorAdeful
-                                                    .actualizarCargoAdeful(cargo)) {
-                                                controladorAdeful
-                                                        .cerrarBaseDeDatos();
-                                                loadListViewMenu();
-                                                loadSpinnerCargo();
-                                                dialogoAlertaEditar.alertDialog.dismiss();
+                                            } else {
                                                 Toast.makeText(
                                                         getActivity(),
-                                                        "Cargo Actualizado Correctamente.",
-                                                        Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                controladorAdeful.cerrarBaseDeDatos();
-                                                Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                                "\nSi el error persiste comuniquese con soporte.",
+                                                        "Ingrese un cargo.",
                                                         Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
-
-
                                     dialogoAlertaEditar.btnCancelar.setOnClickListener(new View.OnClickListener() {
 
                                         @Override
@@ -677,7 +537,6 @@ public class FragmentGenerarDireccion extends Fragment {
                                         }
                                     });
                                 }
-
                             });
                             // Editar Cargo
                             dialogoMenuLista.btnAceptar
@@ -696,20 +555,16 @@ public class FragmentGenerarDireccion extends Fragment {
 
                                 @Override
                                 public void onClick(View v) {
-                                    // TODO Auto-generated method stub
-
                                     dialogoMenuLista.alertDialog.dismiss();
                                     dialogoAlerta.alertDialog.dismiss();
                                 }
                             });
                         }
                     });
-
             return true;
         }
 
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

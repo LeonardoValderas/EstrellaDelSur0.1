@@ -1,11 +1,14 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
+import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
@@ -16,20 +19,23 @@ public class AdaptadorRecyclerDivision extends
 
 	private View.OnClickListener listener;
 	private ArrayList<Division> divisionArray;
+	private Typeface nombreFont;
 
 	public static class DivisionViewHolder extends RecyclerView.ViewHolder {
 
 		private TextView textRecyclerView;
 		private ImageView imageViewEscudo;
+		private LinearLayout linearEscudo;
 
-		public DivisionViewHolder(View itemView) {
+		public DivisionViewHolder(View itemView, Typeface nombre) {
 			super(itemView);
 
 			textRecyclerView = (TextView) itemView
 					.findViewById(R.id.textRecyclerView);
-			imageViewEscudo = (ImageView) itemView
-					.findViewById(R.id.imageViewEscudo);
-			imageViewEscudo.setVisibility(View.GONE);
+			textRecyclerView.setTypeface(nombre);
+			linearEscudo = (LinearLayout) itemView.findViewById(
+					R.id.linearEscudo);
+			linearEscudo.setVisibility(View.GONE);
 		}
 
 		public void bindTitular(Division division) {
@@ -37,8 +43,9 @@ public class AdaptadorRecyclerDivision extends
 		}
 	}
 
-	public AdaptadorRecyclerDivision(ArrayList<Division> divisionArray) {
+	public AdaptadorRecyclerDivision(ArrayList<Division> divisionArray,Context context) {
 		this.divisionArray = divisionArray;
+		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
 	}
 
 	@Override
@@ -48,7 +55,7 @@ public class AdaptadorRecyclerDivision extends
 				R.layout.recyclerview_item_liga, viewGroup, false);
 
 		itemView.setOnClickListener(this);
-		DivisionViewHolder tvh = new DivisionViewHolder(itemView);
+		DivisionViewHolder tvh = new DivisionViewHolder(itemView,nombreFont);
 		return tvh;
 	}
 	@Override

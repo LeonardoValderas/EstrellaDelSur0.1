@@ -17,14 +17,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerComision;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
-
 import java.util.ArrayList;
 
 
@@ -36,6 +35,8 @@ public class FragmentEditarComision extends Fragment {
     private ArrayList<Comision> comisionArray;
     private AdaptadorRecyclerComision adaptadorRecyclerComision;
     private DialogoAlerta dialogoAlerta;
+    private AuxiliarGeneral auxiliarGeneral;
+
 
     public static FragmentEditarComision newInstance() {
         FragmentEditarComision fragment = new FragmentEditarComision();
@@ -78,7 +79,7 @@ public class FragmentEditarComision extends Fragment {
 
 
     private void init() {
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         recyclerComision.setLayoutManager(new LinearLayoutManager(
                 getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerComision.addItemDecoration(new DividerItemDecoration(
@@ -161,49 +162,35 @@ public class FragmentEditarComision extends Fragment {
     }
 
     public void recyclerViewLoadComision() {
-
-        controladorAdeful.abrirBaseDeDatos();
         comisionArray = controladorAdeful.selectListaComisionAdeful();
         if(comisionArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-
-            adaptadorRecyclerComision = new AdaptadorRecyclerComision(comisionArray);
+            adaptadorRecyclerComision = new AdaptadorRecyclerComision(comisionArray,getActivity());
             adaptadorRecyclerComision.notifyDataSetChanged();
             recyclerComision.setAdapter(adaptadorRecyclerComision);
         }else{
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\n Si el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
+           auxiliarGeneral.errorDataBase(getActivity());
         }
     }
 
     public static interface ClickListener {
-
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
-
     }
 
     static class RecyclerTouchListener implements
             RecyclerView.OnItemTouchListener {
-
         private GestureDetector detector;
         private ClickListener clickListener;
-
         public RecyclerTouchListener(Context context,
                                      final RecyclerView recyclerView,
                                      final ClickListener clickListener) {
             this.clickListener = clickListener;
             detector = new GestureDetector(context,
                     new GestureDetector.SimpleOnGestureListener() {
-
                         @Override
                         public boolean onSingleTapUp(MotionEvent e) {
                             return true;
                         }
-
                         @Override
                         public void onLongPress(MotionEvent e) {
                             View child = recyclerView.findChildViewUnder(
@@ -214,7 +201,6 @@ public class FragmentEditarComision extends Fragment {
                             }
                         }
                     });
-
         }
 
         @Override
@@ -227,21 +213,13 @@ public class FragmentEditarComision extends Fragment {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
-
         }
-
     }
-
-
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);

@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.liga;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,11 +16,9 @@ import android.view.View;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 
-
 public class TabsAdeful extends AppCompatActivity {
 
 	private Toolbar toolbar;
-	private ActionBarDrawerToggle drawerToggle;
 	private ViewPager viewPager;
 	private TabLayout tabLayout;
 	private int restarMap = 0;
@@ -30,12 +29,14 @@ public class TabsAdeful extends AppCompatActivity {
 	private static final boolean DEBUG = false;
 	private TextView txtAbTitulo;
 	private TextView txtAbSubTitulo;
+	private Typeface titulos;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs_general);
 
+		titulos = Typeface.createFromAsset(TabsAdeful.this.getAssets(), "aspace_demo.otf");
 		// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -49,6 +50,7 @@ public class TabsAdeful extends AppCompatActivity {
 
 		txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
 		txtAbSubTitulo.setText("ADEFUL");
+		txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
 		if (savedInstanceState != null) {
 			viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -66,8 +68,7 @@ public class TabsAdeful extends AppCompatActivity {
 			viewPager.setOffscreenPageLimit(PAGE_COUNT - 1);
 			viewPager.setAdapter(new TabsAdefulAdapter(
 					getSupportFragmentManager()));
-
-		}
+    	}
 		tabLayout = (TabLayout) findViewById(R.id.appbartabs);
 		tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 		tabLayout.setTabMode(TabLayout.MODE_FIXED);
@@ -82,27 +83,20 @@ public class TabsAdeful extends AppCompatActivity {
 		if (restarMap == 1) {
 			viewPager.setCurrentItem(3);
 		}
-
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageScrolled(int position, float positionOffset,
 					int positionOffsetPixels) {
 				invalidateOptionsMenu();
 			}
-
 			@Override
 			public void onPageSelected(int position) {
-
 			}
-
 			@Override
 			public void onPageScrollStateChanged(int state) {
-
 			}
 		});
-
 	}
-
 	public class TabsAdefulAdapter extends FragmentPagerAdapter {
 		private FragmentManager fm;
 
@@ -113,15 +107,12 @@ public class TabsAdeful extends AppCompatActivity {
 			super(fm);
 			this.fm = fm;
 		}
-
 		@Override
 		public int getCount() {
 			return PAGE_COUNT;
 		}
-
 		@Override
 		public Fragment getItem(int position) {
-
 			Fragment fragmentTab = fm.findFragmentByTag("android:switcher:"
 					+ viewPager.getId() + ":" + getItemId(position));
 
@@ -148,12 +139,9 @@ public class TabsAdeful extends AppCompatActivity {
 
 		@Override
 		public Object instantiateItem(View container, int position) {
-
 			if (fm == null) {
 				mCurTransaction = fm.beginTransaction();
 			}
-
-			// Do we already have this fragment?
 			String name = makeFragmentName(container.getId(), position);
 			Fragment fragment = fm.findFragmentByTag(name);
 			if (fragment != null) {
@@ -167,153 +155,16 @@ public class TabsAdeful extends AppCompatActivity {
 					Log.v(TAG, "Adding item #" + position + ": f=" + fragment);
 				mCurTransaction.add(container.getId(), fragment,
 						makeFragmentName(container.getId(), position));
-			}
-
-			return fragment;
+     		}
+     		return fragment;
 		}
-
 		private String makeFragmentName(int viewId, int index) {
 			return "android:switcher:" + viewId + ":" + index;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-
 			return tabTitles[position];
 		}
 	}
-
-	
-	/*@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
-		if (viewPager.getCurrentItem() == 0) {
-			// menu.getItem(0).setVisible(false);//usuario
-			// menu.getItem(1).setVisible(false);//permiso
-			// menu.getItem(2).setVisible(false);//lifuba
-			menu.getItem(3).setVisible(false);// adeful
-			menu.getItem(4).setVisible(false);// puesto
-			menu.getItem(5).setVisible(false);// posicion
-			menu.getItem(6).setVisible(false);// cargo
-			// menu.getItem(7).setVisible(false);//cerrar
-			menu.getItem(8).setVisible(false);// guardar
-			menu.getItem(9).setVisible(false);// Subir
-			menu.getItem(10).setVisible(false); // eliminar
-			menu.getItem(11).setVisible(false); // consultar
-		} else if (viewPager.getCurrentItem() == 1) {
-			// menu.getItem(0).setVisible(false);//usuario
-			// menu.getItem(1).setVisible(false);//permiso
-			// menu.getItem(2).setVisible(false);//lifuba
-			menu.getItem(3).setVisible(false);// adeful
-			menu.getItem(4).setVisible(false);// puesto
-			menu.getItem(5).setVisible(false);// posicion
-			menu.getItem(6).setVisible(false);// cargo
-			// menu.getItem(7).setVisible(false);//cerrar
-			menu.getItem(8).setVisible(false);// guardar
-			menu.getItem(9).setVisible(false);// Subir
-			menu.getItem(10).setVisible(false); // eliminar
-			menu.getItem(11).setVisible(false); // consultar
-		} else if (viewPager.getCurrentItem() == 2) {
-			// menu.getItem(0).setVisible(false);//usuario
-			// menu.getItem(1).setVisible(false);//permiso
-			// menu.getItem(2).setVisible(false);//lifuba
-			menu.getItem(3).setVisible(false);// adeful
-			menu.getItem(4).setVisible(false);// puesto
-			menu.getItem(5).setVisible(false);// posicion
-			menu.getItem(6).setVisible(false);// cargo
-			// menu.getItem(7).setVisible(false);//cerrar
-			menu.getItem(8).setVisible(false);// guardar
-			menu.getItem(9).setVisible(false);// Subir
-			menu.getItem(10).setVisible(false); // eliminar
-			menu.getItem(11).setVisible(false); // consultar
-		} else if (viewPager.getCurrentItem() == 3) {
-			// menu.getItem(0).setVisible(false);//usuario
-			// menu.getItem(1).setVisible(false);//permiso
-			// menu.getItem(2).setVisible(false);//lifuba
-			menu.getItem(3).setVisible(false);// adeful
-			menu.getItem(4).setVisible(false);// puesto
-			menu.getItem(5).setVisible(false);// posicion
-			menu.getItem(6).setVisible(false);// cargo
-			// menu.getItem(7).setVisible(false);//cerrar
-			menu.getItem(8).setVisible(false);// guardar
-			menu.getItem(9).setVisible(false);// Subir
-			menu.getItem(10).setVisible(false); // eliminar
-			menu.getItem(11).setVisible(false); // consultar
-		}
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-
-		// if (drawerToggle.onOptionsItemSelected(item)) {
-		// return true;
-		// }
-
-		int id = item.getItemId();
-		// noinspection SimplifiableIfStatement
-		if (id == R.id.action_usuario) {
-
-	*//*		Intent usuario = new Intent(TabsAdeful.this,
-					NavigationDrawerUsuario.class);
-			startActivity(usuario);*//*
-
-			return true;
-		}
-
-		if (id == R.id.action_permisos) {
-			return true;
-		}
-
-		if (id == R.id.action_guardar) {
-
-			return true;
-		}
-
-		if (id == R.id.action_subir) {
-
-			return true;
-		}
-
-		if (id == R.id.action_eliminar) {
-
-			return true;
-		}
-		if (id == R.id.action_adeful) {
-
-			return true;
-		}
-
-		if (id == R.id.action_lifuba) {
-
-			return true;
-		}
-
-		if (id == R.id.action_puesto) {
-
-			return true;
-
-		}
-		if (id == R.id.action_posicion) {
-
-			return true;
-		}
-
-		if (id == R.id.action_cargo) {
-
-			return true;
-		}
-
-		if (id == android.R.id.home) {
-
-			NavUtils.navigateUpFromSameTask(this);
-
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}*/
 }

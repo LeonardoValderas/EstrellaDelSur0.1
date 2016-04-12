@@ -1,8 +1,11 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,7 @@ public class AdaptadorRecyclerEquipo extends
 
 	private View.OnClickListener listener;
 	private ArrayList<Equipo> datosEquipoArray;
+	private Typeface nombreFont;
 
 	public static class EquipoAdefulViewHolder extends RecyclerView.ViewHolder {
 
@@ -33,9 +37,9 @@ public class AdaptadorRecyclerEquipo extends
 					.findViewById(R.id.imageViewEscudo);
 		}
 
-		public void bindTitular(Equipo equipoAdeful) {
+		public void bindTitular(Equipo equipoAdeful,Typeface nombre) {
 			textRecyclerView.setText(equipoAdeful.getNOMBRE_EQUIPO());
-			// txtSubtitulo.setText(t.getSubtitulo());
+			textRecyclerView.setTypeface(nombre);
 
 			byte[] image = equipoAdeful.getESCUDO();
 			if (image == null) {
@@ -45,15 +49,14 @@ public class AdaptadorRecyclerEquipo extends
 						equipoAdeful.getESCUDO(), 0,
 						equipoAdeful.getESCUDO().length);
 				theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
-				
 				imageViewEscudo.setImageBitmap(theImage);
 			}
 		}
 	}
 
-	public AdaptadorRecyclerEquipo(ArrayList<Equipo> datosEquipoArray) {
+	public AdaptadorRecyclerEquipo(ArrayList<Equipo> datosEquipoArray, Context context) {
 		this.datosEquipoArray = datosEquipoArray;
-		// notifyItemInserted(datosEquipoArray);
+		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
 	}
 	@Override
 	public EquipoAdefulViewHolder onCreateViewHolder(ViewGroup viewGroup,
@@ -67,13 +70,12 @@ public class AdaptadorRecyclerEquipo extends
 	@Override
 	public void onBindViewHolder(EquipoAdefulViewHolder viewHolder, int pos) {
 		Equipo item = datosEquipoArray.get(pos);
-		viewHolder.bindTitular(item);
+		viewHolder.bindTitular(item,nombreFont);
 	}
 	@Override
 	public int getItemCount() {
 		return datosEquipoArray.size();
 	}
-
 	public void setOnClickListener(View.OnClickListener listener) {
 		this.listener = listener;
 	}

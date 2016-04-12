@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
@@ -34,6 +35,7 @@ public class FragmentEditarDireccion extends Fragment {
     private ArrayList<Direccion> direccionArray;
     private AdaptadorRecyclerDireccion adaptadorRecyclerDireccion;
     private DialogoAlerta dialogoAlerta;
+    private AuxiliarGeneral auxiliarGeneral;
 
     public static FragmentEditarDireccion newInstance() {
         FragmentEditarDireccion fragment = new FragmentEditarDireccion();
@@ -58,9 +60,7 @@ public class FragmentEditarDireccion extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.fragment_editar_recyclerview, container, false);
-
         // RECYCLER ARTICULO
         recyclerDireccion = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
@@ -76,7 +76,7 @@ public class FragmentEditarDireccion extends Fragment {
 
 
     private void init() {
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         recyclerDireccion.setLayoutManager(new LinearLayoutManager(
                 getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerDireccion.addItemDecoration(new DividerItemDecoration(
@@ -103,9 +103,6 @@ public class FragmentEditarDireccion extends Fragment {
 
             @Override
             public void onLongClick(View view, final int position) {
-                // TODO Auto-generated method stub
-
-
                 dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
                         "Desea eliminar el integrante?", null, null);
                 dialogoAlerta.btnAceptar.setText("Aceptar");
@@ -116,15 +113,9 @@ public class FragmentEditarDireccion extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                // TODO Auto-generated method stub
-
-                                controladorAdeful.abrirBaseDeDatos();
-                                if (controladorAdeful.eliminarDireccionAdeful(direccionArray.get(position)
+                               if (controladorAdeful.eliminarDireccionAdeful(direccionArray.get(position)
                                         .getID_DIRECCION())) {
-                                    controladorAdeful.cerrarBaseDeDatos();
-
                                     recyclerViewLoadDireccion();
-
                                     Toast.makeText(
                                             getActivity(),
                                             "Integrante eliminado correctamente",
@@ -132,11 +123,7 @@ public class FragmentEditarDireccion extends Fragment {
 
                                     dialogoAlerta.alertDialog.dismiss();
                                 } else {
-                                    controladorAdeful.cerrarBaseDeDatos();
-                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                    "\n Si el error persiste comuniquese con soporte.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
+                         auxiliarGeneral.errorDataBase(getActivity());                                }
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -144,13 +131,11 @@ public class FragmentEditarDireccion extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                // TODO Auto-generated method stub
                                 dialogoAlerta.alertDialog.dismiss();
                             }
                         });
             }
         }));
-
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -159,34 +144,23 @@ public class FragmentEditarDireccion extends Fragment {
     }
 
     public void recyclerViewLoadDireccion() {
-
-        controladorAdeful.abrirBaseDeDatos();
         direccionArray = controladorAdeful.selectListaDireccionAdeful();
         if(direccionArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-
-            adaptadorRecyclerDireccion = new AdaptadorRecyclerDireccion(direccionArray);
+            adaptadorRecyclerDireccion = new AdaptadorRecyclerDireccion(direccionArray, getActivity());
             adaptadorRecyclerDireccion.notifyDataSetChanged();
             recyclerDireccion.setAdapter(adaptadorRecyclerDireccion);
         }else{
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\n Si el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
+        auxiliarGeneral.errorDataBase(getActivity());
         }
     }
 
     public static interface ClickListener {
-
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
-
     }
 
     static class RecyclerTouchListener implements
             RecyclerView.OnItemTouchListener {
-
         private GestureDetector detector;
         private ClickListener clickListener;
 
@@ -212,7 +186,6 @@ public class FragmentEditarDireccion extends Fragment {
                             }
                         }
                     });
-
         }
 
         @Override
@@ -228,24 +201,18 @@ public class FragmentEditarDireccion extends Fragment {
 
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
-
         }
-
     }
-
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion

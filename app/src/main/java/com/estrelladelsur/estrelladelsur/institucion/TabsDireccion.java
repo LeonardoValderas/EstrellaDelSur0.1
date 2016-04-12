@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.institucion;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -7,20 +8,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 
 public class TabsDireccion extends AppCompatActivity implements Communicator{
 
     private Toolbar toolbar;
-    private Toolbar toolbar_sub;
-    private ActionBarDrawerToggle drawerToggle;
     private ViewPager viewPager;
     private int viewpagerid;
     final int PAGE_COUNT = 2;
@@ -30,13 +27,14 @@ public class TabsDireccion extends AppCompatActivity implements Communicator{
     private static final boolean DEBUG = false;
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
-
+    private Typeface titulos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
 
+        titulos = Typeface.createFromAsset(TabsDireccion.this.getAssets(), "aspace_demo.otf");
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -50,6 +48,7 @@ public class TabsDireccion extends AppCompatActivity implements Communicator{
 
         txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
         txtAbSubTitulo.setText("DIRECCION");
+        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -60,7 +59,6 @@ public class TabsDireccion extends AppCompatActivity implements Communicator{
             } else {
                 viewpagerid = viewPager.getId();
             }
-
             viewPager.setAdapter(new TabsDireccionAdapter(
                     getSupportFragmentManager()));
         } else {
@@ -75,7 +73,6 @@ public class TabsDireccion extends AppCompatActivity implements Communicator{
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setupWithViewPager(viewPager);
-
 
         init();
     }
@@ -147,8 +144,7 @@ public class TabsDireccion extends AppCompatActivity implements Communicator{
             if (fm == null) {
                 mCurTransaction = fm.beginTransaction();
             }
-
-            // Do we already have this fragment?
+           // Do we already have this fragment?
             String name = makeFragmentName(container.getId(), position);
             Fragment fragment = fm.findFragmentByTag(name);
             if (fragment != null) {
@@ -177,64 +173,11 @@ public class TabsDireccion extends AppCompatActivity implements Communicator{
             return tabTitles[position];
         }
     }
-
-
     public void refresh() {
-        // TODO Auto-generated method stub
-
         FragmentManager manager = getSupportFragmentManager();
         FragmentEditarDireccion fragment = (FragmentEditarDireccion) manager
                 .findFragmentByTag("android:switcher:" + viewPager.getId()
                         + ":" + 1);
-
         fragment.recyclerViewLoadDireccion();
-
     }
-
-/*
-    @Override
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
-        if (id == R.id.action_permisos) {
-            return true;
-        }
-
-        if (id == R.id.action_guardar) {
-
-            return true;
-        }
-
-
-        if (id == R.id.action_subir) {
-
-            return true;
-        }
-
-
-        if (id == R.id.action_eliminar) {
-
-            return true;
-        }
-
-        if (id == android.R.id.home) {
-
-            NavUtils.navigateUpFromSameTask(this);
-
-
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-*/
-
 }

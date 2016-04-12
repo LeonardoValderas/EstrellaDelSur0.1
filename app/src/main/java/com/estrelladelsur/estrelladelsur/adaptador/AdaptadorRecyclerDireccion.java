@@ -1,7 +1,9 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,8 @@ public class AdaptadorRecyclerDireccion extends
 
     private View.OnClickListener listener;
     private ArrayList<Direccion> direccionArray;
+    private Typeface nombreFont;
+    private Typeface cargoPeriodoFont;
 
     public static class DireccionViewHolder extends RecyclerView.ViewHolder {
 
@@ -26,7 +30,6 @@ public class AdaptadorRecyclerDireccion extends
         private TextView textRecyclerViewPeriodo;
         private ImageView imageRecyclerViewFoto;
         private byte[] foto;
-
 
         public DireccionViewHolder(View itemView) {
             super(itemView);
@@ -42,12 +45,14 @@ public class AdaptadorRecyclerDireccion extends
 
         }
 
-        public void bindTitular(Direccion direccion) {
+        public void bindTitular(Direccion direccion, Typeface nombre, Typeface cargo) {
             textRecyclerViewNombre.setText(direccion.getNOMBRE_DIRECCION().toString());
+            textRecyclerViewNombre.setTypeface(nombre);
             textRecyclerViewCargo.setText(direccion.getCARGO().toString());
+            textRecyclerViewCargo.setTypeface(cargo, Typeface.BOLD);
             textRecyclerViewPeriodo.setText(direccion.getPERIODO_DESDE().toString() + " - " + direccion.getPERIODO_HASTA().toString());
+            textRecyclerViewPeriodo.setTypeface(cargo);
             foto = direccion.getFOTO_DIRECCION();
-
             if (foto == null) {
                 imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
             } else {
@@ -58,8 +63,10 @@ public class AdaptadorRecyclerDireccion extends
         }
     }
 
-    public AdaptadorRecyclerDireccion(ArrayList<Direccion> direccionArray) {
+    public AdaptadorRecyclerDireccion(ArrayList<Direccion> direccionArray,Context context) {
         this.direccionArray = direccionArray;
+        this.cargoPeriodoFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
+        this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
     }
 
     @Override
@@ -78,7 +85,7 @@ public class AdaptadorRecyclerDireccion extends
     public void onBindViewHolder(DireccionViewHolder viewHolder, int pos) {
         Direccion item = direccionArray.get(pos);
 
-        viewHolder.bindTitular(item);
+        viewHolder.bindTitular(item, nombreFont, cargoPeriodoFont);
     }
 
     @Override

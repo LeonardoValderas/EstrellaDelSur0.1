@@ -7,13 +7,7 @@
         android:title="@string/action_administrador"
         android:orderInCategory="100"
         app:showAsAction="never" />
-    
-    
-    <item android:id="@+id/action_permisos"
-        android:title="@string/action_permisos"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-      
+
        <item android:id="@+id/action_cerrar"
         android:title="@string/action_cerrar"
         android:orderInCategory="100"
