@@ -19,24 +19,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tituloTextFoto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
-                    android:text="Foto del Integrante"
-                    android:textSize="20dp" />
-
                 <ImageView
                     android:id="@+id/fotoImageComisionDireccion"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="5dp"
+                    android:background="@drawable/border_circle"
                     android:clickable="true"
                     android:src="@mipmap/ic_foto_galery" />
-
 
                 <EditText
                     android:id="@+id/nombreEditComisionDireccion"
@@ -51,16 +42,7 @@
                     <requestFocus />
                 </EditText>
 
-                <TextView
-                    android:id="@+id/tituloTextCargo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
-                    android:text="Cargo"
-                    android:textSize="20dp" />
-
-                <Spinner
+             <Spinner
                     android:id="@+id/puestoSpinnerComisionDireccion"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

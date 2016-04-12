@@ -1,5 +1,7 @@
 package com.estrelladelsur.estrelladelsur.institucion;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -33,13 +35,13 @@ public class TabsArticulo extends AppCompatActivity implements Communicator{
     private static final boolean DEBUG = false;
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
-
+    private Typeface titulos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
+        titulos = Typeface.createFromAsset(TabsArticulo.this.getAssets(), "aspace_demo.otf");
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -53,6 +55,7 @@ public class TabsArticulo extends AppCompatActivity implements Communicator{
 
         txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
         txtAbSubTitulo.setText("ARTICULO");
+        txtAbSubTitulo.setTypeface(titulos,Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -78,8 +81,6 @@ public class TabsArticulo extends AppCompatActivity implements Communicator{
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setupWithViewPager(viewPager);
-
-
         init();
     }
     public void init() {
@@ -193,51 +194,4 @@ public class TabsArticulo extends AppCompatActivity implements Communicator{
         fragment.recyclerViewLoadArticulo();
 
     }
-
-/*
-    @Override
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
-        if (id == R.id.action_permisos) {
-            return true;
-        }
-
-        if (id == R.id.action_guardar) {
-
-            return true;
-        }
-
-
-        if (id == R.id.action_subir) {
-
-            return true;
-        }
-
-
-        if (id == R.id.action_eliminar) {
-
-            return true;
-        }
-
-        if (id == android.R.id.home) {
-
-            NavUtils.navigateUpFromSameTask(this);
-
-
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-*/
-
 }

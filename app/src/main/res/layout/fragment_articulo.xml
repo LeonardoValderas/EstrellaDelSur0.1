@@ -18,11 +18,9 @@
             android:layout_marginTop="20dp"
             android:ems="10"
             android:gravity="center"
-            android:hint="TITUTO"
-            android:textSize="25dp">
-
+            android:hint="Titulo"
+            android:textSize="30dp">
             <requestFocus />
-
         </EditText>
 
         <ScrollView
@@ -35,16 +33,16 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-        <EditText
+                <EditText
                     android:id="@+id/articuloEditArticulo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:ems="10"
+                    android:gravity="center"
+                    android:hint="Articulo"
                     android:inputType="textMultiLine"
                     android:lines="5"
-                    android:gravity="center"
-                    android:hint="ARTICULO"
                     android:textSize="25dp" />
 
                 <EditText
@@ -53,13 +51,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:visibility="gone"
-                    android:hint="LINK"
-                    android:textSize="20dp" />
-
+                    android:hint="Link"
+                    android:textSize="20dp"
+                    android:visibility="gone" />
             </LinearLayout>
         </ScrollView>
-
     </LinearLayout>
-
 </FrameLayout>

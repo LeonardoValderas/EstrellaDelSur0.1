@@ -3,6 +3,7 @@ package com.estrelladelsur.estrelladelsur.navegador;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -58,10 +59,10 @@ public class NavigationAdeful extends AppCompatActivity {
     private List<String> permisoChild;
     private HashMap<String, List<String>> listDataChild;
     private List<String> institucionalChild;
-    private TextView txtAbSubTitulo;
-    //private AlertsMenu alertMenu;
-//private AlertPermisos alertPermisos;
+    private TextView txtAbSubTitulo,txtAbTitulo, textViewLiga;
     private ControladorAdeful controladorAdeful;
+    private  Typeface titulos;
+    private  Typeface adeful;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,8 @@ public class NavigationAdeful extends AppCompatActivity {
         setContentView(R.layout.navigation_drawer);
         controladorAdeful = new ControladorAdeful(this);
 
+        titulos = Typeface.createFromAsset(NavigationAdeful.this.getAssets(), "aspace_demo.otf");
+        adeful = Typeface.createFromAsset(NavigationAdeful.this.getAssets(), "androidnation.ttf");
         init();
         drawerLayout.openDrawer(GravityCompat.START);
         iniciarModulos();
@@ -84,11 +87,15 @@ public class NavigationAdeful extends AppCompatActivity {
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        txtAbSubTitulo = (TextView) toolbar.findViewById(R.id.txtAbSubTitulo);
+        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
+        txtAbTitulo.setTypeface(titulos);
 
+        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
+        txtAbSubTitulo.setTypeface(titulos);
+
+        textViewLiga = (TextView) findViewById(R.id.textViewLiga);
+        textViewLiga.setTypeface(adeful,Typeface.BOLD);
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
-
         // preparing list data
         prepareListData();
 
@@ -109,21 +116,21 @@ public class NavigationAdeful extends AppCompatActivity {
                         case 0:
                             Intent estrella = new Intent(NavigationAdeful.this, TabsArticulo.class);
                             startActivity(estrella);
-                            tituloClickFragment = institucionalChild.get(
-                                    childPosition).toString();
+//                            tituloClickFragment = institucionalChild.get(
+//                                    childPosition).toString();
                             break;
                         case 1:
                             Intent comision = new Intent(NavigationAdeful.this, TabsComision.class);
                             startActivity(comision);
-                            tituloClickFragment = institucionalChild.get(
-                                    childPosition).toString();
+//                            tituloClickFragment = institucionalChild.get(
+//                                    childPosition).toString();
                             break;
 
                         case 2:
                             Intent direccion = new Intent(NavigationAdeful.this, TabsDireccion.class);
                             startActivity(direccion);
-                            tituloClickFragment = institucionalChild.get(
-                                    childPosition).toString();
+//                            tituloClickFragment = institucionalChild.get(
+//                                    childPosition).toString();
                             break;
                     }
                 } else if (groupPosition == 1) {
@@ -131,32 +138,32 @@ public class NavigationAdeful extends AppCompatActivity {
                         case 0:
                             Intent fixture = new Intent(NavigationAdeful.this, TabsFixture.class);
                             startActivity(fixture);
-                            tituloClickFragment = mi_equipoChild.get(childPosition)
-                                    .toString();
+//                            tituloClickFragment = mi_equipoChild.get(childPosition)
+//                                    .toString();
                             break;
                         case 1:
                             Intent resultado = new Intent(NavigationAdeful.this, ActivityResultado.class);
                             startActivity(resultado);
-                            tituloClickFragment = mi_equipoChild.get(childPosition)
-                                    .toString();
+//                            tituloClickFragment = mi_equipoChild.get(childPosition)
+//                                    .toString();
                             break;
                         case 2:
                             Intent jugadores = new Intent(NavigationAdeful.this, TabsJugador.class);
                             startActivity(jugadores);
-                            tituloClickFragment = mi_equipoChild.get(childPosition)
-                                    .toString();
+//                            tituloClickFragment = mi_equipoChild.get(childPosition)
+//                                    .toString();
                             break;
                         case 3:
                             Intent entrenamiento = new Intent(NavigationAdeful.this, TabsEntrenamiento.class);
                             startActivity(entrenamiento);
-                            tituloClickFragment = mi_equipoChild.get(childPosition)
-                                    .toString();
+//                            tituloClickFragment = mi_equipoChild.get(childPosition)
+//                                    .toString();
                             break;
                         case 4:
                             Intent sanciones = new Intent(NavigationAdeful.this, TabsSancion.class);
                             startActivity(sanciones);
-                            tituloClickFragment = mi_equipoChild.get(childPosition)
-                                    .toString();
+//                            tituloClickFragment = mi_equipoChild.get(childPosition)
+//                                    .toString();
                             break;
                     }
 
@@ -165,8 +172,8 @@ public class NavigationAdeful extends AppCompatActivity {
                         case 0:
                             Intent liga = new Intent(NavigationAdeful.this, TabsAdeful.class);
                             startActivity(liga);
-                            tituloClickFragment = ligaChild.get(childPosition)
-                                    .toString();
+//                            tituloClickFragment = ligaChild.get(childPosition)
+//                                    .toString();
                             break;
                     }
                 } else if (groupPosition == 3) {
@@ -174,74 +181,45 @@ public class NavigationAdeful extends AppCompatActivity {
                         case 0:
                             Intent notificacion = new Intent(NavigationAdeful.this, TabsNotificacion.class);
                             startActivity(notificacion);
-                            tituloClickFragment = ligaChild.get(childPosition)
-                                    .toString();
+//                            tituloClickFragment = ligaChild.get(childPosition)
+//                                    .toString();
                             break;
                         case 1:
                             Intent noticia = new Intent(NavigationAdeful.this, TabsNoticia.class);
                             startActivity(noticia);
-                            tituloClickFragment = ligaChild.get(childPosition)
-                                    .toString();
+//                            tituloClickFragment = ligaChild.get(childPosition)
+//                                    .toString();
                             break;
                         case 2:
                             Intent foto = new Intent(NavigationAdeful.this, TabsFoto.class);
                             startActivity(foto);
-                            tituloClickFragment = ligaChild.get(childPosition)
-                                    .toString();
+                      //      tituloClickFragment = ligaChild.get(childPosition)
+                        //            .toString();
                             break;
 
                         case 3:
                             Intent publicidad = new Intent(NavigationAdeful.this, TabsPublicidad.class);
                             startActivity(publicidad);
-                            tituloClickFragment = socialChild.get(childPosition)
-                                    .toString();
+//                            tituloClickFragment = socialChild.get(childPosition)
+//                                    .toString();
                             break;
                     }
-                 }else if (groupPosition == 3) {
-                        switch (childPosition) {
-                            case 0:
-                                Intent notificacion = new Intent(NavigationAdeful.this, TabsNotificacion.class);
-                                startActivity(notificacion);
-                                tituloClickFragment = socialChild.get(childPosition)
-                                        .toString();
-                                break;
-                            case 1:
-                                Intent noticia = new Intent(NavigationAdeful.this, TabsNoticia.class);
-                                startActivity(noticia);
-                                tituloClickFragment = socialChild.get(childPosition)
-                                        .toString();
-                                break;
-                            case 2:
-                                Intent foto = new Intent(NavigationAdeful.this, TabsFoto.class);
-                                startActivity(foto);
-                                tituloClickFragment = socialChild.get(childPosition)
-                                        .toString();
-                                break;
-
-                            case 3:
-                                Intent publicidad = new Intent(NavigationAdeful.this, TabsPublicidad.class);
-                                startActivity(publicidad);
-                                tituloClickFragment = socialChild.get(childPosition)
-                                        .toString();
-                                break;
-                        }
-
-                }else if (groupPosition == 4) {
-                        switch (childPosition) {
-                            case 0:
-                                Intent usuario = new Intent(NavigationAdeful.this, TabsUsuario.class);
-                                startActivity(usuario);
-                                tituloClickFragment = permisoChild.get(childPosition)
-                                        .toString();
-                                break;
-                            case 1:
-                                Intent permiso = new Intent(NavigationAdeful.this, TabsPermiso.class);
-                                startActivity(permiso);
-                                tituloClickFragment = permisoChild.get(childPosition)
-                                        .toString();
-                                break;
-                        }
+                 } else if (groupPosition == 4) {
+                    switch (childPosition) {
+                        case 0:
+                            Intent usuario = new Intent(NavigationAdeful.this, TabsUsuario.class);
+                            startActivity(usuario);
+//                            tituloClickFragment = permisoChild.get(childPosition)
+//                                    .toString();
+                            break;
+                        case 1:
+                            Intent permiso = new Intent(NavigationAdeful.this, TabsPermiso.class);
+                            startActivity(permiso);
+//                            tituloClickFragment = permisoChild.get(childPosition)
+//                                    .toString();
+                            break;
                     }
+                }
                 expListView.setItemChecked(childPosition, true);
                 drawerLayout.openDrawer(sifl);
 
@@ -249,12 +227,15 @@ public class NavigationAdeful extends AppCompatActivity {
             }
         });
 
+
+
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         drawerLayout.setStatusBarBackgroundColor(getResources().getColor(
                 R.color.color_primary_dark));
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+        drawerToggle = new ActionBarDrawerToggle(NavigationAdeful.this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
             @Override
@@ -267,11 +248,10 @@ public class NavigationAdeful extends AppCompatActivity {
                 super.onDrawerClosed(drawerView);
             }
         };
-
         drawerLayout.setDrawerListener(drawerToggle);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
     }
 
     @Override

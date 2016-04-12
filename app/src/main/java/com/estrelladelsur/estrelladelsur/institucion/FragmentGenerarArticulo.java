@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.institucion;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -31,7 +32,7 @@ public class FragmentGenerarArticulo extends Fragment {
     private AuxiliarGeneral auxiliarGeneral;
     private String GUARDAR_USUARIO = "Articulo cargado correctamente";
     private String ACTUALIZAR_USUARIO= "Articulo actualizado correctamente";
-
+    private Typeface editTextFont;
 
     public static FragmentGenerarArticulo newInstance() {
         FragmentGenerarArticulo fragment = new FragmentGenerarArticulo();
@@ -58,13 +59,15 @@ public class FragmentGenerarArticulo extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_articulo, container, false);
-
+        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
         // EDITTEXT TITULO
         articuloEditTituto = (EditText) v
                 .findViewById(R.id.articuloEditTituto);
+        articuloEditTituto.setTypeface(editTextFont,Typeface.BOLD);
         // EDITTEXT ARTICULO
         articuloEditArticulo = (EditText) v
                 .findViewById(R.id.articuloEditArticulo);
+        articuloEditArticulo.setTypeface(editTextFont);
         return v;
     }
 
@@ -111,14 +114,14 @@ public class FragmentGenerarArticulo extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
         menu.getItem(6).setVisible(false);// cargo
         // menu.getItem(7).setVisible(false);//cerrar
-        // menu.getItem(8).setVisible(false);// guardar
+       // menu.getItem(8).setVisible(false);// guardar
         menu.getItem(9).setVisible(false);// Subir
         menu.getItem(10).setVisible(false); // eliminar
         menu.getItem(11).setVisible(false); // consultar

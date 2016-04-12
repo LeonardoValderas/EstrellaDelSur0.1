@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -25,8 +26,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.entidad.Cargo;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
@@ -55,7 +58,6 @@ public class FragmentGenerarComision extends Fragment {
     private Communicator communicator;
     private boolean actualizar = false;
     private int idComisionExtra;
-    private String fechaCreacionExtra;
     private ArrayList<Cargo> cargoArray;
     private AdapterSpinnerCargoComision adapterSpinnerCargoComision;
     private DialogoAlerta dialogoAlerta;
@@ -66,12 +68,15 @@ public class FragmentGenerarComision extends Fragment {
     private ByteArrayOutputStream baos;
     private Comision comision;
     private ArrayList<Comision> comisionArray;
-   // private DateFormat formate = DateFormat.getDateInstance();
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
     private Calendar calendar = Calendar.getInstance();
     private boolean botonFecha = false;
     private ArrayAdapter<String> adaptadorInicial;
+    private Typeface editTextFont;
+    private AuxiliarGeneral auxiliarGeneral;
+    private String GUARDAR_USUARIO = "Integrante ingresado correctamente";
+    private String ACTUALIZAR_USUARIO= "Integrante actualizado correctamente";
 
     public static FragmentGenerarComision newInstance() {
         FragmentGenerarComision fragment = new FragmentGenerarComision();
@@ -98,12 +103,14 @@ public class FragmentGenerarComision extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generar_comision_direccion, container, false);
+        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
         //FOTO INTEGRANTE
         fotoImageComision = (ImageView) v
                 .findViewById(R.id.fotoImageComisionDireccion);
         //NOMBRE INTEGRANTE
         nombreEditComision = (EditText) v
                 .findViewById(R.id.nombreEditComisionDireccion);
+        nombreEditComision.setTypeface(editTextFont);
         //CARGO SPINNER INTEGRANTE
         puestoSpinnerComision = (Spinner) v
                 .findViewById(R.id.puestoSpinnerComisionDireccion);
@@ -126,7 +133,7 @@ public class FragmentGenerarComision extends Fragment {
     private void init() {
         // VER DONDE EJECUCTAR ESTA LINEA
         controladorAdeful = new ControladorAdeful(getActivity());
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         // LOAD SPINNER
@@ -160,10 +167,7 @@ public class FragmentGenerarComision extends Fragment {
             insertar = false;
 
         }else{
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\nSi el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
+        auxiliarGeneral.errorDataBase(getActivity());
         }
      }
 
@@ -202,9 +206,9 @@ public class FragmentGenerarComision extends Fragment {
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(
                 getActivity());
         myAlertDialog.setTitle("Galeria");
-        myAlertDialog.setMessage("Seleccione una Foto.");
+        myAlertDialog.setMessage("Seleccione una foto.");
 
-        myAlertDialog.setPositiveButton("Gallery",
+        myAlertDialog.setPositiveButton("Galeria",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         UtilityImage.pictureActionIntent = new Intent(
@@ -321,22 +325,16 @@ public class FragmentGenerarComision extends Fragment {
     public ArrayList<Cargo> selectCargoList() {
 
         // CARGO
-        controladorAdeful.abrirBaseDeDatos();
         cargoArray = controladorAdeful.selectListaCargoAdeful();
         if(cargoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
         }else{
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                            "\nSi el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
+            auxiliarGeneral.errorDataBase(getActivity());
         }
         return cargoArray;
     }
 
     // POPULATION SPINNER
     public void loadSpinnerCargo() {
-
         if(selectCargoList().size()!=0){
             // CARGO SPINNER
             adapterSpinnerCargoComision = new AdapterSpinnerCargoComision(getActivity(),
@@ -345,7 +343,7 @@ public class FragmentGenerarComision extends Fragment {
         }else{
             //SPINNER HINT
             adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                    R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerCargo));
+                   R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerCargo));
             puestoSpinnerComision.setAdapter(adaptadorInicial);
         }
     }
@@ -388,6 +386,19 @@ public class FragmentGenerarComision extends Fragment {
         }
     };
 
+    public void inicializarControles(String mensaje){
+
+        nombreEditComision.setText("");
+        desdeButtonComision.setText("Desde");
+        hastaButtonComision.setText("Hasta");
+        imageComision = null;
+        fotoImageComision.setImageResource(R.mipmap.ic_foto_galery);
+        communicator.refresh();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -397,8 +408,8 @@ public class FragmentGenerarComision extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
@@ -450,24 +461,10 @@ public class FragmentGenerarComision extends Fragment {
                         imageComision, cargoSpinner.getID_CARGO(),null, desdeButtonComision.getText().toString(),
                         hastaButtonComision.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                controladorAdeful.abrirBaseDeDatos();
                 if (controladorAdeful.insertComisionAdeful(comision)) {
-
-                    controladorAdeful.cerrarBaseDeDatos();
-                    nombreEditComision.setText("");
-                    desdeButtonComision.setText("Desde");
-                    hastaButtonComision.setText("Hasta");
-                    imageComision = null;
-                    fotoImageComision.setImageResource(R.mipmap.ic_foto_galery);
-                    communicator.refresh();
-                    Toast.makeText(getActivity(), "Integrante ingresado correctamente",
-                            Toast.LENGTH_SHORT).show();
+                inicializarControles(GUARDAR_USUARIO);
                 } else {
-                    controladorAdeful.cerrarBaseDeDatos();
-                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                    "\n Si el error persiste comuniquese con soporte.",
-                            Toast.LENGTH_SHORT).show();
-
+                auxiliarGeneral.errorDataBase(getActivity());
                 }
             } else { //COMISION ACTUALIZAR
 
@@ -476,27 +473,12 @@ public class FragmentGenerarComision extends Fragment {
                         imageComision, cargoSpinner.getID_CARGO(), null, desdeButtonComision.getText().toString(),
                         hastaButtonComision.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                controladorAdeful.abrirBaseDeDatos();
                 if(controladorAdeful.actualizarComisionAdeful(comision)){
-                controladorAdeful.cerrarBaseDeDatos();
-
-                nombreEditComision.setText("");
-                desdeButtonComision.setText("Desde");
-                hastaButtonComision.setText("Hasta");
-                imageComision = null;
-                fotoImageComision.setImageResource(R.mipmap.ic_foto_galery);
-
                 actualizar = false;
                 insertar = true;
-                communicator.refresh();
-                Toast.makeText(getActivity(), "Integrante actualizado correctamente.",
-                        Toast.LENGTH_SHORT).show();
-                 }else {
-
-                    controladorAdeful.cerrarBaseDeDatos();
-                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                    "\n Si el error persiste comuniquese con soporte.",
-                            Toast.LENGTH_SHORT).show();
+                inicializarControles(ACTUALIZAR_USUARIO);
+                }else {
+                auxiliarGeneral.errorDataBase(getActivity());
                 }
             }
                 return true;
@@ -546,14 +528,9 @@ public class FragmentGenerarComision extends Fragment {
                                                             dialogoAlerta.editTextUno
                                                                     .getText()
                                                                     .toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
-
-                                                    controladorAdeful
-                                                            .abrirBaseDeDatos();
                                                     if(controladorAdeful
                                                             .insertCargoAdeful(cargo)) {
-                                                        controladorAdeful
-                                                                .cerrarBaseDeDatos();
-                                                        //SPINNER
+                                                         //SPINNER
                                                         loadSpinnerCargo();
 
                                                         Toast.makeText(
@@ -564,10 +541,7 @@ public class FragmentGenerarComision extends Fragment {
                                                         dialogoAlerta.alertDialog
                                                                 .dismiss();
                                                     }else{
-                                                        controladorAdeful.cerrarBaseDeDatos();
-                                                        Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                                        "\n Si el error persiste comuniquese con soporte.",
-                                                                Toast.LENGTH_SHORT).show();
+                                                 auxiliarGeneral.errorDataBase(getActivity());
                                                     }
                                                 } else {
                                                     Toast.makeText(
@@ -584,9 +558,7 @@ public class FragmentGenerarComision extends Fragment {
 
                                             @Override
                                             public void onClick(View v) {
-                                                // TODO Auto-generated method stub
-
-                                                dialogoAlerta.alertDialog.dismiss();
+                                                 dialogoAlerta.alertDialog.dismiss();
 
                                             }
                                         });
@@ -599,15 +571,11 @@ public class FragmentGenerarComision extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                // TODO Auto-generated method stub
-
-                                dialogoMenuLista = new DialogoMenuLista(getActivity(),
+                                 dialogoMenuLista = new DialogoMenuLista(getActivity(),
                                         "CARGOS");
 
                                 dialogoMenuLista.btnAceptar.setText("Aceptar");
                                 dialogoMenuLista.btnCancelar.setText("Cancelar");
-
-
                                 loadListViewMenu();
 
 
@@ -637,13 +605,8 @@ public class FragmentGenerarComision extends Fragment {
                                                         cargoArray.get(position).getID_CARGO(),
                                                         dialogoAlertaEditar.editTextUno.getText().toString(),
                                                         usuario, null, usuario, controladorAdeful.getFechaOficial());
-
-                                                controladorAdeful
-                                                        .abrirBaseDeDatos();
                                                 if (controladorAdeful
                                                         .actualizarCargoAdeful(cargo)) {
-                                                    controladorAdeful
-                                                            .cerrarBaseDeDatos();
                                                     loadListViewMenu();
                                                     loadSpinnerCargo();
                                                     dialogoAlertaEditar.alertDialog.dismiss();
@@ -652,22 +615,14 @@ public class FragmentGenerarComision extends Fragment {
                                                             "Cargo Actualizado Correctamente.",
                                                             Toast.LENGTH_SHORT).show();
                                                 } else {
-                                                    controladorAdeful.cerrarBaseDeDatos();
-                                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                                    "\n Si el error persiste comuniquese con soporte.",
-                                                            Toast.LENGTH_SHORT).show();
+                                                auxiliarGeneral.errorDataBase(getActivity());
                                                 }
                                             }
                                         });
-
-
                                         dialogoAlertaEditar.btnCancelar.setOnClickListener(new View.OnClickListener() {
 
                                             @Override
                                             public void onClick(View v) {
-                                                // TODO Auto-generated method stub
-
-
                                                 dialogoAlertaEditar.alertDialog.dismiss();
 
                                             }
@@ -675,16 +630,12 @@ public class FragmentGenerarComision extends Fragment {
                                     }
 
                                 });
-
-
                                 // Editar Cargo
                                 dialogoMenuLista.btnAceptar
                                         .setOnClickListener(new View.OnClickListener() {
 
                                             @Override
                                             public void onClick(View v) {
-                                                // TODO Auto-generated method stub
-
                                                 dialogoMenuLista.alertDialog.dismiss();
                                                 dialogoAlerta.alertDialog.dismiss();
                                             }
@@ -694,8 +645,6 @@ public class FragmentGenerarComision extends Fragment {
 
                                     @Override
                                     public void onClick(View v) {
-                                        // TODO Auto-generated method stub
-
                                         dialogoMenuLista.alertDialog.dismiss();
                                         dialogoAlerta.alertDialog.dismiss();
                                     }

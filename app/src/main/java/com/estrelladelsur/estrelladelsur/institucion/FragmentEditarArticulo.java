@@ -116,11 +116,9 @@ public class FragmentEditarArticulo extends Fragment {
 
             @Override
             public void onLongClick(View view, final int position) {
-                // TODO Auto-generated method stub
-
 
                 dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
-                        "Desea Eliminar el Articulo?", null, null);
+                        "Desea eliminar el articulo?", null, null);
                 dialogoAlerta.btnAceptar.setText("Aceptar");
                 dialogoAlerta.btnCancelar.setText("Cancelar");
 
@@ -165,8 +163,7 @@ public class FragmentEditarArticulo extends Fragment {
     public void recyclerViewLoadArticulo() {
         articuloArray = controladorAdeful.selectListaArticuloAdeful();
         if(articuloArray!= null) {
-            adaptadorRecyclerArticulo = new AdaptadorRecyclerArticulo(articuloArray);
-            adaptadorRecyclerArticulo.notifyDataSetChanged();
+            adaptadorRecyclerArticulo = new AdaptadorRecyclerArticulo(articuloArray,getActivity());
             recyclerArticulo.setAdapter(adaptadorRecyclerArticulo);
         }else{
         auxiliarGeneral.errorDataBase(getActivity());
@@ -206,7 +203,6 @@ public class FragmentEditarArticulo extends Fragment {
                             }
                         }
                     });
-
         }
 
         @Override
@@ -238,8 +234,8 @@ public class FragmentEditarArticulo extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion

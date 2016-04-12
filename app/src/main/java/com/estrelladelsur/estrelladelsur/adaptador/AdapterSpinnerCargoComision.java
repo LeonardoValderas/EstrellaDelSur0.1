@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Cargo;
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,12 @@ import android.widget.TextView;
 public class AdapterSpinnerCargoComision extends ArrayAdapter<Cargo> {
     private Activity context;
     ArrayList<Cargo> cargoArray = null;
-
+    private Typeface editTextFont;
     public AdapterSpinnerCargoComision(Activity context, int resource, ArrayList<Cargo> cargoArray) {
         super(context, resource, cargoArray);
         this.context = context;
         this.cargoArray = cargoArray;
+        this.editTextFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
     }
 
     @Override
@@ -32,13 +34,13 @@ public class AdapterSpinnerCargoComision extends ArrayAdapter<Cargo> {
             LayoutInflater inflater = context.getLayoutInflater();
             row = inflater.inflate(R.layout.spinner_item_general, parent, false);
         }
-
         Cargo cargo = cargoArray.get(position);
 
         if (cargo != null) {   // Parse the data from each object and set it.
             TextView descripcionTextGeneral = (TextView) row.findViewById(R.id.descripcionTextGeneral);
             if (descripcionTextGeneral != null)
                 descripcionTextGeneral.setText(cargo.getCARGO());
+            descripcionTextGeneral.setTypeface(editTextFont);
         }
 
         return row;

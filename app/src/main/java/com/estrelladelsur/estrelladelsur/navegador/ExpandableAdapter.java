@@ -20,6 +20,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 
 
     private Context _context;
+    private  Typeface modulos;
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<String>> _listDataChild;
@@ -28,6 +29,8 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
     public ExpandableAdapter(Context context, List<String> listDataHeader,
                              HashMap<String, List<String>> listChildData) {
         this._context = context;
+     //   modulos = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
+        modulos = Typeface.createFromAsset(context.getAssets(), "DroidSerif-Regular.ttf");
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
     }
@@ -60,7 +63,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
         TextView title = (TextView) convertView.findViewById(R.id.title);
 
         title.setText(childText);
-
+        title.setTypeface(modulos);
 
         return convertView;
     }
@@ -98,7 +101,7 @@ public class ExpandableAdapter extends BaseExpandableListAdapter {
 
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.lblListHeader);
-        lblListHeader.setTypeface(null, Typeface.BOLD);
+        lblListHeader.setTypeface(modulos, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
 
         return convertView;
