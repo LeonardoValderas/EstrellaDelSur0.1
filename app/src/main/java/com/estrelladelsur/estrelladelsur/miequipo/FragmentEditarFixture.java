@@ -1,8 +1,10 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
 import java.util.ArrayList;
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -36,311 +38,319 @@ import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 
 public class FragmentEditarFixture extends Fragment {
 
-	private Division division;
-	private Torneo torneo;
-	private Fecha fecha;
-	private Anio anio;
-	private ArrayList<Division> divisionArray;
-	private ArrayList<Torneo> torneoArray;
-	private ArrayList<Fecha> fechaArray;
-	private ArrayList<Anio> anioArray;
-	private ArrayList<Fixture> fixtureArray;
-	private Spinner fixtureDivisionSpinner;
-	private Spinner fixtureTorneoSpinner;
-	private Spinner fixtureFechaSpinner;
-	private Spinner fixtureAnioSpinner;
-	private AdapterSpinnerTorneo adapterFixtureTorneo;
-	private AdapterSpinnerDivision adapterFixtureDivision;
-	private AdapterSpinnerFecha adapterFixtureFecha;
-	private AdapterSpinnerAnio adapterFixtureAnio;
-	private AdaptadorRecyclerFixture adaptadorFixtureEdit;
-	private RecyclerView recyclerViewFixture;
-	private FloatingActionButton botonFloating;
-	private ControladorAdeful controladorAdeful;
-	private int CheckedPositionFragment;
-	private int divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner;
-	private DialogoAlerta dialogoAlerta;
-	private ArrayAdapter<String> adaptadorInicial;
+    private Division division;
+    private Torneo torneo;
+    private Fecha fecha;
+    private Anio anio;
+    private ArrayList<Division> divisionArray;
+    private ArrayList<Torneo> torneoArray;
+    private ArrayList<Fecha> fechaArray;
+    private ArrayList<Anio> anioArray;
+    private ArrayList<Fixture> fixtureArray;
+    private Spinner fixtureDivisionSpinner;
+    private Spinner fixtureTorneoSpinner;
+    private Spinner fixtureFechaSpinner;
+    private Spinner fixtureAnioSpinner;
+    private AdapterSpinnerTorneo adapterFixtureTorneo;
+    private AdapterSpinnerDivision adapterFixtureDivision;
+    private AdapterSpinnerFecha adapterFixtureFecha;
+    private AdapterSpinnerAnio adapterFixtureAnio;
+    private AdaptadorRecyclerFixture adaptadorFixtureEdit;
+    private RecyclerView recyclerViewFixture;
+    private FloatingActionButton botonFloating;
+    private ControladorAdeful controladorAdeful;
+    private int CheckedPositionFragment;
+    private int divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner;
+    private DialogoAlerta dialogoAlerta;
+    private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
 
-	public static FragmentEditarFixture newInstance() {
-		FragmentEditarFixture fragment = new FragmentEditarFixture();
-		return fragment;
-	}
-	public FragmentEditarFixture() {
-		// Required empty public constructor
-	}
-	@Override
-	public void onActivityCreated(Bundle state) {
-		super.onActivityCreated(state);
 
-		controladorAdeful = new ControladorAdeful(getActivity());
+    public static FragmentEditarFixture newInstance() {
+        FragmentEditarFixture fragment = new FragmentEditarFixture();
+        return fragment;
+    }
 
-		if (state != null) {
-			CheckedPositionFragment = state.getInt("curChoice", 0);
+    public FragmentEditarFixture() {
+        // Required empty public constructor
+    }
 
-		} else {
-			init();
-		}
-	}
+    @Override
+    public void onActivityCreated(Bundle state) {
+        super.onActivityCreated(state);
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_editar_fixture,
-				container, false);
-		// DIVISION
-		fixtureDivisionSpinner = (Spinner) v
-				.findViewById(R.id.fixtureDivisionSpinner);
-		// TORNEO
-		fixtureTorneoSpinner = (Spinner) v
-				.findViewById(R.id.fixtureTorneoSpinner);
-		// FECHA
-		fixtureFechaSpinner = (Spinner) v
-				.findViewById(R.id.fixtureFechaSpinner);
-		// ANIO
-		fixtureAnioSpinner = (Spinner) v.findViewById(R.id.fixtureAnioSpinner);
+        controladorAdeful = new ControladorAdeful(getActivity());
+        if (state != null) {
+            CheckedPositionFragment = state.getInt("curChoice", 0);
+        } else {
+            init();
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_editar_fixture,
+                container, false);
+
+        // DIVISION
+        fixtureDivisionSpinner = (Spinner) v
+                .findViewById(R.id.fixtureDivisionSpinner);
+        // TORNEO
+        fixtureTorneoSpinner = (Spinner) v
+                .findViewById(R.id.fixtureTorneoSpinner);
+        // FECHA
+        fixtureFechaSpinner = (Spinner) v
+                .findViewById(R.id.fixtureFechaSpinner);
+        // ANIO
+        fixtureAnioSpinner = (Spinner) v.findViewById(R.id.fixtureAnioSpinner);
         // FLOATING BUTTON
-		botonFloating = (FloatingActionButton)v.findViewById(R.id.botonFloating);
-		// RecyclerView
-		recyclerViewFixture = (RecyclerView) v
-				.findViewById(R.id.recycleViewGeneral);
+        botonFloating = (FloatingActionButton) v.findViewById(R.id.botonFloating);
+        // RecyclerView
+        recyclerViewFixture = (RecyclerView) v
+                .findViewById(R.id.recycleViewGeneral);
 
-		return v;
-	}
+        return v;
+    }
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putInt("curChoice", CheckedPositionFragment);
-	}
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("curChoice", CheckedPositionFragment);
+    }
 
-	private void init() {
-		auxiliarGeneral = new AuxiliarGeneral(getActivity());
-		// DIVISION
-		divisionArray = controladorAdeful.selectListaDivisionAdeful();
-		if(divisionArray != null) {
-			// DIVSION SPINNER
-			if (divisionArray.size() != 0) {
-				adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
-						R.layout.simple_spinner_dropdown_item, divisionArray);
-				fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
-			} else {
-				//SPINNER HINT
-				adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-						R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
-				fixtureDivisionSpinner.setAdapter(adaptadorInicial);
-			}
-		}else{
-		auxiliarGeneral.errorDataBase(getActivity());
-		}
-		// TORNEO
-	    torneoArray = controladorAdeful.selectListaTorneoAdeful();
-		if(torneoArray != null) {
-			// TORNEO SPINNER
-			if (torneoArray.size() != 0) {
-				// TORNEO SPINNER
-				adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
-						R.layout.simple_spinner_dropdown_item, torneoArray);
-				fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
-			} else {
-				//SPINNER HINT
-				adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-						R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
-				fixtureTorneoSpinner.setAdapter(adaptadorInicial);
-			}
-		}else{
-		auxiliarGeneral.errorDataBase(getActivity());
-		}
-		// FECHA
-		fechaArray = controladorAdeful.selectListaFecha();
-		if(fechaArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
-			// FECHA SPINNER
-			adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
-					R.layout.simple_spinner_dropdown_item, fechaArray);
-			fixtureFechaSpinner.setAdapter(adapterFixtureFecha);
-		}else{
-		auxiliarGeneral.errorDataBase(getActivity());
-		}
-		// ANIO
-	    anioArray = controladorAdeful.selectListaAnio();
-		if(anioArray != null) {
-			// ANIO SPINNER
-			adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
-					R.layout.simple_spinner_dropdown_item, anioArray);
-			fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
-		}else{
-			auxiliarGeneral.errorDataBase(getActivity());
-	}
+    private void init() {
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        // DIVISION
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        if (divisionArray != null) {
+            // DIVSION SPINNER
+            if (!divisionArray.isEmpty()) {
+                adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, divisionArray);
+                fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
+            } else {
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
+                fixtureDivisionSpinner.setAdapter(adaptadorInicial);
+            }
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+        // TORNEO
+        torneoArray = controladorAdeful.selectListaTorneoAdeful();
+        if (torneoArray != null) {
+            // TORNEO SPINNER
+            if (!torneoArray.isEmpty()) {
+                // TORNEO SPINNER
+                adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, torneoArray);
+                fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
+            } else {
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
+                fixtureTorneoSpinner.setAdapter(adaptadorInicial);
+            }
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+        // FECHA
+        fechaArray = controladorAdeful.selectListaFecha();
+        if (fechaArray != null) {
+            // FECHA SPINNER
+            adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
+                    R.layout.simple_spinner_dropdown_item, fechaArray);
+            fixtureFechaSpinner.setAdapter(adapterFixtureFecha);
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+        // ANIO
+        anioArray = controladorAdeful.selectListaAnio();
+        if (anioArray != null) {
+            // ANIO SPINNER
+            adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
+                    R.layout.simple_spinner_dropdown_item, anioArray);
+            fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
 
-		// RECLYCLER
-		recyclerViewFixture.setLayoutManager(new LinearLayoutManager(
-				getActivity(), LinearLayoutManager.VERTICAL, false));
-		recyclerViewFixture.addItemDecoration(new DividerItemDecoration(
-				getActivity(), DividerItemDecoration.VERTICAL_LIST));
-		recyclerViewFixture.setItemAnimator(new DefaultItemAnimator());
+        // RECLYCLER
+        recyclerViewFixture.setLayoutManager(new LinearLayoutManager(
+                getActivity(), LinearLayoutManager.VERTICAL, false));
+        recyclerViewFixture.addItemDecoration(new DividerItemDecoration(
+                getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        recyclerViewFixture.setItemAnimator(new DefaultItemAnimator());
 
-		botonFloating.setOnClickListener(new View.OnClickListener() {
+        botonFloating.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-				if (fixtureDivisionSpinner.getSelectedItem().toString().equals(getResources().
-						getString(R.string.ceroSpinnerDivision))) {
-					Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
-							Toast.LENGTH_SHORT).show();
-				} else if (fixtureTorneoSpinner.getSelectedItem().toString().equals(getResources().
-						getString(R.string.ceroSpinnerTorneo))) {
-					Toast.makeText(getActivity(), "Debe agregar un torneo (Liga).",
-							Toast.LENGTH_SHORT).show();
-				}else {
-					division = (Division) fixtureDivisionSpinner.getSelectedItem();
-					torneo = (Torneo) fixtureTorneoSpinner.getSelectedItem();
-					fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
-					anio = (Anio) fixtureAnioSpinner.getSelectedItem();
+                if (fixtureDivisionSpinner.getSelectedItem().toString().equals(getResources().
+                        getString(R.string.ceroSpinnerDivision))) {
+                    Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
+                            Toast.LENGTH_SHORT).show();
+                } else if (fixtureTorneoSpinner.getSelectedItem().toString().equals(getResources().
+                        getString(R.string.ceroSpinnerTorneo))) {
+                    Toast.makeText(getActivity(), "Debe agregar un torneo (Liga).",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    division = (Division) fixtureDivisionSpinner.getSelectedItem();
+                    torneo = (Torneo) fixtureTorneoSpinner.getSelectedItem();
+                    fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
+                    anio = (Anio) fixtureAnioSpinner.getSelectedItem();
 
-					divisionSpinner = division.getID_DIVISION();
-					torneoSpinner = torneo.getID_TORNEO();
-					fechaSpinner = fecha.getID_FECHA();
-					anioSpiner = anio.getID_ANIO();
+                    divisionSpinner = division.getID_DIVISION();
+                    torneoSpinner = torneo.getID_TORNEO();
+                    fechaSpinner = fecha.getID_FECHA();
+                    anioSpiner = anio.getID_ANIO();
 
-					recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+                    recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+                }
+            }
+        });
 
-				}
-			}
-		});
+        recyclerViewFixture.addOnItemTouchListener(new
+                RecyclerTouchListener(getActivity(),
 
-		recyclerViewFixture.addOnItemTouchListener(new
-				RecyclerTouchListener(getActivity(),
+                recyclerViewFixture, new ClickListener() {
 
-				recyclerViewFixture, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
 
-			@Override
-			public void onClick(View view, int position) {
-				// TODO Auto-generated method stub
+                Intent editarFixture = new Intent(getActivity(),
+                        TabsFixture.class);
+                editarFixture.putExtra("actualizar", true);
+                editarFixture.putExtra("id_fixture",
+                        fixtureArray.get(position).getID_FIXTURE());
+                editarFixture.putExtra("divisionSpinner", divisionSpinner);
+                editarFixture.putExtra("torneoSpinner", torneoSpinner);
+                editarFixture.putExtra("fechaSpinner", fechaSpinner);
+                editarFixture.putExtra("anioSpiner", anioSpiner);
+                editarFixture.putExtra("localSpinner",
+                        fixtureArray.get(position).getID_EQUIPO_LOCAL());
+                editarFixture.putExtra("visitaSpinner",
+                        fixtureArray.get(position).getID_EQUIPO_VISITA());
+                editarFixture.putExtra("canchaSpinner",
+                        fixtureArray.get(position).getID_CANCHA());
+                editarFixture.putExtra("dia",
+                        fixtureArray.get(position).getDIA());
+                editarFixture.putExtra("hora",
+                        fixtureArray.get(position).getHORA());
+                startActivity(editarFixture);
+            }
 
-				Intent editarFixture = new Intent(getActivity(),
-						TabsFixture.class);
-				editarFixture.putExtra("actualizar", true);
-				editarFixture.putExtra("id_fixture",
-						fixtureArray.get(position).getID_FIXTURE());
-				editarFixture.putExtra("divisionSpinner", divisionSpinner);
-				editarFixture.putExtra("torneoSpinner", torneoSpinner);
-				editarFixture.putExtra("fechaSpinner", fechaSpinner);
-				editarFixture.putExtra("anioSpiner", anioSpiner);
-				editarFixture.putExtra("localSpinner",
-						fixtureArray.get(position).getID_EQUIPO_LOCAL());
-				editarFixture.putExtra("visitaSpinner",
-						fixtureArray.get(position).getID_EQUIPO_VISITA());
-				editarFixture.putExtra("canchaSpinner",
-						fixtureArray.get(position).getID_CANCHA());
-				editarFixture.putExtra("dia",
-						fixtureArray.get(position).getDIA());
-				editarFixture.putExtra("hora",
-						fixtureArray.get(position).getHORA());
-				startActivity(editarFixture);
-			}
+            @Override
+            public void onLongClick(View view, final int position) {
+                // TODO Auto-generated method stub
 
-			@Override
-			public void onLongClick(View view, final int position) {
-				// TODO Auto-generated method stub
+                dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
+                        "Desea eliminar el partido?", null, null);
+                dialogoAlerta.btnAceptar.setText("Aceptar");
+                dialogoAlerta.btnCancelar.setText("Cancelar");
 
-				dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
-						"Desea eliminar el Partido?", null, null);
-				dialogoAlerta.btnAceptar.setText("Aceptar");
-				dialogoAlerta.btnCancelar.setText("Cancelar");
+                dialogoAlerta.btnAceptar
+                        .setOnClickListener(new View.OnClickListener() {
 
-				dialogoAlerta.btnAceptar
-						.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (controladorAdeful.eliminarEquipoAdeful(fixtureArray.get(position)
+                                        .getID_FIXTURE())) {
+                                    recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+                                    Toast.makeText(
+                                            getActivity(),
+                                            "Partido eliminado correctamente",
+                                            Toast.LENGTH_SHORT).show();
+                                    dialogoAlerta.alertDialog.dismiss();
+                                } else {
+                                    auxiliarGeneral.errorDataBase(getActivity());
+                                }
+                            }
+                        });
+                dialogoAlerta.btnCancelar
+                        .setOnClickListener(new View.OnClickListener() {
 
-							@Override
-							public void onClick(View v) {
-								if (controladorAdeful.eliminarEquipoAdeful(fixtureArray.get(position)
-										.getID_FIXTURE())) {
-				     				recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
-									Toast.makeText(
-											getActivity(),
-											"Fixture Eliminado Correctamente",
-											Toast.LENGTH_SHORT).show();
-									dialogoAlerta.alertDialog.dismiss();
-								} else {
-							auxiliarGeneral.errorDataBase(getActivity());
-								}
-							}
-						});
-				dialogoAlerta.btnCancelar
-						.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // TODO Auto-generated method stub
+                                dialogoAlerta.alertDialog.dismiss();
+                            }
+                        });
+            }
+        }));
+    }
 
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
-								dialogoAlerta.alertDialog.dismiss();
-							}
-						});
-			}
-		}));
-	}
+    //LOAD RECYCLER
+    public void recyclerViewLoadDivision(int division, int torneo, int fecha,
+                                         int anio) {
+        fixtureArray = controladorAdeful.selectListaFixtureAdeful(division,
+                torneo, fecha, anio);
+        if (fixtureArray != null) {
+            adaptadorFixtureEdit = new AdaptadorRecyclerFixture(fixtureArray, getActivity());
+            recyclerViewFixture.setAdapter(adaptadorFixtureEdit);
+            if (fixtureArray.isEmpty()) {
+               Toast.makeText(
+                        getActivity(),
+                        "Selección sin datos",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+    }
 
-   //LOAD RECYCLER
-	public void recyclerViewLoadDivision(int division, int torneo, int fecha,
-			int anio) {
-		fixtureArray = controladorAdeful.selectListaFixtureAdeful(division,
-				torneo, fecha, anio);
-		if(fixtureArray != null) {
-			adaptadorFixtureEdit = new AdaptadorRecyclerFixture(fixtureArray);
-			adaptadorFixtureEdit.notifyDataSetChanged();
-			recyclerViewFixture.setAdapter(adaptadorFixtureEdit);
-		}else{
-		auxiliarGeneral.errorDataBase(getActivity());
-		}
-	}
-	public static interface ClickListener {
-		public void onClick(View view, int position);
-		public void onLongClick(View view, int position);
-	}
+    public static interface ClickListener {
+        public void onClick(View view, int position);
+        public void onLongClick(View view, int position);
+    }
 
-	static class RecyclerTouchListener implements
-			RecyclerView.OnItemTouchListener {
-		private GestureDetector detector;
-		private ClickListener clickListener;
-		public RecyclerTouchListener(Context context,
-				final RecyclerView recyclerView,
-				final ClickListener clickListener) {
-			this.clickListener = clickListener;
-			detector = new GestureDetector(context,
-					new GestureDetector.SimpleOnGestureListener() {
-						@Override
-						public boolean onSingleTapUp(MotionEvent e) {
-							return true;
-						}
-						@Override
-						public void onLongPress(MotionEvent e) {
-							View child = recyclerView.findChildViewUnder(
-									e.getX(), e.getY());
-							if (child != null && clickListener != null) {
-								clickListener.onLongClick(child,
-										recyclerView.getChildPosition(child));
-							}
-						}
-					});
-		}
+    static class RecyclerTouchListener implements
+            RecyclerView.OnItemTouchListener {
+        private GestureDetector detector;
+        private ClickListener clickListener;
 
-		@Override
-		public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-			// TODO Auto-generated method stub
-			View child = rv.findChildViewUnder(e.getX(), e.getY());
-			if (child != null && clickListener != null
-					&& detector.onTouchEvent(e)) {
-				clickListener.onClick(child, rv.getChildPosition(child));
-			}
-			return false;
-		}
-		@Override
-		public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-		}
-		@Override
-		public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-		}
-	}
+        public RecyclerTouchListener(Context context,
+                                     final RecyclerView recyclerView,
+                                     final ClickListener clickListener) {
+            this.clickListener = clickListener;
+            detector = new GestureDetector(context,
+                    new GestureDetector.SimpleOnGestureListener() {
+                        @Override
+                        public boolean onSingleTapUp(MotionEvent e) {
+                            return true;
+                        }
+
+                        @Override
+                        public void onLongPress(MotionEvent e) {
+                            View child = recyclerView.findChildViewUnder(
+                                    e.getX(), e.getY());
+                            if (child != null && clickListener != null) {
+                                clickListener.onLongClick(child,
+                                        recyclerView.getChildPosition(child));
+                            }
+                        }
+                    });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+            // TODO Auto-generated method stub
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null
+                    && detector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildPosition(child));
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        }
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
+        }
+    }
 }

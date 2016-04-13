@@ -43,7 +43,7 @@ public class AdaptadorRecyclerEquipo extends
 
 			byte[] image = equipoAdeful.getESCUDO();
 			if (image == null) {
-				 imageViewEscudo.setImageResource(R.mipmap.ic_escudo_equipo);
+				 imageViewEscudo.setImageResource(R.mipmap.ic_escudo_cris);
 			} else {
 				Bitmap theImage = BitmapFactory.decodeByteArray(
 						equipoAdeful.getESCUDO(), 0,

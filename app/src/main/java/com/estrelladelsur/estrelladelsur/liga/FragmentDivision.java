@@ -48,7 +48,8 @@ public class FragmentDivision extends Fragment {
 	private String ACTUALIZAR_USUARIO = "División actualizada correctamente";
 	private Typeface editTextFont;
 	private AuxiliarGeneral auxiliarGeneral;
-	private LinearLayout linearEscudo;
+
+
 	public static FragmentDivision newInstance() {
 		FragmentDivision fragment = new FragmentDivision();
 		return fragment;

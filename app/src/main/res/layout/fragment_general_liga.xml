@@ -49,6 +49,7 @@
                 android:visibility="gone">
 
                 <TextView
+                    android:id="@+id/torneoActual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -61,7 +62,6 @@
                     android:layout_weight="1" />
 
             </LinearLayout>
-
             <Spinner
                 android:id="@+id/spinnerAnioTorneoActual"
                 android:layout_width="match_parent"
@@ -71,6 +71,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleViewGeneral"
+            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />

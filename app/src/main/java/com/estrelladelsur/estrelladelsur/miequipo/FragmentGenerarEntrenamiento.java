@@ -4,8 +4,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -24,6 +26,7 @@ import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -39,9 +42,6 @@ import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 
 public class FragmentGenerarEntrenamiento extends Fragment {
 
-    private ImageButton imageButton1;
-    private DialogoListCheck dialogoListCheck;
-    private ListView entrenamientolistView;
     private int CheckedPositionFragment;
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
@@ -50,6 +50,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     private Calendar calenda = Calendar.getInstance();
     private Spinner spinnerLugarEntrenamiento;
     private Button buttonFechaEntrenamiento;
+    private TextView textViewLugar, textViewDivisionCitada;
     private Button buttonHoraEntrenamiento;
     private ControladorAdeful controladorAdeful;
     private ArrayList<Cancha> canchaArray;
@@ -59,27 +60,30 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     private ArrayList<Entrenamiento> divisionArrayExtra;
     private AdaptadorRecyclerDivisionEntrenamiento adaptadorRecyclerDivisionEntrenamiento;
     private Cancha lugar;
-    private int id_x_division;
     private Entrenamiento entrenamiento_Division;
     private Entrenamiento entrenamiento;
     private boolean bandera = true;
     private ArrayAdapter<String> adaptadorInicial;
     private boolean actualizar = false;
     private int idEntrenamientoExtra;
-    private String entrenamientoDiaExtra = null;
-    private String entrenamientoHoraExtra = null;
     private String entrenamientoCanchaExtra = null;
     private boolean insertar = true;
     private ArrayList<Integer> id_divisin_array = null;
+    private Typeface editTextFont;
+    private Typeface textViewFont;
     private AuxiliarGeneral auxiliarGeneral;
+    private String GUARDAR_USUARIO = "Entrenamiento generado correctamente";
+    private String ACTUALIZAR_USUARIO = "Entrenamiento actualizado correctamente";
 
     public static FragmentGenerarEntrenamiento newInstance() {
         FragmentGenerarEntrenamiento fragment = new FragmentGenerarEntrenamiento();
         return fragment;
     }
+
     public FragmentGenerarEntrenamiento() {
         // Required empty public constructor
     }
+
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
@@ -90,11 +94,14 @@ public class FragmentGenerarEntrenamiento extends Fragment {
             init();
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generar_entrenamiento,
                 container, false);
+        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
+        textViewFont = Typeface.createFromAsset(getActivity().getAssets(), "aspace_demo.otf");
         // RECYCLER
         recycleViewGeneral = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
@@ -104,9 +111,19 @@ public class FragmentGenerarEntrenamiento extends Fragment {
         // DIA
         buttonFechaEntrenamiento = (Button) v
                 .findViewById(R.id.buttonFechaEntrenamiento);
+        buttonFechaEntrenamiento.setTypeface(editTextFont, Typeface.BOLD);
         // HORA
         buttonHoraEntrenamiento = (Button) v
                 .findViewById(R.id.buttonHoraEntrenamiento);
+        buttonHoraEntrenamiento.setTypeface(editTextFont, Typeface.BOLD);
+        //TITULO LUGAR
+        textViewLugar = (TextView) v
+                .findViewById(R.id.textViewLugar);
+        textViewLugar.setTypeface(textViewFont);
+        //TITULO DIVISIONES
+        textViewDivisionCitada = (TextView) v
+                .findViewById(R.id.textViewDivisionCitada);
+        textViewDivisionCitada.setTypeface(textViewFont);
 
         return v;
     }
@@ -116,6 +133,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
     }
+
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
@@ -135,13 +153,12 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                 spinnerLugarEntrenamiento.setAdapter(adaptadorInicial);
             }
         } else {
-        auxiliarGeneral.errorDataBase(getActivity());
+            auxiliarGeneral.errorDataBase(getActivity());
         }
         //Metodo Extra
         if (actualizar) {
 
             idEntrenamientoExtra = getActivity().getIntent().getIntExtra("id_entrenamiento", 0);
-
             //DIA
             buttonFechaEntrenamiento.setText(getActivity().getIntent()
                     .getStringExtra("dia"));
@@ -186,19 +203,23 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     public void updatedate() {
         buttonFechaEntrenamiento.setText(formate.format(calendar.getTime()));
     }
+
     public void updatetime() {
         buttonHoraEntrenamiento.setText(form.format(calenda.getTime()));
     }
+
     public void setDate() {
         new DatePickerDialog(getActivity(), d, calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
+
     public void setTime() {
         new TimePickerDialog(getActivity(), t,
                 calenda.get(Calendar.HOUR_OF_DAY),
                 calenda.get(Calendar.MINUTE), true).show();
     }
+
     DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
 
         @Override
@@ -221,6 +242,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
             updatetime();
         }
     };
+
     public void recyclerViewLoadDivision() {
 
         divisionArray = controladorAdeful
@@ -240,20 +262,19 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                         }
                     }
                 } else {
-            auxiliarGeneral.errorDataBase(getActivity());
+                    auxiliarGeneral.errorDataBase(getActivity());
                 }
             }
             //ADAPTER
             adaptadorRecyclerDivisionEntrenamiento = new AdaptadorRecyclerDivisionEntrenamiento(
-                    divisionArray);
+                    divisionArray, getActivity());
             recycleViewGeneral.setAdapter(adaptadorRecyclerDivisionEntrenamiento);
         } else {
-        auxiliarGeneral.errorDataBase(getActivity());
+            auxiliarGeneral.errorDataBase(getActivity());
         }
     }
 
     private int getPositionCancha(int idCancha) {
-
         int index = 0;
 
         for (int i = 0; i < canchaArray.size(); i++) {
@@ -262,6 +283,14 @@ public class FragmentGenerarEntrenamiento extends Fragment {
             }
         }
         return index;
+    }
+
+    public void inicializarControles(String mensaje) {
+        buttonFechaEntrenamiento.setText("Día");
+        buttonHoraEntrenamiento.setText("Hora");
+        recyclerViewLoadDivision();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -273,8 +302,8 @@ public class FragmentGenerarEntrenamiento extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
@@ -326,110 +355,99 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                         Toast.LENGTH_SHORT).show();
             } else {
 
-                    id_divisin_array = new ArrayList<Integer>();
+                id_divisin_array = new ArrayList<Integer>();
 
-                    for (int i = 0; i < listaDivisiones.size(); i++) {
-                        Entrenamiento entrenamientoDivision = listaDivisiones
-                                .get(i);
-                        if (entrenamientoDivision.isSelected() == true) {
-                            bandera = true;
-                            id_divisin_array.add(entrenamientoDivision
-                                    .getID_DIVISION());
-                        }
+                for (int i = 0; i < listaDivisiones.size(); i++) {
+                    Entrenamiento entrenamientoDivision = listaDivisiones
+                            .get(i);
+                    if (entrenamientoDivision.isSelected() == true) {
+                        bandera = true;
+                        id_divisin_array.add(entrenamientoDivision
+                                .getID_DIVISION());
                     }
-                    if (!bandera) {
-                        Toast.makeText(getActivity(),
-                                "Seleccione la/s División/es Citada/s.",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        String usuario = "Administrador";
-                        String fechaCreacion = controladorAdeful.getFechaOficial();
-                        String fechaActualizacion = fechaCreacion;
-                        if (insertar) {
+                }
+                if (!bandera) {
+                    Toast.makeText(getActivity(),
+                            "Seleccione la/s División/es Citada/s.",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    String usuario = "Administrador";
+                    String fechaCreacion = controladorAdeful.getFechaOficial();
+                    String fechaActualizacion = fechaCreacion;
+                    if (insertar) {
+                        lugar = (Cancha) spinnerLugarEntrenamiento
+                                .getSelectedItem();
+                        entrenamiento = new Entrenamiento(0,
+                                buttonFechaEntrenamiento.getText().toString(),
+                                buttonHoraEntrenamiento.getText().toString(),
+                                lugar.getID_CANCHA(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                            lugar = (Cancha) spinnerLugarEntrenamiento
-                                    .getSelectedItem();
-                            entrenamiento = new Entrenamiento(0,
-                                    buttonFechaEntrenamiento.getText().toString(),
-                                    buttonHoraEntrenamiento.getText().toString(),
-                                    lugar.getID_CANCHA(), usuario, fechaCreacion, usuario, fechaActualizacion);
-
-                            // inserto entrenamiento y verifico el id
-                            int id_entrenamiento = controladorAdeful
-                                    .insertEntrenamientoAdeful(entrenamiento);
-                            if (id_entrenamiento > 0) {
-                                for (int i = 0; i < id_divisin_array.size(); i++) {
-                                    entrenamiento_Division = new Entrenamiento(
-                                            0, id_entrenamiento, id_divisin_array
-                                            .get(i), "", true);
-                                    if (!controladorAdeful
-                                            .insertEntrenamientoDivisionAdeful(entrenamiento_Division)) {
-                                        break;
-                                    }
+                        // inserto entrenamiento y verifico el id
+                        int id_entrenamiento = controladorAdeful
+                                .insertEntrenamientoAdeful(entrenamiento);
+                        if (id_entrenamiento > 0) {
+                            for (int i = 0; i < id_divisin_array.size(); i++) {
+                                entrenamiento_Division = new Entrenamiento(
+                                        0, id_entrenamiento, id_divisin_array
+                                        .get(i), "", true);
+                                if (!controladorAdeful
+                                        .insertEntrenamientoDivisionAdeful(entrenamiento_Division)) {
+                                    break;
                                 }
-                                buttonFechaEntrenamiento.setText("Día");
-                                buttonHoraEntrenamiento.setText("Hora");
-                                recyclerViewLoadDivision();
-                                Toast.makeText(
-                                        getActivity(),
-                                        "Entrenamiento cargado correctamente.",
-                                        Toast.LENGTH_SHORT).show();
-                                } else {
-                               auxiliarGeneral.errorDataBase(getActivity());
                             }
+                            inicializarControles(GUARDAR_USUARIO);
                         } else {
-                            //EDITAR ENTRENAMIENTO
-                            lugar = (Cancha) spinnerLugarEntrenamiento
-                                    .getSelectedItem();
-                            entrenamiento = new Entrenamiento(idEntrenamientoExtra,
-                                    buttonFechaEntrenamiento.getText().toString(),
-                                    buttonHoraEntrenamiento.getText().toString(),
-                                    lugar.getID_CANCHA(), null, null, usuario, fechaActualizacion);
+                            auxiliarGeneral.errorDataBase(getActivity());
+                        }
+                    } else {
+                        //EDITAR ENTRENAMIENTO
+                        lugar = (Cancha) spinnerLugarEntrenamiento
+                                .getSelectedItem();
+                        entrenamiento = new Entrenamiento(idEntrenamientoExtra,
+                                buttonFechaEntrenamiento.getText().toString(),
+                                buttonHoraEntrenamiento.getText().toString(),
+                                lugar.getID_CANCHA(), null, null, usuario, fechaActualizacion);
 
-                            // inserto entrenamiento y verifico el id
-                            if (controladorAdeful
-                                    .actualizarEntrenamientoAdeful(entrenamiento)) {
-                               for (int i = 0; i < divisionArrayExtra.size(); i++) {
-                                    for (int d = 0; d < id_divisin_array.size(); d++) {
-                                        if (divisionArrayExtra.get(i).getID_DIVISION() == id_divisin_array.get(d)) {
-                                            break;
+                        // inserto entrenamiento y verifico el id
+                        if (controladorAdeful
+                                .actualizarEntrenamientoAdeful(entrenamiento)) {
+                            for (int i = 0; i < divisionArrayExtra.size(); i++) {
+                                for (int d = 0; d < id_divisin_array.size(); d++) {
+                                    if (divisionArrayExtra.get(i).getID_DIVISION() == id_divisin_array.get(d)) {
+                                        break;
+                                    } else {
+                                        entrenamiento_Division = new Entrenamiento(
+                                                0, idEntrenamientoExtra, id_divisin_array
+                                                .get(i), "", true);
+                                        if (controladorAdeful
+                                                .insertEntrenamientoDivisionAdeful(entrenamiento_Division)) {
                                         } else {
-                                            entrenamiento_Division = new Entrenamiento(
-                                                    0, idEntrenamientoExtra, id_divisin_array
-                                                    .get(i), "", true);
-                                            if (controladorAdeful
-                                                    .insertEntrenamientoDivisionAdeful(entrenamiento_Division)) {
-                                            } else {
-                                      auxiliarGeneral.errorDataBase(getActivity());
-                                            }
+                                            auxiliarGeneral.errorDataBase(getActivity());
                                         }
                                     }
                                 }
-                                for (int i = 0; i < id_divisin_array.size(); i++) {
-                                    for (int d = 0; d < divisionArrayExtra.size(); d++) {
-                                        if (id_divisin_array.get(i) == divisionArrayExtra.get(d).getID_DIVISION()) {
-                                            break;
-                                        }else{
-                                         if(controladorAdeful.eliminarDivisionEntrenamientoAdeful(divisionArrayExtra.get(d).getID_ENTRENAMIENTO_DIVISION())){
-                                        } else {
-                                        auxiliarGeneral.errorDataBase(getActivity());
-                                         }
-                                        }
-                                    }
-                                }
-                                buttonFechaEntrenamiento.setText("Día");
-                                buttonHoraEntrenamiento.setText("Hora");
-                                recyclerViewLoadDivision();
-                                Toast.makeText(
-                                        getActivity(),
-                                        "Entrenamiento actualizado correctamente.",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                   auxiliarGeneral.errorDataBase(getActivity());
                             }
+                            for (int i = 0; i < id_divisin_array.size(); i++) {
+                                for (int d = 0; d < divisionArrayExtra.size(); d++) {
+                                    if (id_divisin_array.get(i) == divisionArrayExtra.get(d).getID_DIVISION()) {
+                                        break;
+                                    } else {
+                                        if (controladorAdeful.eliminarDivisionEntrenamientoAdeful(divisionArrayExtra.get(d).getID_ENTRENAMIENTO_DIVISION())) {
+                                        } else {
+                                            auxiliarGeneral.errorDataBase(getActivity());
+                                        }
+                                    }
+                                }
+                            }
+                            inicializarControles(ACTUALIZAR_USUARIO);
+                            actualizar = false;
+                            insertar = true;
+                        } else {
+                            auxiliarGeneral.errorDataBase(getActivity());
                         }
                     }
                 }
+            }
             return true;
         }
         if (id == R.id.action_lifuba) {

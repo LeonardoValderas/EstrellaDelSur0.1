@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
@@ -33,7 +35,8 @@ public class FragmentCancha extends Fragment {
 	private AdaptadorRecyclerCancha adaptadorCancha;
 	private ControladorAdeful controladorAdeful;
 	private int CheckedPositionFragment;
-	
+	private AuxiliarGeneral auxiliarGeneral;
+
 	public static FragmentCancha newInstance() {
 		FragmentCancha fragment = new FragmentCancha();
 		return fragment;
@@ -63,7 +66,7 @@ public class FragmentCancha extends Fragment {
 				R.id.imageButtonEquipo_Cancha);
 		editTextNombre = (EditText) v.findViewById(
 				R.id.editTextDescripcion);
-
+		editTextNombre.setVisibility(View.GONE);
 		recycleViewCancha = (RecyclerView) v.findViewById(
 				R.id.recycleViewGeneral);
 		 return v;
@@ -76,32 +79,22 @@ public class FragmentCancha extends Fragment {
 	    outState.putInt("curChoice", CheckedPositionFragment);
 	}
 	private void init() {
-
-		/***
-		 * imageButton que busca imagen que activa el mapa
-		 */
-	
-		imageButtonCancha.setImageResource(R.drawable.ic_mapa_icono);
+	    auxiliarGeneral = new AuxiliarGeneral(getActivity());
+		imageButtonCancha.setImageResource(R.mipmap.ic_mapa_icon);
 		imageButtonCancha.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//
 				Intent mapa = new Intent(getActivity(), MapaCancha.class);
 				startActivity(mapa);
 			}
 		});
-
-		editTextNombre.setVisibility(View.GONE);
 		recyclerViewLoadCancha();
 		recycleViewCancha.addOnItemTouchListener(new RecyclerTouchListener(
 				getActivity(), recycleViewCancha, new ClickListener() {
-
-					@Override
+                	@Override
 					public void onLongClick(View view, final int position) {
-
-						dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
+                		dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
 								"Desea eliminar la cancha?", null, null);
 						dialogoAlerta.btnAceptar.setText("Aceptar");
 						dialogoAlerta.btnCancelar.setText("Cancelar");
@@ -111,23 +104,16 @@ public class FragmentCancha extends Fragment {
 
 									@Override
 									public void onClick(View v) {
-										// TODO Auto-generated method stub
-										controladorAdeful.abrirBaseDeDatos();
 										if(controladorAdeful.eliminarCanchaAdeful(canchaAdefulArray.get(position)
 												.getID_CANCHA())) {
-											controladorAdeful.cerrarBaseDeDatos();
 											recyclerViewLoadCancha();
 											Toast.makeText(
 													getActivity(),
-													"Cancha Eliminada Correctamente",
+													"Cancha eliminada correctamente",
 													Toast.LENGTH_SHORT).show();
 											dialogoAlerta.alertDialog.dismiss();
 										}else{
-											controladorAdeful.cerrarBaseDeDatos();
-											Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-															"\n Si el error persiste comuniquese con soporte.",
-													Toast.LENGTH_SHORT).show();
-										}
+		                                auxiliarGeneral.errorDataBase(getActivity());								}
 									}
 								});
 						dialogoAlerta.btnCancelar
@@ -135,7 +121,6 @@ public class FragmentCancha extends Fragment {
 
 									@Override
 									public void onClick(View v) {
-										// TODO Auto-generated method stub
 										dialogoAlerta.alertDialog.dismiss();
 									}
 								});
@@ -143,8 +128,6 @@ public class FragmentCancha extends Fragment {
 
 					@Override
 					public void onClick(View view, int position) {
-						// TODO Auto-generated method stub
-
 						Intent mapa = new Intent(getActivity(),
 								MapaCancha.class);
 						mapa.putExtra("actualizar", true);
@@ -159,8 +142,7 @@ public class FragmentCancha extends Fragment {
 						mapa.putExtra("posicion", position);
 
 						startActivity(mapa);
-
-					}
+                	}
 				}));
 	}
 
@@ -171,23 +153,16 @@ public class FragmentCancha extends Fragment {
 				getActivity(), DividerItemDecoration.VERTICAL_LIST));
 		recycleViewCancha.setItemAnimator(new DefaultItemAnimator());
 
-		controladorAdeful.abrirBaseDeDatos();
-		canchaAdefulArray = controladorAdeful.selectListaCanchaAdeful();
+    	canchaAdefulArray = controladorAdeful.selectListaCanchaAdeful();
 		if(canchaAdefulArray != null) {
-			controladorAdeful.cerrarBaseDeDatos();
-
-			adaptadorCancha = new AdaptadorRecyclerCancha(canchaAdefulArray);
-			adaptadorCancha.notifyDataSetChanged();
+			adaptadorCancha = new AdaptadorRecyclerCancha(canchaAdefulArray, getActivity());
 			recycleViewCancha.setAdapter(adaptadorCancha);
 		}else{
-			controladorAdeful.cerrarBaseDeDatos();
-			Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-					Toast.LENGTH_SHORT).show();
+	    auxiliarGeneral.errorDataBase(getActivity());
 		}
 	}
 
 	public static interface ClickListener {
-
 		public void onClick(View view, int position);
 		public void onLongClick(View view, int position);
 	}
@@ -204,12 +179,10 @@ public class FragmentCancha extends Fragment {
 			this.clickListener = clickListener;
 			detector = new GestureDetector(context,
 					new GestureDetector.SimpleOnGestureListener() {
-
 						@Override
 						public boolean onSingleTapUp(MotionEvent e) {
 							return true;
 						}
-
 						@Override
 						public void onLongPress(MotionEvent e) {
 							View child = recyclerView.findChildViewUnder(
@@ -235,9 +208,7 @@ public class FragmentCancha extends Fragment {
 
 		@Override
 		public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
 		}
-
 		@Override
 		public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
 			// TODO Auto-generated method stub

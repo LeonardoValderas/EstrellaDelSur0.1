@@ -58,7 +58,7 @@ public class AdapterSpinnerEquipo extends ArrayAdapter<Equipo>
 					imageViewEscudo.setImageBitmap(theImage);
 				}else{
 
-                    imageViewEscudo.setImageResource(R.mipmap.ic_escudo_equipo);
+                    imageViewEscudo.setImageResource(R.mipmap.ic_escudo_cris);
 				}
                 if(spinnerGeneral != null)
                 	spinnerGeneral.setText(equipo.getNOMBRE_EQUIPO());

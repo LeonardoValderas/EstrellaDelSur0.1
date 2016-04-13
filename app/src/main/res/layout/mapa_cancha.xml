@@ -2,27 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
     <include
         android:id="@+id/appbar"
-        layout="@layout/toolbar" />
+        layout="@layout/toolbar_mapa" />
 
-    <!--<fragment-->
-        <!--android:id="@+id/map"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="300dp"-->
-        <!--android:layout_below="@+id/appbar"-->
-        <!--class="com.google.android.gms.maps.SupportMapFragment" />-->
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/appbar"
-        android:layout_height="300dp"
         android:id="@+id/map"
-        tools:context=".liga.MapaCancha"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
-
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_below="@+id/appbar"
+        tools:context=".liga.MapaCancha" />
 
     <EditText
         android:id="@+id/editTextNombre"
@@ -30,10 +23,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/map"
         android:layout_marginTop="10dp"
-        android:textSize="25dp"
         android:ems="10"
         android:gravity="center"
-        android:hint="Nombre de la cancha" >
+        android:hint="Nombre de la cancha"
+        android:textSize="25dp">
 
         <requestFocus />
     </EditText>

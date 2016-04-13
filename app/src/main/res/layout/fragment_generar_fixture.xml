@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="5dp"
     tools:context="com.estrelladelsur.estrelladelsur.miequipo.TabsFixture">
 
     <ScrollView
@@ -56,6 +57,7 @@
                     android:background="@drawable/style_spinner"
                     android:spinnerMode="dialog" />
             </LinearLayout>
+
             <Spinner
                 android:id="@+id/fixtureCanchaSpinner"
                 android:layout_width="match_parent"
@@ -83,7 +85,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
 
                 <Button
                     android:id="@+id/btn_dia"
@@ -91,7 +94,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="Día" />
+                    android:background="@drawable/button_estilo_fecha"
+                    android:text="Día"
+                    android:textSize="20dp" />
 
                 <Button
                     android:id="@+id/btn_hora"
@@ -99,7 +104,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="Hora" />
+                    android:background="@drawable/button_estilo_fecha"
+                    android:text="Hora"
+                    android:textSize="20dp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

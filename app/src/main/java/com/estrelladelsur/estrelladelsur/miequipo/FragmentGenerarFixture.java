@@ -1,12 +1,12 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -64,7 +64,6 @@ public class FragmentGenerarFixture extends Fragment {
     private Fecha fecha;
     private Anio anio;
     private Mes mes;
-    //private DateFormat formate = DateFormat.getDateInstance();
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
     private DateFormat form = DateFormat.getTimeInstance(DateFormat.SHORT);
@@ -85,6 +84,7 @@ public class FragmentGenerarFixture extends Fragment {
     private int idFixtureExtra;
     private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
+    private Typeface editTextFont;
 
     public static FragmentGenerarFixture newInstance() {
         FragmentGenerarFixture fragment = new FragmentGenerarFixture();
@@ -113,6 +113,7 @@ public class FragmentGenerarFixture extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generar_fixture, container,
                 false);
+        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
         // DIVISION
         fixtureDivisionSpinner = (Spinner) v
                 .findViewById(R.id.fixtureDivisionSpinner);
@@ -135,9 +136,10 @@ public class FragmentGenerarFixture extends Fragment {
                 .findViewById(R.id.fixtureVisitaSpinner);
         // DIA
         btn_dia = (Button) v.findViewById(R.id.btn_dia);
+        btn_dia.setTypeface(editTextFont, Typeface.BOLD);
         // HORA
         btn_hora = (Button) v.findViewById(R.id.btn_hora);
-
+        btn_hora.setTypeface(editTextFont, Typeface.BOLD);
         return v;
     }
 
@@ -149,30 +151,7 @@ public class FragmentGenerarFixture extends Fragment {
 
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
-//		// Fecha ver donde implementar
-        for (int i = 0; i < getResources().getStringArray(R.array.fechaArray).length; i++) {
-
-            fecha = new Fecha(i, getResources().getStringArray(
-                    R.array.fechaArray)[i]);
-            controladorAdeful.insertFecha(fecha);
-        }
-//		// Anio ver donde implementar
-        for (int i = 0; i < getResources().getStringArray(R.array.anioArray).length; i++) {
-
-            anio = new Anio(i,
-                    getResources().getStringArray(R.array.anioArray)[i]);
-            controladorAdeful.insertAnio(anio);
-        }
-
-        // Mes ver donde implementar
-        for (int i = 0; i < getResources().getStringArray(R.array.mesArray).length; i++) {
-
-            mes = new Mes(i,
-                    getResources().getStringArray(R.array.mesArray)[i]);
-
-            controladorAdeful.insertMes(mes);
-        }
-        // DIVISION
+          // DIVISION
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
             // DIVSION SPINNER
@@ -207,11 +186,9 @@ public class FragmentGenerarFixture extends Fragment {
             auxiliarGeneral.errorDataBase(getActivity());
         }
         // FECHA
-        controladorAdeful.abrirBaseDeDatos();
         fechaArray = controladorAdeful.selectListaFecha();
         if (fechaArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (fechaArray.size() != 0) {
+            if (!fechaArray.isEmpty()) {
                 // FECHA SPINNER
                 adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
                         R.layout.simple_spinner_dropdown_item, fechaArray);
@@ -223,16 +200,12 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureFechaSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+        auxiliarGeneral.errorDataBase(getActivity());
         }
         // ANIO
-        controladorAdeful.abrirBaseDeDatos();
         anioArray = controladorAdeful.selectListaAnio();
         if (anioArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (anioArray.size() != 0) {
+            if (!anioArray.isEmpty()) {
                 // ANIO SPINNER
                 adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
                         R.layout.simple_spinner_dropdown_item, anioArray);
@@ -244,16 +217,12 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureAnioSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+                auxiliarGeneral.errorDataBase(getActivity());
         }
         // CANCHA
-        controladorAdeful.abrirBaseDeDatos();
         canchaArray = controladorAdeful.selectListaCanchaAdeful();
         if (canchaArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (canchaArray.size() != 0) {
+            if (!canchaArray.isEmpty()) {
                 // CANCHA SPINNER
                 adapterFixtureCancha = new AdapterSpinnerCancha(getActivity(),
                         R.layout.simple_spinner_dropdown_item, canchaArray);
@@ -265,16 +234,12 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureCanchaSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+         auxiliarGeneral.errorDataBase(getActivity());
         }
         // EQUIPO
-        controladorAdeful.abrirBaseDeDatos();
         equipoArray = controladorAdeful.selectListaEquipoAdeful();
         if (equipoArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-            if (equipoArray.size() != 0) {
+            if (!equipoArray.isEmpty()) {
                 // LOCAL SPINNER
                 adapterFixtureEquipo = new AdapterSpinnerEquipo(getActivity(),
                         R.layout.simple_spinner_dropdown_item, equipoArray);
@@ -292,9 +257,7 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureVisitaSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                    Toast.LENGTH_SHORT).show();
+         auxiliarGeneral.errorDataBase(getActivity());
         }
         // DIA
         btn_dia.setOnClickListener(new View.OnClickListener() {
@@ -307,7 +270,6 @@ public class FragmentGenerarFixture extends Fragment {
         btn_hora.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                // TODO Auto-generated method stub
                 setTime();
             }
         });
@@ -316,7 +278,6 @@ public class FragmentGenerarFixture extends Fragment {
                 false);
         //Metodo Extra
         if (actualizar) {
-
             idFixtureExtra = getActivity().getIntent().getIntExtra("id_fixture", 0);
 
             //DIVISION 0
@@ -466,8 +427,8 @@ public class FragmentGenerarFixture extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
@@ -547,11 +508,9 @@ public class FragmentGenerarFixture extends Fragment {
                 fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
                 anio = (Anio) fixtureAnioSpinner.getSelectedItem();
 
-
                 //FIXTURE NVO
                 if (insertar) {
-                    //    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                    //    Date d = format.parse();
+
                     fixture = new Fixture(0, equipol.getID_EQUIPO(),
                             equipov.getID_EQUIPO(), division.getID_DIVISION(),
                             torneo.getID_TORNEO(), cancha.getID_CANCHA(),
@@ -559,16 +518,11 @@ public class FragmentGenerarFixture extends Fragment {
                             , btn_hora.getText().toString(),
                             usuario, fechaCreacion, usuario, fechaActualizacion);
 
-                    controladorAdeful.abrirBaseDeDatos();
                     if (controladorAdeful.insertFixtureAdeful(fixture)) {
-                        controladorAdeful.cerrarBaseDeDatos();
-
-                        Toast.makeText(getActivity(), "Partido Cargado Correctamente",
+                          Toast.makeText(getActivity(), "Partido cargado correctamente",
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                Toast.LENGTH_SHORT).show();
+                        auxiliarGeneral.errorDataBase(getActivity());
                     }
                 } else { //FIXTURE ACTUALIZAR
 
@@ -579,19 +533,15 @@ public class FragmentGenerarFixture extends Fragment {
                             .toString(), btn_hora.getText().toString(),
                             null, null, usuario, fechaActualizacion);
 
-                    controladorAdeful.abrirBaseDeDatos();
                     if (controladorAdeful.actualizarFixtureAdeful(fixture)) {
-                        controladorAdeful.cerrarBaseDeDatos();
 
                         actualizar = false;
                         insertar = true;
-                        Toast.makeText(getActivity(), "Partido Actualizado Correctamente",
+                        Toast.makeText(getActivity(), "Partido actualizado correctamente",
                                 Toast.LENGTH_SHORT).show();
 
                     } else {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(getActivity(), getResources().getString(R.string.error_data_base),
-                                Toast.LENGTH_SHORT).show();
+                        auxiliarGeneral.errorDataBase(getActivity());
                     }
                 }
             }

@@ -1,6 +1,9 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
+
+import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +19,14 @@ public class AdaptadorRecyclerCancha extends
 
 	private View.OnClickListener listener;
 	private ArrayList<Cancha> canchaArray;
+	private Typeface nombreFont;
+	private Typeface direFont;
 
 	public static class CanchaViewHolder extends RecyclerView.ViewHolder {
 
 		private TextView textRecyclerView;
 		private TextView textRecyclerView2;
 		private ImageView imageViewEscudo;
-
 		private ImageView imageViewMapa;
 
 		public CanchaViewHolder(View itemView) {
@@ -41,14 +45,18 @@ public class AdaptadorRecyclerCancha extends
 			imageViewEscudo.setVisibility(View.GONE);
 		}
 
-		public void bindTitular(Cancha cancha) {
+		public void bindTitular(Cancha cancha, Typeface nombre, Typeface dire) {
 			textRecyclerView.setText(cancha.getNOMBRE());
+			textRecyclerView.setTypeface(nombre, Typeface.BOLD);
 			textRecyclerView2.setText(cancha.getDIRECCION());
+			textRecyclerView2.setTypeface(dire);
 		}
 	}
 
-	public AdaptadorRecyclerCancha(ArrayList<Cancha> canchaArray) {
+	public AdaptadorRecyclerCancha(ArrayList<Cancha> canchaArray, Context context) {
 		this.canchaArray = canchaArray;
+		this.direFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
+		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
 	}
 
 	@Override
@@ -65,7 +73,7 @@ public class AdaptadorRecyclerCancha extends
 	@Override
 	public void onBindViewHolder(CanchaViewHolder viewHolder, int pos) {
 		Cancha item = canchaArray.get(pos);
-		viewHolder.bindTitular(item);
+		viewHolder.bindTitular(item, nombreFont,direFont);
 	}
 	@Override
 	public int getItemCount() {

@@ -3,6 +3,7 @@ package com.estrelladelsur.estrelladelsur.miequipo;
 import com.estrelladelsur.estrelladelsur.R;
 import java.util.ArrayList;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
@@ -21,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
@@ -55,7 +55,6 @@ public class ActivityResultado extends AppCompatActivity {
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
     private DialogoResultado dialogoResultado;
-    private DialogoGoleador dialogoGoleador;
     private Division division;
     private Torneo torneo;
     private Fecha fecha;
@@ -74,12 +73,14 @@ public class ActivityResultado extends AppCompatActivity {
     private DialogoAlerta dialogoAlerta;
     private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
+    private Typeface titulos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resultado);
 
+        titulos = Typeface.createFromAsset(ActivityResultado.this.getAssets(), "aspace_demo.otf");
         controladorAdeful = new ControladorAdeful(this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -94,6 +95,7 @@ public class ActivityResultado extends AppCompatActivity {
 
         txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
         txtAbSubTitulo.setText("RESULTADO");
+        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         // SPINNER DIVISION
         resultadoDivisionSpinner = (Spinner) findViewById(R.id.resultadoDivisionSpinner);
@@ -286,7 +288,7 @@ public class ActivityResultado extends AppCompatActivity {
                                             dialogoResultado.resultadoTextErrorVacio
                                                     .setVisibility(View.VISIBLE);
                                             dialogoResultado.resultadoTextErrorVacio
-                                                    .setText("Ingrese Ambos Resultados.");
+                                                    .setText("Ingrese ambos resultados.");
                                         }
                                     }
                                 });
@@ -307,7 +309,7 @@ public class ActivityResultado extends AppCompatActivity {
                         // TODO Auto-generated method stub
 
                         dialogoAlerta = new DialogoAlerta(ActivityResultado.this,
-                                "ALERTA", "Desea Resetear el Resultado?", null,
+                                "ALERTA", "Desea resetear el resultado?", null,
                                 null);
                         dialogoAlerta.btnAceptar.setText("Aceptar");
                         dialogoAlerta.btnCancelar.setText("Cancelar");
@@ -358,9 +360,14 @@ public class ActivityResultado extends AppCompatActivity {
         arrayResultado = controladorAdeful.selectListaResultadoAdeful(division,
                 torneo, fecha, anio);
         if (arrayResultado != null) {
-            adaptadorResultado = new AdaptadorRecyclerResultado(arrayResultado);
-            adaptadorResultado.notifyDataSetChanged();
-            recyclerViewResultado.setAdapter(adaptadorResultado);
+            adaptadorResultado = new AdaptadorRecyclerResultado(arrayResultado, ActivityResultado.this);
+             recyclerViewResultado.setAdapter(adaptadorResultado);
+            if(arrayResultado.isEmpty()){
+                Toast.makeText(
+                        ActivityResultado.this,
+                        "Selección sin datos",
+                        Toast.LENGTH_SHORT).show();
+            }
         } else {
             auxiliarGeneral.errorDataBase(ActivityResultado.this);
         }
@@ -424,23 +431,23 @@ public class ActivityResultado extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
 
-        menu.getItem(7).setVisible(false);
-        menu.getItem(8).setVisible(false);
-        menu.getItem(9).setVisible(false);
+
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(3).setVisible(false);// adeful
+        menu.getItem(4).setVisible(false);// puesto
+        menu.getItem(5).setVisible(false);// posicion
+        menu.getItem(6).setVisible(false);// cargo
+        // menu.getItem(7).setVisible(false);//cerrar
+        menu.getItem(8).setVisible(false);// guardar
+        menu.getItem(9).setVisible(false);// Subir
         menu.getItem(10).setVisible(false); // eliminar
         menu.getItem(11).setVisible(false); // consultar
-        return super.onCreateOptionsMenu(menu);
+       return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        // if (drawerToggle.onOptionsItemSelected(item)) {
-        // return true;
-        // }
 
         int id = item.getItemId();
         // noinspection SimplifiableIfStatement

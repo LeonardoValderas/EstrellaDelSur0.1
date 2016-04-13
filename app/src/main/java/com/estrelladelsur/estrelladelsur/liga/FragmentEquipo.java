@@ -100,7 +100,7 @@ public class FragmentEquipo extends Fragment {
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         // imageButton que busca imagen del escudo del equipo en la memoria  interna
-        imageEquipo.setImageResource(R.mipmap.ic_escudo_equipo);
+        imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
         imageEquipo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,7 +134,7 @@ public class FragmentEquipo extends Fragment {
                                             getActivity(),
                                             "Equipo eliminado correctamente",
                                             Toast.LENGTH_SHORT).show();
-                                    imageEquipo.setImageResource(R.mipmap.ic_escudo_equipo);
+                                    imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
                                     editTextNombre.setText("");
                                     insertar = true;
                                     dialogoAlerta.alertDialog.dismiss();
@@ -155,7 +155,7 @@ public class FragmentEquipo extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 insertar = false;
-                imageEquipo.setImageResource(R.mipmap.ic_escudo_equipo);
+                imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
                 editTextNombre.setText(equipoAdefulArray.get(position)
                         .getNOMBRE_EQUIPO());
                 if (equipoAdefulArray.get(position).getESCUDO() != null) {
@@ -286,7 +286,7 @@ public class FragmentEquipo extends Fragment {
         recyclerViewLoadEquipo();
         editTextNombre.setText("");
         if (imagenEscudo != null) {
-            imageEquipo.setImageResource(R.mipmap.ic_escudo_equipo);
+            imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
         }
         Toast.makeText(getActivity(),
                 mensaje,

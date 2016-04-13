@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
@@ -81,9 +80,7 @@ public class FragmentEditarJugador extends Fragment {
 		// BUTTON
 		botonFloating = (FloatingActionButton) v
 				.findViewById(R.id.botonFloating);
-
 		return v;
-
 	}
 
 	@Override
@@ -133,8 +130,7 @@ public class FragmentEditarJugador extends Fragment {
 						}
 	      			}
 				});
-				
-				recyclerViewJugador.addOnItemTouchListener(new 
+			recyclerViewJugador.addOnItemTouchListener(new
 						RecyclerTouchListener(getActivity(), 
 								recyclerViewJugador, new ClickListener() {
 
@@ -165,7 +161,7 @@ public class FragmentEditarJugador extends Fragment {
 										
 										
 										dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
-												"Desea Eliminar el Jugador?", null, null);
+												"Desea eliminar el jugador?", null, null);
 										dialogoAlerta.btnAceptar.setText("Aceptar");
 										dialogoAlerta.btnCancelar.setText("Cancelar");
 
@@ -179,7 +175,7 @@ public class FragmentEditarJugador extends Fragment {
 										recyclerViewLoadJugador(divisionSpinner);
 														Toast.makeText(
 																getActivity(),
-																"Jugador Eliminado Correctamente",
+																"Jugador eliminado correctamente",
 																Toast.LENGTH_SHORT).show();
         												dialogoAlerta.alertDialog.dismiss();
 													}
@@ -203,12 +199,15 @@ public class FragmentEditarJugador extends Fragment {
 	}
 
 	public void recyclerViewLoadJugador(int division) {
-
 		jugadorArray = controladorAdeful.selectListaJugadorAdeful(division);
 		if(jugadorArray != null) {
-			adaptadorEditarJugador = new AdaptadorRecyclerJugador(jugadorArray);
-			adaptadorEditarJugador.notifyDataSetChanged();
+			adaptadorEditarJugador = new AdaptadorRecyclerJugador(jugadorArray, getActivity());
 			recyclerViewJugador.setAdapter(adaptadorEditarJugador);
+			if(jugadorArray.isEmpty())
+				Toast.makeText(
+						getActivity(),
+						"Selección sin datos",
+						Toast.LENGTH_SHORT).show();
 		}else {
         auxiliarGeneral.errorDataBase(getActivity());
 		}
@@ -217,9 +216,7 @@ public class FragmentEditarJugador extends Fragment {
 	public static interface ClickListener {
 		public void onClick(View view, int position);
 		public void onLongClick(View view, int position);
-
 	}
-
 	static class RecyclerTouchListener implements
 			RecyclerView.OnItemTouchListener {
 

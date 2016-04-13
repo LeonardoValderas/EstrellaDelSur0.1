@@ -1,13 +1,17 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
@@ -18,6 +22,8 @@ public class AdaptadorRecyclerResultado extends
 
 	private View.OnClickListener listener;
 	private ArrayList<Resultado> resultadoArray;
+	private Typeface textFont;
+	private Typeface equipoFont;
 
 	public static class FixtureViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -29,6 +35,8 @@ public class AdaptadorRecyclerResultado extends
 		private TextView textRecyclerViewCancha;
 		private TextView textRecyclerViewResultadoV;
 		private TextView textRecyclerViewResultadoL;
+		private LinearLayout linearCancha;
+		private LinearLayout linearDiaHora;
 
 		public FixtureViewHolder(View itemView) {
 			super(itemView);
@@ -62,14 +70,22 @@ public class AdaptadorRecyclerResultado extends
 			// RESULTADO VISITA
 			textRecyclerViewResultadoV = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewResultadoV);
+			linearCancha = (LinearLayout) itemView
+					.findViewById(R.id.linearCancha);
+			linearCancha.setVisibility(View.GONE);
+			linearDiaHora = (LinearLayout) itemView
+					.findViewById(R.id.linearDiaHora);
+			linearDiaHora.setVisibility(View.GONE);
+
+
 
 		}
 
-    	public void bindTitular(Resultado resultadoRecycler) {
+    	public void bindTitular(Resultado resultadoRecycler , Typeface equipo, Typeface texto) {
 			// ESCUDO EQUIPO LOCAL
 			byte[] escudoLocal = resultadoRecycler.getESCUDOLOCAL();
 			if (escudoLocal == null) {
-				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_equipo);
+				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_cris);
 			} else {
 				Bitmap escudoLocalBitmap = BitmapFactory.decodeByteArray(
 						resultadoRecycler.getESCUDOLOCAL(), 0,
@@ -82,7 +98,7 @@ public class AdaptadorRecyclerResultado extends
 			// ESCUDO EQUIPO VISITA
 			byte[] escudovisita = resultadoRecycler.getESCUDOVISITA();
 			if (escudovisita == null) {
-				imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_equipo);
+				imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_cris);
 			} else {
 				Bitmap escudoVisitaBitmap = BitmapFactory.decodeByteArray(
 						resultadoRecycler.getESCUDOVISITA(), 0,
@@ -95,26 +111,34 @@ public class AdaptadorRecyclerResultado extends
 			
 			textRecyclerViewEquipoL.setText(resultadoRecycler
 					.getEQUIPO_LOCAL());
+			textRecyclerViewEquipoL.setTypeface(equipo, Typeface.BOLD);
 			textRecyclerViewEquipoV.setText(resultadoRecycler
 					.getEQUIPO_VISITA());
+			textRecyclerViewEquipoV.setTypeface(equipo, Typeface.BOLD);
 
 			if (resultadoRecycler.getRESULTADO_LOCAL() != null){
 				textRecyclerViewResultadoL.setText(resultadoRecycler
 						.getRESULTADO_LOCAL());
+				textRecyclerViewResultadoL.setTypeface(texto, Typeface.BOLD);
 			}else{
 				textRecyclerViewResultadoL.setText("-");
+				textRecyclerViewResultadoL.setTypeface(texto, Typeface.BOLD);
 			}
 			if (resultadoRecycler.getRESULTADO_VISITA()!=null){
 				textRecyclerViewResultadoV.setText(resultadoRecycler
 						.getRESULTADO_VISITA());
+				textRecyclerViewResultadoV.setTypeface(texto, Typeface.BOLD);
 			}else{
 				textRecyclerViewResultadoV.setText("-");
+				textRecyclerViewResultadoV.setTypeface(texto, Typeface.BOLD);
 			}
 		}
 	}
 
-	public AdaptadorRecyclerResultado(ArrayList<Resultado> resultadoArray) {
+	public AdaptadorRecyclerResultado(ArrayList<Resultado> resultadoArray, Context context) {
 		this.resultadoArray = resultadoArray;
+		textFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
+		equipoFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
 	}
 
 	@Override
@@ -132,7 +156,7 @@ public class AdaptadorRecyclerResultado extends
 	@Override
 	public void onBindViewHolder(FixtureViewHolder viewHolder, int pos) {
 		Resultado item = resultadoArray.get(pos);
-		viewHolder.bindTitular(item);
+		viewHolder.bindTitular(item,textFont, equipoFont);
 	}
 
 	@Override

@@ -1,6 +1,10 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
+import java.util.ResourceBundle;
+
+import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +20,7 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 
 	private View.OnClickListener listener;
 	private ArrayList<Entrenamiento> divisionArray;
-
+	private Typeface nombreFont;
 	public static class DivisionViewHolder extends RecyclerView.ViewHolder {
 
 		private TextView textViewDivision;
@@ -32,14 +36,16 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 					.findViewById(R.id.checkBoxEntrenamiento);
 		}
 
-		public void bindTitular(Entrenamiento entrenamientoXDivision) {
+		public void bindTitular(Entrenamiento entrenamientoXDivision, Typeface division) {
 			textViewDivision.setText(entrenamientoXDivision.getDESCRIPCION());
+			textViewDivision.setTypeface(division);
 			checkBoxEntrenamiento.setSelected(entrenamientoXDivision.isSelected());
 		}
 	}
 
-	public AdaptadorRecyclerDivisionEntrenamiento(ArrayList<Entrenamiento> divisionArray) {
+	public AdaptadorRecyclerDivisionEntrenamiento(ArrayList<Entrenamiento> divisionArray,Context context) {
 		this.divisionArray = divisionArray;
+		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
 	}
 	@Override
 	public DivisionViewHolder onCreateViewHolder(ViewGroup viewGroup,
@@ -59,7 +65,7 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 		final int position = pos;
 
 		viewHolder.textViewDivision.setText(divisionArray.get(position).getDESCRIPCION());
-
+		viewHolder.textViewDivision.setTypeface(nombreFont,Typeface.BOLD);
 		viewHolder.checkBoxEntrenamiento.setChecked(divisionArray.get(position).isSelected());
 
 		viewHolder.checkBoxEntrenamiento.setTag(divisionArray.get(position));

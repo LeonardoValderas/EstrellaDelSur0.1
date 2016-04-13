@@ -136,8 +136,8 @@
     </string-array>
     <string name="ceroSpinnerEquipo">Genere un equipo.</string>
     <!-- mapa cancha -->
-    <string name="error_internet">Verifique su conexión de Internet</string>
-
+    <string name="error_internet">Verifique su conexión de Internet.</string>
+    <string name="error_internet_direccion">No se puede acceder a la dirección seleccionada.\nVerifique su conexión a Interner.</string>
     <!--JUGADOR-->
     <!-- Array SPINNER POSICION  -->
     <string-array name="ceroSpinnerPosicion">

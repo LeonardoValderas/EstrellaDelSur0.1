@@ -56,7 +56,7 @@ public class LocationAddress {
                     } else {
                         message.what = 1;
                         Bundle bundle = new Bundle();
-                        result = "No se puede acceder a la direcci�n seleccionada.\n"+"Verifique su conexi�n a Interner.";
+                        result = "Verifique su conexión de Internet.";
 //                        result = "Latitude: " + latitude + " Longitude: " + longitude +
 //                                "\n No se puede acceder a la direcci�n seleccionada.";
                         bundle.putString("address", result);

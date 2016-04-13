@@ -4,84 +4,89 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado">
 
     <!-- Toolbar -->
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/toolbar" />
-    <include layout="@layout/toolbar_sub"
-        android:id="@+id/toolbar_sub" />
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
 
-        <android.support.design.widget.CoordinatorLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true" >
+    <include
+        android:id="@+id/toolbar_sub"
+        layout="@layout/toolbar_sub" />
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="false">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="2dp"
-            android:orientation="vertical" >
-
-            <Spinner
-                android:id="@+id/resultadoDivisionSpinner"
-                android:layout_width="match_parent"
-                android:layout_margin="2dp"
-                android:background="@drawable/style_spinner"
-                android:layout_height="50dp" />
-
-            <Spinner
-                android:id="@+id/resultadoTorneoSpinner"
-                android:layout_width="match_parent"
-                android:layout_margin="2dp"
-                android:background="@drawable/style_spinner"
-                android:layout_height="50dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:orientation="vertical">
 
                 <Spinner
-                    android:id="@+id/resultadoFechaSpinner"
+                    android:id="@+id/resultadoDivisionSpinner"
                     android:layout_width="match_parent"
-                    android:layout_margin="2dp"
-                    android:background="@drawable/style_spinner"
                     android:layout_height="50dp"
-                    android:layout_weight="2" />
+                    android:layout_margin="2dp"
+                    android:background="@drawable/style_spinner" />
 
                 <Spinner
-                    android:id="@+id/resultadoAnioSpinner"
+                    android:id="@+id/resultadoTorneoSpinner"
                     android:layout_width="match_parent"
-                    android:layout_margin="2dp"
-                    android:background="@drawable/style_spinner"
                     android:layout_height="50dp"
-                    android:layout_weight="2" />
+                    android:layout_margin="2dp"
+                    android:background="@drawable/style_spinner" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Spinner
+                        android:id="@+id/resultadoFechaSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="2dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/style_spinner" />
+
+                    <Spinner
+                        android:id="@+id/resultadoAnioSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="2dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/style_spinner" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-           <android.support.v7.widget.RecyclerView
+
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycleViewResultado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/botonFloating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        app:backgroundTint="@color/color_primary"
-        android:src="@drawable/ic_pelota_futbol"
-        app:borderWidth="0dp" />
-   </android.support.design.widget.CoordinatorLayout>
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/botonFloating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_pelota_futbol"
+            app:backgroundTint="@color/color_primary"
+            app:borderWidth="0dp" />
+    </android.support.design.widget.CoordinatorLayout>
 
 </LinearLayout>

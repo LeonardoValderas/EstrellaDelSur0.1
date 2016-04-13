@@ -2,35 +2,24 @@ package com.estrelladelsur.estrelladelsur.liga;
 
 import java.util.ArrayList;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
-import android.support.v4.app.ActivityCompat;
+import android.graphics.Typeface;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -51,14 +40,11 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
 
     private ArrayList<Cancha> canchaAdefulArray;
     private TextView tvAddress;
-    GoogleMap mapa;
-    private AppLocationService appLocationService;
+    private GoogleMap mapa;
     public static double latBache = -41.139755445793554;
     public static double lonBache = -71.296729134343434;
     private Toolbar toolbar;
-    private ActionBarDrawerToggle drawerToggle;
     private TextView txtTitulo;
-    private TextView txtAbSubTitulo;
     private String locationAddress;
     private String longitud;
     private String latitud;
@@ -71,34 +57,23 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
     private String nombre = null;
     private boolean insertar = true;
     private ControladorAdeful controladorAdeful;
-    private TabsAdeful a;
-
-
-    SupportMapFragment mapFragment;
-
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
-    //private Communicator comm;
+    private SupportMapFragment mapFragment;
+    private Typeface titulos;
+    private Typeface editTextFont;
+    private Handler touchScreem;
+    private AuxiliarGeneral auxiliarGeneral;
+    private String GUARDAR_USUARIO = "Cancha cargada correctamente";
+    private String ACTUALIZAR_USUARIO = "Cancha actualizada correctamente";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mapa_cancha);
 
-//		try {
-//			MapsInitializer.initialize(this);
-//
-//		} catch (GooglePlayServicesNotAvailableException e){
-//			e.printStackTrace();
-//		}
-
+        titulos = Typeface.createFromAsset(MapaCancha.this.getAssets(), "aspace_demo.otf");
+        editTextFont = Typeface.createFromAsset(MapaCancha.this.getAssets(), "ATypewriterForMe.ttf");
         controladorAdeful = new ControladorAdeful(this);
-        //	comm= (Communicator)MapaCancha.this;
-        a = new TabsAdeful();
+        auxiliarGeneral = new AuxiliarGeneral(MapaCancha.this);
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -107,25 +82,24 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
 
         txtTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
         txtTitulo.setText("MAPA CANCHA");
-
-        //txtAbSubTitulo = (TextView) toolbar.findViewById(R.id.txtAbSubTitulo);
-        //txtAbSubTitulo.setVisibility(View.INVISIBLE);
+        txtTitulo.setTypeface(titulos);
 
         actualizar = getIntent().getBooleanExtra("actualizar", false);
-
-//		MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-//		mapFragment.getMapAsync(MapaCancha.this);
-
-
         init();
-
-
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mapa = googleMap;
 
+        mapa = googleMap;
+        touchScreem = new Handler();
+        touchScreem.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mapa.getUiSettings().setAllGesturesEnabled(true);
+            }
+        }, 3000);
+        mapa.getUiSettings().setAllGesturesEnabled(false);
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(latBache, lonBache)).zoom(15).build();
         CameraUpdate cu = CameraUpdateFactory
@@ -151,40 +125,16 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
         });
 
         mapa.setOnMapLongClickListener(new OnMapLongClickListener() {
-
             @Override
             public void onMapLongClick(LatLng latLng) {
                 mapa.clear();
                 tvAddress.setText("");
             }
         });
-    }
-
-    public void init() {
-
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        controladorAdeful.abrirBaseDeDatos();
-        canchaAdefulArray = controladorAdeful.selectListaCanchaAdeful();
-        if (canchaAdefulArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
-        } else {
-            controladorAdeful.cerrarBaseDeDatos();
-            Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-                            "\n Si el error persiste comuniquese con soporte.",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        tvAddress = (TextView) findViewById(R.id.tvAddress);
-        editTextNombre = (EditText) findViewById(R.id.editTextNombre);
 
         if (actualizar) {
-
             longitud = getIntent().getStringExtra("longitud");
             latitud = getIntent().getStringExtra("latitud");
-
             longitudExtra = Double.valueOf(longitud);
             latitudExtra = Double.valueOf(latitud);
             locationAddress = getIntent().getStringExtra("direccion");
@@ -199,7 +149,23 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
             tvAddress.setText(locationAddress);
             insertar = false;
         }
-   }
+    }
+
+    public void init() {
+
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        canchaAdefulArray = controladorAdeful.selectListaCanchaAdeful();
+        if (canchaAdefulArray == null)
+         auxiliarGeneral.errorDataBase(MapaCancha.this);
+
+        tvAddress = (TextView) findViewById(R.id.tvAddress);
+        tvAddress.setTypeface(editTextFont);
+        editTextNombre = (EditText) findViewById(R.id.editTextNombre);
+        editTextNombre.setTypeface(editTextFont,Typeface.BOLD);
+    }
 
     public boolean isGpsActivo() {
 
@@ -232,6 +198,16 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
+
+    public void inicializarControles(String mensaje) {
+        mapa.clear();
+        editTextNombre.setText("");
+        tvAddress.setText("");
+        volver();
+        Toast.makeText(MapaCancha.this,
+                mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
     @Override
     public void onBackPressed() {
 
@@ -264,14 +240,6 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        // if (drawerToggle.onOptionsItemSelected(item)) {
-        // return true;
-        // }
-
         int id = item.getItemId();
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_guardar) {
@@ -281,17 +249,13 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
                         Toast.LENGTH_SHORT).show();
 
             } else if (tvAddress.getText().toString().equals("")) {
-
                 Toast.makeText(this, "Seleccione un punto en el mapa.",
                         Toast.LENGTH_SHORT).show();
-
-            } else if (editTextNombre.getText().toString()
+            } else if (tvAddress.getText().toString()
                     .equals(getResources().getString(R.string.error_internet))) {
-
                 Toast.makeText(this, "Verifique su conexión de Internet.",
                         Toast.LENGTH_SHORT).show();
             } else {
-
                 if (insertar) {
                     String usuario = "Administrador";
                     String fechaCreacion = controladorAdeful.getFechaOficial();
@@ -300,48 +264,25 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
                     cancha = new Cancha(0, editTextNombre.getText().toString(),
                             longitud, latitud, tvAddress.getText().toString(),
                             usuario, fechaCreacion, usuario, fechaActualizacion);
-
-                    controladorAdeful.abrirBaseDeDatos();
-                    if (controladorAdeful.insertCanchaAdeful(cancha)) {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        mapa.clear();
-                        editTextNombre.setText("");
-                        tvAddress.setText("");
-                        Toast.makeText(this, "Cancha guardada correctamente",
-                                Toast.LENGTH_SHORT).show();
-                        volver();
+                if (controladorAdeful.insertCanchaAdeful(cancha)) {
+                       inicializarControles(GUARDAR_USUARIO);
                     } else {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-                                        "\n Si el error persiste comuniquese con soporte.",
-                                Toast.LENGTH_SHORT).show();
+                    auxiliarGeneral.errorDataBase(MapaCancha.this);
                     }
                 } else {
                     String usuario = "Administrador";
                     String fechaActualizacion = controladorAdeful.getFechaOficial();
-
 
                     cancha = new Cancha(canchaAdefulArray.get(posicion)
                             .getID_CANCHA(), editTextNombre.getText()
                             .toString(), longitud, latitud, tvAddress.getText()
                             .toString(), null, null, usuario, fechaActualizacion);
 
-                    controladorAdeful.abrirBaseDeDatos();
                     if (controladorAdeful.actualizarCanchaAdeful(cancha)) {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        mapa.clear();
-                        editTextNombre.setText("");
-                        tvAddress.setText("");
                         insertar = true;
-
-                        Toast.makeText(this, "Cancha actualizada correctamente.",
-                                Toast.LENGTH_SHORT).show();
-                        volver();
+                     inicializarControles(ACTUALIZAR_USUARIO);
                     } else {
-                        controladorAdeful.cerrarBaseDeDatos();
-                        Toast.makeText(this, "Error en la base de datos interna, vuelva a intentar." +
-                                        "\n Si el error persiste comuniquese con soporte.",
-                                Toast.LENGTH_SHORT).show();
+                   auxiliarGeneral.errorDataBase(MapaCancha.this);
                     }
                 }
             }
@@ -361,7 +302,6 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     public void volver() {
-
         Intent i = new Intent(MapaCancha.this, TabsAdeful.class);
         i.putExtra("restart", 1);
         startActivity(i);

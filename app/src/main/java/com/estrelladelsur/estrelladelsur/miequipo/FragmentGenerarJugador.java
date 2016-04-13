@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -64,14 +65,16 @@ public class FragmentGenerarJugador extends Fragment {
     private DialogoMenuLista dialogoMenuLista;
     private boolean actualizar = false;
     private int idJugadorExtra;
-    private String nombre;
-    private TextView foto;
     private String usuario = "Administrador";
     private String fechaCreacion = null;
     private String fechaActualizacion = null;
     private ArrayAdapter<Posicion> posicionAdapter;
     private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
+    private String GUARDAR_USUARIO = "Jugador ingresado correctamente";
+    private String ACTUALIZAR_USUARIO = "Jugador actualizado correctamente";
+    private Typeface editTextFont;
+    private Typeface textViewFont;
 
     public static FragmentGenerarJugador newInstance() {
         FragmentGenerarJugador fragment = new FragmentGenerarJugador();
@@ -101,11 +104,14 @@ public class FragmentGenerarJugador extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_generar_jugador,
                 container, false);
+        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
+        textViewFont = Typeface.createFromAsset(getActivity().getAssets(), "aspace_demo.otf");
         // FOTO JUGADOR
         imageJugador = (ImageView) v.findViewById(R.id.imageJugador);
         // NOMBRE JUGADOR
         jugadoresNombreEdit = (EditText) v
                 .findViewById(R.id.jugadoresNombreEdit);
+        jugadoresNombreEdit.setTypeface(editTextFont);
         // DIVISION
         jugadoresDivisionSpinner = (Spinner) v
                 .findViewById(R.id.jugadoresDivisionSpinner);
@@ -190,7 +196,7 @@ public class FragmentGenerarJugador extends Fragment {
         myAlertDialog.setTitle("Galeria");
         myAlertDialog.setMessage("Seleccione una Foto.");
 
-        myAlertDialog.setPositiveButton("Gallery",
+        myAlertDialog.setPositiveButton("Galeria",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         UtilityImage.pictureActionIntent = new Intent(
@@ -209,84 +215,13 @@ public class FragmentGenerarJugador extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
-            SeleccionarImagen(data);
+
+            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity());
+            if (b != null)
+            imageJugador.setImageBitmap(b);
+            imageJugadorByte = auxiliarGeneral.pasarBitmapByte(b);
         }
     }
-
-    public static Bitmap createDrawableFromView(View view) {
-        view.setDrawingCacheEnabled(true);
-        view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-        view.buildDrawingCache(true);
-        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
-        view.setDrawingCacheEnabled(false);
-
-        return bitmap;
-    }
-
-    public void SeleccionarImagen(Intent data) {
-        try {
-            UtilityImage.uri = data.getData();
-            if (UtilityImage.uri != null) {
-
-                Cursor cursor = getActivity().getContentResolver().query(
-                        UtilityImage.uri, null, null, null, null);
-
-                cursor.moveToFirst();
-                String document_id = cursor.getString(0);
-                document_id = document_id.substring(document_id
-                        .lastIndexOf(":") + 1);
-
-                cursor = getActivity()
-                        .getContentResolver()
-                        .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                null, MediaStore.Images.Media._ID + " = ? ",
-                                new String[]{document_id}, null);
-                cursor.moveToFirst();
-                String path = cursor.getString(cursor
-                        .getColumnIndex(MediaStore.Images.Media.DATA));
-                cursor.close();
-
-                // Assign string path to File
-                UtilityImage.Default_DIR = new File(path);
-
-                // Create new dir MY_IMAGES_DIR if not created and copy image
-                // into that dir and store that image path in valid_photo
-                UtilityImage.Create_MY_IMAGES_DIR();
-
-                // Copy your image
-                UtilityImage.copyFile(UtilityImage.Default_DIR,
-                        UtilityImage.MY_IMG_DIR);
-
-                // Get new image path and decode it
-                Bitmap b = UtilityImage
-                        .decodeFile(UtilityImage.Paste_Target_Location);
-
-                // use new copied path and use anywhere
-                String valid_photo = UtilityImage.Paste_Target_Location
-                        .toString();
-                b = Bitmap.createScaledBitmap(b, 150, 150, true);
-
-                // set your selected image in image view
-                imageJugador.setImageBitmap(b);
-                cursor.close();
-
-                baos = new ByteArrayOutputStream();
-                b.compress(CompressFormat.PNG, 0, baos);
-                imageJugadorByte = baos.toByteArray();
-
-            } else {
-                Toast toast = Toast.makeText(getActivity(),
-                        "No se selecciono un escudo.", Toast.LENGTH_LONG);
-                toast.show();
-            }
-        } catch (Exception e) {
-            // you get this when you will not select any single image
-            Log.e("onActivityResult", "" + e);
-        }
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -307,7 +242,6 @@ public class FragmentGenerarJugador extends Fragment {
     }
 
     public ArrayList<Posicion> selectPosicionList() {
-
         //POSICION
         posicionArray = controladorAdeful.selectListaPosicionAdeful();
         if (posicionArray != null) {
@@ -324,13 +258,23 @@ public class FragmentGenerarJugador extends Fragment {
         dialogoMenuLista.listViewGeneral.setAdapter(posicionAdapter);
     }
 
-
+    public void inicializarControles(String mensaje) {
+        if (imageJugadorByte != null) {
+            imageJugador
+                    .setImageResource(R.mipmap.ic_foto_galery);
+            imageJugadorByte = null;
+        }
+        jugadoresNombreEdit.setText("");
+        imageJugadorByte = null;
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         // menu.getItem(5).setVisible(false);// posicion
@@ -375,23 +319,13 @@ public class FragmentGenerarJugador extends Fragment {
                 division = (Division) jugadoresDivisionSpinner.getSelectedItem();
                 posicion = (Posicion) jugadoresPosicionSpinner.getSelectedItem();
                 if (insertar) {
-
                     jugador = new Jugador(0, jugadoresNombreEdit.getText()
                             .toString(), imageJugadorByte,
                             division.getID_DIVISION(),
                             posicion.getID_POSICION(), usuario, fechaCreacion, usuario, fechaActualizacion);
 
                     if (controladorAdeful.insertJugadorAdeful(jugador)) {
-                        if (imageJugadorByte != null) {
-                            imageJugador
-                                    .setImageResource(R.mipmap.ic_foto_galery);
-                            imageJugadorByte = null;
-                        }
-                        jugadoresNombreEdit.setText("");
-                        Toast.makeText(getActivity(),
-                                "Jugador Cargado Correctamente.",
-                                Toast.LENGTH_SHORT).show();
-                        imageJugadorByte = null;
+                       inicializarControles(GUARDAR_USUARIO);
                     } else {
                     auxiliarGeneral.errorDataBase(getActivity());
                     }
@@ -402,18 +336,9 @@ public class FragmentGenerarJugador extends Fragment {
                             division.getID_DIVISION(),
                             posicion.getID_POSICION(), null, null, usuario, fechaActualizacion);
                     if (controladorAdeful.actualizarJugadorAdeful(jugador)) {
-                        if (imageJugadorByte != null) {
-                            imageJugador
-                                    .setImageResource(R.mipmap.ic_foto_galery);
-                            imageJugadorByte = null;
-                        }
-                        jugadoresNombreEdit.setText("");
-                        Toast.makeText(getActivity(),
-                                "Jugador Actualizado Correctamente.",
-                                Toast.LENGTH_SHORT).show();
-                        imageJugadorByte = null;
                         actualizar = false;
                         insertar = true;
+                        inicializarControles(ACTUALIZAR_USUARIO);
                     } else {
                         auxiliarGeneral.errorDataBase(getActivity());
                     }
@@ -431,7 +356,7 @@ public class FragmentGenerarJugador extends Fragment {
                     getActivity(),
                     "POSICION",
                     "En esta opción puede agreagar o editar una posición de juego",
-                    "Ingrese Posición", null);
+                    "Ingrese posición", null);
             dialogoAlerta.btnAceptar.setText("Crear");
             dialogoAlerta.btnCancelar.setText("Editar");
             dialogoAlerta.btnAceptar
@@ -461,7 +386,7 @@ public class FragmentGenerarJugador extends Fragment {
                        loadSpinnerPosicion();
                        Toast.makeText(
                                getActivity(),
-                               "Posición Cargada Correctamente.",
+                               "Posición cargada correctamente.",
                                Toast.LENGTH_SHORT)
                                .show();
                        dialogoAlerta.alertDialog
@@ -472,7 +397,7 @@ public class FragmentGenerarJugador extends Fragment {
                     } else {
                    Toast.makeText(
                            getActivity(),
-                           "Ingrese una Posición.",
+                           "Ingrese una posición.",
                            Toast.LENGTH_SHORT)
                            .show();
                     }
@@ -520,8 +445,8 @@ public class FragmentGenerarJugador extends Fragment {
 
                                         @Override
                                         public void onClick(View v) {
-                                            // TODO Auto-generated method stub
 
+                                            if (!dialogoAlerta.editTextUno.getText().toString().equals("")) {
                                             String usuario = "Administrador";
                                             posicion = new Posicion(
                                                     posicionArray.get(position).getID_POSICION(),
@@ -535,12 +460,20 @@ public class FragmentGenerarJugador extends Fragment {
                                                 dialogoAlertaEditar.alertDialog.dismiss();
                                                 Toast.makeText(
                                                         getActivity(),
-                                                        "Posición Actualizada Correctamente.",
+                                                        "Posición actualizada correctamente.",
                                                         Toast.LENGTH_SHORT).show();
                                             } else {
                                             auxiliarGeneral.errorDataBase(getActivity());
                                             }
+                                            } else {
+                                                Toast.makeText(
+                                                        getActivity(),
+                                                        "Ingrese una posición.",
+                                                        Toast.LENGTH_SHORT)
+                                                        .show();
+                                            }
                                         }
+
                                     });
                                     dialogoAlertaEditar.btnCancelar.setOnClickListener(new View.OnClickListener() {
 
@@ -555,7 +488,6 @@ public class FragmentGenerarJugador extends Fragment {
                             // Editar Posicion
                             dialogoMenuLista.btnAceptar
                                     .setOnClickListener(new View.OnClickListener() {
-
                                         @Override
                                         public void onClick(View v) {
                                             // TODO Auto-generated method stub
@@ -563,7 +495,6 @@ public class FragmentGenerarJugador extends Fragment {
                                             dialogoAlerta.alertDialog.dismiss();
                                         }
                                     });
-
                             dialogoMenuLista.btnCancelar.setOnClickListener(new View.OnClickListener() {
 
                                 @Override

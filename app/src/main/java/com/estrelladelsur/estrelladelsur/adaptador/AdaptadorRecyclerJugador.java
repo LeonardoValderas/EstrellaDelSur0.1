@@ -1,8 +1,11 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,10 +21,13 @@ public class AdaptadorRecyclerJugador extends
 
 	private View.OnClickListener listener;
 	private ArrayList<Jugador> jugadorArray;
+	private Typeface nombreFont;
+	private Typeface cargoPeriodoFont;
 
 	public static class JugadorViewHolder extends RecyclerView.ViewHolder {
 		private TextView textRecyclerViewNombre;
 		private TextView textRecyclerViewPosicion;
+		private TextView textRecyclerViewPeriodoText;
 		private TextView textRecyclerViewDivision;
 		private ImageView imageRecyclerViewFoto;
 		private byte[] foto;
@@ -36,11 +42,13 @@ public class AdaptadorRecyclerJugador extends
 					.findViewById(R.id.textRecyclerViewCargo);
 			textRecyclerViewDivision = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewPeriodo);
+			textRecyclerViewPeriodoText = (TextView) itemView
+					.findViewById(R.id.textRecyclerViewPeriodoText);
 			imageRecyclerViewFoto = (ImageView) itemView
 					.findViewById(R.id.imageRecyclerViewFoto);
 		}
 
-		public void bindTitular(Jugador jugador) {
+		public void bindTitular(Jugador jugador, Typeface nombre, Typeface cargo) {
 			// ESCUDO EQUIPO LOCAL
 			foto = jugador.getFOTO_JUGADOR();
 			if (foto == null) {
@@ -57,12 +65,18 @@ public class AdaptadorRecyclerJugador extends
 				imageRecyclerViewFoto.setImageBitmap(fotoBitmap);
 			}
 			textRecyclerViewNombre.setText(jugador.getNOMBRE_JUGADOR());
+			textRecyclerViewNombre.setTypeface(nombre);
 			textRecyclerViewPosicion.setText(jugador.getNOMBRE_POSICION());
-			textRecyclerViewDivision.setText(jugador.getNOMBRE_DIVISION());
+			textRecyclerViewPosicion.setTypeface(cargo, Typeface.BOLD);
+	    	textRecyclerViewDivision.setText(jugador.getNOMBRE_DIVISION());
+			textRecyclerViewDivision.setTypeface(cargo);
+			textRecyclerViewPeriodoText.setText("Posición de Juego");
 		}
 	}
-	public AdaptadorRecyclerJugador(ArrayList<Jugador> jugadorArray) {
+	public AdaptadorRecyclerJugador(ArrayList<Jugador> jugadorArray, Context context) {
 		this.jugadorArray = jugadorArray;
+		this.cargoPeriodoFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
+		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
 	}
 
 	@Override
@@ -81,7 +95,7 @@ public class AdaptadorRecyclerJugador extends
 	public void onBindViewHolder(JugadorViewHolder viewHolder, int pos) {
 		Jugador item = jugadorArray.get(pos);
 
-		viewHolder.bindTitular(item);
+		viewHolder.bindTitular(item,nombreFont,cargoPeriodoFont);
 	}
 
 	@Override

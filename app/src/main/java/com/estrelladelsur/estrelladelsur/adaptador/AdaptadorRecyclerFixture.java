@@ -1,8 +1,11 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,8 @@ public class AdaptadorRecyclerFixture extends
 
 	private View.OnClickListener listener;
 	private ArrayList<Fixture> fixtureArray;
+	private Typeface textFont;
+	private Typeface equipoFont;
 
 	public static class FixtureViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -65,11 +70,11 @@ public class AdaptadorRecyclerFixture extends
 		}
 
 
-		public void bindTitular(Fixture fixtureRecycler) {
+		public void bindTitular(Fixture fixtureRecycler , Typeface equipo, Typeface texto) {
 			// ESCUDO EQUIPO LOCAL
 			byte[] escudoLocal = fixtureRecycler.getESCUDOLOCAL();
 			if (escudoLocal == null) {
-				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_equipo);
+				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_cris);
 			} else {
 				Bitmap escudoLocalBitmap = BitmapFactory.decodeByteArray(
 						fixtureRecycler.getESCUDOLOCAL(), 0,
@@ -81,7 +86,7 @@ public class AdaptadorRecyclerFixture extends
 			// ESCUDO EQUIPO VISITA
 			byte[] escudovisita = fixtureRecycler.getESCUDOVISITA();
 			if (escudovisita == null) {
-				imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_equipo);
+				imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_cris);
 			} else {
 				Bitmap escudoVisitaBitmap = BitmapFactory.decodeByteArray(
 						fixtureRecycler.getESCUDOVISITA(), 0,
@@ -90,27 +95,38 @@ public class AdaptadorRecyclerFixture extends
 						escudoVisitaBitmap, 150, 150, true);
 				imageViewEscudoV.setImageBitmap(escudoVisitaBitmap);
 			}
+
 			textRecyclerViewEquipoL.setText(fixtureRecycler.getEQUIPO_LOCAL());
+			textRecyclerViewEquipoL.setTypeface(equipo, Typeface.BOLD);
 			textRecyclerViewEquipoV.setText(fixtureRecycler.getEQUIPO_VISITA());
+			textRecyclerViewEquipoV.setTypeface(equipo, Typeface.BOLD);
 			textRecyclerViewDia.setText(fixtureRecycler.getDIA());
+			textRecyclerViewDia.setTypeface(texto);
 			textRecyclerViewHora.setText(fixtureRecycler.getHORA());
+			textRecyclerViewHora.setTypeface(texto);
 			textRecyclerViewCancha.setText(fixtureRecycler.getCANCHA());
+			textRecyclerViewCancha.setTypeface(texto,Typeface.BOLD);
 
 			if(fixtureRecycler.getRESULTADO_LOCAL() != null){
 				textRecyclerViewResultadoL.setText(fixtureRecycler.getRESULTADO_LOCAL());
+				textRecyclerViewResultadoL.setTypeface(texto,Typeface.BOLD);
 			}else{
 				textRecyclerViewResultadoL.setText("-");
+				textRecyclerViewResultadoL.setTypeface(texto, Typeface.BOLD);
 			}
 			if(fixtureRecycler.getRESULTADO_VISITA() != null){
 				textRecyclerViewResultadoV.setText(fixtureRecycler.getRESULTADO_VISITA());
+				textRecyclerViewResultadoV.setTypeface(texto, Typeface.BOLD);
 			}else{
 				textRecyclerViewResultadoV.setText("-");
+				textRecyclerViewResultadoV.setTypeface(texto, Typeface.BOLD);
 			}
 		}
 	}
-
-	public AdaptadorRecyclerFixture(ArrayList<Fixture> fixtureArray) {
+	public AdaptadorRecyclerFixture(ArrayList<Fixture> fixtureArray,Context context) {
 		this.fixtureArray = fixtureArray;
+		textFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
+		equipoFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
 	}
 
 	@Override
@@ -127,7 +143,7 @@ public class AdaptadorRecyclerFixture extends
 	@Override
 	public void onBindViewHolder(FixtureViewHolder viewHolder, int pos) {
 		Fixture item = fixtureArray.get(pos);
-		viewHolder.bindTitular(item);
+		viewHolder.bindTitular(item,textFont, equipoFont);
 	}
 
 	@Override

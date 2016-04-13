@@ -1,30 +1,24 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
-import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 
 public class TabsEntrenamiento extends AppCompatActivity {
 
 	private Toolbar toolbar;
-	private ActionBarDrawerToggle drawerToggle;
 	private ViewPager viewPager;
 	private TabLayout tabLayout;
 	final int PAGE_COUNT = 3;
@@ -34,12 +28,12 @@ public class TabsEntrenamiento extends AppCompatActivity {
 	private static final boolean DEBUG = false;
 	private TextView txtAbTitulo;
 	private TextView txtAbSubTitulo;
-
+	private Typeface titulos;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs_general);
-
+		titulos = Typeface.createFromAsset(TabsEntrenamiento.this.getAssets(), "aspace_demo.otf");
 		// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -52,6 +46,7 @@ public class TabsEntrenamiento extends AppCompatActivity {
 
 		txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
 		txtAbSubTitulo.setText("ENTRENAMIENTO");
+		txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
 		viewPager = (ViewPager) findViewById(R.id.viewpager);
 		viewPager.setAdapter(new TabsEntrenamientoAdapter(
@@ -87,7 +82,6 @@ public class TabsEntrenamiento extends AppCompatActivity {
 	}
 
 	public void init() {
-
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageScrolled(int position, float positionOffset,
@@ -145,7 +139,6 @@ public class TabsEntrenamiento extends AppCompatActivity {
 				mCurTransaction = fm.beginTransaction();
 			}
 
-			// Do we already have this fragment?
 			String name = makeFragmentName(container.getId(), position);
 			Fragment fragment = fm.findFragmentByTag(name);
 			if (fragment != null) {
@@ -172,65 +165,4 @@ public class TabsEntrenamiento extends AppCompatActivity {
 			return tabTitles[position];
 		}
 	}
-
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
-//		if (viewPager.getCurrentItem() == 0) {
-//			menu.getItem(10).setVisible(false);
-//			menu.getItem(11).setVisible(false);
-//		} else if (viewPager.getCurrentItem() == 1) {
-//			menu.getItem(8).setVisible(false);
-//			menu.getItem(9).setVisible(false);
-//			menu.getItem(10).setVisible(false);
-//		}
-//		return super.onCreateOptionsMenu(menu);
-//	}
-//
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//
-//		int id = item.getItemId();
-//		// noinspection SimplifiableIfStatement
-//		if (id == R.id.action_usuario) {
-//
-//			Intent usuario = new Intent(TabsEntrenamiento.this,
-//					NavigationDrawerUsuario.class);
-//			startActivity(usuario);
-//			return true;
-//		}
-//		if (id == R.id.action_permisos) {
-//			return true;
-//		}
-//		if (id == R.id.action_guardar) {
-//			return true;
-//		}
-//		if (id == R.id.action_subir) {
-//			return true;
-//		}
-//		if (id == R.id.action_eliminar) {
-//			return true;
-//		}
-//		if (id == R.id.action_adeful) {
-//			return true;
-//		}
-//		if (id == R.id.action_lifuba) {
-//			return true;
-//		}
-//		if (id == R.id.action_puesto) {
-//			return true;
-//		}
-//		if (id == R.id.action_posicion) {
-//			return true;
-//		}
-//		if (id == R.id.action_cargo) {
-//			return true;
-//		}
-//		if (id == android.R.id.home) {
-//			NavUtils.navigateUpFromSameTask(this);
-//			return true;
-//		}
-//		return super.onOptionsItemSelected(item);
-//	}
 }

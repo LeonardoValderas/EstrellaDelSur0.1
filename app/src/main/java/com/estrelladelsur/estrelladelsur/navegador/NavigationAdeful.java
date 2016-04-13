@@ -18,8 +18,12 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.entidad.Anio;
+import com.estrelladelsur.estrelladelsur.entidad.Fecha;
+import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Modulo;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.institucion.TabsArticulo;
@@ -59,22 +63,25 @@ public class NavigationAdeful extends AppCompatActivity {
     private List<String> permisoChild;
     private HashMap<String, List<String>> listDataChild;
     private List<String> institucionalChild;
-    private TextView txtAbSubTitulo,txtAbTitulo, textViewLiga;
+    private TextView txtAbSubTitulo, txtAbTitulo, textViewLiga;
     private ControladorAdeful controladorAdeful;
-    private  Typeface titulos;
-    private  Typeface adeful;
+    private Typeface titulos;
+    private Typeface adeful;
+    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
+
         controladorAdeful = new ControladorAdeful(this);
+        auxiliarGeneral = new AuxiliarGeneral(NavigationAdeful.this);
 
         titulos = Typeface.createFromAsset(NavigationAdeful.this.getAssets(), "aspace_demo.otf");
         adeful = Typeface.createFromAsset(NavigationAdeful.this.getAssets(), "androidnation.ttf");
         init();
         drawerLayout.openDrawer(GravityCompat.START);
-        iniciarModulos();
+        inicializarDatosGenerales();
 
     }
 
@@ -94,7 +101,7 @@ public class NavigationAdeful extends AppCompatActivity {
         txtAbSubTitulo.setTypeface(titulos);
 
         textViewLiga = (TextView) findViewById(R.id.textViewLiga);
-        textViewLiga.setTypeface(adeful,Typeface.BOLD);
+        textViewLiga.setTypeface(adeful, Typeface.BOLD);
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
         // preparing list data
         prepareListData();
@@ -193,8 +200,8 @@ public class NavigationAdeful extends AppCompatActivity {
                         case 2:
                             Intent foto = new Intent(NavigationAdeful.this, TabsFoto.class);
                             startActivity(foto);
-                      //      tituloClickFragment = ligaChild.get(childPosition)
-                        //            .toString();
+                            //      tituloClickFragment = ligaChild.get(childPosition)
+                            //            .toString();
                             break;
 
                         case 3:
@@ -204,7 +211,7 @@ public class NavigationAdeful extends AppCompatActivity {
 //                                    .toString();
                             break;
                     }
-                 } else if (groupPosition == 4) {
+                } else if (groupPosition == 4) {
                     switch (childPosition) {
                         case 0:
                             Intent usuario = new Intent(NavigationAdeful.this, TabsUsuario.class);
@@ -226,8 +233,6 @@ public class NavigationAdeful extends AppCompatActivity {
                 return false;
             }
         });
-
-
 
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -355,48 +360,109 @@ public class NavigationAdeful extends AppCompatActivity {
 
     }
 
+    public void inicializarDatosGenerales() {
+        iniciarModulos();
+        iniciarFecha();
+        iniciarAnio();
+        iniciarMes();
+    }
+
+    public void iniciarFecha() {
+        ArrayList<Fecha> fechaArray = new ArrayList<Fecha>();
+        fechaArray = controladorAdeful.selectListaFecha();
+        if (fechaArray != null) {
+            if (fechaArray.isEmpty()) {
+                for (int i = 0; i < getResources().getStringArray(R.array.fechaArray).length; i++) {
+                    Fecha fecha = new Fecha(i, getResources().getStringArray(
+                            R.array.fechaArray)[i]);
+                    controladorAdeful.insertFecha(fecha);
+                }
+            }
+        } else {
+            auxiliarGeneral.errorDataBase(NavigationAdeful.this);
+        }
+    }
+
+    public void iniciarAnio() {
+        ArrayList<Anio> anioArray = new ArrayList<Anio>();
+        anioArray = controladorAdeful.selectListaAnio();
+        if (anioArray != null) {
+            if (anioArray.isEmpty()) {
+                for (int i = 0; i < getResources().getStringArray(R.array.anioArray).length; i++) {
+                    Anio anio = new Anio(i,
+                            getResources().getStringArray(R.array.anioArray)[i]);
+                    controladorAdeful.insertAnio(anio);
+                }
+            }
+
+        } else {
+            auxiliarGeneral.errorDataBase(NavigationAdeful.this);
+        }
+    }
+
+    public void iniciarMes() {
+        ArrayList<Mes> mesArray = new ArrayList<Mes>();
+        mesArray = controladorAdeful.selectListaMes();
+        if (mesArray != null) {
+            if (mesArray.isEmpty()) {
+                for (int i = 0; i < getResources().getStringArray(R.array.mesArray).length; i++) {
+                    Mes mes = new Mes(i,
+                            getResources().getStringArray(R.array.mesArray)[i]);
+                    controladorAdeful.insertMes(mes);
+                }
+            }
+        } else {
+            auxiliarGeneral.errorDataBase(NavigationAdeful.this);
+        }
+    }
+
     public void iniciarModulos() {
 
         ArrayList<Modulo> arrayModulo = new ArrayList<Modulo>();
         ArrayList<SubModulo> arraySubModulo = new ArrayList<SubModulo>();
         arrayModulo = controladorAdeful.selectListaModuloAdeful();
         arraySubModulo = controladorAdeful.selectListaSubModuloAdeful();
-        if (arrayModulo.isEmpty()) {
 
-
-            for (int i = 0; i < getResources().getStringArray(R.array.moduloArray).length; i++) {
-
-                Modulo modulo = new Modulo(0, getResources().getStringArray(R.array.moduloArray)[i]);
-                controladorAdeful.insertModuloAdeful(modulo);
+        if (arrayModulo != null) {
+            if (arrayModulo.isEmpty()) {
+                for (int i = 0; i < getResources().getStringArray(R.array.moduloArray).length; i++) {
+                    Modulo modulo = new Modulo(0, getResources().getStringArray(R.array.moduloArray)[i]);
+                    controladorAdeful.insertModuloAdeful(modulo);
+                }
             }
+        } else {
+            auxiliarGeneral.errorDataBase(NavigationAdeful.this);
         }
+        if (arraySubModulo != null) {
+            if (arraySubModulo.isEmpty()) {
 
-        if (arraySubModulo.isEmpty()) {
+                for (int i = 0; i < getResources().getStringArray(R.array.subModuloArray).length; i++) {
+                    int key = i + 1;
+                    if (key >= 1 && key <= 3) {
+                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 1);
+                        controladorAdeful.insertSubModuloAdeful(submodulo);
+                    }
+                    if (key >= 4 && key <= 8) {
+                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 2);
+                        controladorAdeful.insertSubModuloAdeful(submodulo);
+                    }
+                    if (key >= 9 && key <= 10) {
+                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 3);
+                        controladorAdeful.insertSubModuloAdeful(submodulo);
+                    }
+                    if (key >= 11 && key <= 14) {
+                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
+                        controladorAdeful.insertSubModuloAdeful(submodulo);
+                    }
+                    if (key >= 15 && key <= 16) {
+                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
+                        controladorAdeful.insertSubModuloAdeful(submodulo);
+                    }
 
-            for (int i = 0; i < getResources().getStringArray(R.array.subModuloArray).length; i++) {
-                int key = i + 1;
-                if (key >= 1 && key <= 3) {
-                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 1);
-                    controladorAdeful.insertSubModuloAdeful(submodulo);
                 }
-                if (key >= 4 && key <= 8) {
-                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 2);
-                    controladorAdeful.insertSubModuloAdeful(submodulo);
-                }
-                if (key >= 9 && key <= 10) {
-                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 3);
-                    controladorAdeful.insertSubModuloAdeful(submodulo);
-                }
-                if (key >= 11 && key <= 14) {
-                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
-                    controladorAdeful.insertSubModuloAdeful(submodulo);
-                }
-                if (key >= 15 && key <= 16) {
-                    SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
-                    controladorAdeful.insertSubModuloAdeful(submodulo);
-                }
-
             }
+        } else {
+            auxiliarGeneral.errorDataBase(NavigationAdeful.this);
         }
     }
 

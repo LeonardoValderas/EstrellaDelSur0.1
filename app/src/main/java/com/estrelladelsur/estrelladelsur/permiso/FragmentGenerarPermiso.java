@@ -96,8 +96,7 @@ public class FragmentGenerarPermiso extends Fragment {
         spinnerUsuario = (Spinner) v
                 .findViewById(R.id.spinnerLugarEntrenamiento);
 
-        textViewFecha =(TextView)v.findViewById(R.id.textViewFecha);
-        textViewFecha.setVisibility(View.GONE);
+
         textViewLugar =(TextView)v.findViewById(R.id.textViewLugar);
         textViewLugar.setVisibility(View.GONE);
         textViewSubmodulos =(TextView)v.findViewById(R.id.textViewDivisionCitada);

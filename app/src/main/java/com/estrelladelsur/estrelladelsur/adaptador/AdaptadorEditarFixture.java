@@ -68,7 +68,7 @@ public class AdaptadorEditarFixture extends
 			// ESCUDO EQUIPO LOCAL
 			byte[] escudoLocal = fixtureRecycler.getESCUDOLOCAL();
 			if (escudoLocal == null) {
-				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_equipo);
+				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_cris);
 			} else {
 				Bitmap escudoLocalBitmap = BitmapFactory.decodeByteArray(
 						fixtureRecycler.getESCUDOLOCAL(), 0,
@@ -80,7 +80,7 @@ public class AdaptadorEditarFixture extends
 			// ESCUDO EQUIPO VISITA
 			byte[] escudovisita = fixtureRecycler.getESCUDOVISITA();
 			if (escudovisita == null) {
-				imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_equipo);
+				imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_cris);
 			} else {
 				Bitmap escudoVisitaBitmap = BitmapFactory.decodeByteArray(
 						fixtureRecycler.getESCUDOVISITA(), 0,

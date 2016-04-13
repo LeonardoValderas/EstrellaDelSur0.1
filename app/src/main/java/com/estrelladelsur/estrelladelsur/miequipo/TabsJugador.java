@@ -1,36 +1,26 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
-import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoMenuLista;
+
 
 public class TabsJugador extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private ActionBarDrawerToggle drawerToggle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private DialogoAlerta dialogoAlerta;
-    private DialogoMenuLista dialogoMenuLista;
     private int viewpagerid;
     final int PAGE_COUNT = 2;
     private FragmentTransaction mCurTransaction;
@@ -38,12 +28,12 @@ public class TabsJugador extends AppCompatActivity {
     private static final boolean DEBUG = false;
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
-
+    private Typeface titulos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
+        titulos = Typeface.createFromAsset(TabsJugador.this.getAssets(), "aspace_demo.otf");
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,6 +47,7 @@ public class TabsJugador extends AppCompatActivity {
 
         txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
         txtAbSubTitulo.setText("JUGADOR");
+        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -88,7 +79,6 @@ public class TabsJugador extends AppCompatActivity {
 
     public void init() {
 
-
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset,
@@ -107,7 +97,6 @@ public class TabsJugador extends AppCompatActivity {
             }
         });
     }
-
 
     public class TabsJugadoresAdapter extends FragmentPagerAdapter {
 
@@ -182,131 +171,4 @@ public class TabsJugador extends AppCompatActivity {
             return tabTitles[position];
         }
     }
-
-
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
-//		if (viewPager.getCurrentItem() == 0) {
-//			menu.getItem(10).setVisible(false);
-//			menu.getItem(11).setVisible(false);
-//		} else if (viewPager.getCurrentItem() == 1) {
-//			menu.getItem(8).setVisible(false);
-//			menu.getItem(9).setVisible(false);
-//			menu.getItem(10).setVisible(false);
-//		}
-//		return super.onCreateOptionsMenu(menu);
-//	}
-//
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		// Handle action bar item clicks here. The action bar will
-//		// automatically handle clicks on the Home/Up button, so long
-//		// as you specify a parent activity in AndroidManifest.xml.
-//
-//		// if (drawerToggle.onOptionsItemSelected(item)) {
-//		// return true;
-//		// }
-//
-//		int id = item.getItemId();
-//		// noinspection SimplifiableIfStatement
-//		if (id == R.id.action_usuario) {
-//
-//			Intent usuario = new Intent(TabsJugadores.this,
-//					NavigationDrawerUsuario.class);
-//			startActivity(usuario);
-//
-//			return true;
-//		}
-//
-//		if (id == R.id.action_permisos) {
-//			return true;
-//		}
-//
-//		if (id == R.id.action_guardar) {
-//
-//			return true;
-//		}
-//
-//		if (id == R.id.action_subir) {
-//
-//			return true;
-//		}
-//
-//		if (id == R.id.action_eliminar) {
-//
-//			return true;
-//		}
-//		if (id == R.id.action_adeful) {
-//
-//			return true;
-//		}
-//
-//		if (id == R.id.action_lifuba) {
-//
-//			return true;
-//		}
-//
-//		if (id == R.id.action_puesto) {
-//
-//			return true;
-//
-//		}
-//		if (id == R.id.action_posicion) {
-//
-//			alertMenu = new AlertsMenu(
-//					this,
-//					"POSICION",
-//					"En esta opci�n puede agreagar o editar una posici�n de juego",
-//					"Ingrese Posici�n", null);
-//			alertMenu.btnAceptar.setOnClickListener(new View.OnClickListener() {
-//
-//				@Override
-//				public void onClick(View v) {
-//					// TODO Auto-generated method stub
-//					alertMenu.mensaje.setVisibility(View.GONE);
-//					alertMenu.editTextUno.setVisibility(View.VISIBLE);
-//					alertMenu.btnAceptar.setText("Aceptar");
-//					alertMenu.btnCancelar.setText("Cancelar");
-//
-//				}
-//			});
-//
-//			alertMenu.btnCancelar
-//					.setOnClickListener(new View.OnClickListener() {
-//
-//						@Override
-//						public void onClick(View v) {
-//							// TODO Auto-generated method stub
-//
-//							String[] listview = new String[] { "Delantero",
-//									"Defensor", "Arquero" };
-//
-//							alertMenuList = new AlertsMenuList(
-//									TabsJugadores.this, "POSICION", listview);
-//
-//							alertMenuList.btnAceptar.setText("Aceptar");
-//							alertMenuList.btnCancelar.setText("Cancelar");
-//
-//						}
-//					});
-//
-//			return true;
-//		}
-//
-//		if (id == R.id.action_cargo) {
-//
-//			return true;
-//		}
-//
-//		if (id == android.R.id.home) {
-//
-//			NavUtils.navigateUpFromSameTask(this);
-//
-//			return true;
-//		}
-//		return super.onOptionsItemSelected(item);
-//	}
-
 }

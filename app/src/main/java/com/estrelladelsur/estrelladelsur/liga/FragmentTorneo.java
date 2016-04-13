@@ -1,9 +1,9 @@
 package com.estrelladelsur.estrelladelsur.liga;
 
 import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -24,8 +24,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
@@ -52,10 +52,8 @@ public class FragmentTorneo extends Fragment {
     private int CheckedPositionFragment;
     private ImageView imageButtonEquipo;
     private Torneo torneoActual;
-    private boolean isActual;
     private LinearLayout linearTorneoActual;
     private boolean isChecked = false;
-    private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Anio> anioArray;
     private AdapterSpinnerAnio adapterSpinnerAnio;
     private ArrayAdapter<String> adaptadorInicial;
@@ -64,6 +62,11 @@ public class FragmentTorneo extends Fragment {
     String fechaCreacion = null;
     String fechaActualizacion = fechaCreacion;
     private boolean checkedAnterior = false;
+    private String GUARDAR_USUARIO = "Torneo cargado correctamente";
+    private String ACTUALIZAR_USUARIO = "Torneo actualizado correctamente";
+    private Typeface editTextFont;
+    private AuxiliarGeneral auxiliarGeneral;
+    private TextView torneoActualtext;
 
     public static FragmentTorneo newInstance() {
         FragmentTorneo fragment = new FragmentTorneo();
@@ -90,11 +93,13 @@ public class FragmentTorneo extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_general_liga, container,
                 false);
+        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
         editTextTorneo = (EditText) v.findViewById(
                 R.id.editTextDescripcion);
-
+        editTextTorneo.setTypeface(editTextFont);
         imageButtonEquipo = (ImageView) v.findViewById(
                 R.id.imageButtonEquipo_Cancha);
+        imageButtonEquipo.setVisibility(View.GONE);
         checkboxTorneoActual = (CheckBox) v.findViewById(
                 R.id.checkboxTorneoActual);
         spinnerAnioTorneoActual = (Spinner) v.findViewById(
@@ -102,6 +107,9 @@ public class FragmentTorneo extends Fragment {
         linearTorneoActual = (LinearLayout) v.findViewById(
                 R.id.linearTorneoActual);
         linearTorneoActual.setVisibility(View.VISIBLE);
+        torneoActualtext = (TextView) v.findViewById(
+                R.id.torneoActual);
+        torneoActualtext.setTypeface(editTextFont);
         recycleViewTorneo = (RecyclerView) v.findViewById(
                 R.id.recycleViewGeneral);
 
@@ -121,7 +129,6 @@ public class FragmentTorneo extends Fragment {
         editTextTorneo.setHintTextColor(Color.GRAY);
         //VERICAMOS SI HAY UN TORNEO MARCADO COMO ACTUAL
         getIsActual();
-        imageButtonEquipo.setVisibility(View.GONE);
         loadSpinnerAnio();
         checkboxTorneoActual.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,13 +142,10 @@ public class FragmentTorneo extends Fragment {
                 }
             }
         });
-
         recyclerViewLoadTorneo();
         recycleViewTorneo.addOnItemTouchListener(new
-
                 RecyclerTouchListener(getActivity(), recycleViewTorneo,
                 new ClickListener() {
-
                     @Override
                     public void onLongClick(View view, final int position) {
 
@@ -162,7 +166,7 @@ public class FragmentTorneo extends Fragment {
                                             recyclerViewLoadTorneo();
                                             Toast.makeText(
                                                     getActivity(),
-                                                    "Torneo Eliminado Correctamente",
+                                                    "Torneo eliminado correctamente",
                                                     Toast.LENGTH_SHORT).show();
                                             dialogoAlerta.alertDialog.dismiss();
                                         } else {
@@ -184,7 +188,6 @@ public class FragmentTorneo extends Fragment {
                     @Override
                     public void onClick(View view, int position) {
                         // TODO Auto-generated method stub
-
                         insertar = false;
                         isChecked = torneoArray.get(position).getACTUAL();
                         checkedAnterior = torneoArray.get(position).getACTUAL();
@@ -215,8 +218,7 @@ public class FragmentTorneo extends Fragment {
 
         torneoArray = controladorAdeful.selectListaTorneoAdeful();
         if (torneoArray != null) {
-            adaptadorTorneo = new AdaptadorRecyclerTorneo(torneoArray);
-            adaptadorTorneo.notifyDataSetChanged();
+            adaptadorTorneo = new AdaptadorRecyclerTorneo(torneoArray, getActivity());
             recycleViewTorneo.setAdapter(adaptadorTorneo);
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
@@ -254,19 +256,25 @@ public class FragmentTorneo extends Fragment {
 
         return index;
     }
-    public void guardarTorneo() {
 
+    public void inicializarControles(String mensaje) {
+        recyclerViewLoadTorneo();
+        editTextTorneo.setText("");
+        if(checkboxTorneoActual.isChecked()){
+            OcultarLayoutIsActual();
+            getIsActual();
+        }
+        Toast.makeText(getActivity(),
+                mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
+    public void guardarTorneo() {
         anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
         torneo = new Torneo(0, editTextTorneo.getText()
                 .toString(), isChecked,isChecked, anio.getID_ANIO(), usuario, fechaCreacion, usuario,
                 fechaActualizacion);
         if (controladorAdeful.insertTorneoAdeful(torneo)) {
-            recyclerViewLoadTorneo();
-            editTextTorneo.setText("");
-            if(checkboxTorneoActual.isChecked()){
-                OcultarLayoutIsActual();
-                getIsActual();
-            }
+          inicializarControles(GUARDAR_USUARIO);
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
@@ -278,16 +286,8 @@ public class FragmentTorneo extends Fragment {
                 .getID_TORNEO(), editTextTorneo.getText()
                 .toString(), isChecked,checkedAnterior, anio.getID_ANIO(), null, null, usuario, fechaActualizacion);
         if (controladorAdeful.actualizarTorneoAdeful(torneo)) {
-            recyclerViewLoadTorneo();
-            editTextTorneo.setText("");
             insertar = true;
-            if(checkboxTorneoActual.isChecked()){
-                OcultarLayoutIsActual();
-                getIsActual();
-            }
-            Toast.makeText(getActivity(),
-                    "Torneo actualizado correctamente.",
-                    Toast.LENGTH_SHORT).show();
+            inicializarControles(ACTUALIZAR_USUARIO);
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
@@ -311,7 +311,6 @@ public void OcultarLayoutIsActual(){
     }
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -358,13 +357,11 @@ public void OcultarLayoutIsActual(){
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
             // TODO Auto-generated method stub
         }
     }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -374,12 +371,12 @@ public void OcultarLayoutIsActual(){
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
-        // menu.getItem(6).setVisible(false);// cargo
+        menu.getItem(6).setVisible(false);// cargo
         // menu.getItem(7).setVisible(false);//cerrar
         // menu.getItem(8).setVisible(false);// guardar
         menu.getItem(9).setVisible(false);// Subir
@@ -437,7 +434,6 @@ public void OcultarLayoutIsActual(){
             return true;
         }
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

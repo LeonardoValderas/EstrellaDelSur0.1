@@ -1,11 +1,15 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import java.util.ArrayList;
+
+import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
@@ -16,22 +20,30 @@ public class AdaptadorRecyclerTorneo extends
 
 	private View.OnClickListener listener;
 	private ArrayList<Torneo> torneoArray;
+	private Typeface nombreFont;
+
 
 	public static class TorneoViewHolder extends RecyclerView.ViewHolder {
 
 		private TextView textRecyclerView;
 		private ImageView imageViewEscudo;
         private ImageView imageIsActual;
+		private LinearLayout linearEscudo;
 
-		public TorneoViewHolder(View itemView) {
+		public TorneoViewHolder(View itemView, Typeface nombre) {
 			super(itemView);
 
 			textRecyclerView = (TextView) itemView
 					.findViewById(R.id.textRecyclerView);
+			textRecyclerView.setTypeface(nombre);
 
-			imageViewEscudo = (ImageView) itemView
-					.findViewById(R.id.imageViewEscudo);
-			imageViewEscudo.setVisibility(View.GONE);
+			linearEscudo = (LinearLayout) itemView
+					.findViewById(R.id.linearEscudo);
+			linearEscudo.setVisibility(View.GONE);
+
+//			imageViewEscudo = (ImageView) itemView
+//					.findViewById(R.id.imageViewEscudo);
+//			imageViewEscudo.setVisibility(View.GONE);
 			imageIsActual = (ImageView) itemView
 					.findViewById(R.id.imageIsActual);
 		}
@@ -45,8 +57,9 @@ public class AdaptadorRecyclerTorneo extends
 		}
 	}
 
-	public AdaptadorRecyclerTorneo(ArrayList<Torneo> torneoArray) {
+	public AdaptadorRecyclerTorneo(ArrayList<Torneo> torneoArray,Context context) {
 		this.torneoArray = torneoArray;
+		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
 	}
 
 	@Override
@@ -55,7 +68,7 @@ public class AdaptadorRecyclerTorneo extends
 				R.layout.recyclerview_item_liga, viewGroup, false);
 
 		itemView.setOnClickListener(this);
-		TorneoViewHolder tvh = new TorneoViewHolder(itemView);
+		TorneoViewHolder tvh = new TorneoViewHolder(itemView,nombreFont);
 
 		return tvh;
 	}

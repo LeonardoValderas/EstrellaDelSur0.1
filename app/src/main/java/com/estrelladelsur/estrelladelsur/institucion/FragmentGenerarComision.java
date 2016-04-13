@@ -248,7 +248,6 @@ public class FragmentGenerarComision extends Fragment {
     }
 
     public ArrayList<Cargo> selectCargoList() {
-
         // CARGO
         cargoArray = controladorAdeful.selectListaCargoAdeful();
         if (cargoArray == null)
