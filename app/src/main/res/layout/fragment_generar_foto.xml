@@ -13,6 +13,7 @@
             android:id="@+id/tituloFotoEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:ems="10"
             android:textSize="25dp"
             android:gravity="center"
@@ -23,13 +24,11 @@
 
         <ImageView
             android:id="@+id/imageFoto"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="10dp"
             android:layout_gravity="center"
+            android:background="@drawable/border_rect"
             android:clickable="true"
             android:src="@mipmap/ic_foto" />
 

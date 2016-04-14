@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
 
 public class AdaptadorRecyclerResultado extends
@@ -24,6 +25,7 @@ public class AdaptadorRecyclerResultado extends
 	private ArrayList<Resultado> resultadoArray;
 	private Typeface textFont;
 	private Typeface equipoFont;
+	private AuxiliarGeneral auxiliarGeneral;
 
 	public static class FixtureViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -137,8 +139,10 @@ public class AdaptadorRecyclerResultado extends
 
 	public AdaptadorRecyclerResultado(ArrayList<Resultado> resultadoArray, Context context) {
 		this.resultadoArray = resultadoArray;
-		textFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
-		equipoFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+
+		auxiliarGeneral = new AuxiliarGeneral(context);
+		textFont = auxiliarGeneral.textFont(context);
+		equipoFont = auxiliarGeneral.tituloFont(context);
 	}
 
 	@Override

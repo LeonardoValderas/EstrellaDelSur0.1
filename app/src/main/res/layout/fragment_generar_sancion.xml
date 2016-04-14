@@ -15,6 +15,7 @@
             android:layout_height="match_parent"
             android:layout_margin="2dp"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:gravity="center"
-                    android:text="Amarilla"/>
+                    android:text="Amarilla" />
 
                 <TextView
                     android:id="@+id/textRoja"
@@ -138,8 +139,6 @@
                 android:inputType="textMultiLine"
                 android:lines="5"
                 android:textSize="25dp" />
-
         </LinearLayout>
     </ScrollView>
-
 </FrameLayout>

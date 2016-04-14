@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.permiso;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -14,12 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerCrearPermiso;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerUsuario;
@@ -30,20 +29,13 @@ import com.estrelladelsur.estrelladelsur.dialogo.DialogoListCheck;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
-import com.estrelladelsur.estrelladelsur.institucion.*;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class FragmentGenerarPermiso extends Fragment {
 
-    private ImageButton imageButton1;
-    private TextView textViewFecha, textViewLugar, textViewSubmodulos;
-    private DialogoListCheck dialogoListCheck;
-    private ListView entrenamientolistView;
+    private TextView textViewLugar, textViewSubmodulos;
     private int CheckedPositionFragment;
-    private SimpleDateFormat formate = new SimpleDateFormat(
-            "dd-MM-yyyy");
     private Spinner spinnerUsuario;
     private Button buttonFechaEntrenamiento;
     private Button buttonHoraEntrenamiento;
@@ -56,15 +48,14 @@ public class FragmentGenerarPermiso extends Fragment {
     private ArrayList<SubModulo> submoduloArrayExtraTotal;
     private AdaptadorRecyclerCrearPermiso adaptadorRecyclerCrearPermiso;
     private Usuario usuario;
-    private boolean bandera = true;
     private ArrayAdapter<String> adaptadorInicial;
     private boolean actualizar = false;
     private int idPermisoExtra;
     private boolean insertar = true;
-    private ArrayList<Integer> id_permiso_array = null;
     private AuxiliarGeneral auxiliarGeneral;
     private Permiso permiso;
     private Communicator communicator;
+    private Typeface titulo;
 
     public static FragmentGenerarPermiso newInstance() {
         FragmentGenerarPermiso fragment = new FragmentGenerarPermiso();
@@ -89,6 +80,8 @@ public class FragmentGenerarPermiso extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generar_entrenamiento,
                 container, false);
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        titulo = auxiliarGeneral.tituloFont(getActivity());
         // RECYCLER
         recycleViewGeneral = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
@@ -96,11 +89,11 @@ public class FragmentGenerarPermiso extends Fragment {
         spinnerUsuario = (Spinner) v
                 .findViewById(R.id.spinnerLugarEntrenamiento);
 
-
         textViewLugar =(TextView)v.findViewById(R.id.textViewLugar);
         textViewLugar.setVisibility(View.GONE);
         textViewSubmodulos =(TextView)v.findViewById(R.id.textViewDivisionCitada);
-        textViewSubmodulos.setText("MODULOS");
+        textViewSubmodulos.setText("Modulos");
+        textViewSubmodulos.setTypeface(titulo, Typeface.BOLD);
         // DIA
         buttonFechaEntrenamiento = (Button) v
                 .findViewById(R.id.buttonFechaEntrenamiento);
@@ -206,7 +199,7 @@ public class FragmentGenerarPermiso extends Fragment {
        public void loadApterRecycler(ArrayList<SubModulo> litaSubmodulo){
         //ADAPTER
         adaptadorRecyclerCrearPermiso = new AdaptadorRecyclerCrearPermiso(
-                litaSubmodulo);
+                litaSubmodulo,getActivity());
         recycleViewGeneral.setAdapter(adaptadorRecyclerCrearPermiso);
     }
 
@@ -219,8 +212,8 @@ public class FragmentGenerarPermiso extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
@@ -270,8 +263,7 @@ public class FragmentGenerarPermiso extends Fragment {
                                 Toast.LENGTH_SHORT).show();
                     } else {
                         String usuarioa = "Administrador";
-                        String fechaCreacion = controladorAdeful.getFechaOficial();
-                        String fechaActualizacion = fechaCreacion;
+
                         boolean salving = true;
                         if (insertar) {
                             usuario = (Usuario) spinnerUsuario
@@ -287,7 +279,7 @@ public class FragmentGenerarPermiso extends Fragment {
                             }else {
 
                                 permiso = new Permiso(0, usuario.getID_USUARIO(),
-                                        usuarioa, fechaCreacion, usuarioa, fechaActualizacion);
+                                        usuarioa, auxiliarGeneral.getFechaOficial(), usuarioa, auxiliarGeneral.getFechaOficial());
 
                                 int id_permiso = controladorAdeful
                                         .insertPermisosAdeful(permiso);
@@ -334,7 +326,7 @@ public class FragmentGenerarPermiso extends Fragment {
                         } else {
                         //EDITAR PERMISO
                          permiso = new Permiso(idPermisoExtra,
-                                    0, null, null, usuarioa, fechaActualizacion);
+                                    0, null, null, usuarioa, auxiliarGeneral.getFechaOficial());
                          // actualizo fecha permiso
                          if (controladorAdeful
                                     .actualizarPermisosAdeful(permiso)) {
@@ -344,7 +336,13 @@ public class FragmentGenerarPermiso extends Fragment {
                                   if(!submoduloArrayExtraTrue.get(i).ISSELECTED()){
                                       if (controladorAdeful
                                                    .eliminarPermisoModuloAdeful(submoduloArrayExtraTrue.get(i).getID_PERMISO_MODULO())) {
-                                           } else {
+                                          if (controladorAdeful
+                                                  .actualizarSubModuloSelectedFalseAdeful(submoduloArrayExtraTrue.get(i).getID_SUBMODULO())) {
+
+                                          } else {
+                                              auxiliarGeneral.errorDataBase(getActivity());
+                                          }
+                                      } else {
                                                auxiliarGeneral.errorDataBase(getActivity());
                                            }
                                   }
@@ -357,6 +355,12 @@ public class FragmentGenerarPermiso extends Fragment {
                                             ,submoduloArrayFalse.get(i).getID_SUBMODULO());
                                     if (controladorAdeful
                                             .insertPermisoModuloAdeful(permiso)) {
+                                        if (controladorAdeful
+                                                .actualizarSubModuloSelectedTrueAdeful(submoduloArrayFalse.get(i).getID_SUBMODULO())) {
+
+                                        } else {
+                                            auxiliarGeneral.errorDataBase(getActivity());
+                                        }
                                     } else {
                                         auxiliarGeneral.errorDataBase(getActivity());
                                     }

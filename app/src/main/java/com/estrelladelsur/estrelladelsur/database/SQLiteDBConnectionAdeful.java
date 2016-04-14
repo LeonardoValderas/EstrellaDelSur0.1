@@ -26,6 +26,7 @@ public class SQLiteDBConnectionAdeful extends SQLiteOpenHelper {
     String TABLA_USUARIO_ADEFUL = "CREATE TABLE IF NOT EXISTS USUARIO_ADEFUL (ID_USUARIO INTEGER PRIMARY KEY AUTOINCREMENT,"
             + " USUARIO VARCHAR(200),"
             + " PASSWORD VARCHAR(200),"
+            + " LIGA BOOLEAN,"
             + " USUARIO_CREADOR VARCHAR(100),"
             + " FECHA_CREACION VARCHAR(100),"
             + " USUARIO_ACTUALIZACION VARCHAR(100),"

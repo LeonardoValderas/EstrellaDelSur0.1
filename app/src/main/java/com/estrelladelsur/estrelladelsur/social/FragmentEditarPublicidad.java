@@ -153,7 +153,7 @@ public class FragmentEditarPublicidad extends Fragment {
 
 		publicidadArray = controladorAdeful.selectListaPublicidadAdeful();
 		if(publicidadArray != null) {
-			adaptadorEditarPublicidad = new AdaptadorRecyclerPublicidad(publicidadArray);
+			adaptadorEditarPublicidad = new AdaptadorRecyclerPublicidad(publicidadArray, getActivity());
 			recyclerViewPublicidad.setAdapter(adaptadorEditarPublicidad);
 		}else {
         auxiliarGeneral.errorDataBase(getActivity());

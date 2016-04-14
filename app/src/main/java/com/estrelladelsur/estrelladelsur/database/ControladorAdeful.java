@@ -60,13 +60,6 @@ public class ControladorAdeful {
         sqLiteDBConnectionAdeful.close();
     }
 
-    public String getFechaOficial() {
-
-        Date dateOficial = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd - HH:mm:ss");
-        return sdf.format(dateOficial);
-    }
-
     // INSERTAR MODULO
     public boolean insertModuloAdeful(Modulo modulo)
             throws SQLiteException {
@@ -339,6 +332,7 @@ public class ControladorAdeful {
         try {
             cv.put("USUARIO", usuario.getUSUARIO());
             cv.put("PASSWORD", usuario.getPASSWORD());
+            cv.put("LIGA", usuario.isLIGA());
             cv.put("USUARIO_CREADOR", usuario.getUSUARIO_CREADOR());
             cv.put("FECHA_CREACION", usuario.getFECHA_CREACION());
             cv.put("USUARIO_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
@@ -366,6 +360,7 @@ public class ControladorAdeful {
         try {
             cv.put("USUARIO", usuario.getUSUARIO());
             cv.put("PASSWORD", usuario.getPASSWORD());
+            cv.put("LIGA", usuario.isLIGA());
             cv.put("USUARIO_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
 
@@ -391,6 +386,7 @@ public class ControladorAdeful {
         ArrayList<Usuario> arrayUsuarioAdeful = new ArrayList<Usuario>();
         String user = null, pass = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
         int id;
+        boolean liga;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -408,6 +404,8 @@ public class ControladorAdeful {
                                 .getColumnIndex("USUARIO"));
                         pass = cursor.getString(cursor
                                 .getColumnIndex("PASSWORD"));
+                        liga = cursor.getInt(cursor
+                                .getColumnIndex("LIGA")) > 0;
                         creador = cursor.getString(cursor
                                 .getColumnIndex("USUARIO_CREADOR"));
                         fechaCreacion = cursor.getString(cursor
@@ -417,7 +415,7 @@ public class ControladorAdeful {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         //CLASE AUX
-                        usuario = new Usuario(id, user, pass, creador, fechaCreacion, usuario_act, fechaActualizacion);
+                        usuario = new Usuario(id, user, pass, liga, creador, fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY USUARIO
                         arrayUsuarioAdeful.add(usuario);
                     }
@@ -3213,11 +3211,13 @@ public class ControladorAdeful {
             }
         }
 
-        String sqlJ = "SELECT * FROM JUGADOR_ADEFUL WHERE ID_DIVISION=" + sqlId;
+        String sqlJ = "SELECT J.ID_JUGADOR, J.NOMBRE_JUGADOR, J.ID_DIVISION, D.DESCRIPCION " +
+                "FROM JUGADOR_ADEFUL J INNER JOIN DIVISION_ADEFUL D ON D.ID_DIVISION = J.ID_DIVISION " +
+                "WHERE J.ID_DIVISION=" + sqlId;
         ArrayList<Entrenamiento> arrayAsistenciaJugador = new ArrayList<Entrenamiento>();
 
         int id_jug, id_divi;
-        String nombre = null;
+        String nombre = null,descripcion = null;
         Cursor cursorJ = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -3234,9 +3234,11 @@ public class ControladorAdeful {
                                 .getColumnIndex("NOMBRE_JUGADOR"));
                         id_divi = cursorJ.getInt(cursorJ
                                 .getColumnIndex("ID_DIVISION"));
+                        descripcion = cursorJ.getString(cursorJ
+                                .getColumnIndex("DESCRIPCION"));
 
                         entrenamientoAsistenciaJugador = new Entrenamiento(0,
-                                0, id_divi, "", id_jug, nombre, false);
+                                0, id_divi, descripcion, id_jug, nombre, false);
 
                         arrayAsistenciaJugador.add(entrenamientoAsistenciaJugador);
                     }

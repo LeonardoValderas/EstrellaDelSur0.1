@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
@@ -25,12 +24,9 @@ import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerMes;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
-import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
-
 import java.util.ArrayList;
-
 
 public class FragmentEditarEntrenamiento extends Fragment {
 
@@ -149,7 +145,7 @@ public class FragmentEditarEntrenamiento extends Fragment {
                                                          }
                                                         Toast.makeText(
                                                                 getActivity(),
-                                                                "Entrenamiento Eliminado Correctamente",
+                                                                "Entrenamiento eliminado correctamente",
                                                                 Toast.LENGTH_SHORT).show();
 
                                                         dialogoAlerta.alertDialog.dismiss();
@@ -172,7 +168,6 @@ public class FragmentEditarEntrenamiento extends Fragment {
 
             @Override
             public void onClick(View view, int position) {
-                // TODO Auto-generated method stub
 
                 Intent editarEntrenamiento = new Intent(getActivity(),
                         TabsEntrenamiento.class);
@@ -195,14 +190,12 @@ public class FragmentEditarEntrenamiento extends Fragment {
 //                                                 fecha = auxiliarGeneral.setFormatoMes(
 //                                                         entrenamientoMesSpinner.getSelectedItem().toString())+"-"+entrenamientoAnioSpinner.getSelectedItem().toString();
 
-                                                 if(fechaSpinner() !=null)
+                                                 if(fechaSpinner() != null)
                                                  recyclerViewLoadEntrenamiento(fechaSpinner());
                                              }
                                          }
         );
     }
-
-
 
     public String fechaSpinner (){
 
@@ -217,6 +210,11 @@ public class FragmentEditarEntrenamiento extends Fragment {
         if (entrenamientoArray != null) {
             adaptadorEntrenamiento = new AdaptadorRecyclerEntrenamiento(entrenamientoArray, getActivity());
             recycleViewGeneral.setAdapter(adaptadorEntrenamiento);
+            if(entrenamientoArray.isEmpty())
+                Toast.makeText(
+                        getActivity(),
+                        "Selección sin datos",
+                        Toast.LENGTH_SHORT).show();
         } else {
          auxiliarGeneral.errorDataBase(getActivity());
         }
@@ -227,18 +225,10 @@ public class FragmentEditarEntrenamiento extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    /**
-     * Metodo click item recycler
-     *
-     * @author LEO
-     */
 
     public static interface ClickListener {
-
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
-
     }
 
     static class RecyclerTouchListener implements
@@ -269,9 +259,7 @@ public class FragmentEditarEntrenamiento extends Fragment {
                             }
                         }
                     });
-
         }
-
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
             // TODO Auto-generated method stub
@@ -282,18 +270,11 @@ public class FragmentEditarEntrenamiento extends Fragment {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
-
         }
-
     }
-
 }

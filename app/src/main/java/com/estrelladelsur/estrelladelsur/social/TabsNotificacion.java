@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.social;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -7,21 +8,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.institucion.Communicator;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 
-public class TabsNotificacion extends AppCompatActivity implements com.estrelladelsur.estrelladelsur.social.Communicator{
+public class TabsNotificacion extends AppCompatActivity implements com.estrelladelsur.estrelladelsur.social.Communicator {
 
     private Toolbar toolbar;
-    private Toolbar toolbar_sub;
-    private ActionBarDrawerToggle drawerToggle;
     private ViewPager viewPager;
     private int viewpagerid;
     final int PAGE_COUNT = 2;
@@ -31,12 +28,15 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
     private static final boolean DEBUG = false;
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
-
-
+    private Typeface titulos;
+    private AuxiliarGeneral auxiliarGeneral;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
+
+        auxiliarGeneral = new AuxiliarGeneral(TabsNotificacion.this);
+        titulos = auxiliarGeneral.tituloFont(TabsNotificacion.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -51,6 +51,7 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
 
         txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
         txtAbSubTitulo.setText("NOTIFICACION");
+        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -61,7 +62,6 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
             } else {
                 viewpagerid = viewPager.getId();
             }
-
             viewPager.setAdapter(new TabsNotificacionAdapter(
                     getSupportFragmentManager()));
         } else {
@@ -77,9 +77,9 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setupWithViewPager(viewPager);
 
-
         init();
     }
+
     public void init() {
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -91,7 +91,6 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
 
             @Override
             public void onPageSelected(int position) {
-
             }
 
             @Override
@@ -99,11 +98,9 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
 
             }
         });
-
     }
 
     public class TabsNotificacionAdapter extends FragmentPagerAdapter {
-
         private FragmentManager fm;
         private String tabTitles[] =
                 new String[]{"CREAR NOTIFICACION", "EDITAR NOTIFICACION"};
@@ -120,7 +117,6 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
 
         @Override
         public Fragment getItem(int position) {
-
             Fragment fragmentTab = fm.findFragmentByTag("android:switcher:"
                     + viewPager.getId() + ":" + getItemId(position));
 
@@ -138,18 +134,14 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
 
                     break;
             }
-
             return fragmentTab;
         }
 
         @Override
         public Object instantiateItem(View container, int position) {
-
             if (fm == null) {
                 mCurTransaction = fm.beginTransaction();
             }
-
-            // Do we already have this fragment?
             String name = makeFragmentName(container.getId(), position);
             Fragment fragment = fm.findFragmentByTag(name);
             if (fragment != null) {
@@ -164,7 +156,6 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
                 mCurTransaction.add(container.getId(), fragment,
                         makeFragmentName(container.getId(), position));
             }
-
             return fragment;
         }
 
@@ -179,63 +170,11 @@ public class TabsNotificacion extends AppCompatActivity implements com.estrellad
         }
     }
 
-
     public void refresh() {
-        // TODO Auto-generated method stub
-
         FragmentManager manager = getSupportFragmentManager();
         FragmentEditarNotificacion fragment = (FragmentEditarNotificacion) manager
                 .findFragmentByTag("android:switcher:" + viewPager.getId()
                         + ":" + 1);
-
         fragment.recyclerViewLoadNotificacion();
-
     }
-
-/*
-    @Override
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
-        if (id == R.id.action_permisos) {
-            return true;
-        }
-
-        if (id == R.id.action_guardar) {
-
-            return true;
-        }
-
-
-        if (id == R.id.action_subir) {
-
-            return true;
-        }
-
-
-        if (id == R.id.action_eliminar) {
-
-            return true;
-        }
-
-        if (id == android.R.id.home) {
-
-            NavUtils.navigateUpFromSameTask(this);
-
-
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-*/
-
 }

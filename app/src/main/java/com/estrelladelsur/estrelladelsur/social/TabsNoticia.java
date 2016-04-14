@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.social;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,13 +16,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.institucion.Communicator;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 
-public class TabsNoticia extends AppCompatActivity implements com.estrelladelsur.estrelladelsur.social.Communicator{
+public class TabsNoticia extends AppCompatActivity implements com.estrelladelsur.estrelladelsur.social.Communicator {
 
     private Toolbar toolbar;
-    private Toolbar toolbar_sub;
-    private ActionBarDrawerToggle drawerToggle;
     private ViewPager viewPager;
     private int viewpagerid;
     final int PAGE_COUNT = 2;
@@ -31,13 +30,16 @@ public class TabsNoticia extends AppCompatActivity implements com.estrelladelsur
     private static final boolean DEBUG = false;
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
-
+    private Typeface titulos;
+    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
 
+        auxiliarGeneral = new AuxiliarGeneral(TabsNoticia.this);
+        titulos = auxiliarGeneral.tituloFont(TabsNoticia.this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -51,6 +53,7 @@ public class TabsNoticia extends AppCompatActivity implements com.estrelladelsur
 
         txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
         txtAbSubTitulo.setText("NOTICIA");
+        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -77,9 +80,9 @@ public class TabsNoticia extends AppCompatActivity implements com.estrelladelsur
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setupWithViewPager(viewPager);
 
-
         init();
     }
+
     public void init() {
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -91,15 +94,12 @@ public class TabsNoticia extends AppCompatActivity implements com.estrelladelsur
 
             @Override
             public void onPageSelected(int position) {
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
-
     }
 
     public class TabsNoticiaAdapter extends FragmentPagerAdapter {
@@ -179,16 +179,11 @@ public class TabsNoticia extends AppCompatActivity implements com.estrelladelsur
         }
     }
 
-
     public void refresh() {
-        // TODO Auto-generated method stub
-
         FragmentManager manager = getSupportFragmentManager();
         FragmentEditarNoticia fragment = (FragmentEditarNoticia) manager
                 .findFragmentByTag("android:switcher:" + viewPager.getId()
                         + ":" + 1);
-
         fragment.recyclerViewLoadNoticia();
-
     }
 }

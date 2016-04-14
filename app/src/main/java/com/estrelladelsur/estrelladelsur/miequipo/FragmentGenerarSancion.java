@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -13,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
@@ -28,7 +30,6 @@ import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class FragmentGenerarSancion extends Fragment {
@@ -48,12 +49,9 @@ public class FragmentGenerarSancion extends Fragment {
     private ArrayList<Division> divisionArray;
     private ArrayList<Torneo> torneoArray;
     private ArrayList<Anio> anioArray;
-
     private ArrayList<Jugador> jugadorArray;
     private Anio anio;
     private Jugador jugadorRecycler;
-    private SimpleDateFormat formate = new SimpleDateFormat(
-            "dd-MM-yyyy");
     private Division division;
     private Torneo torneo;
     private int CheckedPositionFragment;
@@ -66,6 +64,9 @@ public class FragmentGenerarSancion extends Fragment {
     private int id_division;
     private Sancion sancion;
     private AuxiliarGeneral auxiliarGeneral;
+    private Typeface editTextFont;
+    private TextView textAmarilla, textRoja, cantidadFecha;
+
 
     public static FragmentGenerarSancion newInstance() {
         FragmentGenerarSancion fragment = new FragmentGenerarSancion();
@@ -73,7 +74,6 @@ public class FragmentGenerarSancion extends Fragment {
     }
 
     public FragmentGenerarSancion() {
-        // Required empty public constructor
     }
 
     @Override
@@ -83,7 +83,6 @@ public class FragmentGenerarSancion extends Fragment {
 
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
-
         } else {
             init();
         }
@@ -94,7 +93,8 @@ public class FragmentGenerarSancion extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generar_sancion, container,
                 false);
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
         // DIVISION
         sancionTorneoSpinner = (Spinner) v
                 .findViewById(R.id.sancionTorneoSpinner);
@@ -114,9 +114,20 @@ public class FragmentGenerarSancion extends Fragment {
         sancionRojaSpinner = (Spinner) v.findViewById(R.id.sancionRojaSpinner);
         //OBSERVACION
         observacionesSancion = (EditText) v.findViewById(R.id.observacionesSancion);
+        observacionesSancion.setTypeface(editTextFont, Typeface.BOLD);
         //CANTIDAD DE FECHAS
         cantidadFechasSpinner = (Spinner) v
                 .findViewById(R.id.cantidadFechasSpinner);
+
+        textAmarilla = (TextView) v
+                .findViewById(R.id.textAmarilla);
+        textAmarilla.setTypeface(editTextFont);
+        textRoja = (TextView) v
+                .findViewById(R.id.textRoja);
+        textRoja.setTypeface(editTextFont);
+        cantidadFecha = (TextView) v
+                .findViewById(R.id.cantidadFecha);
+        cantidadFecha.setTypeface(editTextFont);
         return v;
     }
 
@@ -127,11 +138,11 @@ public class FragmentGenerarSancion extends Fragment {
     }
 
     private void init() {
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+
         // TORNEO
         torneoArray = controladorAdeful.selectListaTorneoAdeful();
         if (torneoArray != null) {
-            if (torneoArray.size() != 0) {
+            if (!torneoArray.isEmpty()) {
                 // TORNEO SPINNER
                 adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
                         R.layout.simple_spinner_dropdown_item, torneoArray);
@@ -148,7 +159,7 @@ public class FragmentGenerarSancion extends Fragment {
         // ANIO
         anioArray = controladorAdeful.selectListaAnio();
         if (anioArray != null) {
-            if (anioArray.size() != 0) {
+            if (!anioArray.isEmpty()) {
                 // ANIO SPINNER
                 adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
                         R.layout.simple_spinner_dropdown_item, anioArray);
@@ -166,7 +177,7 @@ public class FragmentGenerarSancion extends Fragment {
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
             // DIVSION SPINNER
-            if (divisionArray.size() != 0) {
+            if (!divisionArray.isEmpty()) {
                 adapterFixtureDivision = new AdapterSpinnerDivision(getActivity(),
                         R.layout.simple_spinner_dropdown_item, divisionArray);
                 sancionDivisionSpinner.setAdapter(adapterFixtureDivision);
@@ -195,7 +206,7 @@ public class FragmentGenerarSancion extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long arg3) {
-                if (divisionArray.size() > 0) {
+                if (!divisionArray.isEmpty()) {
                     id_division = divisionArray.get(position).getID_DIVISION();
                     populationSpinnerJugador(id_division);
                 }
@@ -217,7 +228,7 @@ public class FragmentGenerarSancion extends Fragment {
             sancionDivisionSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
                     .getIntExtra("divisionSpinner", 0), 0));
             //Traer array jugadores
-            id_division =getActivity().getIntent()
+            id_division = getActivity().getIntent()
                     .getIntExtra("divisionSpinner", 0);
             populationSpinnerJugador(id_division);
             // JUGADOR 1
@@ -229,8 +240,8 @@ public class FragmentGenerarSancion extends Fragment {
             sancionRojaSpinner.setSelection(getActivity().getIntent().getIntExtra("rojaSpinner", 0));
             // FECHAS 4
             cantidadFechasSpinner.setSelection(getActivity().getIntent().getIntExtra("fechaSpinner", 0));
-            // AMARILLA 2
-//            sancionAmarillaSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("amarillaSpinner", 0), 2));
+            // TORNEO 5
+            sancionTorneoSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("torneoSpinner", 0), 3));
 //            // ROJA 3
 //            sancionRojaSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("rojaSpinner", 0), 3));
 //            // FECHAS 4
@@ -249,7 +260,7 @@ public class FragmentGenerarSancion extends Fragment {
 
         jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
         if (jugadorArray != null) {
-            if (jugadorArray.size() != 0) {
+            if (!jugadorArray.isEmpty()) {
                 adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
                         R.layout.simple_spinner_dropdown_item, jugadorArray);
                 sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
@@ -259,7 +270,6 @@ public class FragmentGenerarSancion extends Fragment {
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerJugador));
                 sancionJugadorSpinner.setAdapter(adaptadorInicial);
             }
-
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
@@ -290,7 +300,7 @@ public class FragmentGenerarSancion extends Fragment {
                     }
                 }
                 break;
-            //
+            //Anio
             case 2:
                 for (int i = 0; i < anioArray.size(); i++) {
                     if (anioArray.get(i).getID_ANIO() == (idSpinner)) {
@@ -298,32 +308,14 @@ public class FragmentGenerarSancion extends Fragment {
                     }
                 }
                 break;
-//
-//            case 3:
-//                for (int i = 0; i < jugadorArray.size(); i++) {
-//                    if (jugadorArray.get(i).getID_DIVISION() == (idSpinner)) {
-//                        index = i;
-//                    }
-//                }
-//                break;
-//
-//            case 4:
-//                for (int i = 0; i < jugadorArray.size(); i++) {
-//                    if (jugadorArray.get(i).getID_DIVISION() == (idSpinner)) {
-//                        index = i;
-//                    }
-//                }
-//                break;
-//
-//            case 5:
-//                for (int i = 0; i < jugadorArray.size(); i++) {
-//                    if (jugadorArray.get(i).getID_DIVISION() == (idSpinner)) {
-//                        index = i;
-//                    }
-//                }
-//                break;
-//
-
+            // TORNEO 3
+            case 3:
+                for (int i = 0; i < torneoArray.size(); i++) {
+                    if (torneoArray.get(i).getID_TORNEO() == (idSpinner)) {
+                        index = i;
+                    }
+                }
+                break;
         }
 
         return index;
@@ -333,8 +325,8 @@ public class FragmentGenerarSancion extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
@@ -367,7 +359,6 @@ public class FragmentGenerarSancion extends Fragment {
 
         if (id == R.id.action_guardar) {
 
-
             if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerDivision))) {
                 Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
@@ -376,19 +367,12 @@ public class FragmentGenerarSancion extends Fragment {
                     getString(R.string.ceroSpinnerJugador))) {
                 Toast.makeText(getActivity(), "Debe agregar un jugador.",
                         Toast.LENGTH_SHORT).show();
-//            } else if (sancionAmarillaSpinner.getSelectedItem().toString().equals(getResources().
-//                    getString(R.string.ceroSpinnerFecha))) {
-//                Toast.makeText(getActivity(), "Debe agregar una fecha.",
-//                        Toast.LENGTH_SHORT).show();
-//            } else if (sancionRojaSpinner.getSelectedItem().toString().equals(getResources().
-//                    getString(R.string.ceroSpinnerAnio))) {
-//                Toast.makeText(getActivity(), "Debe agregar un año.",
-//                        Toast.LENGTH_SHORT).show();
+            } else if (sancionTorneoSpinner.getSelectedItem().toString().equals(getResources().
+                    getString(R.string.ceroSpinnerTorneo))) {
+                Toast.makeText(getActivity(), "Debe agregar un torneo.",
+                        Toast.LENGTH_SHORT).show();
             } else {
                 String usuario = "Administrador";
-                String fechaCreacion = controladorAdeful.getFechaOficial();
-                String fechaActualizacion = fechaCreacion;
-
                 division = (Division) sancionDivisionSpinner.getSelectedItem();
                 torneo = (Torneo) sancionTorneoSpinner.getSelectedItem();
                 anio = (Anio) sancionAnioSpinner.getSelectedItem();
@@ -398,12 +382,13 @@ public class FragmentGenerarSancion extends Fragment {
                 if (insertar) {
 
                     sancion = new Sancion(0, jugadorRecycler.getID_JUGADOR(), torneo.getID_TORNEO(), anio.getID_ANIO(), sancionAmarillaSpinner.getSelectedItemPosition(),
-                            sancionRojaSpinner.getSelectedItemPosition(), cantidadFechasSpinner.getSelectedItemPosition(), observacionesSancion.getText().toString(), usuario, fechaCreacion,
-                            usuario, fechaActualizacion);
+                            sancionRojaSpinner.getSelectedItemPosition(), cantidadFechasSpinner.getSelectedItemPosition(), observacionesSancion.getText().toString(), usuario, auxiliarGeneral.getFechaOficial(),
+                            usuario, auxiliarGeneral.getFechaOficial());
 
                     if (controladorAdeful.insertSancionAdeful(sancion)) {
                         Toast.makeText(getActivity(), "Sanción cargada correctamente",
                                 Toast.LENGTH_SHORT).show();
+                        observacionesSancion.setText("");
                     } else {
                         auxiliarGeneral.errorDataBase(getActivity());
                     }
@@ -411,7 +396,7 @@ public class FragmentGenerarSancion extends Fragment {
 
                     sancion = new Sancion(idSancionExtra, jugadorRecycler.getID_JUGADOR(), torneo.getID_TORNEO(), anio.getID_ANIO(), sancionAmarillaSpinner.getSelectedItemPosition(),
                             sancionRojaSpinner.getSelectedItemPosition(), cantidadFechasSpinner.getSelectedItemPosition(), observacionesSancion.getText().toString(), null, null,
-                            usuario, fechaActualizacion);
+                            usuario, auxiliarGeneral.getFechaOficial());
 
                     if (controladorAdeful.actualizarSancionAdeful(sancion)) {
 
@@ -419,6 +404,7 @@ public class FragmentGenerarSancion extends Fragment {
                         insertar = true;
                         Toast.makeText(getActivity(), "Sanción actualizada correctamente",
                                 Toast.LENGTH_SHORT).show();
+                        observacionesSancion.setText("");
 
                     } else {
                         auxiliarGeneral.errorDataBase(getActivity());

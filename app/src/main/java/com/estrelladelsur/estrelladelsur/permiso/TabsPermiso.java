@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.permiso;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.miequipo.FragmentEditarSancion;
 import com.estrelladelsur.estrelladelsur.miequipo.FragmentGenerarSancion;
 
@@ -28,14 +30,17 @@ public class TabsPermiso extends AppCompatActivity implements Communicator{
 	private FragmentTransaction mCurTransaction;
 	private static final String TAG = "FragmentPagerAdapter";
 	private static final boolean DEBUG = false;
+	private AuxiliarGeneral auxiliarGeneral;
 	private TextView txtAbTitulo;
 	private TextView txtAbSubTitulo;
-
+	private Typeface titulos;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs_general);
 
+		auxiliarGeneral = new AuxiliarGeneral(TabsPermiso.this);
+		titulos = auxiliarGeneral.tituloFont(TabsPermiso.this);
 		// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -48,7 +53,7 @@ public class TabsPermiso extends AppCompatActivity implements Communicator{
 
 		txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
 		txtAbSubTitulo.setText("PERMISO");
-
+		txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
 		if (savedInstanceState != null) {
 			viewpagerid = savedInstanceState.getInt("viewpagerid", -1);

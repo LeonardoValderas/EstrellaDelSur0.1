@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.social;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,19 +14,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoMenuLista;
 
 public class TabsPublicidad extends AppCompatActivity implements Communicator{
 
     private Toolbar toolbar;
-    private ActionBarDrawerToggle drawerToggle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private DialogoAlerta dialogoAlerta;
-    private DialogoMenuLista dialogoMenuLista;
     private int viewpagerid;
     final int PAGE_COUNT = 2;
     private FragmentTransaction mCurTransaction;
@@ -33,11 +31,15 @@ public class TabsPublicidad extends AppCompatActivity implements Communicator{
     private static final boolean DEBUG = false;
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
-
+    private Typeface titulos;
+    private AuxiliarGeneral auxiliarGeneral;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
+
+        auxiliarGeneral = new AuxiliarGeneral(TabsPublicidad.this);
+        titulos = auxiliarGeneral.tituloFont(TabsPublicidad.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -52,6 +54,7 @@ public class TabsPublicidad extends AppCompatActivity implements Communicator{
 
         txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
         txtAbSubTitulo.setText("PUBLICIDAD");
+        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);

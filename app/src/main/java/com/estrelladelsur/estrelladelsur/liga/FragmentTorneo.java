@@ -59,8 +59,6 @@ public class FragmentTorneo extends Fragment {
     private ArrayAdapter<String> adaptadorInicial;
     private Anio anio;
     String usuario = "Administrador";
-    String fechaCreacion = null;
-    String fechaActualizacion = fechaCreacion;
     private boolean checkedAnterior = false;
     private String GUARDAR_USUARIO = "Torneo cargado correctamente";
     private String ACTUALIZAR_USUARIO = "Torneo actualizado correctamente";
@@ -93,7 +91,8 @@ public class FragmentTorneo extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_general_liga, container,
                 false);
-        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
         editTextTorneo = (EditText) v.findViewById(
                 R.id.editTextDescripcion);
         editTextTorneo.setTypeface(editTextFont);
@@ -123,8 +122,6 @@ public class FragmentTorneo extends Fragment {
     }
 
     private void init() {
-        fechaCreacion = controladorAdeful.getFechaOficial();
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextTorneo.setHint("Ingrese un Torneo");
         editTextTorneo.setHintTextColor(Color.GRAY);
         //VERICAMOS SI HAY UN TORNEO MARCADO COMO ACTUAL
@@ -271,8 +268,8 @@ public class FragmentTorneo extends Fragment {
     public void guardarTorneo() {
         anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
         torneo = new Torneo(0, editTextTorneo.getText()
-                .toString(), isChecked,isChecked, anio.getID_ANIO(), usuario, fechaCreacion, usuario,
-                fechaActualizacion);
+                .toString(), isChecked,isChecked, anio.getID_ANIO(), usuario, auxiliarGeneral.getFechaOficial(), usuario,
+                auxiliarGeneral.getFechaOficial());
         if (controladorAdeful.insertTorneoAdeful(torneo)) {
           inicializarControles(GUARDAR_USUARIO);
         } else {
@@ -284,7 +281,7 @@ public class FragmentTorneo extends Fragment {
         anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
         torneo = new Torneo(torneoArray.get(posicion)
                 .getID_TORNEO(), editTextTorneo.getText()
-                .toString(), isChecked,checkedAnterior, anio.getID_ANIO(), null, null, usuario, fechaActualizacion);
+                .toString(), isChecked,checkedAnterior, anio.getID_ANIO(), null, null, usuario, auxiliarGeneral.getFechaOficial());
         if (controladorAdeful.actualizarTorneoAdeful(torneo)) {
             insertar = true;
             inicializarControles(ACTUALIZAR_USUARIO);

@@ -17,7 +17,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerNotificacion;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
@@ -25,9 +24,7 @@ import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
-
 import java.util.ArrayList;
-
 
 public class FragmentEditarNotificacion extends Fragment {
 
@@ -64,7 +61,6 @@ public class FragmentEditarNotificacion extends Fragment {
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_editar_recyclerview, container, false);
-
         // RECYCLER NOTIFICACION
         recyclerArticulo = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
@@ -76,8 +72,6 @@ public class FragmentEditarNotificacion extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
     }
-
-
 
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
@@ -95,7 +89,6 @@ public class FragmentEditarNotificacion extends Fragment {
 
             @Override
             public void onClick(View view, int position) {
-                // TODO Auto-generated method stub
 
                 Intent editarNotificacion = new Intent(getActivity(),
                         TabsNotificacion.class);
@@ -110,8 +103,6 @@ public class FragmentEditarNotificacion extends Fragment {
 
             @Override
             public void onLongClick(View view, final int position) {
-                // TODO Auto-generated method stub
-
 
                 dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
                         "Desea eliminar la notificación?", null, null);
@@ -157,8 +148,7 @@ public class FragmentEditarNotificacion extends Fragment {
     public void recyclerViewLoadNotificacion() {
         notificacionArray = controladorAdeful.selectListaNotificacionAdeful();
         if(notificacionArray != null) {
-            adaptadorRecyclerNotificacion = new AdaptadorRecyclerNotificacion(notificacionArray);
-            adaptadorRecyclerNotificacion.notifyDataSetChanged();
+            adaptadorRecyclerNotificacion = new AdaptadorRecyclerNotificacion(notificacionArray, getActivity());
             recyclerArticulo.setAdapter(adaptadorRecyclerNotificacion);
         }else{
             auxiliarGeneral.errorDataBase(getActivity());
@@ -166,19 +156,14 @@ public class FragmentEditarNotificacion extends Fragment {
     }
 
     public static interface ClickListener {
-
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
-
     }
 
     static class RecyclerTouchListener implements
             RecyclerView.OnItemTouchListener {
-
         private GestureDetector detector;
         private ClickListener clickListener;
-
         public RecyclerTouchListener(Context context,
                                      final RecyclerView recyclerView,
                                      final ClickListener clickListener) {
@@ -190,7 +175,6 @@ public class FragmentEditarNotificacion extends Fragment {
                         public boolean onSingleTapUp(MotionEvent e) {
                             return true;
                         }
-
                         @Override
                         public void onLongPress(MotionEvent e) {
                             View child = recyclerView.findChildViewUnder(
@@ -201,9 +185,7 @@ public class FragmentEditarNotificacion extends Fragment {
                             }
                         }
                     });
-
         }
-
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
             // TODO Auto-generated method stub
@@ -214,27 +196,19 @@ public class FragmentEditarNotificacion extends Fragment {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
-
         }
-
     }
-
-
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
@@ -246,10 +220,8 @@ public class FragmentEditarNotificacion extends Fragment {
         menu.getItem(11).setVisible(false); // consultar
         super.onCreateOptionsMenu(menu, inflater);
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
         // noinspection SimplifiableIfStatement
         if (id == R.id.action_usuario) {

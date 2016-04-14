@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 
 public class AdaptadorRecyclerDivisionEntrenamiento extends
@@ -21,6 +22,7 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 	private View.OnClickListener listener;
 	private ArrayList<Entrenamiento> divisionArray;
 	private Typeface nombreFont;
+	private AuxiliarGeneral auxiliarGeneral;
 	public static class DivisionViewHolder extends RecyclerView.ViewHolder {
 
 		private TextView textViewDivision;
@@ -45,7 +47,8 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 
 	public AdaptadorRecyclerDivisionEntrenamiento(ArrayList<Entrenamiento> divisionArray,Context context) {
 		this.divisionArray = divisionArray;
-		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+		auxiliarGeneral = new AuxiliarGeneral(context);
+		this.nombreFont = auxiliarGeneral.tituloFont(context);
 	}
 	@Override
 	public DivisionViewHolder onCreateViewHolder(ViewGroup viewGroup,

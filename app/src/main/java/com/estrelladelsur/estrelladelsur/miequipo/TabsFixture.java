@@ -8,13 +8,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 
 public class TabsFixture extends AppCompatActivity {
 
@@ -29,12 +29,14 @@ public class TabsFixture extends AppCompatActivity {
 	private TextView txtAbTitulo;
 	private TextView txtAbSubTitulo;
 	private Typeface titulos;
-
+	private AuxiliarGeneral auxiliarGeneral;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs_general);
-		titulos = Typeface.createFromAsset(TabsFixture.this.getAssets(), "aspace_demo.otf");
+
+		auxiliarGeneral = new AuxiliarGeneral(TabsFixture.this);
+		titulos = auxiliarGeneral.tituloFont(TabsFixture.this);
 		// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);

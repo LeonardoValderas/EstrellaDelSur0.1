@@ -1,5 +1,7 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
-
 import java.util.ArrayList;
 
 public class AdaptadorRecyclerAsistencia extends
@@ -18,11 +20,16 @@ public class AdaptadorRecyclerAsistencia extends
 	private View.OnClickListener listener;
 	private ArrayList<Entrenamiento> asistenciaArray;
 	private ArrayList<Entrenamiento> asistenciaTrueArray = new ArrayList<Entrenamiento>();
+	private Typeface textFont;
+	private Typeface equipoFont;
+	private AuxiliarGeneral auxiliarGeneral;
+
 	public static class AsistenciaViewHolder extends RecyclerView.ViewHolder {
 		private TextView editTextDivision;
 		private TextView textViewDivision;
 		private CheckBox checkBoxEntrenamiento;
-		private CheckBox checkBoxEntrenamiento2;
+
+
 
 		public AsistenciaViewHolder(View itemView) {
 			super(itemView);
@@ -37,21 +44,21 @@ public class AdaptadorRecyclerAsistencia extends
 			textViewDivision = (TextView) itemView
 					.findViewById(R.id.textViewDivision);
 			textViewDivision.setVisibility(View.VISIBLE);
-
 		}
 
 
-		public void bindTitular(Entrenamiento entrenamientoAsistencia) {
-
+		public void bindTitular(Entrenamiento entrenamientoAsistencia, Typeface equipo, Typeface texto) {
 			editTextDivision.setText(entrenamientoAsistencia.getNOMBRE());
 			checkBoxEntrenamiento.setSelected(entrenamientoAsistencia.isSelected());
 			textViewDivision.setText(entrenamientoAsistencia.getDESCRIPCION());
 		}
 	}
 
-	public AdaptadorRecyclerAsistencia(ArrayList<Entrenamiento> asistenciaArray) {
+	public AdaptadorRecyclerAsistencia(ArrayList<Entrenamiento> asistenciaArray, Context context) {
 		this.asistenciaArray = asistenciaArray;
-
+		auxiliarGeneral = new AuxiliarGeneral(context);
+		textFont = auxiliarGeneral.textFont(context);
+		equipoFont = auxiliarGeneral.tituloFont(context);
 	}
 
 	@Override
@@ -71,11 +78,12 @@ public class AdaptadorRecyclerAsistencia extends
 		final int position = pos;
 
 		viewHolder.editTextDivision.setText(asistenciaArray.get(position).getNOMBRE());
+		viewHolder.editTextDivision.setTypeface(equipoFont, Typeface.BOLD);
+		viewHolder.textViewDivision.setText(asistenciaArray.get(position).getDESCRIPCION());
+		viewHolder.textViewDivision.setTypeface(textFont, Typeface.BOLD);
 
 		viewHolder.checkBoxEntrenamiento.setChecked(asistenciaArray.get(position).isSelected());
-
-		viewHolder.checkBoxEntrenamiento.setTag(asistenciaArray.get(position));
-
+        viewHolder.checkBoxEntrenamiento.setTag(asistenciaArray.get(position));
 		viewHolder.checkBoxEntrenamiento.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				CheckBox cb = (CheckBox) v;
@@ -91,26 +99,21 @@ public class AdaptadorRecyclerAsistencia extends
 	public int getItemCount() {
 		return asistenciaArray.size();
 	}
-
-
 	public ArrayList<Entrenamiento> getJugadoresAsistenciaList() {
 		return asistenciaArray;
 	}
 	public ArrayList<Entrenamiento> getJugadoresTrueAsistenciaList() {
-
 		for (int i = 0; i < asistenciaArray.size(); i++) {
 
 			if(asistenciaArray.get(i).isSelected()==true){
 				asistenciaTrueArray.add(asistenciaArray.get(i));
 			}
 		}
-
 		return asistenciaTrueArray;
 	}
 	public void setOnClickListener(View.OnClickListener listener) {
 		this.listener = listener;
 	}
-
 	@Override
 	public void onClick(View view) {
 		if (listener != null)

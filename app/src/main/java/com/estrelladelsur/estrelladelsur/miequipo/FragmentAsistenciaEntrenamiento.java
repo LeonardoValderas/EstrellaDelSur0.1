@@ -1,6 +1,7 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerAsistencia;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivisionEntrenamiento;
@@ -45,6 +47,7 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
     private ControladorAdeful controladorAdeful;
     private RecyclerView recycleViewGeneral;
     private int CheckedPositionFragment;
+    private TextView textViewJuagdor,textViewAsistencia;
     private FloatingActionButton botonFloating;
     private ArrayList<Anio> anioArray;
     private ArrayList<Mes> mesArray;
@@ -55,16 +58,12 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
     private ArrayList<Entrenamiento> arrayAsistenciaAnterior;
     private ArrayList<EntrenamientoRecycler> entrenamientoArray;
     private AdaptadorRecyclerAsistencia adaptadorEntrenamiento;
-    private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
-    private ArrayList<Entrenamiento> entrenamientoDivisionArray;
-    private AdapterSpinnerDivisionEntrenamiento adapterSpinnerDivisionEntrenamiento;
-    private AdaptadorRecyclerAsistencia adaptadorRecyclerAsistencia;
     private ArrayList<Entrenamiento> listaJugadoresAsistencia;
     private ArrayList<Integer> id_divisiones;
     private Entrenamiento entrenamientoAsistencia;
     private int id_entrenamiento;
-    private ArrayList<Integer> id_jugadores_asistencia;
+    private Typeface editTextFont;
 
     public static FragmentAsistenciaEntrenamiento newInstance() {
         FragmentAsistenciaEntrenamiento fragment = new FragmentAsistenciaEntrenamiento();
@@ -72,7 +71,6 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
     }
 
     public FragmentAsistenciaEntrenamiento() {
-        // Required empty public constructor
     }
 
     @Override
@@ -89,9 +87,10 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View v = inflater.inflate(R.layout.fragment_editar_entrenamiento_asistencia,
+    View v = inflater.inflate(R.layout.fragment_editar_entrenamiento_asistencia,
                 container, false);
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
         // RECYCLER
         recycleViewGeneral = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
@@ -104,13 +103,20 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
         //FECHA
         entrenamientoFechahsSpinner = (Spinner) v
                 .findViewById(R.id.entrenamientoFechahsSpinner);
-        entrenamientoFechahsSpinner.setVisibility(View.VISIBLE);
+        entrenamientoFechahsSpinner.setVisibility(View.INVISIBLE);
         // DIVISION
         entrenamientoDivisionSpinner = (Spinner) v
                 .findViewById(R.id.entrenamientoDivisionSpinner);
         //BOTON FLOATING
         botonFloating = (FloatingActionButton) v
                 .findViewById(R.id.botonFloating);
+
+        textViewJuagdor = (TextView) v
+                .findViewById(R.id.textViewJuagdor);
+        textViewJuagdor.setTypeface(editTextFont);
+        textViewAsistencia = (TextView) v
+                .findViewById(R.id.textViewAsistencia);
+        textViewAsistencia.setTypeface(editTextFont);
 
         return v;
     }
@@ -122,8 +128,6 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
     }
 
     private void init() {
-
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         // ANIO SPINNER
         anioArray = controladorAdeful.selectListaAnio();
         if (anioArray != null) {
@@ -160,11 +164,19 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
                 if (fecha != null && !fecha.equals(""))
                 entrenamientoArray = controladorAdeful.selectListaEntrenamientoAdeful(fecha);
                 if (entrenamientoArray != null) {
-                    // MES ADAPTER
-                    adapterSpinnerFechaEntrenamiento = new AdapterSpinnerFechaEntrenamiento(getActivity(),
-                            R.layout.simple_spinner_dropdown_item, entrenamientoArray);
-                    entrenamientoFechahsSpinner.setAdapter(adapterSpinnerFechaEntrenamiento);
-
+                    if(entrenamientoArray.isEmpty()){
+                        entrenamientoFechahsSpinner.setVisibility(View.INVISIBLE);
+                        Toast.makeText(
+                                getActivity(),
+                                "Selección sin datos",
+                                Toast.LENGTH_SHORT).show();
+                    }else {
+                        entrenamientoFechahsSpinner.setVisibility(View.VISIBLE);
+                        // MES ADAPTER
+                        adapterSpinnerFechaEntrenamiento = new AdapterSpinnerFechaEntrenamiento(getActivity(),
+                                R.layout.simple_spinner_dropdown_item, entrenamientoArray);
+                        entrenamientoFechahsSpinner.setAdapter(adapterSpinnerFechaEntrenamiento);
+                    }
                 } else {
                 auxiliarGeneral.errorDataBase(getActivity());
                 }
@@ -180,31 +192,35 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
                 id_entrenamiento = entrenamientoArray.get(position).getID_ENTRENAMIENTO();
                 id_divisiones = controladorAdeful.selectListaIdDivisionEntrenamientoAdeful(id_entrenamiento);
                 if (id_divisiones != null) {
-
                     arrayAsistencia = controladorAdeful.selectListaJugadoresEntrenamientoAdeful(id_divisiones, id_entrenamiento);
                     if (arrayAsistencia != null) {
                         recyclerViewLoadEntrenamiento(arrayAsistencia);
+                        if(arrayAsistencia.isEmpty())
+                            Toast.makeText(
+                                    getActivity(),
+                                    "Selección sin datos",
+                                    Toast.LENGTH_SHORT).show();
                     } else {
-                auxiliarGeneral.errorDataBase(getActivity());                    }
+                 auxiliarGeneral.errorDataBase(getActivity());}
                 } else {
                  auxiliarGeneral.errorDataBase(getActivity());
                 }
             }
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-                    Toast.makeText(getActivity(), "Sin datos.",
+                    Toast.makeText(getActivity(), "Selección sin datos",
                             Toast.LENGTH_SHORT).show();
                 }
         });
     }
 
     public void recyclerViewLoadEntrenamiento(ArrayList<Entrenamiento> arrayAsistencia) {
-        adaptadorEntrenamiento = new AdaptadorRecyclerAsistencia(arrayAsistencia);
+        adaptadorEntrenamiento = new AdaptadorRecyclerAsistencia(arrayAsistencia, getActivity());
         recycleViewGeneral.setAdapter(adaptadorEntrenamiento);
     }
     public void recyclerViewCleanEntrenamiento() {
         arrayAsistencia = new ArrayList<Entrenamiento>();
-        adaptadorEntrenamiento = new AdaptadorRecyclerAsistencia(arrayAsistencia);
+        adaptadorEntrenamiento = new AdaptadorRecyclerAsistencia(arrayAsistencia, getActivity());
         recycleViewGeneral.setAdapter(adaptadorEntrenamiento);
 
     }
@@ -212,17 +228,10 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
-    /**
-     * Metodo click item recycler
-     *
-     * @author LEO
-     */
     public static interface ClickListener {
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);
     }
-
     static class RecyclerTouchListener implements
             RecyclerView.OnItemTouchListener {
 
@@ -273,8 +282,8 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
@@ -311,8 +320,6 @@ public class FragmentAsistenciaEntrenamiento extends Fragment {
                         Toast.LENGTH_SHORT).show();
             } else {
                 String usuario = "Administrador";
-                String fechaCreacion = controladorAdeful.getFechaOficial();
-                String fechaActualizacion = fechaCreacion;
 
                 Boolean insert_ok = true;
                 arrayAsistenciaAnterior = controladorAdeful.selectListaJugadoresEntrenamientoAdeful(id_entrenamiento);

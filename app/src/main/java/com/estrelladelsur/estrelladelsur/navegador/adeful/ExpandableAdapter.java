@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur.navegador;
+package com.estrelladelsur.estrelladelsur.navegador.adeful;
 
 import android.content.Context;
 import android.graphics.Typeface;

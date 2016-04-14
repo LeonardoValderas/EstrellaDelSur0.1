@@ -1,15 +1,15 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.entidad.Articulo;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
-
 import java.util.ArrayList;
 
 public class AdaptadorRecyclerNotificacion extends
@@ -18,27 +18,33 @@ public class AdaptadorRecyclerNotificacion extends
 
     private View.OnClickListener listener;
     private ArrayList<Notificacion> notificacionArray;
-
+    private Typeface editTextFont;
+    private AuxiliarGeneral auxiliarGeneral;
     public static class NotificacionViewHolder extends RecyclerView.ViewHolder {
 
         private TextView textRecyclerViewTitulo;
         private TextView textRecyclerViewFecha;
 
-        public NotificacionViewHolder(View itemView) {
+        public NotificacionViewHolder(View itemView, Typeface type) {
             super(itemView);
 
             textRecyclerViewTitulo = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewTitulo);
+            textRecyclerViewTitulo.setTypeface(type,Typeface.BOLD);
             textRecyclerViewFecha = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewFecha);
+            textRecyclerViewFecha.setTypeface(type);
         }
         public void bindTitular(Notificacion notificacion) {
             textRecyclerViewTitulo.setText(notificacion.getTITULO());
             textRecyclerViewFecha.setText("ult.act: "+notificacion.getFECHA_ACTUALIZACION());
         }
     }
-    public AdaptadorRecyclerNotificacion(ArrayList<Notificacion> notificacionArray) {
+    public AdaptadorRecyclerNotificacion(ArrayList<Notificacion> notificacionArray, Context context) {
         this.notificacionArray = notificacionArray;
+
+        auxiliarGeneral = new AuxiliarGeneral(context);
+        this.editTextFont = auxiliarGeneral.textFont(context);
     }
 
     @Override
@@ -48,7 +54,7 @@ public class AdaptadorRecyclerNotificacion extends
                 R.layout.recyclerview_item_articulo, viewGroup, false);
 
         itemView.setOnClickListener(this);
-        NotificacionViewHolder tvh = new NotificacionViewHolder(itemView);
+        NotificacionViewHolder tvh = new NotificacionViewHolder(itemView, editTextFont);
 
         return tvh;
     }

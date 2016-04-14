@@ -81,7 +81,8 @@ public class FragmentEquipo extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_general_liga, container,
                 false);
-        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
         imageEquipo = (ImageView) v
                 .findViewById(R.id.imageButtonEquipo_Cancha);
         editTextNombre = (EditText) v.findViewById(R.id.editTextDescripcion);
@@ -98,7 +99,7 @@ public class FragmentEquipo extends Fragment {
     }
 
     private void init() {
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+
         // imageButton que busca imagen del escudo del equipo en la memoria  interna
         imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
         imageEquipo.setOnClickListener(new View.OnClickListener() {
@@ -219,7 +220,7 @@ public class FragmentEquipo extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
-            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity());
+            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity(), true);
             if (b != null)
                 imageEquipo.setImageBitmap(b);
             imagenEscudo = auxiliarGeneral.pasarBitmapByte(b);
@@ -346,12 +347,10 @@ public class FragmentEquipo extends Fragment {
                 if (insertar) {
 
                     String usuario = "Administrador";
-                    String fechaCreacion = controladorAdeful.getFechaOficial();
-                    String fechaActualizacion = fechaCreacion;
 
                     equipoAdeful = new Equipo(0, editTextNombre.getText()
                             .toString(), imagenEscudo, usuario,
-                            fechaCreacion, usuario, fechaActualizacion);
+                            auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
                     if (controladorAdeful.insertEquipoAdeful(equipoAdeful)) {
                         inicializarControles(GUARDAR_USUARIO);
@@ -361,13 +360,11 @@ public class FragmentEquipo extends Fragment {
 
                 } else {
                     String usuario = "Administrador";
-                    String fechaActualizacion = controladorAdeful
-                            .getFechaOficial();
 
                     equipoAdeful = new Equipo(equipoAdefulArray.get(
                             posicion).getID_EQUIPO(), editTextNombre
                             .getText().toString(), imagenEscudo, null,
-                            null, usuario, fechaActualizacion);
+                            null, usuario, auxiliarGeneral.getFechaOficial());
 
                     if (controladorAdeful.actualizarEquipoAdeful(equipoAdeful)) {
                         insertar = true;

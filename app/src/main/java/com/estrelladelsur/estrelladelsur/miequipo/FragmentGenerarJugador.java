@@ -82,7 +82,6 @@ public class FragmentGenerarJugador extends Fragment {
     }
 
     public FragmentGenerarJugador() {
-        // Required empty public constructor
     }
 
     @Override
@@ -104,8 +103,9 @@ public class FragmentGenerarJugador extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_generar_jugador,
                 container, false);
-        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
-        textViewFont = Typeface.createFromAsset(getActivity().getAssets(), "aspace_demo.otf");
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
+        textViewFont = auxiliarGeneral.tituloFont(getActivity());
         // FOTO JUGADOR
         imageJugador = (ImageView) v.findViewById(R.id.imageJugador);
         // NOMBRE JUGADOR
@@ -128,10 +128,7 @@ public class FragmentGenerarJugador extends Fragment {
     }
 
     private void init() {
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         usuario = "Administrador";
-        fechaCreacion = controladorAdeful.getFechaOficial();
-        fechaActualizacion = fechaCreacion;
 
         // DIVISION
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
@@ -216,7 +213,7 @@ public class FragmentGenerarJugador extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
 
-            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity());
+            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity(),true);
             if (b != null)
             imageJugador.setImageBitmap(b);
             imageJugadorByte = auxiliarGeneral.pasarBitmapByte(b);
@@ -451,7 +448,7 @@ public class FragmentGenerarJugador extends Fragment {
                                             posicion = new Posicion(
                                                     posicionArray.get(position).getID_POSICION(),
                                                     dialogoAlertaEditar.editTextUno.getText().toString(),
-                                                    null, null, usuario, controladorAdeful.getFechaOficial());
+                                                    null, null, usuario, auxiliarGeneral.getFechaOficial());
 
                                             if (controladorAdeful
                                                     .actualizarPosicionAdeful(posicion)) {

@@ -15,20 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerEditarPermiso;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerMes;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.entidad.Anio;
-import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
-import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
-
 import java.util.ArrayList;
 
 
@@ -40,10 +33,6 @@ public class FragmentEditarPermiso extends Fragment {
     private RecyclerView recycleViewGeneral;
     private int CheckedPositionFragment;
     private FloatingActionButton botonFloating;
-    private ArrayList<Anio> anioArray;
-    private ArrayList<Mes> mesArray;
-    private AdapterSpinnerAnio adapterSpinnerAnio;
-    private AdapterSpinnerMes adapterSpinnerMes;
     private ArrayList<Permiso> permisoArray;
     private AdaptadorRecyclerEditarPermiso adaptadorPermiso;
     private DialogoAlerta dialogoAlerta;
@@ -215,18 +204,9 @@ public class FragmentEditarPermiso extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    /**
-     * Metodo click item recycler
-     *
-     * @author LEO
-     */
-
     public static interface ClickListener {
-
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
-
     }
 
     static class RecyclerTouchListener implements
@@ -269,18 +249,11 @@ public class FragmentEditarPermiso extends Fragment {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
-
         }
-
     }
-
 }

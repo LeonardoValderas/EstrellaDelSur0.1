@@ -158,7 +158,7 @@ public class FragmentEditarNoticia extends Fragment {
     public void recyclerViewLoadNoticia() {
         noticiaArray = controladorAdeful.selectListaNoticiaAdeful();
         if(noticiaArray != null) {
-            adaptadorRecyclerNoticia = new AdaptadorRecyclerNoticia(noticiaArray);
+            adaptadorRecyclerNoticia = new AdaptadorRecyclerNoticia(noticiaArray, getActivity());
             adaptadorRecyclerNoticia.notifyDataSetChanged();
             recyclerArticulo.setAdapter(adaptadorRecyclerNoticia);
         }else{

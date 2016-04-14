@@ -76,7 +76,8 @@ public class FragmentDivision extends Fragment {
 			Bundle savedInstanceState) {
 		View v= inflater.inflate(R.layout.fragment_general_liga, container,
 				false);
-		editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
+		auxiliarGeneral = new AuxiliarGeneral(getActivity());
+		editTextFont = auxiliarGeneral.textFont(getActivity());
 		editTextDivision = (EditText) v.findViewById(
 				R.id.editTextDescripcion);
 		editTextDivision.setTypeface(editTextFont);
@@ -96,7 +97,7 @@ public class FragmentDivision extends Fragment {
 	
 	
 	private void init() {
-		auxiliarGeneral = new AuxiliarGeneral(getActivity());
+
 		editTextDivision.setHint("Ingrese una División");
 		editTextDivision.setHintTextColor(Color.GRAY);
 		recyclerViewLoadDivision();
@@ -269,11 +270,9 @@ public class FragmentDivision extends Fragment {
 				if (insertar) {
 
 					String usuario = "Administrador";
-					String fechaCreacion = controladorAdeful.getFechaOficial();
-					String fechaActualizacion = fechaCreacion;
-					division = new Division(0, editTextDivision.getText()
-							.toString(), usuario, fechaCreacion,
-							usuario,fechaActualizacion);
+			    	division = new Division(0, editTextDivision.getText()
+							.toString(), usuario, auxiliarGeneral.getFechaOficial(),
+							usuario, auxiliarGeneral.getFechaOficial());
 
 					if(controladorAdeful.insertDivisionAdeful(division)) {
 				    inicializarControles(GUARDAR_USUARIO);
@@ -283,12 +282,10 @@ public class FragmentDivision extends Fragment {
 				} else {
 
 					String usuario = "Administrador";
-					String fechaActualizacion = controladorAdeful
-							.getFechaOficial();
 
 					division = new Division(divisionArray.get(posicion)
 							.getID_DIVISION(), editTextDivision.getText()
-							.toString(), null, null, usuario,fechaActualizacion);
+							.toString(), null, null, usuario, auxiliarGeneral.getFechaOficial());
 
 					if(controladorAdeful.actualizarDivisionAdeful(division)) {
 						insertar = true;

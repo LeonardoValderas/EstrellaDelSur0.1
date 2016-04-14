@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 
 public class AdaptadorRecyclerDivision extends
@@ -20,11 +21,11 @@ public class AdaptadorRecyclerDivision extends
 	private View.OnClickListener listener;
 	private ArrayList<Division> divisionArray;
 	private Typeface nombreFont;
+	private AuxiliarGeneral auxiliarGeneral;
 
 	public static class DivisionViewHolder extends RecyclerView.ViewHolder {
 
 		private TextView textRecyclerView;
-		private ImageView imageViewEscudo;
 		private LinearLayout linearEscudo;
 
 		public DivisionViewHolder(View itemView, Typeface nombre) {
@@ -45,7 +46,8 @@ public class AdaptadorRecyclerDivision extends
 
 	public AdaptadorRecyclerDivision(ArrayList<Division> divisionArray,Context context) {
 		this.divisionArray = divisionArray;
-		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+		auxiliarGeneral = new AuxiliarGeneral(context);
+		this.nombreFont = auxiliarGeneral.tituloFont(context);
 	}
 
 	@Override

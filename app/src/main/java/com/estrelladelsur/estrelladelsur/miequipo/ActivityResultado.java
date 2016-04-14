@@ -80,7 +80,10 @@ public class ActivityResultado extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resultado);
 
-        titulos = Typeface.createFromAsset(ActivityResultado.this.getAssets(), "aspace_demo.otf");
+
+        auxiliarGeneral = new AuxiliarGeneral(ActivityResultado.this);
+        titulos = auxiliarGeneral.tituloFont(ActivityResultado.this);
+
         controladorAdeful = new ControladorAdeful(this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -261,8 +264,7 @@ public class ActivityResultado extends AppCompatActivity {
                                                 .getText().toString()
                                                 .equals("")) {
                                             String usuario = "Administrador";
-                                            String fechaCreacion = controladorAdeful.getFechaOficial();
-                                            String fechaActualizacion = fechaCreacion;
+
                                             if(controladorAdeful
                                                     .actualizarResultadoAdeful(
                                                             arrayResultado
@@ -273,7 +275,7 @@ public class ActivityResultado extends AppCompatActivity {
                                                                     .toString(),
                                                             dialogoResultado.resultadoVisita
                                                                     .getText()
-                                                                    .toString(), usuario, fechaActualizacion)) {
+                                                                    .toString(), usuario, auxiliarGeneral.getFechaOficial())) {
                                               recyclerViewLoadResultado(
                                                         divisionSpinner,
                                                         torneoSpinner,
@@ -322,15 +324,13 @@ public class ActivityResultado extends AppCompatActivity {
                                     public void onClick(View v) {
                                         // TODO Auto-generated method stub
                                         String usuario = "Administrador";
-                                        String fechaCreacion = controladorAdeful.getFechaOficial();
-                                        String fechaActualizacion = fechaCreacion;
 
                                         if (controladorAdeful
                                                 .actualizarResultadoAdeful(
                                                         arrayResultado
                                                                 .get(position)
                                                                 .getID_FIXTURE(),
-                                                        null, null, usuario, fechaActualizacion)){
+                                                        null, null, usuario, auxiliarGeneral.getFechaOficial())){
                                         recyclerViewLoadResultado(
                                                     divisionSpinner, torneoSpinner,
                                                     fechaSpinner, anioSpiner);

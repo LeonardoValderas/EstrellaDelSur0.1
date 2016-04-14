@@ -17,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorEditarSancion;
 import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
@@ -33,7 +32,6 @@ import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
-
 import java.util.ArrayList;
 
 public class FragmentEditarSancion extends Fragment {
@@ -72,7 +70,6 @@ public class FragmentEditarSancion extends Fragment {
     }
 
     public FragmentEditarSancion() {
-        // Required empty public constructor
     }
 
     @Override
@@ -83,7 +80,6 @@ public class FragmentEditarSancion extends Fragment {
 
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
-
         } else {
             init();
         }
@@ -144,7 +140,7 @@ public class FragmentEditarSancion extends Fragment {
         // TORNEO
         torneoArray = controladorAdeful.selectListaTorneoAdeful();
         if (torneoArray != null) {
-            if (torneoArray.size() != 0) {
+            if (!torneoArray.isEmpty()) {
                 // TORNEO SPINNER
                 adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
                         R.layout.simple_spinner_dropdown_item, torneoArray);
@@ -175,19 +171,15 @@ public class FragmentEditarSancion extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long arg3) {
-                if (divisionArray.size() > 0) {
+                if (!divisionArray.isEmpty()) {
                     id_division = divisionArray.get(position).getID_DIVISION();
                     populationSpinnerJugador(id_division);
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
-
-
-
 
         // RECLYCLER
         recyclerViewSancion.setLayoutManager(new LinearLayoutManager(
@@ -206,8 +198,12 @@ public class FragmentEditarSancion extends Fragment {
                  Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
                          Toast.LENGTH_SHORT).show();
              } else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
-                     getString(R.string.ceroSpinnerTorneo))) {
+                     getString(R.string.ceroSpinnerJugador))) {
                  Toast.makeText(getActivity(), "Debe agregar un jugador.",
+                         Toast.LENGTH_SHORT).show();
+             } else if (sancionTorneoSpinner.getSelectedItem().toString().equals(getResources().
+                     getString(R.string.ceroSpinnerTorneo))) {
+                 Toast.makeText(getActivity(), "Debe agregar un torneo.",
                          Toast.LENGTH_SHORT).show();
              } else {
                  division = (Division) sancionDivisionSpinner.getSelectedItem();
@@ -221,21 +217,14 @@ public class FragmentEditarSancion extends Fragment {
                  anioSpiner = anio.getID_ANIO();
 
                  recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, torneoSpinner, anioSpiner);
-
-             }
+          }
                                              }
          }
-
         );
-
         recyclerViewSancion.addOnItemTouchListener(new
-
                 RecyclerTouchListener(getActivity(),
-
                 recyclerViewSancion, new
-
                 ClickListener() {
-
                     @Override
                     public void onClick(View view, int position) {
                         // TODO Auto-generated method stub
@@ -247,6 +236,7 @@ public class FragmentEditarSancion extends Fragment {
                                 sancionArray.get(position).getID_SANCION());
                         editarSancion.putExtra("divisionSpinner", divisionSpinner);
                         editarSancion.putExtra("jugadorSpinner", jugadorSpinner);
+                        editarSancion.putExtra("torneoSpinner", torneoSpinner);
                         editarSancion.putExtra("amarillaSpinner", sancionArray.get(position).getAMARILLA());
                         editarSancion.putExtra("rojaSpinner", sancionArray.get(position).getROJA());
                         editarSancion.putExtra("fechaSpinner", sancionArray.get(position).getFECHA_SUSPENSION());
@@ -258,20 +248,15 @@ public class FragmentEditarSancion extends Fragment {
 
                     @Override
                     public void onLongClick(View view, final int position) {
-                        // TODO Auto-generated method stub
-
                         dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
                                 "Desea eliminar la sanción?", null, null);
                         dialogoAlerta.btnAceptar.setText("Aceptar");
                         dialogoAlerta.btnCancelar.setText("Cancelar");
-
                         dialogoAlerta.btnAceptar
                                 .setOnClickListener(new View.OnClickListener() {
 
                                     @Override
                                     public void onClick(View v) {
-                                        // TODO Auto-generated method stub
-
                                         if (controladorAdeful.eliminarSancionAdeful(sancionArray.get(position)
                                                 .getID_SANCION())) {
                                             recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, torneoSpinner, anioSpiner);
@@ -290,21 +275,18 @@ public class FragmentEditarSancion extends Fragment {
 
                                     @Override
                                     public void onClick(View v) {
-                                        // TODO Auto-generated method stub
                                         dialogoAlerta.alertDialog.dismiss();
                                     }
                                 });
                     }
                 }
-
         ));
     }
-
     public void populationSpinnerJugador(int id_division) {
 
         jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
         if (jugadorArray != null) {
-            if (jugadorArray.size() != 0) {
+            if (!jugadorArray.isEmpty()) {
                 adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
                         R.layout.simple_spinner_dropdown_item, jugadorArray);
                 sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
@@ -314,31 +296,30 @@ public class FragmentEditarSancion extends Fragment {
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerJugador));
                 sancionJugadorSpinner.setAdapter(adaptadorInicial);
             }
-
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
     }
     //LOAD RECYCLER
-
     public void recyclerViewLoadSancion(int division, int jugador, int fecha,
                                         int anio) {
-
         //controladorAdeful.abrirBaseDeDatos();
         sancionArray = controladorAdeful.selectListaSancionAdeful(division,
                 id_division, fecha, anio);
         if (sancionArray != null) {
-            adaptadorEditarSancion = new AdaptadorEditarSancion(sancionArray);
+            adaptadorEditarSancion = new AdaptadorEditarSancion(sancionArray,getActivity());
             recyclerViewSancion.setAdapter(adaptadorEditarSancion);
+            if(sancionArray.isEmpty())
+                Toast.makeText(
+                        getActivity(),
+                        "Selección sin datos",
+                        Toast.LENGTH_SHORT).show();
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
     }
-
     public static interface ClickListener {
-
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -354,12 +335,10 @@ public class FragmentEditarSancion extends Fragment {
             this.clickListener = clickListener;
             detector = new GestureDetector(context,
                     new GestureDetector.SimpleOnGestureListener() {
-
                         @Override
                         public boolean onSingleTapUp(MotionEvent e) {
                             return true;
                         }
-
                         @Override
                         public void onLongPress(MotionEvent e) {
                             View child = recyclerView.findChildViewUnder(
@@ -371,7 +350,6 @@ public class FragmentEditarSancion extends Fragment {
                         }
                     });
         }
-
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
             // TODO Auto-generated method stub
@@ -382,15 +360,11 @@ public class FragmentEditarSancion extends Fragment {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
         }
     }
 }

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import java.util.ArrayList;
 
@@ -22,6 +23,7 @@ public class AdaptadorRecyclerDireccion extends
     private ArrayList<Direccion> direccionArray;
     private Typeface nombreFont;
     private Typeface cargoPeriodoFont;
+    private AuxiliarGeneral auxiliarGeneral;
 
     public static class DireccionViewHolder extends RecyclerView.ViewHolder {
 
@@ -65,8 +67,9 @@ public class AdaptadorRecyclerDireccion extends
 
     public AdaptadorRecyclerDireccion(ArrayList<Direccion> direccionArray,Context context) {
         this.direccionArray = direccionArray;
-        this.cargoPeriodoFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
-        this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+        auxiliarGeneral = new AuxiliarGeneral(context);
+        this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
+        this.nombreFont = auxiliarGeneral.tituloFont(context);
     }
 
     @Override

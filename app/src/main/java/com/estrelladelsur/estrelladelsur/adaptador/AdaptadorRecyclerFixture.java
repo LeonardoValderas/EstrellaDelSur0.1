@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 
 public class AdaptadorRecyclerFixture extends
@@ -23,6 +24,7 @@ public class AdaptadorRecyclerFixture extends
 	private ArrayList<Fixture> fixtureArray;
 	private Typeface textFont;
 	private Typeface equipoFont;
+	private AuxiliarGeneral auxiliarGeneral;
 
 	public static class FixtureViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -125,8 +127,9 @@ public class AdaptadorRecyclerFixture extends
 	}
 	public AdaptadorRecyclerFixture(ArrayList<Fixture> fixtureArray,Context context) {
 		this.fixtureArray = fixtureArray;
-		textFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
-		equipoFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+		auxiliarGeneral = new AuxiliarGeneral(context);
+		textFont = auxiliarGeneral.textFont(context);
+		equipoFont = auxiliarGeneral.tituloFont(context);
 	}
 
 	@Override

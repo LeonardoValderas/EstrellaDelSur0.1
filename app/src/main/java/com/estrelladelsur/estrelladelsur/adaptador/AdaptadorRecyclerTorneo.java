@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
 public class AdaptadorRecyclerTorneo extends
@@ -21,7 +22,7 @@ public class AdaptadorRecyclerTorneo extends
 	private View.OnClickListener listener;
 	private ArrayList<Torneo> torneoArray;
 	private Typeface nombreFont;
-
+	private AuxiliarGeneral auxiliarGeneral;
 
 	public static class TorneoViewHolder extends RecyclerView.ViewHolder {
 
@@ -59,7 +60,8 @@ public class AdaptadorRecyclerTorneo extends
 
 	public AdaptadorRecyclerTorneo(ArrayList<Torneo> torneoArray,Context context) {
 		this.torneoArray = torneoArray;
-		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+		auxiliarGeneral = new AuxiliarGeneral(context);
+		this.nombreFont = auxiliarGeneral.tituloFont(context);
 	}
 
 	@Override

@@ -1,7 +1,9 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
-
 import java.util.ArrayList;
 
 public class AdaptadorEditarSancion extends
@@ -19,6 +21,9 @@ public class AdaptadorEditarSancion extends
 
 	private View.OnClickListener listener;
 	private ArrayList<Sancion> sancionArray;
+	private Typeface textFont;
+	private Typeface equipoFont;
+	private AuxiliarGeneral auxiliarGeneral;
 
 	public static class SancionViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewFotoJugador;
@@ -47,7 +52,7 @@ public class AdaptadorEditarSancion extends
 					.findViewById(R.id.textRecyclerViewObservacion);
 		}
 
-		public void bindTitular(Sancion sancion) {
+		public void bindTitular(Sancion sancion, Typeface equipo, Typeface texto) {
 			// Jugador
 			byte[] foto = sancion.getFOTO_JUGADOR();
 			if (foto == null) {
@@ -61,15 +66,22 @@ public class AdaptadorEditarSancion extends
 				imageViewFotoJugador.setImageBitmap(escudoLocalBitmap);
 			}
 			textRecyclerViewNombre.setText(sancion.getNOMBRE_JUGADOR());
+			textRecyclerViewNombre.setTypeface(texto, Typeface.BOLD);
 			String tarjetas = "Amarrilas: "+sancion.getAMARILLA()+" Rojas: "+sancion.getROJA();
 			textRecyclerViewTarjetas.setText(tarjetas);
-			textRecyclerViewFecha.setText("Fechas: "+sancion.getFECHA_SUSPENSION());
-			textRecyclerViewObs.setText("*"+sancion.getOBSERVACIONES());
+			textRecyclerViewTarjetas.setTypeface(equipo);
+			textRecyclerViewFecha.setText("Fechas de Sanción: " + sancion.getFECHA_SUSPENSION());
+			textRecyclerViewFecha.setTypeface(texto, Typeface.BOLD);
+			textRecyclerViewObs.setText("*" + sancion.getOBSERVACIONES());
+			textRecyclerViewObs.setTypeface(texto);
 		}
 	}
 
-	public AdaptadorEditarSancion(ArrayList<Sancion> sancionArray) {
+	public AdaptadorEditarSancion(ArrayList<Sancion> sancionArray, Context context) {
 		this.sancionArray = sancionArray;
+		auxiliarGeneral = new AuxiliarGeneral(context);
+		textFont = auxiliarGeneral.textFont(context);
+		equipoFont = auxiliarGeneral.tituloFont(context);
 	}
 
 	@Override
@@ -85,7 +97,7 @@ public class AdaptadorEditarSancion extends
 	@Override
 	public void onBindViewHolder(SancionViewHolder viewHolder, int pos) {
 		Sancion item = sancionArray.get(pos);
-		viewHolder.bindTitular(item);
+		viewHolder.bindTitular(item,textFont, equipoFont);
 	}
 
 	@Override

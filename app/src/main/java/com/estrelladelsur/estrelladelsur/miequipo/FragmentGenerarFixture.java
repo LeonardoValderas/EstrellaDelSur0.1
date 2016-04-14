@@ -113,8 +113,9 @@ public class FragmentGenerarFixture extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generar_fixture, container,
                 false);
-        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
-        // DIVISION
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
+          // DIVISION
         fixtureDivisionSpinner = (Spinner) v
                 .findViewById(R.id.fixtureDivisionSpinner);
         // TORNEO
@@ -150,8 +151,7 @@ public class FragmentGenerarFixture extends Fragment {
     }
 
     private void init() {
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
-          // DIVISION
+         // DIVISION
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
             // DIVSION SPINNER
@@ -497,9 +497,6 @@ public class FragmentGenerarFixture extends Fragment {
                         Toast.LENGTH_SHORT).show();
             } else {
                 String usuario = "Administrador";
-                String fechaCreacion = controladorAdeful.getFechaOficial();
-                String fechaActualizacion = fechaCreacion;
-
                 division = (Division) fixtureDivisionSpinner.getSelectedItem();
                 equipol = (Equipo) fixtureLocalSpinner.getSelectedItem();
                 equipov = (Equipo) fixtureVisitaSpinner.getSelectedItem();
@@ -516,7 +513,7 @@ public class FragmentGenerarFixture extends Fragment {
                             torneo.getID_TORNEO(), cancha.getID_CANCHA(),
                             fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText().toString()
                             , btn_hora.getText().toString(),
-                            usuario, fechaCreacion, usuario, fechaActualizacion);
+                            usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
                     if (controladorAdeful.insertFixtureAdeful(fixture)) {
                           Toast.makeText(getActivity(), "Partido cargado correctamente",
@@ -531,7 +528,7 @@ public class FragmentGenerarFixture extends Fragment {
                             torneo.getID_TORNEO(), cancha.getID_CANCHA(),
                             fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText()
                             .toString(), btn_hora.getText().toString(),
-                            null, null, usuario, fechaActualizacion);
+                            null, null, usuario, auxiliarGeneral.getFechaOficial());
 
                     if (controladorAdeful.actualizarFixtureAdeful(fixture)) {
 

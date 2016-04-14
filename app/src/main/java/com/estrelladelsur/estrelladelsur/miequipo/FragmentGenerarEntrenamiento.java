@@ -100,8 +100,9 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generar_entrenamiento,
                 container, false);
-        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
-        textViewFont = Typeface.createFromAsset(getActivity().getAssets(), "aspace_demo.otf");
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
+        textViewFont = auxiliarGeneral.tituloFont(getActivity());
         // RECYCLER
         recycleViewGeneral = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
@@ -135,7 +136,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
     }
 
     private void init() {
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         // CANCHA
@@ -372,15 +373,13 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                             Toast.LENGTH_SHORT).show();
                 } else {
                     String usuario = "Administrador";
-                    String fechaCreacion = controladorAdeful.getFechaOficial();
-                    String fechaActualizacion = fechaCreacion;
                     if (insertar) {
                         lugar = (Cancha) spinnerLugarEntrenamiento
                                 .getSelectedItem();
                         entrenamiento = new Entrenamiento(0,
                                 buttonFechaEntrenamiento.getText().toString(),
                                 buttonHoraEntrenamiento.getText().toString(),
-                                lugar.getID_CANCHA(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                                lugar.getID_CANCHA(), usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
                         // inserto entrenamiento y verifico el id
                         int id_entrenamiento = controladorAdeful
@@ -406,7 +405,7 @@ public class FragmentGenerarEntrenamiento extends Fragment {
                         entrenamiento = new Entrenamiento(idEntrenamientoExtra,
                                 buttonFechaEntrenamiento.getText().toString(),
                                 buttonHoraEntrenamiento.getText().toString(),
-                                lugar.getID_CANCHA(), null, null, usuario, fechaActualizacion);
+                                lugar.getID_CANCHA(), null, null, usuario, auxiliarGeneral.getFechaOficial());
 
                         // inserto entrenamiento y verifico el id
                         if (controladorAdeful

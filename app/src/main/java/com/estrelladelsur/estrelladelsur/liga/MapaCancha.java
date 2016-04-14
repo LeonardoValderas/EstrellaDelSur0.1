@@ -70,8 +70,9 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mapa_cancha);
 
-        titulos = Typeface.createFromAsset(MapaCancha.this.getAssets(), "aspace_demo.otf");
-        editTextFont = Typeface.createFromAsset(MapaCancha.this.getAssets(), "ATypewriterForMe.ttf");
+        titulos = auxiliarGeneral.tituloFont(MapaCancha.this);
+        editTextFont = auxiliarGeneral.textFont(MapaCancha.this);
+
         controladorAdeful = new ControladorAdeful(this);
         auxiliarGeneral = new AuxiliarGeneral(MapaCancha.this);
         toolbar = (Toolbar) findViewById(R.id.appbar);
@@ -258,12 +259,9 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
             } else {
                 if (insertar) {
                     String usuario = "Administrador";
-                    String fechaCreacion = controladorAdeful.getFechaOficial();
-                    String fechaActualizacion = fechaCreacion;
-
                     cancha = new Cancha(0, editTextNombre.getText().toString(),
                             longitud, latitud, tvAddress.getText().toString(),
-                            usuario, fechaCreacion, usuario, fechaActualizacion);
+                            usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
                 if (controladorAdeful.insertCanchaAdeful(cancha)) {
                        inicializarControles(GUARDAR_USUARIO);
                     } else {
@@ -271,12 +269,11 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
                     }
                 } else {
                     String usuario = "Administrador";
-                    String fechaActualizacion = controladorAdeful.getFechaOficial();
 
                     cancha = new Cancha(canchaAdefulArray.get(posicion)
                             .getID_CANCHA(), editTextNombre.getText()
                             .toString(), longitud, latitud, tvAddress.getText()
-                            .toString(), null, null, usuario, fechaActualizacion);
+                            .toString(), null, null, usuario, auxiliarGeneral.getFechaOficial());
 
                     if (controladorAdeful.actualizarCanchaAdeful(cancha)) {
                         insertar = true;

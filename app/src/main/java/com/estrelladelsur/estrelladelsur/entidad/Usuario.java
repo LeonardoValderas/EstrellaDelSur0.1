@@ -5,17 +5,19 @@ public class Usuario {
     private int ID_USUARIO;
     private String USUARIO;
     private String PASSWORD;
+    private boolean LIGA;
     private String USUARIO_CREADOR;
     private String FECHA_CREACION;
     private String USUARIO_ACTUALIZACION;
     private String FECHA_ACTUALIZACION;
 
     //USUARIO
-    public Usuario(int id_usuario, String user, String pass,String usuario, String fechaCreacion,
+    public Usuario(int id_usuario, String user, String pass,boolean liga,String usuario, String fechaCreacion,
                    String usuario_act, String fechaActualizacion) {
         ID_USUARIO = id_usuario;
         USUARIO = user;
         PASSWORD = pass;
+        LIGA = liga;
         USUARIO_CREADOR = usuario;
         FECHA_CREACION = fechaCreacion;
         USUARIO_ACTUALIZACION = usuario_act;
@@ -38,5 +40,8 @@ public class Usuario {
     }
     public String getFECHA_ACTUALIZACION() {
         return FECHA_ACTUALIZACION;
+    }
+    public boolean isLIGA() {
+        return LIGA;
     }
 }

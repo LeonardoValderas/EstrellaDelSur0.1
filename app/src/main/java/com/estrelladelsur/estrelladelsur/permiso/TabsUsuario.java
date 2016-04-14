@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.permiso;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -7,23 +8,18 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.institucion.Communicator;
-import com.estrelladelsur.estrelladelsur.institucion.FragmentEditarArticulo;
-import com.estrelladelsur.estrelladelsur.institucion.FragmentGenerarArticulo;
 
 public class TabsUsuario extends AppCompatActivity implements Communicator{
 
     private Toolbar toolbar;
-    private Toolbar toolbar_sub;
-    private ActionBarDrawerToggle drawerToggle;
     private ViewPager viewPager;
     private int viewpagerid;
     final int PAGE_COUNT = 2;
@@ -31,15 +27,18 @@ public class TabsUsuario extends AppCompatActivity implements Communicator{
     private FragmentTransaction mCurTransaction;
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
+    private AuxiliarGeneral auxiliarGeneral;
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
-
+    private Typeface titulos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
 
+        auxiliarGeneral = new AuxiliarGeneral(TabsUsuario.this);
+        titulos = auxiliarGeneral.tituloFont(TabsUsuario.this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -53,6 +52,7 @@ public class TabsUsuario extends AppCompatActivity implements Communicator{
 
         txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
         txtAbSubTitulo.setText("USUARIO");
+        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);

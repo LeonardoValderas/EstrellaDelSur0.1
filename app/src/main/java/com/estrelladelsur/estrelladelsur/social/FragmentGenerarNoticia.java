@@ -1,6 +1,7 @@
 package com.estrelladelsur.estrelladelsur.social;
 
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -29,10 +30,10 @@ public class FragmentGenerarNoticia extends Fragment {
     private Communicator communicator;
     private boolean actualizar = false;
     private int idNoticianExtra;
-    private String fechaCreacionExtra;
     private AuxiliarGeneral auxiliarGeneral;
     private String GUARDAR_TOAST = "Noticia cargada correctamente";
     private String ACTUALIZAR_TOAST = "Noticia actualizada correctamente";
+    private Typeface editTextFont;
 
     public static FragmentGenerarNoticia newInstance() {
         FragmentGenerarNoticia fragment = new FragmentGenerarNoticia();
@@ -59,18 +60,22 @@ public class FragmentGenerarNoticia extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_articulo, container, false);
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
         // EDITTEXT TITULO
         noticiaEditTituto = (EditText) v
                 .findViewById(R.id.articuloEditTituto);
+        noticiaEditTituto.setTypeface(editTextFont,Typeface.BOLD);
         // EDITTEXT NOTIFICACIO
         noticiaEditArticulo = (EditText) v
                 .findViewById(R.id.articuloEditArticulo);
         noticiaEditArticulo.setHint("DESCRIPCION");
+        noticiaEditArticulo.setTypeface(editTextFont);
         // EDITTEXT LINK
         noticiaEditLink = (EditText) v
                 .findViewById(R.id.noticiaEditLink);
         noticiaEditLink.setVisibility(View.VISIBLE);
+        noticiaEditLink.setTypeface(editTextFont);
 
         return v;
     }
@@ -82,8 +87,7 @@ public class FragmentGenerarNoticia extends Fragment {
     }
 
     private void init() {
-        // VER DONDE EJECUCTAR ESTA LINEA
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+
         controladorAdeful = new ControladorAdeful(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
@@ -152,7 +156,7 @@ public class FragmentGenerarNoticia extends Fragment {
         if (id == R.id.action_guardar) {
 
             String usuario = "Administrador";
-            String fechaCreacion = controladorAdeful.getFechaOficial();
+            String fechaCreacion = auxiliarGeneral.getFechaOficial();
             String fechaActualizacion = fechaCreacion;
 
             if(noticiaEditTituto.getText().toString().equals("")|| noticiaEditLink.getText().toString().equals("")){
@@ -171,7 +175,7 @@ public class FragmentGenerarNoticia extends Fragment {
                 }else{ //NOTIFICACION ACTUALIZAR
                 noticia = new Noticia(idNoticianExtra, noticiaEditTituto.getText().toString(),noticiaEditArticulo.getText().toString(),
                         noticiaEditLink.getText().toString(),
-                        usuario, fechaCreacionExtra, usuario,controladorAdeful.getFechaOficial());
+                        null, null, usuario,fechaCreacion);
                 if(controladorAdeful.actualizarNoticiaAdeful(noticia)) {
                     setBotonGuardar(ACTUALIZAR_TOAST);
                 actualizar = false;

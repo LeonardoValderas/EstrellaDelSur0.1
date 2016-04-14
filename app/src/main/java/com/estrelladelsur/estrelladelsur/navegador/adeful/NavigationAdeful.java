@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur.navegador;
+package com.estrelladelsur.estrelladelsur.navegador.adeful;
 
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +35,7 @@ import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsJugador;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsSancion;
+import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
 import com.estrelladelsur.estrelladelsur.permiso.TabsPermiso;
 import com.estrelladelsur.estrelladelsur.permiso.TabsUsuario;
 import com.estrelladelsur.estrelladelsur.social.TabsFoto;
@@ -44,7 +45,9 @@ import com.estrelladelsur.estrelladelsur.social.TabsPublicidad;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class NavigationAdeful extends AppCompatActivity {
@@ -57,6 +60,7 @@ public class NavigationAdeful extends AppCompatActivity {
     private ExpandableAdapter listAdapter;
     private ExpandableListView expListView;
     private List<String> listDataHeader;
+    private List<String> listDataHeaderAux;
     private List<String> mi_equipoChild;
     private List<String> ligaChild;
     private List<String> socialChild;
@@ -68,6 +72,8 @@ public class NavigationAdeful extends AppCompatActivity {
     private Typeface titulos;
     private Typeface adeful;
     private AuxiliarGeneral auxiliarGeneral;
+    private String usuarioAdministrador = null;
+    private int idUsuarioAdministrador;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +82,10 @@ public class NavigationAdeful extends AppCompatActivity {
 
         controladorAdeful = new ControladorAdeful(this);
         auxiliarGeneral = new AuxiliarGeneral(NavigationAdeful.this);
-
-        titulos = Typeface.createFromAsset(NavigationAdeful.this.getAssets(), "aspace_demo.otf");
-        adeful = Typeface.createFromAsset(NavigationAdeful.this.getAssets(), "androidnation.ttf");
+        titulos = auxiliarGeneral.tituloFont(NavigationAdeful.this);
+        adeful = auxiliarGeneral.ligaFont(NavigationAdeful.this);
+        //usuario adminsitrador
+        usuarioAdminitrador();
         init();
         drawerLayout.openDrawer(GravityCompat.START);
         inicializarDatosGenerales();
@@ -259,6 +266,11 @@ public class NavigationAdeful extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
     }
 
+    public void usuarioAdminitrador() {
+        usuarioAdministrador = NavigationAdeful.this.getIntent().getStringExtra("usuario");
+        idUsuarioAdministrador = NavigationAdeful.this.getIntent().getIntExtra("id_usuario", 0);
+    }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -272,62 +284,119 @@ public class NavigationAdeful extends AppCompatActivity {
     }
 
     private void prepareListData() {
+        ArrayList<SubModulo> subModuloArray = new ArrayList<SubModulo>();
+        String ADM = "ADM";
         listDataHeader = new ArrayList<String>();
+        listDataHeaderAux = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
+
+        institucionalChild = new ArrayList<String>();
+        mi_equipoChild = new ArrayList<String>();
+        ligaChild = new ArrayList<String>();
+        socialChild = new ArrayList<String>();
+        permisoChild = new ArrayList<String>();
+
+        if (usuarioAdministrador.equals(ADM)) {
+
+            subModuloArray = controladorAdeful.selectListaModuloSubModuloFalseAdeful();
+            if (subModuloArray != null) {
+
+                if (!subModuloArray.isEmpty()) {
+                    for (int i = 0; i < subModuloArray.size(); i++) {
+
+                        switch (subModuloArray.get(i).getID_MODULO()) {
+
+                            case 1:
+
+                                institucionalChild.add(subModuloArray.get(i).getSUBMODULO());
+                                break;
+                            case 2:
+                                mi_equipoChild.add(subModuloArray.get(i).getSUBMODULO());
+                                break;
+                            case 3:
+                                ligaChild.add(subModuloArray.get(i).getSUBMODULO());
+                                break;
+                            case 4:
+                                socialChild.add(subModuloArray.get(i).getSUBMODULO());
+                                break;
+                            case 5:
+                                permisoChild.add(subModuloArray.get(i).getSUBMODULO());
+                                break;
+                        }
+
+                        listDataHeaderAux.add(subModuloArray.get(i).getMODULO());
+                    }
+                }
+            } else {
+                auxiliarGeneral.errorDataBase(NavigationAdeful.this);
+            }
+
+        }
+//        HashSet<String> uniqueModulo = new HashSet<String>(listDataHeaderAux);
+//
+//        for (String value : uniqueModulo) {
+//            listDataHeader.add(value);
+//        }
 
         for (int i = 0; i < getResources().getStringArray(R.array.moduloArray).length; i++) {
 
             listDataHeader.add(getResources().getStringArray(R.array.moduloArray)[i]);
 
         }
+//COMENTARRRR
+//
+//        for (int i = 0; i < getResources().getStringArray(
+//                R.array.NavigationInstitucion).length; i++) {
+//
+//            institucionalChild.add(getResources().getStringArray(
+//                    R.array.NavigationInstitucion)[i]);
+//        }
 
-        // Adding child data
-//            listDataHeader.add("INSTITUCION");
-//            listDataHeader.add("MI EQUIPO");
-//            listDataHeader.add("LIGA");
-//            listDataHeader.add("SOCIAL");
+//        for (int i = 0; i < getResources().getStringArray(
+//                R.array.NavigationCarga).length; i++) {
+//
+//            mi_equipoChild.add(getResources().getStringArray(
+//                    R.array.NavigationCarga)[i]);
+//        }
 
-        // Adding child data
-        institucionalChild = new ArrayList<String>();
+//        for (int i = 0; i < getResources().getStringArray(
+//                R.array.NavigationLigaAdeful).length; i++) {
+//
+//            ligaChild.add(getResources().getStringArray(
+//                    R.array.NavigationLigaAdeful)[i]);
+//        }
 
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationInstitucion).length; i++) {
+//        for (int i = 0; i < getResources().getStringArray(
+//                R.array.NavigationSocial).length; i++) {
+//
+//            socialChild.add(getResources().getStringArray(R.array.NavigationSocial)[i]);
+//        }
 
-            institucionalChild.add(getResources().getStringArray(
-                    R.array.NavigationInstitucion)[i]);
-        }
-
-        mi_equipoChild = new ArrayList<String>();
-
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationCarga).length; i++) {
-
-            mi_equipoChild.add(getResources().getStringArray(
-                    R.array.NavigationCarga)[i]);
-        }
-
-        ligaChild = new ArrayList<String>();
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationLigaAdeful).length; i++) {
-
-            ligaChild.add(getResources().getStringArray(
-                    R.array.NavigationLigaAdeful)[i]);
-        }
-
-        socialChild = new ArrayList<String>();
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationSocial).length; i++) {
-
-            socialChild.add(getResources().getStringArray(R.array.NavigationSocial)[i]);
-        }
-        permisoChild = new ArrayList<String>();
-
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationPermiso).length; i++) {
-
-            permisoChild.add(getResources().getStringArray(R.array.NavigationPermiso)[i]);
-        }
-
+//        for (int i = 0; i < getResources().getStringArray(
+//                R.array.NavigationPermiso).length; i++) {
+//
+//            permisoChild.add(getResources().getStringArray(R.array.NavigationPermiso)[i]);
+//        }
+//        for (int i = 0; i < listDataHeader.size(); i++) {
+//            switch (listDataHeader.get(i)){
+//
+//                case "INSTITUCION":
+//                    listDataChild.put(listDataHeader.get(0), institucionalChild);
+//                    break;
+//                case "MI EQUIPO":
+//                    listDataChild.put(listDataHeader.get(0), institucionalChild);
+//                    break;
+//                case "LIGA":
+//                    listDataChild.put(listDataHeader.get(0), institucionalChild);
+//                    break;
+//                case "SOCIAL":
+//                    listDataChild.put(listDataHeader.get(0), institucionalChild);
+//                    break;
+//                case "PERMISO":
+//                    listDataChild.put(listDataHeader.get(0), institucionalChild);
+//                    break;
+//            }
+//        }
         listDataChild.put(listDataHeader.get(0), institucionalChild);
         listDataChild.put(listDataHeader.get(1), mi_equipoChild);
         listDataChild.put(listDataHeader.get(2), ligaChild);
@@ -455,7 +524,7 @@ public class NavigationAdeful extends AppCompatActivity {
                         controladorAdeful.insertSubModuloAdeful(submodulo);
                     }
                     if (key >= 15 && key <= 16) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
+                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 5);
                         controladorAdeful.insertSubModuloAdeful(submodulo);
                     }
 
@@ -520,21 +589,10 @@ public class NavigationAdeful extends AppCompatActivity {
         int id = item.getItemId();
 
         // noinspection SimplifiableIfStatement
-        if (id == R.id.action_permisos) {
+        if (id == R.id.action_administrador) {
 
-
-               /* alertMenu = new AlertsMenu(this, "PERMISOS", "En esta opción puede agreagar o editar un Permiso","Ingrese nombre",null);
-                alertMenu.btnAceptar.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        // TODO Auto-generated method stub
-
-                        String[] comision = new String[] {"Presidente","Delegado"};
-                        alertPermisos = new AlertPermisos(NavigationDrawerAdeful.this, "PERMISOS", getResources().getStringArray(R.array.NavigationInstitucion),getResources().getStringArray(R.array.NavigationCarga),comision);
-
-                    }
-                });*/
+            Intent i = new Intent(this, NavigationUsuario.class);
+            startActivity(i);
 
 
             return true;

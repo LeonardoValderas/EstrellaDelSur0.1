@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 
 public class TabsComision extends AppCompatActivity implements Communicator{
 
@@ -32,12 +33,15 @@ public class TabsComision extends AppCompatActivity implements Communicator{
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
     private Typeface titulos;
-
+    private AuxiliarGeneral auxiliarGeneral;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-        titulos = Typeface.createFromAsset(TabsComision.this.getAssets(), "aspace_demo.otf");
+
+        auxiliarGeneral = new AuxiliarGeneral(TabsComision.this);
+        titulos = auxiliarGeneral.tituloFont(TabsComision.this);
+
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

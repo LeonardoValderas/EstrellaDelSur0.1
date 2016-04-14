@@ -12,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -19,6 +20,21 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
+
 
 public class AuxiliarGeneral {
     private Context context;
@@ -77,7 +93,7 @@ public class AuxiliarGeneral {
     }
 
     //SELECCIONAR UNA IMAGEN DE LA GALERIA
-    public Bitmap SeleccionarImagen(Intent data, Context context) {
+    public Bitmap SeleccionarImagen(Intent data, Context context, boolean circle) {
         Bitmap b = null;
         try {
             UtilityImage.uri = data.getData();
@@ -113,10 +129,14 @@ public class AuxiliarGeneral {
                 // use new copied path and use anywhere
                 String valid_photo = UtilityImage.Paste_Target_Location
                         .toString();
-
-                b = Bitmap.createScaledBitmap(b, 100, 100, true);
-                //  pasamos la imagen a circulo
-                b = getRoundedBitmap(b);
+                if(circle) {
+                    b = Bitmap.createScaledBitmap(b, 100, 100, true);
+                    //  pasamos la imagen a circulo
+                    b = getRoundedBitmap(b);
+                }else{
+                    b = Bitmap.createScaledBitmap(b, 298, 298, true);
+                    b = getRoundedBitmapRect(b);
+                }
                 cursor.close();
 
             } else {
@@ -129,15 +149,12 @@ public class AuxiliarGeneral {
         }
         return b;
     }
-
-
-
     //PASA A CIRCULAR UNA IMAGEN
     public static Bitmap getRoundedBitmap(Bitmap bitmap) {
         final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
 
-        final int color = Color.RED;
+        final int color = Color.BLACK;
         final Paint paint = new Paint();
         final Rect rect = new Rect(2, 2, bitmap.getWidth()-2, bitmap.getHeight()-1);
         final RectF rectF = new RectF(rect);
@@ -154,11 +171,52 @@ public class AuxiliarGeneral {
 
         return output;
     }
+
+    //PASA A CIRCULAR UNA IMAGEN
+    public static Bitmap getRoundedBitmapRect(Bitmap bitmap) {
+        final Bitmap output = Bitmap.createBitmap(299, 299, Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(output);
+
+        final int color = Color.BLACK;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(2, 2, 299, 299);
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRect(rectF, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        bitmap.recycle();
+
+        return output;
+    }
+
     //PASA BITMAP A BYTE
     public byte[] pasarBitmapByte(Bitmap b){
         //Pasar bitmap a byte[]
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         b.compress(Bitmap.CompressFormat.PNG, 0, baos);
         return baos.toByteArray();
+    }
+
+    public String getFechaOficial() {
+
+        Date dateOficial = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd - HH:mm:ss");
+        return sdf.format(dateOficial);
+    }
+
+    public Typeface tituloFont(Context context){
+        return Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+    }
+    public Typeface textFont(Context context){
+        return Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
+    }
+    public Typeface ligaFont(Context context){
+        return Typeface.createFromAsset(context.getAssets(), "androidnation.ttf");
     }
 }

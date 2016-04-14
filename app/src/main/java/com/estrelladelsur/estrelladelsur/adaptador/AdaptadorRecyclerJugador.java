@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 
 public class AdaptadorRecyclerJugador extends
@@ -23,7 +24,7 @@ public class AdaptadorRecyclerJugador extends
 	private ArrayList<Jugador> jugadorArray;
 	private Typeface nombreFont;
 	private Typeface cargoPeriodoFont;
-
+	private AuxiliarGeneral auxiliarGeneral;
 	public static class JugadorViewHolder extends RecyclerView.ViewHolder {
 		private TextView textRecyclerViewNombre;
 		private TextView textRecyclerViewPosicion;
@@ -38,9 +39,9 @@ public class AdaptadorRecyclerJugador extends
 
 			textRecyclerViewNombre = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewNombre);
-			textRecyclerViewPosicion = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewCargo);
 			textRecyclerViewDivision = (TextView) itemView
+					.findViewById(R.id.textRecyclerViewCargo);
+			textRecyclerViewPosicion = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewPeriodo);
 			textRecyclerViewPeriodoText = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewPeriodoText);
@@ -65,18 +66,20 @@ public class AdaptadorRecyclerJugador extends
 				imageRecyclerViewFoto.setImageBitmap(fotoBitmap);
 			}
 			textRecyclerViewNombre.setText(jugador.getNOMBRE_JUGADOR());
-			textRecyclerViewNombre.setTypeface(nombre);
+			textRecyclerViewNombre.setTypeface(nombre, Typeface.BOLD);
+			textRecyclerViewDivision.setText(jugador.getNOMBRE_DIVISION());
+			textRecyclerViewDivision.setTextSize(20);
+			textRecyclerViewDivision.setTypeface(nombre);
 			textRecyclerViewPosicion.setText(jugador.getNOMBRE_POSICION());
-			textRecyclerViewPosicion.setTypeface(cargo, Typeface.BOLD);
-	    	textRecyclerViewDivision.setText(jugador.getNOMBRE_DIVISION());
-			textRecyclerViewDivision.setTypeface(cargo);
+			textRecyclerViewPosicion.setTypeface(cargo,Typeface.BOLD);
 			textRecyclerViewPeriodoText.setText("Posición de Juego");
 		}
 	}
 	public AdaptadorRecyclerJugador(ArrayList<Jugador> jugadorArray, Context context) {
 		this.jugadorArray = jugadorArray;
-		this.cargoPeriodoFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
-		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+		auxiliarGeneral = new AuxiliarGeneral(context);
+		this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
+		this.nombreFont = auxiliarGeneral.tituloFont(context);
 	}
 
 	@Override

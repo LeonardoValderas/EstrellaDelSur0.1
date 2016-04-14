@@ -1,6 +1,6 @@
 package com.estrelladelsur.estrelladelsur.social;
 
-
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -29,8 +29,10 @@ public class FragmentGenerarNotificacion extends Fragment {
     private Communicator communicator;
     private boolean actualizar = false;
     private int idNotificacionExtra;
-    private String fechaCreacionExtra;
     private AuxiliarGeneral auxiliarGeneral;
+    private String GUARDAR_USUARIO = "Notificación cargada correctamente";
+    private String ACTUALIZAR_USUARIO= "Notificación actualizada correctamente";
+    private Typeface editTextFont;
 
     public static FragmentGenerarNotificacion newInstance() {
         FragmentGenerarNotificacion fragment = new FragmentGenerarNotificacion();
@@ -57,16 +59,17 @@ public class FragmentGenerarNotificacion extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_articulo, container, false);
-
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
         // EDITTEXT TITULO
         notificacionEditTituto = (EditText) v
                 .findViewById(R.id.articuloEditTituto);
-
+        notificacionEditTituto.setTypeface(editTextFont,Typeface.BOLD);
         // EDITTEXT NOTIFICACIO
-
         notificacionEditArticulo = (EditText) v
                 .findViewById(R.id.articuloEditArticulo);
         notificacionEditArticulo.setHint("NOTIFICACION");
+        notificacionEditArticulo.setTypeface(editTextFont);
         return v;
     }
 
@@ -77,11 +80,8 @@ public class FragmentGenerarNotificacion extends Fragment {
     }
 
     private void init() {
-        // VER DONDE EJECUCTAR ESTA LINEA
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
-        controladorAdeful = new ControladorAdeful(getActivity());
-
-        actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
+         controladorAdeful = new ControladorAdeful(getActivity());
+         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
         if (actualizar) {
@@ -91,10 +91,15 @@ public class FragmentGenerarNotificacion extends Fragment {
                     .getStringExtra("titulo"));
             notificacionEditArticulo.setText(getActivity().getIntent()
                     .getStringExtra("notificacion"));
-            fechaCreacionExtra = getActivity().getIntent()
-                    .getStringExtra("fecha_creacion");
             insertar = false;
         }
+    }
+    public void inicializarControles(String mensaje){
+        notificacionEditTituto.setText("");
+        notificacionEditArticulo.setText("");
+        communicator.refresh();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
     }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,8 +110,8 @@ public class FragmentGenerarNotificacion extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
+        menu.getItem(1).setVisible(false);//permiso
+        menu.getItem(2).setVisible(false);//lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
         menu.getItem(5).setVisible(false);// posicion
@@ -139,8 +144,6 @@ public class FragmentGenerarNotificacion extends Fragment {
         if (id == R.id.action_guardar) {
 
             String usuario = "Administrador";
-            String fechaCreacion = controladorAdeful.getFechaOficial();
-            String fechaActualizacion = fechaCreacion;
 
             if(notificacionEditTituto.getText().toString().equals("")|| notificacionEditArticulo.getText().toString().equals("")){
 
@@ -149,44 +152,31 @@ public class FragmentGenerarNotificacion extends Fragment {
             }else if(insertar){
                 notificacion = new Notificacion(0, notificacionEditTituto.getText().toString(),
                         notificacionEditArticulo.getText().toString(),
-                        usuario, fechaCreacion,usuario,fechaActualizacion);
+                        usuario, auxiliarGeneral.getFechaOficial(),usuario,auxiliarGeneral.getFechaOficial());
                if(controladorAdeful.insertNotificacionAdeful(notificacion)) {
-                   notificacionEditTituto.setText("");
-                   notificacionEditArticulo.setText("");
-                   communicator.refresh();
-                   Toast.makeText(getActivity(), "Notificación cargada correctamente",
-                           Toast.LENGTH_SHORT).show();
+                  inicializarControles(GUARDAR_USUARIO);
                }else {
                 auxiliarGeneral.errorDataBase(getActivity());
                 }
                 }else{ //NOTIFICACION ACTUALIZAR
-
                 notificacion = new Notificacion(idNotificacionExtra, notificacionEditTituto.getText().toString(),
                         notificacionEditArticulo.getText().toString(),
-                        usuario, fechaCreacionExtra, usuario,controladorAdeful.getFechaOficial());
+                        null, null, usuario,auxiliarGeneral.getFechaOficial());
                 if(controladorAdeful.actualizarNotificacionAdeful(notificacion)){
-                notificacionEditTituto.setText("");
-                notificacionEditArticulo.setText("");
-
                 actualizar = false;
                 insertar = true;
-                communicator.refresh();
-                Toast.makeText(getActivity(), "Notificación actualizada correctamente",
-                        Toast.LENGTH_SHORT).show();
+                inicializarControles(ACTUALIZAR_USUARIO);
                 }else {
-               auxiliarGeneral.errorDataBase(getActivity());
+                auxiliarGeneral.errorDataBase(getActivity());
                 }
             }
             return true;
         }
 
         if (id == R.id.action_lifuba) {
-
             return true;
         }
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

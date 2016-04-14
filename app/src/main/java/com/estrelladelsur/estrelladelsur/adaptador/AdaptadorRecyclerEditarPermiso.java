@@ -1,14 +1,17 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import java.util.ArrayList;
@@ -20,6 +23,8 @@ public class AdaptadorRecyclerEditarPermiso extends
 	private View.OnClickListener listener;
 	private ArrayList<Permiso> permisoArray;
 	private Context context;
+	private AuxiliarGeneral auxiliarGeneral;
+	private Typeface usuarioFont,modulosfont;
 
 	public static class PermisoViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -34,25 +39,37 @@ public class AdaptadorRecyclerEditarPermiso extends
         private String permisos ="";
 		private ControladorAdeful controladorAdeful;
 		private ArrayList<Permiso> permisoDivisionArray;
+		private LinearLayout linearEscudoL, linearEscudoV, linearVisita;
 
 		public PermisoViewHolder(View itemView) {
 			super(itemView);
 
-			// ESCUDO LOCAL
-			imageViewEscudoL = (ImageView) itemView
-					.findViewById(R.id.imageViewEscudoL);
-			imageViewEscudoL.setVisibility(View.GONE);
+			linearEscudoL = (LinearLayout) itemView
+					.findViewById(R.id.linearEscudoL);
+			linearEscudoL.setVisibility(View.GONE);
+
+			linearEscudoV  = (LinearLayout) itemView
+					.findViewById(R.id.linearEscudoV);
+			linearEscudoV.setVisibility(View.GONE);
+
+			linearVisita  = (LinearLayout) itemView
+					.findViewById(R.id.linearVisita);
+			linearVisita.setVisibility(View.GONE);
+//			// ESCUDO LOCAL
+//			imageViewEscudoL = (ImageView) itemView
+//					.findViewById(R.id.imageViewEscudoL);
+//			imageViewEscudoL.setVisibility(View.GONE);
 			// ESCUDO VISITA
-			imageViewEscudoV = (ImageView) itemView
-					.findViewById(R.id.imageViewEscudoV);
-			imageViewEscudoV.setVisibility(View.GONE);
+//			imageViewEscudoV = (ImageView) itemView
+//					.findViewById(R.id.imageViewEscudoV);
+//			imageViewEscudoV.setVisibility(View.GONE);
 			// EQUIPO LOCAL
 			textRecyclerViewEquipoL = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewEquipoL);
 			// EQUIPO VISITA
-			textRecyclerViewEquipoV = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewEquipoV);
-			textRecyclerViewEquipoV.setVisibility(View.GONE);
+//			textRecyclerViewEquipoV = (TextView) itemView
+//					.findViewById(R.id.textRecyclerViewEquipoV);
+//			textRecyclerViewEquipoV.setVisibility(View.GONE);
 			// DIA
 			textRecyclerViewDia = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewDia);
@@ -74,10 +91,13 @@ public class AdaptadorRecyclerEditarPermiso extends
 			textRecyclerViewResultadoV.setVisibility(View.GONE);
 		}
 
-			public void bindTitular(Permiso permiso,Context context) {
+			public void bindTitular(Permiso permiso,Context context, Typeface u, Typeface m) {
 
 			textRecyclerViewEquipoL.setText(permiso.getUSUARIO().toString());
+			textRecyclerViewEquipoL.setTextSize(30);
+			textRecyclerViewEquipoL.setTypeface(u,Typeface.BOLD);
 			textRecyclerViewDia.setText("Permisos:");
+			textRecyclerViewDia.setTypeface(m, Typeface.BOLD);
 			controladorAdeful = new ControladorAdeful(context);
 			permisoDivisionArray =controladorAdeful.selectListaPermisoAdefulId(permiso.getID_PERMISO());
 			if(permisoDivisionArray != null) {
@@ -94,11 +114,16 @@ public class AdaptadorRecyclerEditarPermiso extends
 						Toast.LENGTH_SHORT).show();
 			}
 			textRecyclerViewHora.setText(permisos);
+			textRecyclerViewHora.setTypeface(m);
 		}
 	}
 		public AdaptadorRecyclerEditarPermiso(ArrayList<Permiso> permisoArray, Context c) {
 			this.permisoArray = permisoArray;
 			this.context = c;
+			auxiliarGeneral = new AuxiliarGeneral(c);
+			usuarioFont = auxiliarGeneral.tituloFont(c);
+			modulosfont = auxiliarGeneral.textFont(c);
+
 	}
 	@Override
 	public PermisoViewHolder onCreateViewHolder(ViewGroup viewGroup,
@@ -112,7 +137,7 @@ public class AdaptadorRecyclerEditarPermiso extends
 	@Override
 	public void onBindViewHolder(PermisoViewHolder viewHolder, int pos) {
 		Permiso item = permisoArray.get(pos);
-		viewHolder.bindTitular(item,context);
+		viewHolder.bindTitular(item,context,usuarioFont,modulosfont);
 	}
 	@Override
 	public int getItemCount() {

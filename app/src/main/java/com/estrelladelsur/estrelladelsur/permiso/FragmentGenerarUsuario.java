@@ -170,10 +170,7 @@ public class FragmentGenerarUsuario extends Fragment {
         if (id == R.id.action_guardar) {
 
             String usuarios = "Administrador";
-            String fechaCreacion = controladorAdeful.getFechaOficial();
-            String fechaActualizacion = fechaCreacion;
-
-            if (usuarioEditUser.getText().toString().equals("") || usuarioEditPass.getText().toString().equals("")) {
+           if (usuarioEditUser.getText().toString().equals("") || usuarioEditPass.getText().toString().equals("")) {
 
                 Toast.makeText(getActivity(), "Debe completar todos los campos.",
                         Toast.LENGTH_SHORT).show();
@@ -182,8 +179,8 @@ public class FragmentGenerarUsuario extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }else if (insertar) {
                 usuario = new Usuario(0, usuarioEditUser.getText().toString(),
-                        usuarioEditPass.getText().toString(),
-                        usuarios, fechaCreacion, usuarios, fechaActualizacion);
+                        usuarioEditPass.getText().toString(),true,
+                        usuarios, auxiliarGeneral.getFechaOficial(), usuarios, auxiliarGeneral.getFechaOficial());
                 if (controladorAdeful.insertUsuarioAdeful(usuario)) {
                     inicializarControles(GUARDAR_USUARIO);
                 } else {
@@ -191,8 +188,8 @@ public class FragmentGenerarUsuario extends Fragment {
                 }
             } else { //USUARIO ACTUALIZAR
                 usuario = new Usuario(idUsuarioExtra, usuarioEditUser.getText().toString(),
-                        usuarioEditPass.getText().toString(),
-                        null, null, usuarios, fechaActualizacion);
+                        usuarioEditPass.getText().toString(),true,
+                        null, null, usuarios, auxiliarGeneral.getFechaOficial());
                 if (controladorAdeful.actualizarUsuarioAdeful(usuario)) {
                     actualizar = false;
                     insertar = true;

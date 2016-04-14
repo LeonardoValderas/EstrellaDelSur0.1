@@ -103,8 +103,9 @@ public class FragmentGenerarDireccion extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_generar_comision_direccion, container, false);
-        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
-        textViewFont = Typeface.createFromAsset(getActivity().getAssets(), "aspace_demo.otf");
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
+        textViewFont = auxiliarGeneral.tituloFont(getActivity());
         //FOTO INTEGRANTE
         fotoImageDireccion = (ImageView) v
                 .findViewById(R.id.fotoImageComisionDireccion);
@@ -139,7 +140,6 @@ public class FragmentGenerarDireccion extends Fragment {
     private void init() {
         // VER DONDE EJECUCTAR ESTA LINEA
         controladorAdeful = new ControladorAdeful(getActivity());
-        auxiliarGeneral = new AuxiliarGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         // LOAD SPINNER
@@ -237,7 +237,7 @@ public class FragmentGenerarDireccion extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
-            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity());
+            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity(), true);
             if (b != null)
                 fotoImageDireccion.setImageBitmap(b);
             imageDireccion = auxiliarGeneral.pasarBitmapByte(b);
@@ -352,9 +352,6 @@ public class FragmentGenerarDireccion extends Fragment {
         if (id == R.id.action_guardar) {
 
             String usuario = "Administrador";
-            String fechaCreacion = controladorAdeful.getFechaOficial();
-            String fechaActualizacion = fechaCreacion;
-
             if (nombreEditDireccion.getText().toString().equals("")) {
                 Toast.makeText(getActivity(), "Ingrese el nombre del integrante de la Dirección.",
                         Toast.LENGTH_SHORT).show();
@@ -368,7 +365,7 @@ public class FragmentGenerarDireccion extends Fragment {
                 cargoSpinner = (Cargo) puestoSpinnerDireccion.getSelectedItem();
                 direccion = new Direccion(0, nombreEditDireccion.getText().toString(),
                         imageDireccion, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
-                        hastaButtonDireccion.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                        hastaButtonDireccion.getText().toString(), usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
                 if (controladorAdeful.insertDireccionAdeful(direccion)) {
                     inicializarControles(GUARDAR_USUARIO);
                 } else {
@@ -378,7 +375,7 @@ public class FragmentGenerarDireccion extends Fragment {
                 cargoSpinner = (Cargo) puestoSpinnerDireccion.getSelectedItem();
                 direccion = new Direccion(idDireccionExtra, nombreEditDireccion.getText().toString(),
                         imageDireccion, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
-                        hastaButtonDireccion.getText().toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                        hastaButtonDireccion.getText().toString(), null, null, usuario, auxiliarGeneral.getFechaOficial());
 
                 if (controladorAdeful.actualizarDireccionAdeful(direccion)) {
                     actualizar = false;
@@ -427,13 +424,11 @@ public class FragmentGenerarDireccion extends Fragment {
                                                     .equals("")) {
 
                                                 String usuario = "Administrador";
-                                                String fechaCreacion = controladorAdeful.getFechaOficial();
-                                                String fechaActualizacion = fechaCreacion;
 
                                                 cargo = new Cargo(0,
                                                         dialogoAlerta.editTextUno
                                                                 .getText()
-                                                                .toString(), usuario, fechaCreacion, usuario, fechaActualizacion);
+                                                                .toString(), usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
                                                 if (controladorAdeful
                                                         .insertCargoAdeful(cargo)) {
                                                      //SPINNER
@@ -506,7 +501,7 @@ public class FragmentGenerarDireccion extends Fragment {
                                                 cargo = new Cargo(
                                                         cargoArray.get(position).getID_CARGO(),
                                                         dialogoAlertaEditar.editTextUno.getText().toString(),
-                                                        usuario, null, usuario, controladorAdeful.getFechaOficial());
+                                                        null, null, usuario, auxiliarGeneral.getFechaOficial());
                                                 if (controladorAdeful
                                                         .actualizarCargoAdeful(cargo)) {
                                                     loadListViewMenu();

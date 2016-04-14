@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 
 public class AdaptadorRecyclerEquipo extends
@@ -22,6 +23,7 @@ public class AdaptadorRecyclerEquipo extends
 	private View.OnClickListener listener;
 	private ArrayList<Equipo> datosEquipoArray;
 	private Typeface nombreFont;
+	private AuxiliarGeneral auxiliarGeneral;
 
 	public static class EquipoAdefulViewHolder extends RecyclerView.ViewHolder {
 
@@ -56,7 +58,8 @@ public class AdaptadorRecyclerEquipo extends
 
 	public AdaptadorRecyclerEquipo(ArrayList<Equipo> datosEquipoArray, Context context) {
 		this.datosEquipoArray = datosEquipoArray;
-		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+	    auxiliarGeneral = new AuxiliarGeneral(context);
+		this.nombreFont = auxiliarGeneral.tituloFont(context);
 	}
 	@Override
 	public EquipoAdefulViewHolder onCreateViewHolder(ViewGroup viewGroup,

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 
 public class AdaptadorRecyclerCancha extends
@@ -21,7 +22,7 @@ public class AdaptadorRecyclerCancha extends
 	private ArrayList<Cancha> canchaArray;
 	private Typeface nombreFont;
 	private Typeface direFont;
-
+	private AuxiliarGeneral auxiliarGeneral;
 	public static class CanchaViewHolder extends RecyclerView.ViewHolder {
 
 		private TextView textRecyclerView;
@@ -49,14 +50,16 @@ public class AdaptadorRecyclerCancha extends
 			textRecyclerView.setText(cancha.getNOMBRE());
 			textRecyclerView.setTypeface(nombre, Typeface.BOLD);
 			textRecyclerView2.setText(cancha.getDIRECCION());
+			textRecyclerView2.setTextSize(15);
 			textRecyclerView2.setTypeface(dire);
 		}
 	}
 
 	public AdaptadorRecyclerCancha(ArrayList<Cancha> canchaArray, Context context) {
 		this.canchaArray = canchaArray;
-		this.direFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
-		this.nombreFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
+		auxiliarGeneral = new AuxiliarGeneral(context);
+		direFont = auxiliarGeneral.textFont(context);
+		nombreFont = auxiliarGeneral.tituloFont(context);
 	}
 
 	@Override

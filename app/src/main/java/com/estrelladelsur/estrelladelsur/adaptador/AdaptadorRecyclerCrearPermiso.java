@@ -1,5 +1,7 @@
 package com.estrelladelsur.estrelladelsur.adaptador;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
-
 import java.util.ArrayList;
 
 public class AdaptadorRecyclerCrearPermiso extends
@@ -19,7 +21,8 @@ public class AdaptadorRecyclerCrearPermiso extends
 	private ArrayList<SubModulo> submoduloArray;
 	private ArrayList<SubModulo> submoduloTrueArray = new ArrayList<SubModulo>();
 	private ArrayList<SubModulo> submoduloFalseArray = new ArrayList<SubModulo>();
-
+    private Typeface moduloFont;
+	private AuxiliarGeneral auxiliarGeneral;
 	public static class PermisoViewHolder extends RecyclerView.ViewHolder {
 
 		private TextView textViewModulo;
@@ -41,9 +44,10 @@ public class AdaptadorRecyclerCrearPermiso extends
 		}
 	}
 
-	public AdaptadorRecyclerCrearPermiso(ArrayList<SubModulo> submoduloArray) {
+	public AdaptadorRecyclerCrearPermiso(ArrayList<SubModulo> submoduloArray, Context context) {
 		this.submoduloArray = submoduloArray;
-
+		this.auxiliarGeneral = new AuxiliarGeneral(context);
+		moduloFont = auxiliarGeneral.tituloFont(context);
 		for (int i = 0; i <submoduloArray.size() ; i++) {
 			if(submoduloArray.get(i).ISSELECTED()) {
 				submoduloTrueArray.add(submoduloArray.get(i));
@@ -51,8 +55,6 @@ public class AdaptadorRecyclerCrearPermiso extends
 				submoduloFalseArray.add(submoduloArray.get(i));
 			}
 		}
-
-
 	}
 	@Override
 	public PermisoViewHolder onCreateViewHolder(ViewGroup viewGroup,
@@ -68,19 +70,13 @@ public class AdaptadorRecyclerCrearPermiso extends
 
 	@Override
 	public void onBindViewHolder(PermisoViewHolder viewHolder, int pos) {
-		//EntrenamientoXDivision item = submoduloArray.get(pos);
+
 		final int position = pos;
 
 		viewHolder.textViewModulo.setText(submoduloArray.get(position).getSUBMODULO());
-
+		viewHolder.textViewModulo.setTypeface(moduloFont);
 		viewHolder.checkBoxPermiso.setChecked(submoduloArray.get(position).ISSELECTED());
-//		if(submoduloArray.get(position).ISSELECTED()) {
-//			submoduloTrueArray.add(submoduloArray.get(position));
-//		}else{
-//			submoduloFalseArray.add(submoduloArray.get(position));
-//		}
 		viewHolder.checkBoxPermiso.setTag(submoduloArray.get(position));
-
 		viewHolder.checkBoxPermiso.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				CheckBox cb = (CheckBox) v;

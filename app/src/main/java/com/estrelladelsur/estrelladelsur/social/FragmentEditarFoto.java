@@ -151,7 +151,7 @@ public class FragmentEditarFoto extends Fragment {
 
 		fotoArray = controladorAdeful.selectListaFotoAdeful();
 		if(fotoArray != null) {
-			adaptadorEditarFoto = new AdaptadorRecyclerFoto(fotoArray);
+			adaptadorEditarFoto = new AdaptadorRecyclerFoto(fotoArray, getActivity());
 			recyclerViewFoto.setAdapter(adaptadorEditarFoto);
 		}else {
         auxiliarGeneral.errorDataBase(getActivity());

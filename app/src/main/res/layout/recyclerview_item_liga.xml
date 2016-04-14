@@ -17,16 +17,24 @@
             android:id="@+id/linearEscudo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.1"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/imageViewEscudo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/border_circle"
-                android:layout_width="80dp"
-                android:layout_height="80dp" />
+                android:background="@drawable/border_circle" />
+
+            <ImageView
+                android:id="@+id/imageViewFoto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/border_rect"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
@@ -50,8 +58,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Equipo"
                 android:gravity="center"
+                android:text="Equipo"
                 android:textColor="#000000"
                 android:textSize="20dp"
                 android:visibility="gone" />
@@ -95,9 +103,9 @@
         android:id="@+id/imageIsActual"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginRight="5dp"
         android:layout_gravity="center|right"
+        android:layout_marginRight="5dp"
         android:src="@drawable/ic_is_actual"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </android.support.v7.widget.CardView>

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 
 
 public class TabsJugador extends AppCompatActivity {
@@ -29,11 +30,15 @@ public class TabsJugador extends AppCompatActivity {
     private TextView txtAbTitulo;
     private TextView txtAbSubTitulo;
     private Typeface titulos;
+    private AuxiliarGeneral auxiliarGeneral;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-        titulos = Typeface.createFromAsset(TabsJugador.this.getAssets(), "aspace_demo.otf");
+
+        auxiliarGeneral = new AuxiliarGeneral(TabsJugador.this);
+        titulos = auxiliarGeneral.tituloFont(TabsJugador.this);
+
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

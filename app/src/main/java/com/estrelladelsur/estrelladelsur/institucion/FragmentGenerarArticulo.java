@@ -28,7 +28,6 @@ public class FragmentGenerarArticulo extends Fragment {
     private Communicator communicator;
     private boolean actualizar = false;
     private int idArticuloExtra;
-    private String fechaCreacionExtra;
     private AuxiliarGeneral auxiliarGeneral;
     private String GUARDAR_USUARIO = "Articulo cargado correctamente";
     private String ACTUALIZAR_USUARIO= "Articulo actualizado correctamente";
@@ -59,7 +58,8 @@ public class FragmentGenerarArticulo extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_articulo, container, false);
-        editTextFont = Typeface.createFromAsset(getActivity().getAssets(), "ATypewriterForMe.ttf");
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        editTextFont = auxiliarGeneral.textFont(getActivity());
         // EDITTEXT TITULO
         articuloEditTituto = (EditText) v
                 .findViewById(R.id.articuloEditTituto);
@@ -80,7 +80,6 @@ public class FragmentGenerarArticulo extends Fragment {
     private void init() {
         // VER DONDE EJECUCTAR ESTA LINEA
         controladorAdeful = new ControladorAdeful(getActivity());
-        auxiliarGeneral= new AuxiliarGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
@@ -90,8 +89,6 @@ public class FragmentGenerarArticulo extends Fragment {
                     .getStringExtra("titulo"));
             articuloEditArticulo.setText(getActivity().getIntent()
                     .getStringExtra("articulo"));
-            fechaCreacionExtra = getActivity().getIntent()
-                    .getStringExtra("fecha_creacion");
             insertar = false;
         }
     }
@@ -149,8 +146,6 @@ public class FragmentGenerarArticulo extends Fragment {
         if (id == R.id.action_guardar) {
 
             String usuario = "Administrador";
-            String fechaCreacion = controladorAdeful.getFechaOficial();
-            String fechaActualizacion = fechaCreacion;
 
             if(articuloEditTituto.getText().toString().equals("")|| articuloEditArticulo.getText().toString().equals("")){
                 Toast.makeText(getActivity(), "Debe completar todos los campos.",
@@ -158,7 +153,7 @@ public class FragmentGenerarArticulo extends Fragment {
             }else if(insertar){
                 articulo = new Articulo(0, articuloEditTituto.getText().toString(),
                         articuloEditArticulo.getText().toString(),
-                        usuario, fechaCreacion,usuario,fechaActualizacion);
+                        usuario, auxiliarGeneral.getFechaOficial(),usuario,auxiliarGeneral.getFechaOficial());
 
                if(controladorAdeful.insertArticuloAdeful(articulo)) {
                inicializarControles(GUARDAR_USUARIO);
@@ -169,7 +164,7 @@ public class FragmentGenerarArticulo extends Fragment {
 
                 articulo = new Articulo(idArticuloExtra, articuloEditTituto.getText().toString(),
                         articuloEditArticulo.getText().toString(),
-                        usuario, fechaCreacionExtra, usuario,controladorAdeful.getFechaOficial());
+                        null, null, usuario,auxiliarGeneral.getFechaOficial());
 
                 controladorAdeful.abrirBaseDeDatos();
                 if(controladorAdeful.actualizarArticuloAdeful(articulo)){
