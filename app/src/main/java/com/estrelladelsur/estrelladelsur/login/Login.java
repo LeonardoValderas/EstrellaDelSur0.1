@@ -1,7 +1,9 @@
 package com.estrelladelsur.estrelladelsur.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,6 +15,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -49,14 +52,14 @@ public class Login extends AppCompatActivity {
     private boolean liga = true;
     private boolean usuarioOK = false;
     private boolean passOK = false;
-    int posicion;
-    int id_usuario;
-
+    private int posicion;
+    private int id_usuario;
+   // private ProgressBar loginProgress = new ProgressBar(Login.this);
+    private Intent ligaIntente = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-
 
         usuarioEdit = (EditText) findViewById(R.id.user);
         passEdit = (EditText) findViewById(R.id.pass);
@@ -87,24 +90,24 @@ public class Login extends AppCompatActivity {
 
                             for (int i = 0; i < usuarioUsuario.size(); i++) {
 
-                                if(usuario.equals(usuarioUsuario.get(i).getUSUARIO().toString())){
+                                if (usuario.equals(usuarioUsuario.get(i).getUSUARIO().toString())) {
                                     usuarioOK = true;
                                     posicion = i;
                                     break;
                                 }
                             }
-                            if(usuarioOK){
-                                if(pass.equals(usuarioUsuario.get(posicion).getPASSWORD().toString())){
+                            if (usuarioOK) {
+                                if (pass.equals(usuarioUsuario.get(posicion).getPASSWORD().toString())) {
                                     passOK = true;
                                     liga = usuarioUsuario.get(posicion).isLIGA();
                                     id_usuario = usuarioUsuario.get(posicion).getID_USUARIO();
-                                }else{
+                                } else {
                                     showError();
                                 }
                             }
-                            if(usuarioOK && passOK){
-                                intentAdeful(liga);
-                            }else{
+                            if (usuarioOK && passOK) {
+                            intentAdeful(liga);
+                            } else {
                                 showError();
                             }
                         } else {
@@ -134,17 +137,15 @@ public class Login extends AppCompatActivity {
     }
 
     public void intentAdeful(boolean liga){
-        Intent ligaIntente = null;
+      //  Intent ligaIntente = null;
         if(liga) {
         ligaIntente = new Intent(Login.this, NavigationAdeful.class);
         }else{
        // ligaIntente = new Intent(Login.this, NavigationLifuba.class);
         }
-
         ligaIntente.putExtra("id_usuario",id_usuario);
         ligaIntente.putExtra("usuario", usuario);
         ligaIntente.putExtra("pass", pass);
         startActivity(ligaIntente);
     }
-
 }

@@ -1,5 +1,6 @@
 package com.estrelladelsur.estrelladelsur.permiso;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,8 @@ import com.estrelladelsur.estrelladelsur.dialogo.DialogoListCheck;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
+import com.estrelladelsur.estrelladelsur.navegador.adeful.NavigationAdeful;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -246,9 +249,6 @@ public class FragmentGenerarPermiso extends Fragment {
 
         if (id == R.id.action_guardar) {
 
-//            ArrayList<SubModulo> permisoList = adaptadorRecyclerCrearPermiso
-//                    .getPermisoList();
-
             if (spinnerUsuario.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerUsuario))) {
                 Toast.makeText(getActivity(),
@@ -262,6 +262,8 @@ public class FragmentGenerarPermiso extends Fragment {
                                 "Seleccione un modulo.",
                                 Toast.LENGTH_SHORT).show();
                     } else {
+
+
                         String usuarioa = "Administrador";
 
                         boolean salving = true;
@@ -318,6 +320,9 @@ public class FragmentGenerarPermiso extends Fragment {
                                                 getActivity(),
                                                 "Permiso cargado correctamente.",
                                                 Toast.LENGTH_SHORT).show();
+                                        Intent nav = new Intent(getActivity(),NavigationAdeful.class);
+                                        nav.putExtra("usuario", "ADM");
+                                        startActivity(nav);
                                     }
                                 } else {
                                     auxiliarGeneral.errorDataBase(getActivity());

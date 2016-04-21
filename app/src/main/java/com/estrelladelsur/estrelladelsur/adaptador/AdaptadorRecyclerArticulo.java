@@ -39,7 +39,8 @@ public class AdaptadorRecyclerArticulo extends
         }
         public void bindTitular(Articulo articulo) {
             textRecyclerViewTitulo.setText(articulo.getTITULO());
-            textRecyclerViewFecha.setText("ult.act: "+articulo.getFECHA_ACTUALIZACION());
+            String fecha = articulo.getFECHA_ACTUALIZACION().substring(0, 10);
+            textRecyclerViewFecha.setText("ult.act: "+fecha);
         }
     }
 

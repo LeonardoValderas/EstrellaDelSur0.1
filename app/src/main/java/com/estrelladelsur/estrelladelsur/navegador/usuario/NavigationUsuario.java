@@ -453,15 +453,15 @@ public void insertUsuarioAdm(){
                         SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 2);
                         controladorAdeful.insertSubModuloAdeful(submodulo);
                     }
-                    if (key >= 9 && key <= 10) {
+                    if (key == 9) {
                         SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 3);
                         controladorAdeful.insertSubModuloAdeful(submodulo);
                     }
-                    if (key >= 11 && key <= 14) {
+                    if (key >= 10 && key <= 13) {
                         SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
                         controladorAdeful.insertSubModuloAdeful(submodulo);
                     }
-                    if (key >= 15 && key <= 16) {
+                    if (key >= 14 && key <= 15) {
                         SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 5);
                         controladorAdeful.insertSubModuloAdeful(submodulo);
                     }

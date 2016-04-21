@@ -1,7 +1,9 @@
 package com.estrelladelsur.estrelladelsur.institucion;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -17,7 +19,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
@@ -25,7 +26,10 @@ import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerArticulo;
 import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
-
+import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.ArrayList;
 
 
@@ -38,6 +42,14 @@ public class FragmentEditarArticulo extends Fragment {
     private AdaptadorRecyclerArticulo adaptadorRecyclerArticulo;
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
+    private ProgressDialog dialog;
+    private JsonParsing jsonParsing = new JsonParsing();
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+    private String mensaje = null;
+    private String ELIMINAR_ARTICULO = "Articulo eliminado correctamente";
+    private int posicion = 0;
+    private Request request = new Request();
 
     public static FragmentEditarArticulo newInstance() {
         FragmentEditarArticulo fragment = new FragmentEditarArticulo();
@@ -98,7 +110,6 @@ public class FragmentEditarArticulo extends Fragment {
 
             @Override
             public void onClick(View view, int position) {
-                // TODO Auto-generated method stub
 
                 Intent editarArticulo = new Intent(getActivity(),
                         TabsArticulo.class);
@@ -127,18 +138,9 @@ public class FragmentEditarArticulo extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                    if (controladorAdeful.eliminarArticuloAdeful(articuloArray.get(position)
-                                        .getID_ARTICULO())) {
-                                    recyclerViewLoadArticulo();
-
-                                    Toast.makeText(
-                                            getActivity(),
-                                            "Articulo eliminado correctamente",
-                                            Toast.LENGTH_SHORT).show();
-                                    dialogoAlerta.alertDialog.dismiss();
-                                } else {
-                                auxiliarGeneral.errorDataBase(getActivity());
-                                }
+                                posicion = articuloArray.get(position)
+                                        .getID_ARTICULO();
+                                envioWebService();
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -152,7 +154,6 @@ public class FragmentEditarArticulo extends Fragment {
                         });
             }
         }));
-
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -169,6 +170,74 @@ public class FragmentEditarArticulo extends Fragment {
         auxiliarGeneral.errorDataBase(getActivity());
         }
     }
+
+    public void inicializarControles(String mensaje) {
+        recyclerViewLoadArticulo();
+        posicion = 0;
+        dialogoAlerta.alertDialog.dismiss();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public void envioWebService() {
+        request.setMethod("POST");
+        request.setQuery("ELIMINAR");
+        request.setParametrosDatos("id_articulo", String.valueOf(posicion));
+        new TaskArticulo().execute(request);
+    }
+    // enviar/editar/eliminar articulo
+
+    public class TaskArticulo extends AsyncTask<Request, Boolean, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(getActivity());
+            dialog.setMessage("Procesando...");
+            dialog.show();
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Request... params) {
+            int success;
+            JSONObject json = null;
+            boolean precessOK = true;
+            try {
+                json = jsonParsing.parsingArticulo(params[0]);
+                if (json != null) {
+                    success = json.getInt(TAG_SUCCESS);
+                    mensaje = json.getString(TAG_MESSAGE);
+                    if (success == 0) {
+                        if (controladorAdeful.eliminarArticuloAdeful(posicion)) {
+                         precessOK = true;
+                        } else {
+                            precessOK = false;
+                        }
+                    } else {
+                        precessOK = false;
+                    }
+                }else {
+                    precessOK = false;
+                    mensaje = "Error(4). Por favor comuniquese con soporte.";
+                }
+            } catch (JSONException e) {
+                precessOK = false;
+                mensaje = "Error(5). Por favor comuniquese con soporte.";
+            }
+            return precessOK;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            dialog.dismiss();
+
+            if (result) {
+            inicializarControles(ELIMINAR_ARTICULO);
+            } else {
+                auxiliarGeneral.errorWebService(getActivity(), mensaje);
+            }
+        }
+    }
+
 
     public static interface ClickListener {
         public void onClick(View view, int position);

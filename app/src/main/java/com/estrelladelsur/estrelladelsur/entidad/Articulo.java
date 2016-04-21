@@ -20,7 +20,6 @@ public class Articulo {
         USUARIO_ACTUALIZACION = usuario_actualizacion;
         FECHA_ACTUALIZACION = fecha_actualizacion;
     }
-
     public String getUSUARIO_ACTUALIZACION() {
         return USUARIO_ACTUALIZACION;
     }

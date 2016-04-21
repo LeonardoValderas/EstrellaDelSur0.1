@@ -1,8 +1,8 @@
 package com.estrelladelsur.estrelladelsur.auxiliar;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -14,27 +14,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.widget.Toast;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
-
 
 public class AuxiliarGeneral {
     private Context context;
@@ -89,6 +73,10 @@ public class AuxiliarGeneral {
     public void errorDataBase(Context context) {
         Toast.makeText(context, "Error en la base de datos interna, vuelva a intentar." +
                         "\n Si el error persiste comuniquese con soporte.",
+                Toast.LENGTH_SHORT).show();
+    }
+    public void errorWebService(Context context,String mensaje) {
+        Toast.makeText(context, mensaje,
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -206,7 +194,7 @@ public class AuxiliarGeneral {
     public String getFechaOficial() {
 
         Date dateOficial = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd - HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss");
         return sdf.format(dateOficial);
     }
 
@@ -218,5 +206,10 @@ public class AuxiliarGeneral {
     }
     public Typeface ligaFont(Context context){
         return Typeface.createFromAsset(context.getAssets(), "androidnation.ttf");
+    }
+
+    public String getUsuarioPreferences(Context context) {
+        SharedPreferences getUser = context.getSharedPreferences("UsuarioLog", context.MODE_PRIVATE);
+        return getUser.getString("usuario", null);
     }
 }

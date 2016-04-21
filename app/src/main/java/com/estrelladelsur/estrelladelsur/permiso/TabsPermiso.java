@@ -193,9 +193,7 @@ public class TabsPermiso extends AppCompatActivity implements Communicator{
 		FragmentGenerarPermiso fragment = (FragmentGenerarPermiso) manager
 				.findFragmentByTag("android:switcher:" + viewPager.getId()
 						+ ":" + 0);
-
 		fragment.recyclerViewLoadModulos();
-
 	}
 
 }

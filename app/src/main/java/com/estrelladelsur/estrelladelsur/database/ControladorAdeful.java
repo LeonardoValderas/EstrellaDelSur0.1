@@ -573,7 +573,39 @@ public class ControladorAdeful {
         database = null;
         return arrayPermiso;
     }
-    //ELIMINAR PERMISO
+
+    //LISTA permisos
+    public int selectIdPermisoAdefulIdUser(int id_usuario) {
+
+        String sql = "SELECT ID_PERMISO"
+                + " FROM PERMISO_ADEFUL WHERE ID_USUARIO = "+id_usuario;
+
+        Cursor cursor = null;
+        int id = 0;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        Permiso permiso = null;
+                        id = cursor.getInt(cursor
+                                .getColumnIndex("ID_PERMISO"));
+                    }
+                }
+            } catch (Exception e) {
+                id = 0;
+            }
+        } else {
+            id = 0;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        return id;
+    }    //ELIMINAR PERMISO
     public boolean eliminarPermisoModuloAdeful(int id) {
 
         boolean res = false;
@@ -732,17 +764,17 @@ public class ControladorAdeful {
 
 
     // INSERTAR ARTICULO
-    public boolean insertArticuloAdeful(Articulo articulo)
+    public boolean insertArticuloAdeful(int id, Articulo articulo)
             throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
+            cv.put("ID_ARTICULO", id);
             cv.put("TITULO", articulo.getTITULO());
             cv.put("ARTICULO", articulo.getARTICULO());
             cv.put("USUARIO_CREADOR", articulo.getUSUARIO_CREADOR());
             cv.put("FECHA_CREACION", articulo.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", articulo.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", articulo.getFECHA_ACTUALIZACION());
 
             long valor = database.insert("ARTICULO_ADEFUL", null, cv);
