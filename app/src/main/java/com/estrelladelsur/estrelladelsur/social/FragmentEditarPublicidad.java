@@ -15,12 +15,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerFoto;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerPublicidad;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerPublicidad;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 
 import java.util.ArrayList;

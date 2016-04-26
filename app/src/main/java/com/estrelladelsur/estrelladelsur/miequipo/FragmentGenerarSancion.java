@@ -18,12 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerJugador;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerAnio;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerDivision;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerJugador;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;

@@ -14,10 +14,9 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.entidad.Articulo;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
-import com.estrelladelsur.estrelladelsur.institucion.Communicator;
+import com.estrelladelsur.estrelladelsur.institucion.adeful.Communicator;
 
 import java.util.ArrayList;
 

@@ -32,13 +32,13 @@ import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCancha;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerEquipo;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFecha;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerAnio;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerCancha;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerDivision;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerEquipo;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerFecha;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerTorneo;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 
 public class FragmentGenerarFixture extends Fragment {
 

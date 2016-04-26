@@ -1,34 +1,27 @@
 package com.estrelladelsur.estrelladelsur.miequipo;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.ArrayList;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.MeasureSpec;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
@@ -36,11 +29,11 @@ import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import com.estrelladelsur.estrelladelsur.entidad.Posicion;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerPosicion;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoMenuLista;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerDivision;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerPosicion;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
 
 public class FragmentGenerarJugador extends Fragment {
 

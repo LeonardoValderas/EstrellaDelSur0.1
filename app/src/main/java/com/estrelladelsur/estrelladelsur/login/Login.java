@@ -1,39 +1,16 @@
 package com.estrelladelsur.estrelladelsur.login;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerResultado;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFecha;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoResultado;
-import com.estrelladelsur.estrelladelsur.entidad.Anio;
-import com.estrelladelsur.estrelladelsur.entidad.Division;
-import com.estrelladelsur.estrelladelsur.entidad.Fecha;
-import com.estrelladelsur.estrelladelsur.entidad.Resultado;
-import com.estrelladelsur.estrelladelsur.entidad.Torneo;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.navegador.adeful.NavigationAdeful;
 

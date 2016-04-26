@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.institucion.Communicator;
+import com.estrelladelsur.estrelladelsur.institucion.adeful.Communicator;
 
 public class TabsUsuario extends AppCompatActivity implements Communicator{
 

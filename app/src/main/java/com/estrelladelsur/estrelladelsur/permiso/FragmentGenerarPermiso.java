@@ -16,23 +16,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerCrearPermiso;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerUsuario;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerCrearPermiso;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoListCheck;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.navegador.adeful.NavigationAdeful;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class FragmentGenerarPermiso extends Fragment {

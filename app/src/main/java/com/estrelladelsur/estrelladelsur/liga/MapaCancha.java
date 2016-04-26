@@ -3,7 +3,6 @@ package com.estrelladelsur.estrelladelsur.liga;
 import java.util.ArrayList;
 
 import android.graphics.Typeface;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -13,8 +12,7 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

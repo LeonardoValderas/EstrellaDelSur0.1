@@ -23,8 +23,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -33,11 +31,10 @@ import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerDivisionEntrenamiento;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerDivisionEntrenamiento;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerCancha;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoListCheck;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerCancha;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 
 public class FragmentGenerarEntrenamiento extends Fragment {

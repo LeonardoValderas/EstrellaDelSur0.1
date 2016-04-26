@@ -29,15 +29,14 @@ import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerResultado;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerAnio;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerFecha;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerTorneo;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoGoleador;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoResultado;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerResultado;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerAnio;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerDivision;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerFecha;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerTorneo;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoResultado;
 
 
 public class ActivityResultado extends AppCompatActivity {

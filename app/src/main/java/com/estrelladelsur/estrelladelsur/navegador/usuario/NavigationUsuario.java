@@ -20,16 +20,18 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Modulo;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
-import com.estrelladelsur.estrelladelsur.institucion.TabsArticulo;
-import com.estrelladelsur.estrelladelsur.institucion.TabsComision;
-import com.estrelladelsur.estrelladelsur.institucion.TabsDireccion;
+import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsArticulo;
+import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsComision;
+import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsDireccion;
+import com.estrelladelsur.estrelladelsur.institucion.usuario.ArticuloUsuario;
+import com.estrelladelsur.estrelladelsur.institucion.usuario.ComisionUsuario;
 import com.estrelladelsur.estrelladelsur.liga.TabsAdeful;
 import com.estrelladelsur.estrelladelsur.login.Login;
 import com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado;
@@ -124,13 +126,13 @@ public class NavigationUsuario extends AppCompatActivity {
                 if (groupPosition == 0) {
                     switch (childPosition) {
                         case 0:
-                            Intent estrella = new Intent(NavigationUsuario.this, TabsArticulo.class);
+                            Intent estrella = new Intent(NavigationUsuario.this, ArticuloUsuario.class);
                             startActivity(estrella);
 //                            tituloClickFragment = institucionalChild.get(
 //                                    childPosition).toString();
                             break;
                         case 1:
-                            Intent comision = new Intent(NavigationUsuario.this, TabsComision.class);
+                            Intent comision = new Intent(NavigationUsuario.this, ComisionUsuario.class);
                             startActivity(comision);
 //                            tituloClickFragment = institucionalChild.get(
 //                                    childPosition).toString();

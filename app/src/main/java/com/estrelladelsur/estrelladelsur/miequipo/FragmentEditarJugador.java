@@ -21,10 +21,10 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerJugador;
-import com.estrelladelsur.estrelladelsur.adaptador.AdapterSpinnerDivision;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerJugador;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerDivision;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 
 public class FragmentEditarJugador extends Fragment {

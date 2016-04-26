@@ -27,6 +27,14 @@ public class Comision {
         USUARIO_ACTUALIZACION = usuario_actualizacion;
         FECHA_ACTUALIZACION = fecha_actualizacion;
     }
+    public Comision(int id, String nombre, byte[] foto, String cargo, String periodo_desde, String periodo_hasta) {
+        ID_COMISION = id;
+        NOMBRE_COMISION = nombre;
+        FOTO_COMISION = foto;
+        CARGO = cargo;
+        PERIODO_DESDE = periodo_desde;
+        PERIODO_HASTA = periodo_hasta;
+    }
     public String getCARGO() {
         return CARGO;
     }

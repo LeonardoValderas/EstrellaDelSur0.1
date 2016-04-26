@@ -1,6 +1,5 @@
 package com.estrelladelsur.estrelladelsur.liga;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -34,9 +33,9 @@ import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
-import com.estrelladelsur.estrelladelsur.adaptador.AdaptadorRecyclerEquipo;
-import com.estrelladelsur.estrelladelsur.database.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.dialogo.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerEquipo;
+import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 
 public class FragmentEquipo extends Fragment {
     private byte[] imagenEscudo = null;
