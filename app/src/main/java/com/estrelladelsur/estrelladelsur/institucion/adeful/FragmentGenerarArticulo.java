@@ -19,6 +19,7 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
@@ -44,7 +45,7 @@ public class FragmentGenerarArticulo extends Fragment {
     private ProgressDialog dialog;
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
-    private JsonParsing jsonParsing = new JsonParsing();
+    private JsonParsing jsonParsing = new JsonParsing(getActivity());
     private static final String TAG_ID = "id";
     private String usuario = null;
     private String mensaje = null;
@@ -117,7 +118,12 @@ public class FragmentGenerarArticulo extends Fragment {
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
     }
-
+    public void cargarEntidad(int id,int ws) {
+        articulo = new Articulo(0, articuloEditTituto.getText().toString(),
+                articuloEditArticulo.getText().toString(),
+                usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
+        envioWebService(ws);
+    }
     public void envioWebService(int tipo) {
             request.setMethod("POST");
             request.setParametrosDatos("titulo", articulo.getTITULO());
@@ -255,15 +261,9 @@ public class FragmentGenerarArticulo extends Fragment {
                 Toast.makeText(getActivity(), "Debe completar todos los campos.",
                         Toast.LENGTH_SHORT).show();
             } else if (insertar) {
-                articulo = new Articulo(0, articuloEditTituto.getText().toString(),
-                        articuloEditArticulo.getText().toString(),
-                        usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
-                envioWebService(0);
+                cargarEntidad(0,0);
             } else { //ACTUALIZAR ACTUALIZAR
-                articulo = new Articulo(idArticuloExtra, articuloEditTituto.getText().toString(),
-                        articuloEditArticulo.getText().toString(),
-                        null, null, usuario, auxiliarGeneral.getFechaOficial());
-                envioWebService(1);
+                cargarEntidad(idArticuloExtra,1);
             }
             return true;
         }

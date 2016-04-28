@@ -29,7 +29,7 @@ public class SplashUsuario extends AppCompatActivity {
     private ProgressBar progressSplash;
     private String fecha_articulo = null;
     private Request request = new Request();
-    private JsonParsing jsonParsing = new JsonParsing();
+    private JsonParsing jsonParsing = new JsonParsing(SplashUsuario.this);
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private String mensaje = null;
@@ -44,8 +44,7 @@ public class SplashUsuario extends AppCompatActivity {
 //
 //        titulos = auxiliarGeneral.tituloFont(NavigationUsuario.this);
 //        adeful = auxiliarGeneral.ligaFont(NavigationUsuario.this);
-          init();
-//        drawerLayout.openDrawer(GravityCompat.START);
+        init();
 //        inicializarDatosGenerales();
 //        insertUsuarioAdm();
 
@@ -83,7 +82,7 @@ public class SplashUsuario extends AppCompatActivity {
 
     public void envioWebService() {
         request.setMethod("POST");
-       // request.setParametrosDatos("fecha_articulo", fecha_articulo);
+        // request.setParametrosDatos("fecha_articulo", fecha_articulo);
         request.setParametrosDatos("ARTICULO_ADEFUL", "2016-04-23--09-29-0");
 
 //
@@ -111,43 +110,47 @@ public class SplashUsuario extends AppCompatActivity {
             int success;
             JSONObject json = null;
             JSONObject jsonAux = null;
-            JSONArray jsonArray= null;
+            JSONArray jsonArray = null;
             boolean precessOK = true;
             Articulo articulo;
             try {
 
-              //  jsonParsing.traerPromo();
+                //  jsonParsing.traerPromo();
                 json = jsonParsing.parsingUsuarioSincronizar(params[0]);
+
                 if (json != null) {
-                    success = 0;
                     //success = json.getInt(TAG_SUCCESS);
-                   // mensaje = json.getString(TAG_MESSAGE);
-                    if (success == 0) {
-                        jsonArray= json.optJSONArray("ARTICULO_ADEFUL");
-                        if(jsonArray != null){
-                            if(jsonArray.length() > 0){
-                                controladorUsuario.eliminarArticuloUsuario();
-                                for (int i = 0; i <jsonArray.length() ; i++) {
-                                    jsonAux = jsonArray.getJSONObject(i);
-                                    articulo = new Articulo(jsonAux.getInt("ID_ARTICULO"),jsonAux.getString("TITULO"),jsonAux.getString("ARTICULO"));
-                                   controladorUsuario.insertArticuloUsuario(articulo);
+                    success = 0;
+                 //   mensaje = json.getString(TAG_MESSAGE);
+                        if (success == 0) {
+
+                            jsonArray = json.optJSONArray("ARTICULO_ADEFUL");
+                            if (jsonArray != null) {
+                                if (jsonArray.length() > 0) {
+                                    if (controladorUsuario.eliminarArticuloUsuario()) {
+
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            jsonAux = jsonArray.getJSONObject(i);
+                                            articulo = new Articulo(jsonAux.getInt("ID_ARTICULO"),
+                                                    jsonAux.getString("TITULO"), jsonAux.getString("ARTICULO"));
+                                            if (!controladorUsuario.insertArticuloUsuario(articulo)) {
+                                                precessOK = false;
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        precessOK = false;
+                                    }
+
+                                    jsonArray = null;
+                                    jsonAux = null;
                                 }
-                                jsonArray = null;
-                                jsonAux = null;
                             }
+
+                        } else {
+                            precessOK = false;
                         }
-                    //    if (insertar) {
-                        //    int id = json.getInt(TAG_ID);
-                        //    if (id > 0) {
-//                                if (controladorAdeful.insertArticuloAdeful(id, articulo)) {
-//                                    precessOK = true;
-//                                } else {
-//                                    precessOK = false;
-//                                }
-                            } else {
-                                precessOK = false;
-                            }
-//                        } else {
+
 //                            if (controladorAdeful.actualizarArticuloAdeful(articulo)) {
 //                                precessOK = true;
 //                            } else {
@@ -171,11 +174,11 @@ public class SplashUsuario extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-           progressSplash.setVisibility(View.GONE);
+            progressSplash.setVisibility(View.GONE);
 
             if (result) {
 
-                Intent i =  new Intent(SplashUsuario.this,NavigationUsuario.class);
+                Intent i = new Intent(SplashUsuario.this, NavigationUsuario.class);
                 startActivity(i);
 //                if (insertar) {
 //                    inicializarControles(GUARDAR_USUARIO);

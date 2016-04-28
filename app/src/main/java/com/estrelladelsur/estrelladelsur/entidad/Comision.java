@@ -8,12 +8,13 @@ public class Comision {
     private String CARGO;
     private String PERIODO_DESDE;
     private String PERIODO_HASTA;
+    private String URL_COMISION;
     private String USUARIO_CREADOR;
     private String FECHA_CREACION;
     private String USUARIO_ACTUALIZACION;
     private String FECHA_ACTUALIZACION;
 
-    public Comision(int id, String nombre, byte[] foto, int id_cargo,String cargo, String periodo_desde, String periodo_hasta,String usuario,
+    public Comision(int id, String nombre, byte[] foto, int id_cargo,String cargo, String periodo_desde, String periodo_hasta, String url_comision, String usuario,
                     String fecha_creacion, String usuario_actualizacion, String fecha_actualizacion) {
         ID_COMISION = id;
         NOMBRE_COMISION = nombre;
@@ -22,6 +23,7 @@ public class Comision {
         CARGO = cargo;
         PERIODO_DESDE = periodo_desde;
         PERIODO_HASTA = periodo_hasta;
+        URL_COMISION = url_comision;
         USUARIO_CREADOR = usuario;
         FECHA_CREACION = fecha_creacion;
         USUARIO_ACTUALIZACION = usuario_actualizacion;
@@ -68,4 +70,5 @@ public class Comision {
     public String getFECHA_ACTUALIZACION() {
         return FECHA_ACTUALIZACION;
     }
+    public String getURL_COMISION() {return URL_COMISION;}
 }

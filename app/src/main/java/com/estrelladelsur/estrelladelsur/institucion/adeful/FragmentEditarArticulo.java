@@ -43,7 +43,7 @@ public class FragmentEditarArticulo extends Fragment {
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
     private ProgressDialog dialog;
-    private JsonParsing jsonParsing = new JsonParsing();
+    private JsonParsing jsonParsing = new JsonParsing(getActivity());
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private String mensaje = null;

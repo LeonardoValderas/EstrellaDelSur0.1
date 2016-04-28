@@ -891,7 +891,7 @@ public class ControladorUsuario {
         return fechaArticulo;
     }
 
-//    //ELIMINAR TODOS ARTICULO
+//    ELIMINAR TODOS ARTICULO
     public boolean eliminarArticuloUsuario() {
 
         boolean res = false;

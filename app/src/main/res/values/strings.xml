@@ -6,6 +6,22 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- Array Tablas Adeful  -->
+    <string-array name="tablasAdefulArray">
+    <item>ARTICULO_ADEFUL</item>
+    <item>COMISION_ADEFUL</item>
+    <item>DIRECCION_ADEFUL</item>
+    <item>EQUIPO_ADEFUL</item>
+    <item>CANCHA_ADEFUL</item>
+    <item>FIXTURE_ADEFUL</item>
+    <item>RESULTADO_ADEFUL</item>
+    <item>JUGADOR_ADEFUL</item>
+    <item>ENTRENAMIENTO_ADEFUL</item>
+    <item>SANCION_ADEFUL</item>
+    <item>NOTICIA_ADEFUL</item>
+    <item>FOTO_ADEFUL</item>
+    <item>PUBLICIDAD_ADEFUL</item>
+    </string-array>
     <!-- Array Modulo  -->
     <string-array name="moduloArray">
         <item>INSTITUCION</item>

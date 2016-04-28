@@ -1,5 +1,9 @@
 package com.estrelladelsur.estrelladelsur.webservice;
 
+import android.content.Context;
+
+import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,23 +20,37 @@ import java.net.URL;
  */
 public class JsonParsing {
 
-    public static String URL = "http://valdroide.com/";
-    public static String URLMODULO = "estrella_del_sur/testing/ADEFUL/Institucion/Articulo/";
-    public static String URLSINCRONIZAR = "estrella_del_sur/testing/ADEFUL/sincronizar/usuario/";
     static JSONObject jObj = null;
-    static  JSONArray jArray = null;
+    static JSONArray jArray = null;
     static String json = "";
+    private Context context;
+    private AuxiliarGeneral auxiliarGeneral;
+    public static String URL;
+    //    public static String URLARTICULO = "estrella_del_sur/testing/ADEFUL/Institucion/Articulo/";
+//    public static String URLSINCRONIZAR = "estrella_del_sur/testing/ADEFUL/sincronizar/usuario/";
+    public static String URLARTICULO;
+    public static String URLCOMISION;
+    public static String URLSINCRONIZAR;
+
+    public JsonParsing(Context c) {
+        context = c;
+        auxiliarGeneral = new AuxiliarGeneral(context);
+        URL = auxiliarGeneral.getURL();
+        URLARTICULO = auxiliarGeneral.getURLARTICULO();
+        URLSINCRONIZAR = auxiliarGeneral.getURLSINCRONIZARUSUARIO();
+        URLCOMISION = auxiliarGeneral.getURLCOMISION();
+    }
 
     // ARTICULO ADEFUL
-    public  JSONObject parsingArticulo(Request request) {
+    public JSONObject parsingArticulo(Request request) {
 
         String uri = null;
         if (request.getQuery().equals("SUBIR")) {
-            uri = URL + URLMODULO + "insertArticulo.php";
+            uri = URL + URLARTICULO + "insertArticulo.php";
         } else if (request.getQuery().equals("EDITAR")) {
-            uri = URL + URLMODULO + "updateArticulo.php";
+            uri = URL + URLARTICULO + "updateArticulo.php";
         } else if (request.getQuery().equals("ELIMINAR")) {
-            uri = URL + URLMODULO + "deleteArticulo.php";
+            uri = URL + URLARTICULO + "deleteArticulo.php";
         }
 
 
@@ -78,6 +96,63 @@ public class JsonParsing {
         }
 
     }
+
+    // ARTICULO ADEFUL
+    public JSONObject parsingComision(Request request) {
+
+        String uri = null;
+        if (request.getQuery().equals("SUBIR")) {
+            uri = URL + URLCOMISION + "insertComision.php";
+        } else if (request.getQuery().equals("EDITAR")) {
+            uri = URL + URLARTICULO + "updateArticulo.php";
+        } else if (request.getQuery().equals("ELIMINAR")) {
+            uri = URL + URLARTICULO + "deleteArticulo.php";
+        }
+
+
+        BufferedReader reader = null;
+        try {
+            URL url = new URL(uri);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod(request.getMethod());
+
+            if (request.getMethod().equals("POST")) {
+                con.setDoOutput(true);
+                OutputStreamWriter write = new OutputStreamWriter(
+                        con.getOutputStream());
+                write.write(request.getEncodedParams());
+                write.flush();
+            }
+            StringBuilder sb = new StringBuilder();
+            reader = new BufferedReader(new InputStreamReader(
+                    con.getInputStream(), "UTF-8"), 8);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            json = sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            try {
+                jObj = new JSONObject(json);
+            } catch (JSONException e) {
+                // Log.e("JSON Parser", "Error parsing data " + e.toString());
+            }
+            return jObj;
+        }
+
+    }
+
 
     // trae promo splash
     public static String traerPromo() {
@@ -156,8 +231,8 @@ public class JsonParsing {
             }
             try {
                 jObj = new JSONObject(json);
-              //  JSONArray jsonArray = jObj.optJSONArray("ARTICULO_ADEFUL");
-               // jArray = new JSONArray(json);
+                //  JSONArray jsonArray = jObj.optJSONArray("ARTICULO_ADEFUL");
+                // jArray = new JSONArray(json);
 
 //                for (int i = 0; i < jsonArray.length(); i++) {
 //                    jObj = jsonArray.getJSONObject(i);

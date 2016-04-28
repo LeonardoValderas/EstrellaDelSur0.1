@@ -1004,20 +1004,20 @@ public class ControladorAdeful {
 
     ////////COMISION/////////
     //INSERTAR
-    public boolean insertComisionAdeful(Comision comision) throws SQLiteException {
+    public boolean insertComisionAdeful(int id, Comision comision) throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
+            cv.put("ID_COMISION", id);
             cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
             cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
             cv.put("ID_CARGO", comision.getID_CARGO());
             cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
             cv.put("PERIODO_HASTA", comision.getPERIODO_HASTA());
+            cv.put("URL_COMISION", comision.getURL_COMISION());
             cv.put("USUARIO_CREADOR", comision.getUSUARIO_CREADOR());
             cv.put("FECHA_CREACION", comision.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", comision.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", comision.getFECHA_ACTUALIZACION());
 
             long valor = database.insert("COMISION_ADEFUL", null, cv);
             cerrarBaseDeDatos();
@@ -1038,7 +1038,7 @@ public class ControladorAdeful {
         String sql = "SELECT * FROM COMISION_ADEFUL WHERE ID_COMISION=" + id_comision;
         ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
         String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-                fechaActualizacion = null, creador = null, usuario_act = null;
+                fechaActualizacion = null, creador = null, usuario_act = null, url_comision = null;
         int id;
         int id_cargo;
         byte[] foto = null;
@@ -1064,6 +1064,8 @@ public class ControladorAdeful {
                                 .getColumnIndex("PERIODO_DESDE"));
                         hasta = cursor.getString(cursor
                                 .getColumnIndex("PERIODO_HASTA"));
+                        url_comision = cursor.getString(cursor
+                                .getColumnIndex("URL_COMISION"));
                         creador = cursor.getString(cursor
                                 .getColumnIndex("USUARIO_CREADOR"));
                         fechaCreacion = cursor.getString(cursor
@@ -1073,7 +1075,7 @@ public class ControladorAdeful {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        comision = new Comision(id, nombre, foto, id_cargo, null, desde, hasta, creador,
+                        comision = new Comision(id, nombre, foto, id_cargo, null, desde, hasta,url_comision, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY CARGO
                         arrayComisionAdeful.add(comision);
@@ -1097,6 +1099,7 @@ public class ControladorAdeful {
         fechaActualizacion = null;
         creador = null;
         usuario_act = null;
+        url_comision = null;
 
         return arrayComisionAdeful;
     }
@@ -1105,12 +1108,12 @@ public class ControladorAdeful {
     public ArrayList<Comision> selectListaComisionAdeful() {
 
         String sql = "SELECT C.ID_COMISION, C.NOMBRE_COMISION, C.FOTO_COMISION, " +
-                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.USUARIO_CREADOR, " +
+                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.URL_COMISION, C.USUARIO_CREADOR, " +
                 "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
                 "CA.CARGO FROM COMISION_ADEFUL C INNER JOIN CARGO_ADEFUL CA ON CA.ID_CARGO=C.ID_CARGO";
         ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
         String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null;
+                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_comision=null;
         int id;
         int id_cargo;
         byte[] foto = null;
@@ -1138,6 +1141,8 @@ public class ControladorAdeful {
                                 .getColumnIndex("PERIODO_DESDE"));
                         hasta = cursor.getString(cursor
                                 .getColumnIndex("PERIODO_HASTA"));
+                        url_comision = cursor.getString(cursor
+                                .getColumnIndex("URL_COMISION"));
                         creador = cursor.getString(cursor
                                 .getColumnIndex("USUARIO_CREADOR"));
                         fechaCreacion = cursor.getString(cursor
@@ -1147,7 +1152,7 @@ public class ControladorAdeful {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        comision = new Comision(id, nombre, foto, id_cargo, cargo, desde, hasta, creador,
+                        comision = new Comision(id, nombre, foto, id_cargo, cargo, desde, hasta, url_comision, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY COMISION
                         arrayComisionAdeful.add(comision);
@@ -1171,6 +1176,7 @@ public class ControladorAdeful {
         fechaActualizacion = null;
         creador = null;
         usuario_act = null;
+        url_comision = null;
 
         return arrayComisionAdeful;
     }
