@@ -13,11 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerComisionDireccion;
+import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerComision;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuario;
-import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import java.util.ArrayList;
 
@@ -29,9 +28,8 @@ public class ComisionUsuario extends AppCompatActivity {
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Comision> comisionArray;
     private ControladorUsuario controladorUsuario;
-    private AdaptadorRecyclerComisionDireccion adaptadorRecyclerComisionDireccion;
+    private AdaptadorRecyclerComision adaptadorRecyclerComisionDireccion;
     private RecyclerView recycleViewUsuarioGeneral;
-    private DialogoArticulo dialogoArticulo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +93,7 @@ public class ComisionUsuario extends AppCompatActivity {
     public void recyclerViewLoadComision() {
         comisionArray = controladorUsuario.selectListaComisionUsuario();
         if(comisionArray != null) {
-            adaptadorRecyclerComisionDireccion = new AdaptadorRecyclerComisionDireccion(comisionArray,ComisionUsuario.this);
+            adaptadorRecyclerComisionDireccion = new AdaptadorRecyclerComision(comisionArray,ComisionUsuario.this);
             recycleViewUsuarioGeneral.setAdapter(adaptadorRecyclerComisionDireccion);
         }else{
             auxiliarGeneral.errorDataBase(ComisionUsuario.this);

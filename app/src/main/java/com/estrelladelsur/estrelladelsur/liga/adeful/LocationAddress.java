@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur.liga;
+package com.estrelladelsur.estrelladelsur.liga.adeful;
 
 import android.content.Context;
 import android.location.Address;

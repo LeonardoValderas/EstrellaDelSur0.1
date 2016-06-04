@@ -27,12 +27,10 @@ import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Modulo;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
-import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsArticulo;
-import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsComision;
-import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsDireccion;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ArticuloUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ComisionUsuario;
-import com.estrelladelsur.estrelladelsur.liga.TabsAdeful;
+import com.estrelladelsur.estrelladelsur.institucion.usuario.DireccionUsuario;
+import com.estrelladelsur.estrelladelsur.liga.adeful.TabsAdeful;
 import com.estrelladelsur.estrelladelsur.login.Login;
 import com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
@@ -102,8 +100,8 @@ public class NavigationUsuario extends AppCompatActivity {
         txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
         txtAbTitulo.setTypeface(titulos);
 
-        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-        txtAbSubTitulo.setTypeface(titulos);
+//        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
+//        txtAbSubTitulo.setTypeface(titulos);
 
         textViewLiga = (TextView) findViewById(R.id.textViewLiga);
         textViewLiga.setTypeface(adeful, Typeface.BOLD);
@@ -139,7 +137,7 @@ public class NavigationUsuario extends AppCompatActivity {
                             break;
 
                         case 2:
-                            Intent direccion = new Intent(NavigationUsuario.this, TabsDireccion.class);
+                            Intent direccion = new Intent(NavigationUsuario.this, DireccionUsuario.class);
                             startActivity(direccion);
 //                            tituloClickFragment = institucionalChild.get(
 //                                    childPosition).toString();

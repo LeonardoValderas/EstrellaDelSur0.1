@@ -71,17 +71,12 @@ public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
             + " PERIODO_DESDE VARCHAR(100),"
             + " PERIODO_HASTA VARCHAR(100));";
     //DIRECCION
-    String TABLA_DIRECCION_ADEFUL = "CREATE TABLE IF NOT EXISTS DIRECCION_ADEFUL(ID_DIRECCION INTEGER PRIMARY KEY AUTOINCREMENT,"
+    String TABLA_DIRECCION_USUARIO = "CREATE TABLE IF NOT EXISTS DIRECCION_USUARIO(ID_DIRECCION INTEGER PRIMARY KEY ,"
             + " NOMBRE_DIRECCION VARCHAR(100),"
             + " FOTO_DIRECCION BLOB,"
-            + " ID_CARGO INTEGER,"
+            + " CARGO VARCHAR(100),"
             + " PERIODO_DESDE VARCHAR(100),"
-            + " PERIODO_HASTA VARCHAR(100),"
-            + " USUARIO_CREADOR VARCHAR(100),"
-            + " FECHA_CREACION VARCHAR(100),"
-            + " USUARIO_ACTUALIZACION VARCHAR(100),"
-            + " FECHA_ACTUALIZACION VARCHAR(100),"
-            + " FOREIGN KEY(ID_CARGO) REFERENCES CARGO_ADEFUL(ID_CARGO));";
+            + " PERIODO_HASTA VARCHAR(100));";
     //////MODULO LIGA ADEFUL/////////
     //EQUIPO
     String TABLA_EQUIPO_ADEFUL = "CREATE TABLE IF NOT EXISTS EQUIPO_ADEFUL (ID_EQUIPO INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -298,7 +293,7 @@ public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
         db.execSQL(TABLA_ARTICULO_USUARIO);
 //        db.execSQL(TABLA_CARGO_ADEFUL);
         db.execSQL(TABLA_COMISION_USUARIO);
-//        db.execSQL(TABLA_DIRECCION_ADEFUL);
+        db.execSQL(TABLA_DIRECCION_USUARIO);
 //        //MODULO LIGA
 //        db.execSQL(TABLA_EQUIPO_ADEFUL);
 //        db.execSQL(TABLA_DIVISION_ADEFUL);
@@ -339,7 +334,7 @@ public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS ARTICULO_USUARIO");
 //        db.execSQL("DROP TABLE IF EXISTS CARGO_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS COMISION_USUARIO");
-//        db.execSQL("DROP TABLE IF EXISTS DIRECCION_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS DIRECCION_USUARIO");
 //        //MODULO LIGA
 //        db.execSQL("DROP TABLE IF EXISTS EQUIPO_ADEFUL");
 //        db.execSQL("DROP TABLE IF EXISTS DIVISION_ADEFUL");
@@ -376,7 +371,7 @@ public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
         db.execSQL(TABLA_ARTICULO_USUARIO);
 //        db.execSQL(TABLA_CARGO_ADEFUL);
         db.execSQL(TABLA_COMISION_USUARIO);
-//        db.execSQL(TABLA_DIRECCION_ADEFUL);
+        db.execSQL(TABLA_DIRECCION_USUARIO);
 //        //MODULO LIGA
 //        db.execSQL(TABLA_EQUIPO_ADEFUL);
 //        db.execSQL(TABLA_DIVISION_ADEFUL);

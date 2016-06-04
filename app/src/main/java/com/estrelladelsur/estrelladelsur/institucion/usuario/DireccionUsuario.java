@@ -1,8 +1,6 @@
 package com.estrelladelsur.estrelladelsur.institucion.usuario;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,40 +12,32 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerArticulo;
-import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerTitulo;
+import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerDireccion;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuario;
-import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
-import com.estrelladelsur.estrelladelsur.entidad.Articulo;
-import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsArticulo;
-
+import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import java.util.ArrayList;
 
-public class ArticuloUsuario extends AppCompatActivity {
+public class DireccionUsuario extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TextView txtAbTitulo;
-    private TextView txtAbSubTitulo;
     private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
-    private ArrayList<Articulo> articuloArray;
+    private ArrayList<Direccion> direccionArray;
     private ControladorUsuario controladorUsuario;
-    private AdaptadorRecyclerTitulo adaptadorRecyclerTitulo;
+    private AdaptadorRecyclerDireccion adaptadorRecyclerDireccion;
     private RecyclerView recycleViewUsuarioGeneral;
-    private DialogoArticulo dialogoArticulo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario_general);
 
-        auxiliarGeneral = new AuxiliarGeneral(ArticuloUsuario.this);
-        controladorUsuario = new ControladorUsuario(ArticuloUsuario.this);
-        titulos = auxiliarGeneral.tituloFont(ArticuloUsuario.this);
+        auxiliarGeneral = new AuxiliarGeneral(DireccionUsuario.this);
+        controladorUsuario = new ControladorUsuario(DireccionUsuario.this);
+        titulos = auxiliarGeneral.tituloFont(DireccionUsuario.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
@@ -59,32 +49,30 @@ public class ArticuloUsuario extends AppCompatActivity {
 
         txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
 
-        txtAbTitulo.setText("Articulo");
-        txtAbTitulo.setPaintFlags(txtAbTitulo.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        txtAbTitulo.setText("DIRECCION TECNICA");
         txtAbTitulo.setTypeface(titulos, Typeface.BOLD);
-        //txtAbTitulo.setTypeface(titulos);
         init();
     }
 
     public void init() {
         recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
         initRecycler();
-        recyclerViewLoadArticulo();
+        recyclerViewLoadComision();
 
         recycleViewUsuarioGeneral.addOnItemTouchListener(new
-                RecyclerTouchListener(ArticuloUsuario.this,
+                RecyclerTouchListener(DireccionUsuario.this,
                 recycleViewUsuarioGeneral, new ClickListener() {
 
             @Override
             public void onClick(View view, int position) {
-                dialogoArticulo = new DialogoArticulo(ArticuloUsuario.this,"ARTICULO", articuloArray.get(position).getTITULO(),
-                        articuloArray.get(position).getARTICULO());
-                dialogoArticulo.btnCerrar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialogoArticulo.alertDialog.dismiss();
-                    }
-                });
+//                dialogoArticulo = new DialogoArticulo(ComisionUsuario.this,"", articuloArray.get(position).getTITULO(),
+//                        articuloArray.get(position).getARTICULO());
+//                dialogoArticulo.btnCerrar.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialogoArticulo.alertDialog.dismiss();
+//                    }
+//                });
             }
 
             @Override
@@ -96,19 +84,19 @@ public class ArticuloUsuario extends AppCompatActivity {
 
     public void initRecycler(){
         recycleViewUsuarioGeneral.setLayoutManager(new LinearLayoutManager(
-                ArticuloUsuario.this, LinearLayoutManager.VERTICAL, false));
+                DireccionUsuario.this, LinearLayoutManager.VERTICAL, false));
         recycleViewUsuarioGeneral.addItemDecoration(new DividerItemDecoration(
-                ArticuloUsuario.this, DividerItemDecoration.VERTICAL_LIST));
+                DireccionUsuario.this, DividerItemDecoration.VERTICAL_LIST));
         recycleViewUsuarioGeneral.setItemAnimator(new DefaultItemAnimator());
     }
 
-    public void recyclerViewLoadArticulo() {
-        articuloArray = controladorUsuario.selectListaArticuloAdeful();
-        if(articuloArray!= null) {
-            adaptadorRecyclerTitulo = new AdaptadorRecyclerTitulo(articuloArray,ArticuloUsuario.this);
-            recycleViewUsuarioGeneral.setAdapter(adaptadorRecyclerTitulo);
+    public void recyclerViewLoadComision() {
+        direccionArray = controladorUsuario.selectListaDireccionUsuario();
+        if(direccionArray != null) {
+            adaptadorRecyclerDireccion = new AdaptadorRecyclerDireccion(direccionArray,DireccionUsuario.this);
+            recycleViewUsuarioGeneral.setAdapter(adaptadorRecyclerDireccion);
         }else{
-            auxiliarGeneral.errorDataBase(ArticuloUsuario.this);
+            auxiliarGeneral.errorDataBase(DireccionUsuario.this);
         }
     }
 

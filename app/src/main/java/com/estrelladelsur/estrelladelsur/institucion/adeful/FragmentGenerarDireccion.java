@@ -1,15 +1,18 @@
 package com.estrelladelsur.estrelladelsur.institucion.adeful;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +37,12 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerC
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
+import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,6 +84,16 @@ public class FragmentGenerarDireccion extends Fragment {
     private Typeface textViewFont;
     private AuxiliarGeneral auxiliarGeneral;
     private TextView tituloTextPeriodo;
+    private String usuario = null;
+    private String url_nombre_foto = null;
+    private Request request = new Request();
+    private String encodedImage = null;
+    private ProgressDialog dialog;
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+    private JsonParsing jsonParsing = new JsonParsing(getActivity());
+    private static final String TAG_ID = "id";
+    private String mensaje = null;
 
     public static FragmentGenerarDireccion newInstance() {
         FragmentGenerarDireccion fragment = new FragmentGenerarDireccion();
@@ -138,6 +157,7 @@ public class FragmentGenerarDireccion extends Fragment {
         controladorAdeful = new ControladorAdeful(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
         // LOAD SPINNER
         loadSpinnerCargo();
         //Metodo Extra
@@ -306,6 +326,119 @@ public class FragmentGenerarDireccion extends Fragment {
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
     }
+
+    public void cargarEntidad(int id, int ws) {
+        url_nombre_foto = auxiliarGeneral.removeAccents(nombreEditDireccion.getText().toString().replace(" ", "").trim());
+
+        String url_foto_comision = auxiliarGeneral.getURL() + auxiliarGeneral.getURLFOTOCOMISIONADEFUL() +
+                auxiliarGeneral.getFechaFoto() + url_nombre_foto + ".PNG";
+        direccion = new Direccion(id, nombreEditDireccion.getText().toString(),
+                imageDireccion, url_nombre_foto+".PNG", cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
+                hastaButtonDireccion.getText().toString(), url_foto_comision, usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
+        envioWebService(ws);
+    }
+
+    public void envioWebService(int tipo) {
+        request.setMethod("POST");
+        request.setParametrosDatos("nombre", direccion.getNOMBRE_DIRECCION());
+        request.setParametrosDatos("nombre_foto",url_nombre_foto);
+        request.setParametrosDatos("id_cargo", String.valueOf(direccion.getID_CARGO()));
+        request.setParametrosDatos("periodo_desde", direccion.getPERIODO_DESDE());
+        request.setParametrosDatos("periodo_hasta", direccion.getPERIODO_HASTA());
+
+        if (imageDireccion != null) {
+            encodedImage = Base64.encodeToString(imageDireccion,
+                    Base64.DEFAULT);
+
+            request.setParametrosDatos("foto", encodedImage);
+            request.setParametrosDatos("url_foto",
+                    direccion.getURL_COMISION());
+        }
+        if (tipo == 0) {
+            request.setQuery("SUBIR");
+            request.setParametrosDatos("usuario_creador", direccion.getUSUARIO_CREADOR());
+            request.setParametrosDatos("fecha_creacion", direccion.getFECHA_CREACION());
+        }else{
+            request.setQuery("EDITAR");
+            request.setParametrosDatos("id_comision", String.valueOf(direccion.getID_DIRECCION()));
+            request.setParametrosDatos("usuario_actualizacion", direccion.getUSUARIO_ACTUALIZACION());
+            request.setParametrosDatos("fecha_actualizacion", direccion.getFECHA_ACTUALIZACION());
+        }
+        new TaskDireccion().execute(request);
+    }
+
+
+    public class TaskDireccion extends AsyncTask<Request, Boolean, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(getActivity());
+            dialog.setMessage("Procesando...");
+            dialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Request... params) {
+            int success;
+            JSONObject json = null;
+            boolean precessOK = true;
+            try {
+                json = jsonParsing.parsingComision(params[0]);
+                if (json != null) {
+                    success = json.getInt(TAG_SUCCESS);
+                    mensaje =json.getString(TAG_MESSAGE);
+                    if (success == 0) {
+                        if (insertar) {
+                            int id = json.getInt(TAG_ID);
+                            if (id > 0) {
+                                if (controladorAdeful.insertDireccionAdeful(id, direccion)) {
+                                    precessOK = true;
+                                } else {
+                                    precessOK = false;
+                                }
+                            } else {
+                                precessOK = false;
+                            }
+                        } else {
+                            if (controladorAdeful.actualizarDireccionAdeful(direccion)) {
+                                precessOK = true;
+                            }else{
+                                precessOK = false;
+                            }
+                        }
+                        precessOK = true;
+                    } else {
+                        precessOK = false;
+                    }
+                } else {
+                    precessOK = false;
+                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
+                }
+            } catch (JSONException e) {
+                precessOK = false;
+                mensaje = "Error(5). Por favor comuniquese con el administrador.";
+            }
+            return precessOK;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            dialog.dismiss();
+
+            if (result) {
+                if (insertar) {
+                    inicializarControles(GUARDAR_USUARIO);
+                } else {
+                    actualizar = false;
+                    insertar = true;
+                    inicializarControles(ACTUALIZAR_USUARIO);
+                }
+            } else {
+                auxiliarGeneral.errorWebService(getActivity(), mensaje);
+            }
+        }
+    }
+
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -359,28 +492,13 @@ public class FragmentGenerarDireccion extends Fragment {
                         Toast.LENGTH_SHORT).show();
             } else if (insertar) {
                 cargoSpinner = (Cargo) puestoSpinnerDireccion.getSelectedItem();
-                direccion = new Direccion(0, nombreEditDireccion.getText().toString(),
-                        imageDireccion, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
-                        hastaButtonDireccion.getText().toString(), usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
-                if (controladorAdeful.insertDireccionAdeful(direccion)) {
-                    inicializarControles(GUARDAR_USUARIO);
-                } else {
-                auxiliarGeneral.errorDataBase(getActivity());
-                }
+                cargarEntidad(0,0);
+
             } else { //DIRECCION ACTUALIZAR
                 cargoSpinner = (Cargo) puestoSpinnerDireccion.getSelectedItem();
-                direccion = new Direccion(idDireccionExtra, nombreEditDireccion.getText().toString(),
-                        imageDireccion, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
-                        hastaButtonDireccion.getText().toString(), null, null, usuario, auxiliarGeneral.getFechaOficial());
-
-                if (controladorAdeful.actualizarDireccionAdeful(direccion)) {
-                    actualizar = false;
-                    insertar = true;
-                    inicializarControles(ACTUALIZAR_USUARIO);
-                } else {
-                    auxiliarGeneral.errorDataBase(getActivity());                }
+                cargarEntidad(idDireccionExtra, 1);
             }
-            return true;
+                return true;
         }
 
         if (id == R.id.action_lifuba) {

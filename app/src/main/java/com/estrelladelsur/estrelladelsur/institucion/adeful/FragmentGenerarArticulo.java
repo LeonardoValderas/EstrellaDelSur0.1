@@ -49,16 +49,16 @@ public class FragmentGenerarArticulo extends Fragment {
     private static final String TAG_ID = "id";
     private String usuario = null;
     private String mensaje = null;
+    private Request requestUrl = new Request();
+    private String URL = null;
 
     public static FragmentGenerarArticulo newInstance() {
         FragmentGenerarArticulo fragment = new FragmentGenerarArticulo();
         return fragment;
     }
-
     public FragmentGenerarArticulo() {
         // Required empty public constructor
     }
-
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
@@ -70,7 +70,6 @@ public class FragmentGenerarArticulo extends Fragment {
             init();
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,13 +86,11 @@ public class FragmentGenerarArticulo extends Fragment {
         articuloEditArticulo.setTypeface(editTextFont);
         return v;
     }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
     }
-
     private void init() {
         // VER DONDE EJECUCTAR ESTA LINEA
         controladorAdeful = new ControladorAdeful(getActivity());
@@ -119,31 +116,35 @@ public class FragmentGenerarArticulo extends Fragment {
                 Toast.LENGTH_SHORT).show();
     }
     public void cargarEntidad(int id,int ws) {
-        articulo = new Articulo(0, articuloEditTituto.getText().toString(),
+        articulo = new Articulo(id, articuloEditTituto.getText().toString(),
                 articuloEditArticulo.getText().toString(),
                 usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
+        URL = null;
+        URL = auxiliarGeneral.getURL()+auxiliarGeneral.getURLARTICULO();
         envioWebService(ws);
     }
     public void envioWebService(int tipo) {
             request.setMethod("POST");
             request.setParametrosDatos("titulo", articulo.getTITULO());
             request.setParametrosDatos("articulo", articulo.getARTICULO());
-            request.setParametrosDatos("fecha_actualizacion", articulo.getFECHA_ACTUALIZACION());
 
             if (tipo == 0) {
-                request.setQuery("SUBIR");
+                //request.setQuery("SUBIR");
                 request.setParametrosDatos("usuario_creador", articulo.getUSUARIO_CREADOR());
                 request.setParametrosDatos("fecha_creacion", articulo.getFECHA_CREACION());
+                requestUrl.setParametrosDatos("URL",URL+auxiliarGeneral.getInsertPHP("Articulo"));
+
             }else{
-                request.setQuery("EDITAR");
+                //request.setQuery("EDITAR");
                 request.setParametrosDatos("id_articulo", String.valueOf(articulo.getID_ARTICULO()));
                 request.setParametrosDatos("usuario_actualizacion", articulo.getUSUARIO_ACTUALIZACION());
+                request.setParametrosDatos("fecha_actualizacion", articulo.getFECHA_ACTUALIZACION());
+                requestUrl.setParametrosDatos("URL",URL+auxiliarGeneral.getUpdatePHP("Articulo"));
             }
+
             new TaskArticulo().execute(request);
     }
-
     // enviar/editar articulo
-
     public class TaskArticulo extends AsyncTask<Request, Boolean, Boolean> {
         @Override
         protected void onPreExecute() {
@@ -157,8 +158,10 @@ public class FragmentGenerarArticulo extends Fragment {
             int success;
             JSONObject json = null;
             boolean precessOK = true;
+            String UrlParsing = null;
             try {
-                json = jsonParsing.parsingArticulo(params[0]);
+                UrlParsing = params[1].getParametros().get("URL");
+                json = jsonParsing.parsingJsonObject(params[0],UrlParsing);
                 if (json != null) {
                     success = json.getInt(TAG_SUCCESS);
                     mensaje =json.getString(TAG_MESSAGE);

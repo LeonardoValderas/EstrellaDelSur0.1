@@ -1,7 +1,9 @@
 package com.estrelladelsur.estrelladelsur.institucion.adeful;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -24,6 +26,12 @@ import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerDireccion;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 
@@ -36,6 +44,16 @@ public class FragmentEditarDireccion extends Fragment {
     private AdaptadorRecyclerDireccion adaptadorRecyclerDireccion;
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
+    private ProgressDialog dialog;
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+    private String ELIMINAR_DIRECCION = "Integrante eliminado correctamente";
+    private String mensaje = null;
+    private JsonParsing jsonParsing = new JsonParsing(getActivity());
+    private int posicion = 0;
+    private String nombre_foto = null;
+    private Request request = new Request();
+
 
     public static FragmentEditarDireccion newInstance() {
         FragmentEditarDireccion fragment = new FragmentEditarDireccion();
@@ -113,17 +131,12 @@ public class FragmentEditarDireccion extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                               if (controladorAdeful.eliminarDireccionAdeful(direccionArray.get(position)
-                                        .getID_DIRECCION())) {
-                                    recyclerViewLoadDireccion();
-                                    Toast.makeText(
-                                            getActivity(),
-                                            "Integrante eliminado correctamente",
-                                            Toast.LENGTH_SHORT).show();
 
-                                    dialogoAlerta.alertDialog.dismiss();
-                                } else {
-                         auxiliarGeneral.errorDataBase(getActivity());                                }
+                                posicion = direccionArray.get(position)
+                                        .getID_DIRECCION();
+                                nombre_foto = direccionArray.get(position)
+                                        .getNOMBRE_FOTO();
+                                envioWebService();
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -154,6 +167,71 @@ public class FragmentEditarDireccion extends Fragment {
         }
     }
 
+    public void envioWebService() {
+        request.setMethod("POST");
+        request.setQuery("ELIMINAR");
+        request.setParametrosDatos("id_direccion", String.valueOf(posicion));
+        request.setParametrosDatos("nombre_foto", nombre_foto);
+        new TaskComision().execute(request);
+    }
+
+    public void inicializarControles(String mensaje) {
+        recyclerViewLoadDireccion();
+        posicion = 0;
+        dialogoAlerta.alertDialog.dismiss();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public class TaskComision extends AsyncTask<Request, Boolean, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(getActivity());
+            dialog.setMessage("Procesando...");
+            dialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Request... params) {
+            int success;
+            JSONObject json = null;
+            boolean precessOK = true;
+            try {
+                json = jsonParsing.parsingComision(params[0]);
+                if (json != null) {
+                    success = json.getInt(TAG_SUCCESS);
+                    mensaje =json.getString(TAG_MESSAGE);
+                    if (success == 0) {
+                        if (controladorAdeful.eliminarDireccionAdeful(posicion)) {
+                            precessOK = true;
+                        } else {
+                            precessOK = false;
+                        }
+                    } else {
+                        precessOK = false;
+                    }
+                }else {
+                    precessOK = false;
+                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
+                }
+            } catch (JSONException e) {
+                precessOK = false;
+                mensaje = "Error(5). Por favor comuniquese con el administrador.";
+            }
+            return precessOK;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            dialog.dismiss();
+
+            if (result) {
+                inicializarControles(ELIMINAR_DIRECCION);
+            } else {
+                auxiliarGeneral.errorWebService(getActivity(), mensaje);
+            }
+        }
+    }
     public static interface ClickListener {
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);

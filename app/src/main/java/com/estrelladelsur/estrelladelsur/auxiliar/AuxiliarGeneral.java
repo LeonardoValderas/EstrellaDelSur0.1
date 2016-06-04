@@ -21,7 +21,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import android.graphics.Bitmap.CompressFormat;
 
 public class AuxiliarGeneral {
     private Context context;
@@ -85,7 +87,7 @@ public class AuxiliarGeneral {
 
     //SELECCIONAR UNA IMAGEN DE LA GALERIA
     public Bitmap SeleccionarImagen(Intent data, Context context, boolean circle) {
-        Bitmap b = null;
+        Bitmap bRect = null;
         try {
             UtilityImage.uri = data.getData();
             if (UtilityImage.uri != null) {
@@ -115,21 +117,25 @@ public class AuxiliarGeneral {
                 UtilityImage.copyFile(UtilityImage.Default_DIR,
                         UtilityImage.MY_IMG_DIR);
                 //tomamos la imagen y la codificamos
-                b = UtilityImage
+                bRect = UtilityImage
                         .decodeFile(UtilityImage.Paste_Target_Location);
                 // use new copied path and use anywhere
                 String valid_photo = UtilityImage.Paste_Target_Location
                         .toString();
-                if(circle) {
-                    b = Bitmap.createScaledBitmap(b, 100, 100, true);
-                    //  pasamos la imagen a circulo
-                    b = getRoundedBitmap(b);
-                }else{
-                    b = Bitmap.createScaledBitmap(b, 298, 298, true);
-                    b = getRoundedBitmapRect(b);
-                }
-                cursor.close();
+                bRect = Bitmap.createScaledBitmap(bRect, 150, 150, true);
 
+
+//                if(circle) {
+//                    //  pasamos la imagen a circulo
+//                    bCircle = getRoundedBitmap(bRect);
+//
+//                }else{
+//                    bRect = getRoundedBitmapRect(bRect);
+//                }
+
+                cursor.close();
+//                listBitmap.add(bCircle);
+//                listBitmap.add(bRect);
             } else {
                 Toast toast = Toast.makeText(context,
                         "No se selecciono una foto.", Toast.LENGTH_LONG);
@@ -138,10 +144,10 @@ public class AuxiliarGeneral {
         } catch (Exception e) {
 
         }
-        return b;
+        return bRect;
     }
     //PASA A CIRCULAR UNA IMAGEN
-    public static Bitmap getRoundedBitmap(Bitmap bitmap) {
+    public Bitmap getRoundedBitmap(Bitmap bitmap) {
         final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
 
@@ -163,7 +169,7 @@ public class AuxiliarGeneral {
         return output;
     }
 
-    //PASA A CIRCULAR UNA IMAGEN
+    //PASA A rect UNA IMAGEN
     public static Bitmap getRoundedBitmapRect(Bitmap bitmap) {
         final Bitmap output = Bitmap.createBitmap(299, 299, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
@@ -190,7 +196,12 @@ public class AuxiliarGeneral {
     public byte[] pasarBitmapByte(Bitmap b){
         //Pasar bitmap a byte[]
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        b.compress(Bitmap.CompressFormat.PNG, 0, baos);
+        try {
+
+            b.compress(CompressFormat.PNG, 0, baos);
+        }catch (Exception e){
+
+        }
         return baos.toByteArray();
     }
 
@@ -206,6 +217,7 @@ public class AuxiliarGeneral {
         return sdf.format(dateOficial);
     }
 
+    //FORMATOS LETRA
     public Typeface tituloFont(Context context){
         return Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
     }
@@ -216,14 +228,17 @@ public class AuxiliarGeneral {
         return Typeface.createFromAsset(context.getAssets(), "androidnation.ttf");
     }
 
+
     public String getUsuarioPreferences(Context context) {
         SharedPreferences getUser = context.getSharedPreferences("UsuarioLog", context.MODE_PRIVATE);
         return getUser.getString("usuario", null);
     }
 
+    //URLS
     public String getURL() {
         return "http://valdroide.com/";
     }
+
     public String getURLARTICULO() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Articulo/";
     }
@@ -231,13 +246,26 @@ public class AuxiliarGeneral {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Comision/";
     }
     public String getURLSINCRONIZARUSUARIO() {
-        return "estrella_del_sur/testing/ADEFUL/sincronizar/usuario/";
+        return "estrella_del_sur/testing/ADEFUL/sincronizar/usuario/sincronizarUsuario.php";
     }
-    public String getURLFOTOCOMISION (){
+    public String getURLFOTOCOMISIONADEFUL(){
         return "estrella_del_sur/testing/ADEFUL/Institucion/Comision/foto_comision/";
     }
-
-
+    public String getURLESCUDOEQUIPOADEFUL (){
+        return "estrella_del_sur/testing/ADEFUL/Liga/equipo/escudo_equipo/";
+    }
+    public String getURLEQUIPOADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Liga/equipo/";
+    }
+    public String getInsertPHP(String Modulo) {
+        return "insert"+Modulo+".php";
+    }
+    public String getUpdatePHP(String Modulo) {
+        return "update"+Modulo+".php";
+    }
+    public String getDeletePHP(String Modulo) {
+        return "delete"+Modulo+".php";
+    }
     private static Map<Character, Character> MAP_NORM;
     public String removeAccents(String value)
     {

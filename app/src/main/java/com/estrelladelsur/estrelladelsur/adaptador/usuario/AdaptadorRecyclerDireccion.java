@@ -10,17 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
+import com.estrelladelsur.estrelladelsur.entidad.Direccion;
+
 import java.util.ArrayList;
 
-public class AdaptadorRecyclerComisionDireccion extends
-        RecyclerView.Adapter<AdaptadorRecyclerComisionDireccion.ComisionViewHolder> implements
+public class AdaptadorRecyclerDireccion extends
+        RecyclerView.Adapter<AdaptadorRecyclerDireccion.ComisionViewHolder> implements
         View.OnClickListener {
 
     private View.OnClickListener listener;
-    private ArrayList<Comision> comisionArray;
+    private ArrayList<Direccion> direccionArray;
     private Typeface nombreFont;
     private Typeface cargoPeriodoFont;
     private AuxiliarGeneral auxiliarGeneral;
@@ -46,14 +49,14 @@ public class AdaptadorRecyclerComisionDireccion extends
 
         }
 
-        public void bindTitular(Comision comision,Typeface nombre, Typeface cargo) {
-            textRecyclerViewNombre.setText(comision.getNOMBRE_COMISION().toString());
+        public void bindTitular(Direccion direccion,Typeface nombre, Typeface cargo) {
+            textRecyclerViewNombre.setText(direccion.getNOMBRE_DIRECCION().toString());
             textRecyclerViewNombre.setTypeface(nombre);
-            textRecyclerViewCargo.setText(comision.getCARGO().toString());
+            textRecyclerViewCargo.setText(direccion.getCARGO().toString());
             textRecyclerViewCargo.setTypeface(cargo, Typeface.BOLD);
-            textRecyclerViewPeriodo.setText(comision.getPERIODO_DESDE().toString() + " - " + comision.getPERIODO_HASTA().toString());
+            textRecyclerViewPeriodo.setText(direccion.getPERIODO_DESDE().toString() + " - " + direccion.getPERIODO_HASTA().toString());
             textRecyclerViewPeriodo.setTypeface(cargo);
-            foto = comision.getFOTO_COMISION();
+            foto = direccion.getFOTO_DIRECCION();
             if (foto == null) {
                 imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
             } else {
@@ -64,8 +67,8 @@ public class AdaptadorRecyclerComisionDireccion extends
         }
     }
 
-    public AdaptadorRecyclerComisionDireccion(ArrayList<Comision> comisionArray, Context context) {
-        this.comisionArray = comisionArray;
+    public AdaptadorRecyclerDireccion(ArrayList<Direccion> direccionArray, Context context) {
+        this.direccionArray = direccionArray;
         auxiliarGeneral = new AuxiliarGeneral(context);
         this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
         this.nombreFont = auxiliarGeneral.tituloFont(context);
@@ -85,14 +88,14 @@ public class AdaptadorRecyclerComisionDireccion extends
 
     @Override
     public void onBindViewHolder(ComisionViewHolder viewHolder, int pos) {
-        Comision item = comisionArray.get(pos);
+        Direccion item = direccionArray.get(pos);
 
         viewHolder.bindTitular(item,nombreFont,cargoPeriodoFont);
     }
 
     @Override
     public int getItemCount() {
-        return comisionArray.size();
+        return direccionArray.size();
     }
 
     public void setOnClickListener(View.OnClickListener listener) {

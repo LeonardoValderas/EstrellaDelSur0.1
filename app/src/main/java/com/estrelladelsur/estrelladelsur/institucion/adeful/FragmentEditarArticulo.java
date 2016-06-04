@@ -183,6 +183,7 @@ public class FragmentEditarArticulo extends Fragment {
         request.setMethod("POST");
         request.setQuery("ELIMINAR");
         request.setParametrosDatos("id_articulo", String.valueOf(posicion));
+        request.setParametrosDatos("fecha_eliminar", auxiliarGeneral.getFechaOficial());
         new TaskArticulo().execute(request);
     }
     // enviar/editar/eliminar articulo
@@ -217,11 +218,11 @@ public class FragmentEditarArticulo extends Fragment {
                     }
                 }else {
                     precessOK = false;
-                    mensaje = "Error(4). Por favor comuniquese con soporte.";
+                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
                 }
             } catch (JSONException e) {
                 precessOK = false;
-                mensaje = "Error(5). Por favor comuniquese con soporte.";
+                mensaje = "Error(5). Por favor comuniquese con el administrador.";
             }
             return precessOK;
         }

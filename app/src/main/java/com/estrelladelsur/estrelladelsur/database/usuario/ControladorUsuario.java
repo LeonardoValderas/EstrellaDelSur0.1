@@ -891,7 +891,7 @@ public class ControladorUsuario {
         return fechaArticulo;
     }
 
-//    ELIMINAR TODOS ARTICULO
+    // ELIMINAR TODOS ARTICULO
     public boolean eliminarArticuloUsuario() {
 
         boolean res = false;
@@ -1203,60 +1203,56 @@ public class ControladorUsuario {
 //    }
 //
 //    //ELIMINAR COMISION
-//    public boolean eliminarComisionAdeful(int id) {
-//
-//        boolean res = false;
-//        String sql = "DELETE FROM COMISION_ADEFUL WHERE ID_COMISION = " + id;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//
-//            try {
-//
-//                database.execSQL(sql);
-//                res = true;
-//
-//            } catch (Exception e) {
-//
-//                res = false;
-//            }
-//        } else {
-//            res = false;
-//        }
-//        cerrarBaseDeDatos();
-//        database = null;
-//        sql = null;
-//        return res;
-//    }
+    public boolean eliminarComisionUsuario() {
+
+        boolean res = false;
+        String sql = "DELETE FROM COMISION_USUARIO";
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+
+                database.execSQL(sql);
+                res = true;
+
+            } catch (Exception e) {
+
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
 //
 //    ////////DIRECCION/////////
 //    //INSERTAR
-//    public boolean insertDireccionAdeful(Direccion direccion) throws SQLiteException {
-//
-//        ContentValues cv = new ContentValues();
-//        abrirBaseDeDatos();
-//        try {
-//            cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
-//            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
-//            cv.put("ID_CARGO", direccion.getID_CARGO());
-//            cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
-//            cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
-//            cv.put("USUARIO_CREADOR", direccion.getUSUARIO_CREADOR());
-//            cv.put("FECHA_CREACION", direccion.getFECHA_CREACION());
-//            cv.put("USUARIO_ACTUALIZACION", direccion.getUSUARIO_ACTUALIZACION());
-//            cv.put("FECHA_ACTUALIZACION", direccion.getFECHA_ACTUALIZACION());
-//
-//            long valor = database.insert("DIRECCION_ADEFUL", null, cv);
-//            cerrarBaseDeDatos();
-//            if (valor > 0) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        } catch (SQLiteException e) {
-//            cerrarBaseDeDatos();
-//            return false;
-//        }
-//    }
+    public boolean insertDireccionUsuario(Direccion direccion) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
+            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
+            cv.put("CARGO", direccion.getCARGO());
+            cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
+            cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
+
+            long valor = database.insert("DIRECCION_USUARIO", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
 //
 //    //DIRECCION POR ID
 //    public ArrayList<Direccion> selectDireccionAdeful(int id_direccion) {
@@ -1328,78 +1324,59 @@ public class ControladorUsuario {
 //    }
 //
 //    //LISTA COMISION
-//    public ArrayList<Direccion> selectListaDireccionAdeful() {
-//
-//        String sql = "SELECT C.ID_DIRECCION, C.NOMBRE_DIRECCION, C.FOTO_DIRECCION, " +
-//                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.USUARIO_CREADOR, " +
-//                "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
-//                "CA.CARGO FROM DIRECCION_ADEFUL C INNER JOIN CARGO_ADEFUL CA ON CA.ID_CARGO=C.ID_CARGO";
-//        ArrayList<Direccion> arrayDireccionAdeful = new ArrayList<Direccion>();
-//        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-//                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null;
-//        int id;
-//        int id_cargo;
-//        byte[] foto = null;
-//        Cursor cursor = null;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//
-//                    while (cursor.moveToNext()) {
-//
-//                        Direccion direccion = null;
-//
-//                        id = cursor.getInt(cursor.getColumnIndex("ID_DIRECCION"));
-//                        nombre = cursor.getString(cursor
-//                                .getColumnIndex("NOMBRE_DIRECCION"));
-//                        foto = cursor.getBlob(cursor
-//                                .getColumnIndex("FOTO_DIRECCION"));
-//                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
-//                        cargo = cursor.getString(cursor
-//                                .getColumnIndex("CARGO"));
-//                        desde = cursor.getString(cursor
-//                                .getColumnIndex("PERIODO_DESDE"));
-//                        hasta = cursor.getString(cursor
-//                                .getColumnIndex("PERIODO_HASTA"));
-//                        creador = cursor.getString(cursor
-//                                .getColumnIndex("USUARIO_CREADOR"));
-//                        fechaCreacion = cursor.getString(cursor
-//                                .getColumnIndex("FECHA_CREACION"));
-//                        usuario_act = cursor.getString(cursor
-//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-//                        fechaActualizacion = cursor.getString(cursor
-//                                .getColumnIndex("FECHA_ACTUALIZACION"));
-//                        // CLASE AUX
-//                        direccion = new Direccion(id, nombre, foto, id_cargo, cargo, desde, hasta, creador,
-//                                fechaCreacion, usuario_act, fechaActualizacion);
-//                        //ARRAY COMISION
-//                        arrayDireccionAdeful.add(direccion);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayDireccionAdeful = null;
-//            }
-//        } else {
-//            arrayDireccionAdeful = null;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        nombre = null;
-//        desde = null;
-//        hasta = null;
-//        foto = null;
-//        fechaCreacion = null;
-//        fechaActualizacion = null;
-//        creador = null;
-//        usuario_act = null;
-//
-//        return arrayDireccionAdeful;
-//    }
+    public ArrayList<Direccion> selectListaDireccionUsuario() {
+
+        String sql = "SELECT * FROM DIRECCION_USUARIO";
+        ArrayList<Direccion> arrayDireccionAdeful = new ArrayList<Direccion>();
+        String nombre = null, desde = null, hasta = null, cargo = null;
+        int id;
+        byte[] foto = null;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        Direccion direccion = null;
+
+                        id = cursor.getInt(cursor.getColumnIndex("ID_DIRECCION"));
+                        nombre = cursor.getString(cursor
+                                .getColumnIndex("NOMBRE_DIRECCION"));
+                        foto = cursor.getBlob(cursor
+                                .getColumnIndex("FOTO_DIRECCION"));
+                        cargo = cursor.getString(cursor
+                                .getColumnIndex("CARGO"));
+                        desde = cursor.getString(cursor
+                                .getColumnIndex("PERIODO_DESDE"));
+                        hasta = cursor.getString(cursor
+                                .getColumnIndex("PERIODO_HASTA"));
+                        // CLASE AUX
+                        direccion = new Direccion(id, nombre, foto, cargo, desde, hasta);
+                        //ARRAY COMISION
+                        arrayDireccionAdeful.add(direccion);
+                    }
+                }
+            } catch (Exception e) {
+                arrayDireccionAdeful = null;
+            }
+        } else {
+            arrayDireccionAdeful = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        nombre = null;
+        desde = null;
+        hasta = null;
+        foto = null;
+
+        return arrayDireccionAdeful;
+    }
 //
 //    //ACTUALIZAR
 //    public boolean actualizarDireccionAdeful(Direccion direccion) throws SQLiteException {
@@ -1430,33 +1407,33 @@ public class ControladorUsuario {
 //        }
 //    }
 //
-//    //ELIMINAR COMISION
-//    public boolean eliminarDireccionAdeful(int id) {
+//    //ELIMINAR DIRECCIOIN
 //
-//        boolean res = false;
-//        String sql = "DELETE FROM DIRECCION_ADEFUL WHERE ID_DIRECCION = " + id;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//
-//            try {
-//
-//                database.execSQL(sql);
-//                res = true;
-//
-//            } catch (Exception e) {
-//
-//                res = false;
-//            }
-//
-//        } else {
-//
-//            res = false;
-//        }
-//        cerrarBaseDeDatos();
-//        database = null;
-//        sql = null;
-//        return res;
-//    }
+    public boolean eliminarDireccionUsuario() {
+        boolean res = false;
+        String sql = "DELETE FROM DIRECCION_USUARIO";
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+
+                database.execSQL(sql);
+                res = true;
+
+            } catch (Exception e) {
+
+                res = false;
+            }
+
+        } else {
+
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
 //
 //    ////////LIGA ADEFUL/////////
 //    //EQUIPO INSERTAR

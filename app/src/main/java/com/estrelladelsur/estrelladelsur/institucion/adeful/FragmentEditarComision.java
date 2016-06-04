@@ -1,7 +1,9 @@
 package com.estrelladelsur.estrelladelsur.institucion.adeful;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -24,6 +26,12 @@ import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerComision;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 
@@ -36,7 +44,15 @@ public class FragmentEditarComision extends Fragment {
     private AdaptadorRecyclerComision adaptadorRecyclerComision;
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
-
+    private ProgressDialog dialog;
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+    private String ELIMINAR_COMISION = "Integrante eliminado correctamente";
+    private String mensaje = null;
+    private JsonParsing jsonParsing = new JsonParsing(getActivity());
+    private int posicion = 0;
+    private String nombre_foto = null;
+    private Request request = new Request();
 
     public static FragmentEditarComision newInstance() {
         FragmentEditarComision fragment = new FragmentEditarComision();
@@ -119,27 +135,24 @@ public class FragmentEditarComision extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                // TODO Auto-generated method stub
-
-                                controladorAdeful.abrirBaseDeDatos();
-                                if (controladorAdeful.eliminarComisionAdeful(comisionArray.get(position)
-                                        .getID_COMISION())) {
-                                    controladorAdeful.cerrarBaseDeDatos();
-
-                                    recyclerViewLoadComision();
-
-                                    Toast.makeText(
-                                            getActivity(),
-                                            "Integrante eliminado correctamente",
-                                            Toast.LENGTH_SHORT).show();
-
-                                    dialogoAlerta.alertDialog.dismiss();
-                                } else {
-                                    controladorAdeful.cerrarBaseDeDatos();
-                                    Toast.makeText(getActivity(), "Error en la base de datos interna, vuelva a intentar." +
-                                                    "\n Si el error persiste comuniquese con soporte.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
+                                posicion = comisionArray.get(position)
+                                        .getID_COMISION();
+                                nombre_foto = comisionArray.get(position)
+                                        .getNOMBRE_FOTO();
+                                envioWebService();
+//                                if (controladorAdeful.eliminarComisionAdeful(comisionArray.get(position)
+//                                        .getID_COMISION())) {
+//                                    recyclerViewLoadComision();
+//
+//                                    Toast.makeText(
+//                                            getActivity(),
+//                                            "Integrante eliminado correctamente",
+//                                            Toast.LENGTH_SHORT).show();
+//
+//                                    dialogoAlerta.alertDialog.dismiss();
+//                                } else {
+//                        auxiliarGeneral.errorDataBase(getActivity());
+//                                }
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -153,7 +166,71 @@ public class FragmentEditarComision extends Fragment {
                         });
             }
         }));
+    }
 
+    public void envioWebService() {
+        request.setMethod("POST");
+        request.setQuery("ELIMINAR");
+        request.setParametrosDatos("id_comision", String.valueOf(posicion));
+        request.setParametrosDatos("nombre_foto", nombre_foto);
+        new TaskComision().execute(request);
+    }
+    public void inicializarControles(String mensaje) {
+        recyclerViewLoadComision();
+        posicion = 0;
+        dialogoAlerta.alertDialog.dismiss();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public class TaskComision extends AsyncTask<Request, Boolean, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(getActivity());
+            dialog.setMessage("Procesando...");
+            dialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Request... params) {
+            int success;
+            JSONObject json = null;
+            boolean precessOK = true;
+            try {
+                json = jsonParsing.parsingComision(params[0]);
+                if (json != null) {
+                    success = json.getInt(TAG_SUCCESS);
+                    mensaje =json.getString(TAG_MESSAGE);
+                    if (success == 0) {
+                        if (controladorAdeful.eliminarComisionAdeful(posicion)) {
+                            precessOK = true;
+                        } else {
+                            precessOK = false;
+                        }
+                    } else {
+                        precessOK = false;
+                    }
+                }else {
+                    precessOK = false;
+                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
+                }
+            } catch (JSONException e) {
+                precessOK = false;
+                mensaje = "Error(5). Por favor comuniquese con el administrador.";
+            }
+            return precessOK;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            dialog.dismiss();
+
+            if (result) {
+                inicializarControles(ELIMINAR_COMISION);
+            } else {
+                auxiliarGeneral.errorWebService(getActivity(), mensaje);
+            }
+        }
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -165,7 +242,6 @@ public class FragmentEditarComision extends Fragment {
         comisionArray = controladorAdeful.selectListaComisionAdeful();
         if(comisionArray != null) {
             adaptadorRecyclerComision = new AdaptadorRecyclerComision(comisionArray,getActivity());
-            adaptadorRecyclerComision.notifyDataSetChanged();
             recyclerComision.setAdapter(adaptadorRecyclerComision);
         }else{
            auxiliarGeneral.errorDataBase(getActivity());

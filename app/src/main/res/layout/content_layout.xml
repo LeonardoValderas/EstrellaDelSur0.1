@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:clickable="true"
-    tools:context=".NavigationDrawerAdeful"
+    tools:context=".navegador.usuario.NavigationUsuario"
     tools:showIn="@layout/navigation_drawer">
 
     <!-- Toolbar -->
@@ -12,8 +12,8 @@
         layout="@layout/toolbar" />
 
     <!-- Toolbar -->
-    <include android:id="@+id/appbar_sub"
-        layout="@layout/toolbar_sub" />
+    <!--<include android:id="@+id/appbar_sub"-->
+        <!--layout="@layout/toolbar_sub" />-->
 
 
 

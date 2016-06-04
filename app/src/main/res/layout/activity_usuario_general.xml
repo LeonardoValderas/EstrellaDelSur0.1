@@ -4,9 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/appbar"
-        layout="@layout/toolbar_mapa" />
+    <!--<include-->
+        <!--android:id="@+id/appbar"-->
+        <!--layout="@layout/toolbar_mapa" />-->
+    <include android:id="@+id/appbar"
+        layout="@layout/toolbar_usuario" />
 
     <android.support.v7.widget.RecyclerView
         android:layout_marginTop="10dp"

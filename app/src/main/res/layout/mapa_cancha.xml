@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:layout_below="@+id/appbar"
-        tools:context=".liga.MapaCancha" />
+        tools:context=".liga.adeful.MapaCancha" />
 
     <EditText
         android:id="@+id/editTextNombre"

@@ -41,9 +41,73 @@ public class JsonParsing {
         URLCOMISION = auxiliarGeneral.getURLCOMISION();
     }
 
+    public JSONObject parsingJsonObject(Request request,String url_parsing) {
+        jObj = null;
+        jArray = null;
+        String json = null;
+        String uri = null;
+        uri = url_parsing;
+//        if (request.getQuery().equals("SUBIR")) {
+//            uri = URL + URLARTICULO + "insertArticulo.php";
+//        } else if (request.getQuery().equals("EDITAR")) {
+//            uri = URL + URLARTICULO + "updateArticulo.php";
+//        } else if (request.getQuery().equals("ELIMINAR")) {
+//            uri = URL + URLARTICULO + "deleteArticulo.php";
+//        }
+
+        BufferedReader reader = null;
+        try {
+            URL url = new URL(uri);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod(request.getMethod());
+
+            if (request.getMethod().equals("POST")) {
+                con.setDoOutput(true);
+                OutputStreamWriter write = new OutputStreamWriter(
+                        con.getOutputStream());
+                write.write(request.getEncodedParams());
+                write.flush();
+            }
+            con.setConnectTimeout(4000);
+            StringBuilder sb = new StringBuilder();
+            reader = new BufferedReader(new InputStreamReader(
+                    con.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            json = sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            try {
+                jObj = new JSONObject(json);
+            } catch (JSONException e) {
+
+            }
+            json = null;
+            return jObj;
+        }
+
+    }
+
+
+
+
     // ARTICULO ADEFUL
     public JSONObject parsingArticulo(Request request) {
-
+        jObj = null;
+        jArray = null;
+        String json = null;
         String uri = null;
         if (request.getQuery().equals("SUBIR")) {
             uri = URL + URLARTICULO + "insertArticulo.php";
@@ -53,7 +117,6 @@ public class JsonParsing {
             uri = URL + URLARTICULO + "deleteArticulo.php";
         }
 
-
         BufferedReader reader = null;
         try {
             URL url = new URL(uri);
@@ -90,23 +153,27 @@ public class JsonParsing {
             try {
                 jObj = new JSONObject(json);
             } catch (JSONException e) {
-                // Log.e("JSON Parser", "Error parsing data " + e.toString());
+
             }
+            json = null;
             return jObj;
         }
 
     }
 
-    // ARTICULO ADEFUL
+   // COMISION
     public JSONObject parsingComision(Request request) {
 
+        jObj = null;
+        jArray = null;
+        String json = null;
         String uri = null;
         if (request.getQuery().equals("SUBIR")) {
             uri = URL + URLCOMISION + "insertComision.php";
         } else if (request.getQuery().equals("EDITAR")) {
-            uri = URL + URLARTICULO + "updateArticulo.php";
+            uri = URL + URLCOMISION + "updateComision.php";
         } else if (request.getQuery().equals("ELIMINAR")) {
-            uri = URL + URLARTICULO + "deleteArticulo.php";
+            uri = URL + URLCOMISION + "deleteComision.php";
         }
 
 
@@ -125,7 +192,7 @@ public class JsonParsing {
             }
             StringBuilder sb = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(
-                    con.getInputStream(), "UTF-8"), 8);
+                    con.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
@@ -148,11 +215,11 @@ public class JsonParsing {
             } catch (JSONException e) {
                 // Log.e("JSON Parser", "Error parsing data " + e.toString());
             }
+            json = null;
             return jObj;
         }
 
     }
-
 
     // trae promo splash
     public static String traerPromo() {
@@ -194,8 +261,11 @@ public class JsonParsing {
 
     // SINCRONIZAR USUARIO
     public JSONObject parsingUsuarioSincronizar(Request request) {
-
-        String uri = URL + URLSINCRONIZAR + "sincronizarUsuario.php";
+        jObj = null;
+        jArray = null;
+        String json = null;
+        String uri = null;
+        uri = URL + URLSINCRONIZAR + "sincronizarUsuario.php";
         BufferedReader reader = null;
         try {
             URL url = new URL(uri);
@@ -209,6 +279,7 @@ public class JsonParsing {
                 write.write(request.getEncodedParams());
                 write.flush();
             }
+            con.setConnectTimeout(4000);
             StringBuilder sb = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(
                     con.getInputStream()));
@@ -240,6 +311,7 @@ public class JsonParsing {
             } catch (JSONException e) {
                 jObj = null;
             }
+            json = null;
             return jObj;
         }
 

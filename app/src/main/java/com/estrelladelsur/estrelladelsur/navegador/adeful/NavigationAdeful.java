@@ -31,7 +31,7 @@ import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsArticulo;
 import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsComision;
 import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsDireccion;
-import com.estrelladelsur.estrelladelsur.liga.TabsAdeful;
+import com.estrelladelsur.estrelladelsur.liga.adeful.TabsAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
@@ -107,8 +107,8 @@ public class NavigationAdeful extends AppCompatActivity {
         txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
         txtAbTitulo.setTypeface(titulos);
 
-        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-        txtAbSubTitulo.setTypeface(titulos);
+//        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
+//        txtAbSubTitulo.setTypeface(titulos);
 
         textViewLiga = (TextView) findViewById(R.id.textViewLiga);
         textViewLiga.setTypeface(adeful, Typeface.BOLD);
