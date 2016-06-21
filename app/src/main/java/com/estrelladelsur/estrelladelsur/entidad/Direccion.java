@@ -9,7 +9,7 @@ public class Direccion {
     private String CARGO;
     private String PERIODO_DESDE;
     private String PERIODO_HASTA;
-    private String URL_COMISION;
+    private String URL_DIRECCION;
     private String USUARIO_CREADOR;
     private String FECHA_CREACION;
     private String USUARIO_ACTUALIZACION;
@@ -25,7 +25,7 @@ public class Direccion {
         CARGO = cargo;
         PERIODO_DESDE = periodo_desde;
         PERIODO_HASTA = periodo_hasta;
-        URL_COMISION = url_direccion;
+        URL_DIRECCION = url_direccion;
         USUARIO_CREADOR = usuario;
         FECHA_CREACION = fecha_creacion;
         USUARIO_ACTUALIZACION = usuario_actualizacion;
@@ -62,7 +62,7 @@ public class Direccion {
         return PERIODO_HASTA;
     }
     public String getNOMBRE_FOTO() { return NOMBRE_FOTO; }
-    public String getURL_COMISION() {return URL_COMISION; }
+    public String getURL_DIRECCION() {return URL_DIRECCION; }
     public String getUSUARIO_CREADOR() {
         return USUARIO_CREADOR;
     }

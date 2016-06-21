@@ -35,7 +35,7 @@ import java.util.ArrayList;
 
 public class FragmentEditarArticulo extends Fragment {
 
-    private int CheckedPositionFragment;
+    private int CheckedPositionFragment, posicion = 0;
     private RecyclerView recyclerArticulo;
     private ControladorAdeful controladorAdeful;
     private ArrayList<Articulo> articuloArray;
@@ -46,9 +46,8 @@ public class FragmentEditarArticulo extends Fragment {
     private JsonParsing jsonParsing = new JsonParsing(getActivity());
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
-    private String mensaje = null;
+    private String mensaje = null, URL = null;
     private String ELIMINAR_ARTICULO = "Articulo eliminado correctamente";
-    private int posicion = 0;
     private Request request = new Request();
 
     public static FragmentEditarArticulo newInstance() {
@@ -181,9 +180,11 @@ public class FragmentEditarArticulo extends Fragment {
 
     public void envioWebService() {
         request.setMethod("POST");
-        request.setQuery("ELIMINAR");
         request.setParametrosDatos("id_articulo", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_eliminar", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        URL = null;
+        URL = auxiliarGeneral.getURLARTICULOADEFULALL();
+        URL = URL + auxiliarGeneral.getDeletePHP("Articulo");
         new TaskArticulo().execute(request);
     }
     // enviar/editar/eliminar articulo
@@ -203,7 +204,7 @@ public class FragmentEditarArticulo extends Fragment {
             JSONObject json = null;
             boolean precessOK = true;
             try {
-                json = jsonParsing.parsingArticulo(params[0]);
+                json = jsonParsing.parsingJsonObject(params[0],URL);
                 if (json != null) {
                     success = json.getInt(TAG_SUCCESS);
                     mensaje = json.getString(TAG_MESSAGE);

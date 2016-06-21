@@ -43,10 +43,11 @@
             android:name=".navegador.usuario.SplashUsuario">
             <!--android:label="@string/app_name"-->
             <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-
-
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -54,7 +55,15 @@
         </activity>
 
         <activity
-            android:name=".institucion.usuario.ArticuloUsuario">
+            android:name=".institucion.usuario.ArticuloUsuario"
+            android:label="@string/institucion.articulo.usuario">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".navegador.usuario.NavigationUsuario" />
+        </activity>
+        <activity
+            android:name=".institucion.usuario.ComisionUsuario"
+            android:label="@string/institucion.comision.usuario">
             <!--android:label="@string/app_name"-->
             <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
@@ -62,7 +71,8 @@
                 android:value=".navegador.usuario.NavigationUsuario" />
         </activity>
         <activity
-            android:name=".institucion.usuario.ComisionUsuario">
+            android:name=".institucion.usuario.DireccionUsuario"
+            android:label="@string/institucion.direccion.usuario">
             <!--android:label="@string/app_name"-->
             <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
             <meta-data
@@ -74,11 +84,7 @@
         <activity
             android:name=".navegador.adeful.NavigationAdeful">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity

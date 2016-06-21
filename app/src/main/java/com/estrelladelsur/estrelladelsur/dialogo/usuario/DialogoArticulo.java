@@ -21,8 +21,9 @@ public class DialogoArticulo {
     private Typeface tituloFont;
     private Typeface textFont;
 
-    public DialogoArticulo(Context context, String tituloS, String subTituloS,
+    public DialogoArticulo(Context context, String tituloS,
                            String mensaje) {
+
         this.context = context;
         this.textFont = Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
         this.tituloFont = Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
@@ -36,17 +37,13 @@ public class DialogoArticulo {
         // TITULO
         titulo = (TextView) layout.findViewById(R.id.alertGenericoTitulo);
         titulo.setText(tituloS);
-        titulo.setTypeface(tituloFont,Typeface.BOLD);
-        // SUBTITULO
-        subTitulo = (TextView) layout.findViewById(R.id.alertGenericoSubtitulo);
-        subTitulo.setText(subTituloS);
-        subTitulo.setTypeface(textFont,Typeface.BOLD);
-        // TEXTO ERROR VACIO
+        titulo.setTypeface(tituloFont, Typeface.BOLD);
+
         detalle = (TextView) layout
                 .findViewById(R.id.alertGenericoDetalle);
         detalle.setText(mensaje);
         detalle.setTypeface(textFont);
-        // BOTON ACEPTAR
+        // BOTON CERRAE
         btnCerrar = (ImageButton) layout.findViewById(R.id.cerrarDialogo);
         builder.setView(layout);
         alertDialog = builder.create();

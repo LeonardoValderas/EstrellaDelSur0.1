@@ -1,7 +1,6 @@
 package com.estrelladelsur.estrelladelsur.institucion.usuario;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerComision;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
@@ -23,8 +21,6 @@ import java.util.ArrayList;
 public class ComisionUsuario extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private TextView txtAbTitulo;
-    private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Comision> comisionArray;
     private ControladorUsuario controladorUsuario;
@@ -37,20 +33,13 @@ public class ComisionUsuario extends AppCompatActivity {
 
         auxiliarGeneral = new AuxiliarGeneral(ComisionUsuario.this);
         controladorUsuario = new ControladorUsuario(ComisionUsuario.this);
-        titulos = auxiliarGeneral.tituloFont(ComisionUsuario.this);
-
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-
-        txtAbTitulo.setText("COMISION DIRECTIVA");
-        txtAbTitulo.setTypeface(titulos, Typeface.BOLD);
         init();
     }
 
@@ -62,22 +51,11 @@ public class ComisionUsuario extends AppCompatActivity {
         recycleViewUsuarioGeneral.addOnItemTouchListener(new
                 RecyclerTouchListener(ComisionUsuario.this,
                 recycleViewUsuarioGeneral, new ClickListener() {
-
             @Override
             public void onClick(View view, int position) {
-//                dialogoArticulo = new DialogoArticulo(ComisionUsuario.this,"", articuloArray.get(position).getTITULO(),
-//                        articuloArray.get(position).getARTICULO());
-//                dialogoArticulo.btnCerrar.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialogoArticulo.alertDialog.dismiss();
-//                    }
-//                });
             }
-
             @Override
             public void onLongClick(View view, final int position) {
-
             }
         }));
     }
@@ -99,14 +77,10 @@ public class ComisionUsuario extends AppCompatActivity {
             auxiliarGeneral.errorDataBase(ComisionUsuario.this);
         }
     }
-
-
-
     public static interface ClickListener {
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);
     }
-
     static class RecyclerTouchListener implements
             RecyclerView.OnItemTouchListener {
 
@@ -147,17 +121,11 @@ public class ComisionUsuario extends AppCompatActivity {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
-
         }
-
     }
 }

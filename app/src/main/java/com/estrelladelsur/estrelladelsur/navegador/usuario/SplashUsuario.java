@@ -209,8 +209,17 @@ public class SplashUsuario extends AppCompatActivity {
                                     for (int i = 0; i < jsonArray.length(); i++) {
                                         jsonAux = jsonArray.getJSONObject(i);
 
+                                        String imageString = jsonAux.getString("FOTO_DIRECCION");
+
+                                        Bitmap b = getBitmap(imageString);
+                                        byte[] byteArray = null;
+                                        if(b != null) {
+                                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                            b.compress(Bitmap.CompressFormat.PNG, 0, stream);
+                                            byteArray = stream.toByteArray();
+                                        }
                                         direccion = new Direccion(jsonAux.getInt("ID_DIRECCION"),
-                                                jsonAux.getString("NOMBRE_DIRECCION"), null, jsonAux.getString("CARGO"),jsonAux.getString("PERIODO_DESDE"),jsonAux.getString("PERIODO_HASTA") );
+                                                jsonAux.getString("NOMBRE_DIRECCION"), byteArray, jsonAux.getString("CARGO"),jsonAux.getString("PERIODO_DESDE"),jsonAux.getString("PERIODO_HASTA") );
 
                                         if (!controladorUsuario.insertDireccionUsuario(direccion)) {
                                             precessOK = false;
@@ -320,4 +329,6 @@ public class SplashUsuario extends AppCompatActivity {
         }
         return inputStream;
     }
+
+
 }

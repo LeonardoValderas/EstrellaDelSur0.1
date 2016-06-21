@@ -19,13 +19,22 @@
             android:layout_weight="2.2"
             android:gravity="center">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/imageRecyclerViewFoto"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/border_circle"
-                android:src="@android:drawable/ic_menu_my_calendar" />
+                android:src="@android:drawable/ic_menu_my_calendar"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="1dp" />
+
+            <!--<ImageView-->
+            <!--android:id="@+id/imageRecyclerViewFoto"-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="100dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:background="@drawable/border_circle"-->
+            <!--android:src="@android:drawable/ic_menu_my_calendar" />-->
         </LinearLayout>
 
         <LinearLayout

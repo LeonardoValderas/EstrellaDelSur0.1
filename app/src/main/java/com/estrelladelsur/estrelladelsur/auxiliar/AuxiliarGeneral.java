@@ -15,6 +15,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.provider.MediaStore;
 import android.widget.Toast;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import android.graphics.Bitmap.CompressFormat;
 
 public class AuxiliarGeneral {
@@ -80,7 +82,8 @@ public class AuxiliarGeneral {
                         "\n Si el error persiste comuniquese con soporte.",
                 Toast.LENGTH_SHORT).show();
     }
-    public void errorWebService(Context context,String mensaje) {
+
+    public void errorWebService(Context context, String mensaje) {
         Toast.makeText(context, mensaje,
                 Toast.LENGTH_SHORT).show();
     }
@@ -146,6 +149,7 @@ public class AuxiliarGeneral {
         }
         return bRect;
     }
+
     //PASA A CIRCULAR UNA IMAGEN
     public Bitmap getRoundedBitmap(Bitmap bitmap) {
         final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -153,7 +157,7 @@ public class AuxiliarGeneral {
 
         final int color = Color.BLACK;
         final Paint paint = new Paint();
-        final Rect rect = new Rect(2, 2, bitmap.getWidth()-2, bitmap.getHeight()-1);
+        final Rect rect = new Rect(2, 2, bitmap.getWidth() - 2, bitmap.getHeight() - 1);
         final RectF rectF = new RectF(rect);
 
         paint.setAntiAlias(true);
@@ -169,48 +173,46 @@ public class AuxiliarGeneral {
         return output;
     }
 
-    //PASA A rect UNA IMAGEN
-    public static Bitmap getRoundedBitmapRect(Bitmap bitmap) {
-        final Bitmap output = Bitmap.createBitmap(299, 299, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(output);
-
-        final int color = Color.BLACK;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(2, 2, 299, 299);
-        final RectF rectF = new RectF(rect);
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRect(rectF, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        bitmap.recycle();
-
-        return output;
-    }
-
+    //    //PASA A rect UNA IMAGEN
+//    public static Bitmap getRoundedBitmapRect(Bitmap bitmap) {
+//        final Bitmap output = Bitmap.createBitmap(299, 299, Bitmap.Config.ARGB_8888);
+//        final Canvas canvas = new Canvas(output);
+//
+//        final int color = Color.BLACK;
+//        final Paint paint = new Paint();
+//        final Rect rect = new Rect(2, 2, 299, 299);
+//        final RectF rectF = new RectF(rect);
+//
+//        paint.setAntiAlias(true);
+//        canvas.drawARGB(0, 0, 0, 0);
+//        paint.setColor(color);
+//        canvas.drawRect(rectF, paint);
+//
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+//        canvas.drawBitmap(bitmap, rect, rect, paint);
+//
+//        bitmap.recycle();
+//
+//        return output;
+//    }
     //PASA BITMAP A BYTE
-    public byte[] pasarBitmapByte(Bitmap b){
+    public byte[] pasarBitmapByte(Bitmap b) {
         //Pasar bitmap a byte[]
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
 
             b.compress(CompressFormat.PNG, 0, baos);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         return baos.toByteArray();
     }
-
+    //FECHAS
     public String getFechaOficial() {
         Date dateOficial = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss");
         return sdf.format(dateOficial);
     }
-
     public String getFechaFoto() {
         Date dateOficial = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -218,17 +220,15 @@ public class AuxiliarGeneral {
     }
 
     //FORMATOS LETRA
-    public Typeface tituloFont(Context context){
+    public Typeface tituloFont(Context context) {
         return Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
     }
-    public Typeface textFont(Context context){
+    public Typeface textFont(Context context) {
         return Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
     }
-    public Typeface ligaFont(Context context){
+    public Typeface ligaFont(Context context) {
         return Typeface.createFromAsset(context.getAssets(), "androidnation.ttf");
     }
-
-
     public String getUsuarioPreferences(Context context) {
         SharedPreferences getUser = context.getSharedPreferences("UsuarioLog", context.MODE_PRIVATE);
         return getUser.getString("usuario", null);
@@ -238,39 +238,59 @@ public class AuxiliarGeneral {
     public String getURL() {
         return "http://valdroide.com/";
     }
-
-    public String getURLARTICULO() {
+    public String getURLARTICULOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Articulo/";
     }
-    public String getURLCOMISION() {
+    public String getURLARTICULOADEFULALL() {
+        return getURL() + getURLARTICULOADEFUL();
+    }
+    public String getURLCOMISIONADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Comision/";
+    }
+    public String getURLCOMISIONADEFULALL() {
+        return getURL() + getURLCOMISIONADEFUL();
+    }
+    public String getURLDIRECCIONADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Institucion/Direccion/";
+    }
+    public String getURLDIRECCIONADEFULALL() {
+        return getURL() + getURLDIRECCIONADEFUL();
+    }
+    public String getURLCARGOADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Institucion/Cargo/";
+    }
+    public String getURLCARGOADEFULALL() {
+        return getURL() + getURLCARGOADEFUL();
+    }
+    public String getURLFOTOCOMISIONADEFUL() {
+        return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Comision/foto_comision/";
+    }
+    public String getURLFOTODIRECCIONADEFUL() {
+        return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Direccion/foto_direccion/";
     }
     public String getURLSINCRONIZARUSUARIO() {
         return "estrella_del_sur/testing/ADEFUL/sincronizar/usuario/sincronizarUsuario.php";
     }
-    public String getURLFOTOCOMISIONADEFUL(){
-        return "estrella_del_sur/testing/ADEFUL/Institucion/Comision/foto_comision/";
-    }
-    public String getURLESCUDOEQUIPOADEFUL (){
-        return "estrella_del_sur/testing/ADEFUL/Liga/equipo/escudo_equipo/";
+    public String getURLESCUDOEQUIPOADEFUL() {
+        return "escudo_equipo/";
     }
     public String getURLEQUIPOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/equipo/";
     }
     public String getInsertPHP(String Modulo) {
-        return "insert"+Modulo+".php";
+        return "insert" + Modulo + ".php";
     }
     public String getUpdatePHP(String Modulo) {
-        return "update"+Modulo+".php";
+        return "update" + Modulo + ".php";
     }
     public String getDeletePHP(String Modulo) {
-        return "delete"+Modulo+".php";
+        return "delete" + Modulo + ".php";
     }
+
     private static Map<Character, Character> MAP_NORM;
-    public String removeAccents(String value)
-    {
-        if (MAP_NORM == null || MAP_NORM.size() == 0)
-        {
+
+    public String removeAccents(String value) {
+        if (MAP_NORM == null || MAP_NORM.size() == 0) {
             MAP_NORM = new HashMap<Character, Character>();
             MAP_NORM.put('À', 'A');
             MAP_NORM.put('Á', 'A');
@@ -331,15 +351,14 @@ public class AuxiliarGeneral {
             return "";
         }
         StringBuilder sb = new StringBuilder(value);
-        for(int i = 0; i < value.length(); i++) {
+        for (int i = 0; i < value.length(); i++) {
             Character c = MAP_NORM.get(sb.charAt(i));
-            if(c != null) {
+            if (c != null) {
                 sb.setCharAt(i, c.charValue());
             }
         }
         return sb.toString();
     }
-
 
 
 }

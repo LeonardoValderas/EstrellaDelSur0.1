@@ -37,7 +37,7 @@ import java.util.ArrayList;
 
 public class FragmentEditarComision extends Fragment {
 
-    private int CheckedPositionFragment;
+    private int CheckedPositionFragment,posicion = 0;
     private RecyclerView recyclerComision;
     private ControladorAdeful controladorAdeful;
     private ArrayList<Comision> comisionArray;
@@ -48,21 +48,17 @@ public class FragmentEditarComision extends Fragment {
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private String ELIMINAR_COMISION = "Integrante eliminado correctamente";
-    private String mensaje = null;
     private JsonParsing jsonParsing = new JsonParsing(getActivity());
-    private int posicion = 0;
-    private String nombre_foto = null;
+    private String nombre_foto = null, URL = null, mensaje = null;
     private Request request = new Request();
 
     public static FragmentEditarComision newInstance() {
         FragmentEditarComision fragment = new FragmentEditarComision();
         return fragment;
     }
-
     public FragmentEditarComision() {
         // Required empty public constructor
     }
-
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
@@ -73,7 +69,6 @@ public class FragmentEditarComision extends Fragment {
             init();
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,14 +81,11 @@ public class FragmentEditarComision extends Fragment {
 
         return v;
     }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
     }
-
-
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         recyclerComision.setLayoutManager(new LinearLayoutManager(
@@ -167,22 +159,25 @@ public class FragmentEditarComision extends Fragment {
             }
         }));
     }
-
     public void envioWebService() {
         request.setMethod("POST");
-        request.setQuery("ELIMINAR");
         request.setParametrosDatos("id_comision", String.valueOf(posicion));
         request.setParametrosDatos("nombre_foto", nombre_foto);
+        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        URL = null;
+        URL = auxiliarGeneral.getURLCOMISIONADEFULALL();
+        URL = URL + auxiliarGeneral.getDeletePHP("Comision");
+
         new TaskComision().execute(request);
     }
     public void inicializarControles(String mensaje) {
         recyclerViewLoadComision();
         posicion = 0;
+        nombre_foto.isEmpty();
         dialogoAlerta.alertDialog.dismiss();
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
     }
-
     public class TaskComision extends AsyncTask<Request, Boolean, Boolean> {
         @Override
         protected void onPreExecute() {
@@ -197,7 +192,7 @@ public class FragmentEditarComision extends Fragment {
             JSONObject json = null;
             boolean precessOK = true;
             try {
-                json = jsonParsing.parsingComision(params[0]);
+                json = jsonParsing.parsingJsonObject(params[0],URL);
                 if (json != null) {
                     success = json.getInt(TAG_SUCCESS);
                     mensaje =json.getString(TAG_MESSAGE);
@@ -232,12 +227,10 @@ public class FragmentEditarComision extends Fragment {
             }
         }
     }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
     public void recyclerViewLoadComision() {
         comisionArray = controladorAdeful.selectListaComisionAdeful();
         if(comisionArray != null) {
@@ -247,12 +240,10 @@ public class FragmentEditarComision extends Fragment {
            auxiliarGeneral.errorDataBase(getActivity());
         }
     }
-
     public static interface ClickListener {
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);
     }
-
     static class RecyclerTouchListener implements
             RecyclerView.OnItemTouchListener {
         private GestureDetector detector;
@@ -313,7 +304,6 @@ public class FragmentEditarComision extends Fragment {
         menu.getItem(11).setVisible(false); // consultar
         super.onCreateOptionsMenu(menu, inflater);
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 

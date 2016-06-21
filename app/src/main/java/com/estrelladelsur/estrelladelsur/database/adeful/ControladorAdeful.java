@@ -897,12 +897,13 @@ public class ControladorAdeful {
 
     /////////CARGO//////////////
     // INSERTAR CARGO
-    public boolean insertCargoAdeful(Cargo cargo)
+    public boolean insertCargoAdeful(int id, Cargo cargo)
             throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
+            cv.put("ID_CARGO", id);
             cv.put("CARGO", cargo.getCARGO());
             cv.put("USUARIO_CREADOR", cargo.getUSUARIO_CREADOR());
             cv.put("FECHA_CREACION", cargo.getFECHA_CREACION());
@@ -1255,7 +1256,7 @@ public class ControladorAdeful {
             cv.put("ID_CARGO", direccion.getID_CARGO());
             cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
             cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
-            cv.put("URL_COMISION", direccion.getURL_COMISION());
+            cv.put("URL_COMISION", direccion.getURL_DIRECCION());
             cv.put("USUARIO_CREADOR", direccion.getUSUARIO_CREADOR());
             cv.put("FECHA_CREACION", direccion.getFECHA_CREACION());
 
@@ -1435,7 +1436,7 @@ public class ControladorAdeful {
             cv.put("ID_CARGO", direccion.getID_CARGO());
             cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
             cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
-            cv.put("URL_COMISION", direccion.getURL_COMISION());
+            cv.put("URL_COMISION", direccion.getURL_DIRECCION());
             cv.put("USUARIO_ACTUALIZACION", direccion.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", direccion.getFECHA_ACTUALIZACION());
 

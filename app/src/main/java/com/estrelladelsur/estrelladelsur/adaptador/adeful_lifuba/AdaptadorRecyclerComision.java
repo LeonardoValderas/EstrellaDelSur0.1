@@ -15,6 +15,8 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class AdaptadorRecyclerComision extends
         RecyclerView.Adapter<AdaptadorRecyclerComision.ComisionViewHolder> implements
         View.OnClickListener {
@@ -29,7 +31,7 @@ public class AdaptadorRecyclerComision extends
         private TextView textRecyclerViewNombre;
         private TextView textRecyclerViewCargo;
         private TextView textRecyclerViewPeriodo;
-        private ImageView imageRecyclerViewFoto;
+        private CircleImageView imageRecyclerViewFoto;
         private byte[] foto;
 
 
@@ -42,7 +44,7 @@ public class AdaptadorRecyclerComision extends
                     .findViewById(R.id.textRecyclerViewCargo);
             textRecyclerViewPeriodo = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewPeriodo);
-            imageRecyclerViewFoto = (ImageView) itemView
+            imageRecyclerViewFoto = (CircleImageView) itemView
                     .findViewById(R.id.imageRecyclerViewFoto);
 
         }

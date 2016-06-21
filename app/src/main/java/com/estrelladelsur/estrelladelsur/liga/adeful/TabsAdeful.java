@@ -31,6 +31,7 @@ public class TabsAdeful extends AppCompatActivity {
 	private TextView txtAbSubTitulo;
 	private Typeface titulos;
 	private AuxiliarGeneral auxiliarGeneral;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

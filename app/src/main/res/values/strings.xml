@@ -5,6 +5,10 @@
     <!-- Navigation -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!--toolbar title activity-->
+    <string name="institucion.articulo.usuario">Articulos</string>
+    <string name="institucion.comision.usuario">Comisión Directiva</string>
+    <string name="institucion.direccion.usuario">Dirección Técnica</string>
 
     <!-- Array Tablas Adeful  -->
     <string-array name="tablasAdefulArray">
@@ -116,6 +120,7 @@
     <string-array name="ceroSpinnerCargo">
         <item><font fgcolor="#FF33B5E5">Genere un cargo.</font></item>
     </string-array>
+    <string name="ceroSpinnerCargo">Genere un cargo.</string>
 
     <!--FIXTURE-->
     <!-- Array SPINNER DIVISION  -->

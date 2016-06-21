@@ -27,10 +27,10 @@ public class TabsArticulo extends AppCompatActivity implements Communicator{
     private FragmentTransaction mCurTransaction;
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
-    private TextView txtAbTitulo;
-    private TextView txtAbSubTitulo;
+    private TextView txtAbTitulo, txtAbSubTitulo;
     private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

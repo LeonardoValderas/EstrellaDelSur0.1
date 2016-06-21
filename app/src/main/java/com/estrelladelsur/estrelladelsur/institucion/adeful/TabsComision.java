@@ -21,7 +21,6 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 public class TabsComision extends AppCompatActivity implements Communicator{
 
     private Toolbar toolbar;
-    private Toolbar toolbar_sub;
     private ActionBarDrawerToggle drawerToggle;
     private ViewPager viewPager;
     private int viewpagerid;
@@ -30,8 +29,7 @@ public class TabsComision extends AppCompatActivity implements Communicator{
     private FragmentTransaction mCurTransaction;
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
-    private TextView txtAbTitulo;
-    private TextView txtAbSubTitulo;
+    private TextView txtAbTitulo, txtAbSubTitulo;
     private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
     @Override

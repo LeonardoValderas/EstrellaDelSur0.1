@@ -37,7 +37,7 @@ import java.util.ArrayList;
 
 public class FragmentEditarDireccion extends Fragment {
 
-    private int CheckedPositionFragment;
+    private int CheckedPositionFragment, posicion = 0;
     private RecyclerView recyclerDireccion;
     private ControladorAdeful controladorAdeful;
     private ArrayList<Direccion> direccionArray;
@@ -48,12 +48,10 @@ public class FragmentEditarDireccion extends Fragment {
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private String ELIMINAR_DIRECCION = "Integrante eliminado correctamente";
-    private String mensaje = null;
+    private String mensaje = null, nombre_foto = null;
     private JsonParsing jsonParsing = new JsonParsing(getActivity());
-    private int posicion = 0;
-    private String nombre_foto = null;
     private Request request = new Request();
-
+    private String URL = null;
 
     public static FragmentEditarDireccion newInstance() {
         FragmentEditarDireccion fragment = new FragmentEditarDireccion();
@@ -160,7 +158,6 @@ public class FragmentEditarDireccion extends Fragment {
         direccionArray = controladorAdeful.selectListaDireccionAdeful();
         if(direccionArray != null) {
             adaptadorRecyclerDireccion = new AdaptadorRecyclerDireccion(direccionArray, getActivity());
-            adaptadorRecyclerDireccion.notifyDataSetChanged();
             recyclerDireccion.setAdapter(adaptadorRecyclerDireccion);
         }else{
         auxiliarGeneral.errorDataBase(getActivity());
@@ -169,21 +166,27 @@ public class FragmentEditarDireccion extends Fragment {
 
     public void envioWebService() {
         request.setMethod("POST");
-        request.setQuery("ELIMINAR");
         request.setParametrosDatos("id_direccion", String.valueOf(posicion));
         request.setParametrosDatos("nombre_foto", nombre_foto);
-        new TaskComision().execute(request);
+        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+
+        URL = null;
+        URL = auxiliarGeneral.getURLDIRECCIONADEFULALL();
+        URL = URL + auxiliarGeneral.getDeletePHP("Comision");
+
+        new TaskDireccion().execute(request);
     }
 
     public void inicializarControles(String mensaje) {
         recyclerViewLoadDireccion();
         posicion = 0;
+        nombre_foto.isEmpty();
         dialogoAlerta.alertDialog.dismiss();
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
     }
 
-    public class TaskComision extends AsyncTask<Request, Boolean, Boolean> {
+    public class TaskDireccion extends AsyncTask<Request, Boolean, Boolean> {
         @Override
         protected void onPreExecute() {
             dialog = new ProgressDialog(getActivity());
@@ -197,7 +200,7 @@ public class FragmentEditarDireccion extends Fragment {
             JSONObject json = null;
             boolean precessOK = true;
             try {
-                json = jsonParsing.parsingComision(params[0]);
+                json = jsonParsing.parsingJsonObject(params[0],URL);
                 if (json != null) {
                     success = json.getInt(TAG_SUCCESS);
                     mensaje =json.getString(TAG_MESSAGE);

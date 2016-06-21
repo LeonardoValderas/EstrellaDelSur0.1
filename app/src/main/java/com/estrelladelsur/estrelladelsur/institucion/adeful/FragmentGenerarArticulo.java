@@ -19,7 +19,6 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
@@ -120,7 +119,7 @@ public class FragmentGenerarArticulo extends Fragment {
                 articuloEditArticulo.getText().toString(),
                 usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
         URL = null;
-        URL = auxiliarGeneral.getURL()+auxiliarGeneral.getURLARTICULO();
+        URL = auxiliarGeneral.getURL()+auxiliarGeneral.getURLARTICULOADEFUL();
         envioWebService(ws);
     }
     public void envioWebService(int tipo) {
@@ -129,17 +128,15 @@ public class FragmentGenerarArticulo extends Fragment {
             request.setParametrosDatos("articulo", articulo.getARTICULO());
 
             if (tipo == 0) {
-                //request.setQuery("SUBIR");
                 request.setParametrosDatos("usuario_creador", articulo.getUSUARIO_CREADOR());
                 request.setParametrosDatos("fecha_creacion", articulo.getFECHA_CREACION());
-                requestUrl.setParametrosDatos("URL",URL+auxiliarGeneral.getInsertPHP("Articulo"));
+                URL = URL+auxiliarGeneral.getInsertPHP("Articulo");
 
             }else{
-                //request.setQuery("EDITAR");
                 request.setParametrosDatos("id_articulo", String.valueOf(articulo.getID_ARTICULO()));
                 request.setParametrosDatos("usuario_actualizacion", articulo.getUSUARIO_ACTUALIZACION());
                 request.setParametrosDatos("fecha_actualizacion", articulo.getFECHA_ACTUALIZACION());
-                requestUrl.setParametrosDatos("URL",URL+auxiliarGeneral.getUpdatePHP("Articulo"));
+                URL = URL+auxiliarGeneral.getUpdatePHP("Articulo");
             }
 
             new TaskArticulo().execute(request);
@@ -158,10 +155,8 @@ public class FragmentGenerarArticulo extends Fragment {
             int success;
             JSONObject json = null;
             boolean precessOK = true;
-            String UrlParsing = null;
             try {
-                UrlParsing = params[1].getParametros().get("URL");
-                json = jsonParsing.parsingJsonObject(params[0],UrlParsing);
+                json = jsonParsing.parsingJsonObject(params[0],URL);
                 if (json != null) {
                     success = json.getInt(TAG_SUCCESS);
                     mensaje =json.getString(TAG_MESSAGE);

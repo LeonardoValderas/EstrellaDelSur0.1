@@ -1,6 +1,7 @@
 package com.estrelladelsur.estrelladelsur.liga.adeful;
 
 import java.util.ArrayList;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
@@ -49,32 +51,27 @@ public class FragmentEquipo extends Fragment {
     private RecyclerView recycleViewEquipo;
     private EditText editTextNombre;
     private ImageView imageEquipo;
+    private TextInputLayout editTextInputDescripcion;
     private Equipo equipoAdeful;
     private ArrayList<Equipo> equipoAdefulArray;
     private AdaptadorRecyclerEquipo adaptador;
     private DialogoAlerta dialogoAlerta;
     private int gestion = 0;//0-insert //1-update//2-delete
-    private int posicion;
+    private int posicion, CheckedPositionFragment;
     private ControladorAdeful controladorAdeful;
-    private int CheckedPositionFragment;
     private String GUARDAR = "Equipo cargado correctamente";
     private String ACTUALIZAR = "Equipo actualizado correctamente";
     private String ELIMINAR = "Equipo eliminado correctamente";
     private Typeface editTextFont;
     private AuxiliarGeneral auxiliarGeneral;
-    private String nombreEquipoAnterior = null;
-    private String usuario = null;
-    private String mensaje = null;
+    private String nombreEquipoAnterior = null, usuario = null, mensaje = null,
+            url_escudo_equipo = null, encodedImage = null, URL = null;
     private Request request = new Request();
-    private Request requestUrl = new Request();
     private ProgressDialog dialog;
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private JsonParsing jsonParsing = new JsonParsing(getActivity());
     private static final String TAG_ID = "id";
-    private String url_escudo_equipo = null;
-    private String encodedImage = null;
-    private String URL = null;
 
     public static FragmentEquipo newInstance() {
         FragmentEquipo fragment = new FragmentEquipo();
@@ -82,7 +79,6 @@ public class FragmentEquipo extends Fragment {
     }
 
     public FragmentEquipo() {
-        // Required empty public constructor
     }
 
     @Override
@@ -107,6 +103,7 @@ public class FragmentEquipo extends Fragment {
                 .findViewById(R.id.imageButtonEquipo_Cancha);
         editTextNombre = (EditText) v.findViewById(R.id.editTextDescripcion);
         editTextNombre.setTypeface(editTextFont);
+        editTextInputDescripcion = (TextInputLayout) v.findViewById(R.id.editTextInputDescripcion);
         recycleViewEquipo = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
         return v;
@@ -119,9 +116,9 @@ public class FragmentEquipo extends Fragment {
     }
 
     private void init() {
-
         // imageButton que busca imagen del escudo del equipo en la memoria  interna
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+
         imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
         imageEquipo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +126,7 @@ public class FragmentEquipo extends Fragment {
                 ImageDialogEquipo();
             }
         });
-        editTextNombre.setHintTextColor(Color.GRAY);
+        editTextInputDescripcion.setHint("Ingrese el equipo");
 
         recycleViewEquipo.addOnItemTouchListener(new RecyclerTouchListener(
                 getActivity(), recycleViewEquipo, new ClickListener() {
@@ -152,7 +149,7 @@ public class FragmentEquipo extends Fragment {
                                 cargarEntidad(equipoAdefulArray
                                         .get(position)
                                         .getID_EQUIPO(), 3);
-                                    dialogoAlerta.alertDialog.dismiss();
+                                dialogoAlerta.alertDialog.dismiss();
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -241,7 +238,6 @@ public class FragmentEquipo extends Fragment {
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -283,14 +279,11 @@ public class FragmentEquipo extends Fragment {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
         }
     }
 
@@ -308,21 +301,20 @@ public class FragmentEquipo extends Fragment {
     }
 
     public void cargarEntidad(int id, int ws) {
-
         String nombreEquipo = null;
         nombreEquipo = editTextNombre.getText()
                 .toString();
+        String url_nombre_escudo = auxiliarGeneral.removeAccents(nombreEquipo.replace(" ", "").trim());
+
         URL = null;
         URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLEQUIPOADEFUL();
-        url_escudo_equipo = auxiliarGeneral.getURL() + auxiliarGeneral.getURLESCUDOEQUIPOADEFUL() +
-                auxiliarGeneral.getFechaFoto() + nombreEquipo + ".PNG";
+        url_escudo_equipo = URL + auxiliarGeneral.getURLESCUDOEQUIPOADEFUL() +
+                auxiliarGeneral.getFechaFoto() + url_nombre_escudo + ".PNG";
 
         equipoAdeful = new Equipo(id, nombreEquipo, imagenEscudo, usuario,
                 auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
-
         envioWebService(ws);
-
     }
 
     public void envioWebService(int tipo) {
@@ -335,29 +327,30 @@ public class FragmentEquipo extends Fragment {
 
             request.setParametrosDatos("escudo_equipo", encodedImage);
             request.setParametrosDatos("url_escudo", url_escudo_equipo);
-
         }
         //0 = insert // 1 = update // 2 = delete
         if (tipo == 0) {
-            requestUrl.setParametrosDatos("URL", URL +auxiliarGeneral.getInsertPHP("Equipo"));
             request.setParametrosDatos("usuario_creador", equipoAdeful.getUSUARIO_CREADOR());
             request.setParametrosDatos("fecha_creacion", equipoAdeful.getFECHA_CREACION());
-        } else if(tipo == 1){
-            requestUrl.setParametrosDatos("URL", URL +auxiliarGeneral.getUpdatePHP("Equipo"));
+            URL = URL + auxiliarGeneral.getInsertPHP("Equipo");
+        } else if (tipo == 1) {
+            //   requestUrl.setParametrosDatos("URL", URL +auxiliarGeneral.getUpdatePHP("Equipo"));
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
             request.setParametrosDatos("usuario_actualizacion", equipoAdeful.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", equipoAdeful.getFECHA_ACTUALIZACION());
 
-            nombreEquipoAnterior = nombreEquipoAnterior.equals(equipoAdeful.getNOMBRE_EQUIPO()) ? "":nombreEquipoAnterior;
+            nombreEquipoAnterior = nombreEquipoAnterior.equals(equipoAdeful.getNOMBRE_EQUIPO()) ? "" : nombreEquipoAnterior;
             request.setParametrosDatos("nombre_anterior", nombreEquipoAnterior);
-        }else{
-            requestUrl.setParametrosDatos("URL", URL +auxiliarGeneral.getDeletePHP("Equipo"));
+            URL = URL + auxiliarGeneral.getUpdatePHP("Equipo");
+        } else {
+            // requestUrl.setParametrosDatos("URL", URL +auxiliarGeneral.getDeletePHP("Equipo"));
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
             request.setParametrosDatos("nombre_anterior", nombreEquipoAnterior);
             request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+            URL = URL + auxiliarGeneral.getDeletePHP("Equipo");
         }
 
-        new TaskEquipo().execute(request,requestUrl);
+        new TaskEquipo().execute(request);
     }
 
 
@@ -376,10 +369,10 @@ public class FragmentEquipo extends Fragment {
             int success;
             JSONObject json = null;
             boolean precessOK = true;
-            String UrlParsing = null;
+            //String UrlParsing = null;
             try {
-                UrlParsing = params[1].getParametros().get("URL");
-                json = jsonParsing.parsingJsonObject(params[0], UrlParsing);
+                // json = jsonParsing.parsingJsonObject(params[0], URL);
+                json = jsonParsing.parsingJsonObject(params[0], URL);
                 if (json != null) {
                     success = json.getInt(TAG_SUCCESS);
                     mensaje = json.getString(TAG_MESSAGE);
@@ -395,13 +388,13 @@ public class FragmentEquipo extends Fragment {
                             } else {
                                 precessOK = false;
                             }
-                        } else if(gestion == 1){
+                        } else if (gestion == 1) {
                             if (controladorAdeful.actualizarEquipoAdeful(equipoAdeful)) {
                                 precessOK = true;
                             } else {
                                 precessOK = false;
                             }
-                        }else{
+                        } else {
                             if (controladorAdeful.eliminarArticuloAdeful(equipoAdeful.getID_EQUIPO())) {
                                 precessOK = true;
                             } else {
@@ -430,10 +423,10 @@ public class FragmentEquipo extends Fragment {
             if (result) {
                 if (gestion == 0) {
                     inicializarControles(GUARDAR);
-                } else if (gestion == 1){
+                } else if (gestion == 1) {
                     gestion = 0;
                     inicializarControles(ACTUALIZAR);
-                }else{
+                } else {
                     gestion = 0;
                     inicializarControles(ELIMINAR);
                 }
@@ -493,10 +486,10 @@ public class FragmentEquipo extends Fragment {
                         .show();
             } else {
                 if (gestion == 0) {
-                    cargarEntidad(0,0);
+                    cargarEntidad(0, 0);
                 } else if (gestion == 1) {
                     cargarEntidad(equipoAdefulArray.get(
-                            posicion).getID_EQUIPO(),1);
+                            posicion).getID_EQUIPO(), 1);
                 }
             }
             return true;

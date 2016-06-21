@@ -2,16 +2,14 @@ package com.estrelladelsur.estrelladelsur.institucion.adeful;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
@@ -31,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
@@ -43,31 +42,29 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.SplashUsuario;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FragmentGenerarComision extends Fragment {
 
-    private int CheckedPositionFragment;
-    private ImageView fotoImageComision;
+    private int CheckedPositionFragment, idComisionExtra;
+    private CircleImageView fotoImageComision;
     private EditText nombreEditComision;
     private Spinner puestoSpinnerComision;
-    private Button desdeButtonComision;
-    private Button hastaButtonComision;
-    private TextView tituloTextPeriodo;
+    private Button desdeButtonComision, hastaButtonComision;
+    private TextView tituloTextPeriodo, tituloTextCargo;
     private ControladorAdeful controladorAdeful;
-    private boolean insertar = true;
-    private Cargo cargo;
-    private Cargo cargoSpinner;
+    private boolean insertar = true, insertarCargo = true, actualizar = false, botonFecha = false;
+    private Cargo cargo, cargoSpinner;
     private Communicator communicator;
-    private boolean actualizar = false;
-    private int idComisionExtra;
     private ArrayList<Cargo> cargoArray;
     private AdapterSpinnerCargoComision adapterSpinnerCargoComision;
     private DialogoAlerta dialogoAlerta;
@@ -81,36 +78,31 @@ public class FragmentGenerarComision extends Fragment {
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
     private Calendar calendar = Calendar.getInstance();
-    private boolean botonFecha = false;
     private ArrayAdapter<String> adaptadorInicial;
-    private Typeface editTextFont;
-    private Typeface textViewFont;
+    private Typeface editTextFont, textViewFont;
     private AuxiliarGeneral auxiliarGeneral;
     private String GUARDAR_USUARIO = "Integrante ingresado correctamente";
     private String ACTUALIZAR_USUARIO = "Integrante actualizado correctamente";
-    private String usuario = null;
-    private String mensaje = null;
+    private String GUARDAR_CARGO = "Cargo generado correctamente";
+    private String ACTUALIZAR_CARGO = "Cargo actualizado correctamente";
     private Request request = new Request();
     private ProgressDialog dialog;
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private JsonParsing jsonParsing = new JsonParsing(getActivity());
     private static final String TAG_ID = "id";
-    private String encodedImage = null;
-    private String url_nombre_foto = null;
-    private Request requestUrl = new Request();
-    private String URL = null;
-    private String fechaFoto = null;
-    private String nombre_foto = null;
-    private String url_foto_comision =null;
+    private String encodedImage = null, url_nombre_foto = null, usuario = null, mensaje = null,
+            URL = null, fechaFoto = null, nombre_foto = null, url_foto_comision = null;
 
     public static FragmentGenerarComision newInstance() {
         FragmentGenerarComision fragment = new FragmentGenerarComision();
         return fragment;
     }
+
     public FragmentGenerarComision() {
         // Required empty public constructor
     }
+
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
@@ -122,6 +114,7 @@ public class FragmentGenerarComision extends Fragment {
             init();
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -130,7 +123,7 @@ public class FragmentGenerarComision extends Fragment {
         editTextFont = auxiliarGeneral.textFont(getActivity());
         textViewFont = auxiliarGeneral.tituloFont(getActivity());
         //FOTO INTEGRANTE
-        fotoImageComision = (ImageView) v
+        fotoImageComision = (CircleImageView) v
                 .findViewById(R.id.fotoImageComisionDireccion);
         //NOMBRE INTEGRANTE
         nombreEditComision = (EditText) v
@@ -151,13 +144,21 @@ public class FragmentGenerarComision extends Fragment {
         tituloTextPeriodo = (TextView) v
                 .findViewById(R.id.tituloTextPeriodo);
         tituloTextPeriodo.setTypeface(textViewFont);
+        tituloTextPeriodo.setPaintFlags(tituloTextPeriodo.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        tituloTextCargo = (TextView) v
+                .findViewById(R.id.tituloTextCargo);
+        tituloTextCargo.setTypeface(textViewFont);
+        tituloTextCargo.setPaintFlags(tituloTextCargo.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
         return v;
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
     }
+
     private void init() {
         // VER DONDE EJECUCTAR ESTA LINEA
         controladorAdeful = new ControladorAdeful(getActivity());
@@ -221,6 +222,7 @@ public class FragmentGenerarComision extends Fragment {
             }
         });
     }
+
     //Alerta galeria
     public void ImageDialogComision() {
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(
@@ -243,11 +245,10 @@ public class FragmentGenerarComision extends Fragment {
                 });
         myAlertDialog.show();
     }
+
     //get posicion en el spinner del cargo.
     private int getPositionCargo(int idCargo) {
-
         int index = 0;
-
         for (int i = 0; i < cargoArray.size(); i++) {
             if (cargoArray.get(i).getID_CARGO() == (idCargo)) {
                 index = i;
@@ -255,19 +256,25 @@ public class FragmentGenerarComision extends Fragment {
         }
         return index;
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
             Bitmap bitmapWeb = auxiliarGeneral.SeleccionarImagen(data, getContext(), true);
-            Bitmap bitmapImage = auxiliarGeneral.getRoundedBitmap(bitmapWeb);
-            if (bitmapImage != null )
-            fotoImageComision.setImageBitmap(bitmapImage);
+            //     Bitmap bitmapImage = auxiliarGeneral.getRoundedBitmap(bitmapWeb);
+//            if (bitmapImage != null)
+//                fotoImageComision.setImageBitmap(bitmapImage);
+            if (bitmapWeb != null)
+                fotoImageComision.setImageBitmap(bitmapWeb);
+
 
             baos = new ByteArrayOutputStream();
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 0, baos);
+            //bitmapImage.compress(Bitmap.CompressFormat.PNG, 0, baos);
+            bitmapWeb.compress(Bitmap.CompressFormat.PNG, 0, baos);
             imageComision = baos.toByteArray();
         }
     }
+
     public ArrayList<Cargo> selectCargoList() {
         // CARGO
         cargoArray = controladorAdeful.selectListaCargoAdeful();
@@ -276,6 +283,7 @@ public class FragmentGenerarComision extends Fragment {
 
         return cargoArray;
     }
+
     // POPULATION SPINNER
     public void loadSpinnerCargo() {
         if (selectCargoList().size() != 0) {
@@ -290,23 +298,28 @@ public class FragmentGenerarComision extends Fragment {
             puestoSpinnerComision.setAdapter(adaptadorInicial);
         }
     }
+
     // POPULATION LISTVIEW
     public void loadListViewMenu() {
         adapterList = new ArrayAdapter<Cargo>(getActivity(),
                 R.layout.listview_item_dialogo, R.id.textViewGeneral, selectCargoList());
         dialogoMenuLista.listViewGeneral.setAdapter(adapterList);
     }
+
     public void dateDesde() {
         desdeButtonComision.setText(formate.format(calendar.getTime()));
     }
+
     public void dateHasta() {
         hastaButtonComision.setText(formate.format(calendar.getTime()));
     }
+
     public void setDate() {
         new DatePickerDialog(getActivity(), d, calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
+
     DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear,
@@ -321,6 +334,7 @@ public class FragmentGenerarComision extends Fragment {
             }
         }
     };
+
     public void inicializarControles(String mensaje) {
         nombreEditComision.setText("");
         desdeButtonComision.setText("Desde");
@@ -331,27 +345,67 @@ public class FragmentGenerarComision extends Fragment {
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
     }
+
+    public void inicializarControlesCargo(String mensaje) {
+        loadSpinnerCargo();
+        if (insertarCargo) {
+            dialogoAlerta.alertDialog
+                    .dismiss();
+        } else {
+            loadListViewMenu();
+            dialogoAlertaEditar.alertDialog.dismiss();
+        }
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
+
     public void cargarEntidad(int id, int ws) {
-        url_nombre_foto = auxiliarGeneral.removeAccents(nombreEditComision.getText().toString().replace(" ", "").trim());
-
+        String nombre = null;
+        nombre = nombreEditComision.getText().toString();
+        url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
+        URL = null;
+        URL = auxiliarGeneral.getURLCOMISIONADEFULALL();
         fechaFoto = auxiliarGeneral.getFechaFoto();
-        nombre_foto =  fechaFoto + url_nombre_foto+".PNG";
-        url_foto_comision = auxiliarGeneral.getURL() + auxiliarGeneral.getURLFOTOCOMISIONADEFUL() +
-                nombre_foto;
+        nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
+        url_foto_comision = auxiliarGeneral.getURLFOTOCOMISIONADEFUL() + nombre_foto;
 
-        comision = new Comision(id, nombreEditComision.getText().toString(),
+        comision = new Comision(id, nombre,
                 imageComision, nombre_foto, cargoSpinner.getID_CARGO(), null, desdeButtonComision.getText().toString(),
                 hastaButtonComision.getText().toString(), url_foto_comision, usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
-        URL = null;
-        URL = auxiliarGeneral.getURL()+auxiliarGeneral.getURLCOMISION();
 
         envioWebService(ws);
 
     }
+
+    public void cargarEntidadCargo(int id, int ws, String cargoEntidad) {
+        URL = null;
+        URL = auxiliarGeneral.getURLCARGOADEFULALL();
+
+        cargo = new Cargo(id, cargoEntidad, usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
+        envioWebServiceCargo(ws);
+    }
+
+    public void envioWebServiceCargo(int tipo) {
+        request.setMethod("POST");
+        request.setParametrosDatos("cargo", cargo.getCARGO());
+        if (tipo == 0) {
+            request.setParametrosDatos("usuario_creador", cargo.getUSUARIO_CREADOR());
+            request.setParametrosDatos("fecha_creacion", cargo.getFECHA_CREACION());
+            URL = URL + auxiliarGeneral.getInsertPHP("Cargo");
+            insertarCargo = true;
+        } else {
+            request.setParametrosDatos("id_cargo", String.valueOf(cargo.getID_CARGO()));
+            request.setParametrosDatos("usuario_actualizacion", cargo.getUSUARIO_ACTUALIZACION());
+            request.setParametrosDatos("fecha_actualizacion", cargo.getFECHA_ACTUALIZACION());
+            URL = URL + auxiliarGeneral.getUpdatePHP("Cargo");
+            insertarCargo = false;
+        }
+        new TaskCargo().execute(request);
+    }
+
     public void envioWebService(int tipo) {
         request.setMethod("POST");
         request.setParametrosDatos("nombre", comision.getNOMBRE_COMISION());
-        request.setParametrosDatos("nombre_foto",comision.getNOMBRE_FOTO());
         request.setParametrosDatos("id_cargo", String.valueOf(comision.getID_CARGO()));
         request.setParametrosDatos("periodo_desde", comision.getPERIODO_DESDE());
         request.setParametrosDatos("periodo_hasta", comision.getPERIODO_HASTA());
@@ -363,24 +417,93 @@ public class FragmentGenerarComision extends Fragment {
             request.setParametrosDatos("foto", encodedImage);
             request.setParametrosDatos("url_foto",
                     comision.getURL_COMISION());
+         //   request.setParametrosDatos("nombre_foto", comision.getNOMBRE_FOTO());
+
         }
         if (tipo == 0) {
-            request.setQuery("SUBIR");
+            //request.setQuery("SUBIR");
             request.setParametrosDatos("usuario_creador", comision.getUSUARIO_CREADOR());
             request.setParametrosDatos("fecha_creacion", comision.getFECHA_CREACION());
-            //requestUrl.setParametrosDatos("URL",URL+auxiliarGeneral.getInsertPHP("Comision"));
-            URL = URL+auxiliarGeneral.getInsertPHP("Comision");
+            URL = URL + auxiliarGeneral.getInsertPHP("Comision");
 
-        }else{
-            request.setQuery("EDITAR");
+        } else {
+            //request.setQuery("EDITAR");
             request.setParametrosDatos("id_comision", String.valueOf(comision.getID_COMISION()));
             request.setParametrosDatos("usuario_actualizacion", comision.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", comision.getFECHA_ACTUALIZACION());
-            //requestUrl.setParametrosDatos("URL",URL+auxiliarGeneral.getUpdatePHP("Comision"));
-            URL = URL+auxiliarGeneral.getUpdatePHP("Comision");
+            URL = URL + auxiliarGeneral.getUpdatePHP("Comision");
         }
         new TaskComision().execute(request);
     }
+
+    public class TaskCargo extends AsyncTask<Request, Boolean, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(getActivity());
+            dialog.setMessage("Procesando...");
+            dialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Request... params) {
+            int success;
+            JSONObject json = null;
+            boolean precessOK = true;
+            try {
+                json = jsonParsing.parsingJsonObject(params[0], URL);
+                if (json != null) {
+                    success = json.getInt(TAG_SUCCESS);
+                    mensaje = json.getString(TAG_MESSAGE);
+                    if (success == 0) {
+                        if (insertarCargo) {
+                            int id = json.getInt(TAG_ID);
+                            if (id > 0) {
+                                if (controladorAdeful.insertCargoAdeful(id, cargo)) {
+                                    precessOK = true;
+                                } else {
+                                    precessOK = false;
+                                }
+                            } else {
+                                precessOK = false;
+                            }
+                        } else {
+                            if (controladorAdeful.actualizarCargoAdeful(cargo)) {
+                                precessOK = true;
+                            } else {
+                                precessOK = false;
+                            }
+                        }
+                        precessOK = true;
+                    } else {
+                        precessOK = false;
+                    }
+                } else {
+                    precessOK = false;
+                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
+                }
+            } catch (JSONException e) {
+                precessOK = false;
+                mensaje = "Error(5). Por favor comuniquese con el administrador.";
+            }
+            return precessOK;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            dialog.dismiss();
+
+            if (result) {
+                if (insertarCargo) {
+                    inicializarControlesCargo(GUARDAR_CARGO);
+                } else {
+                    inicializarControlesCargo(ACTUALIZAR_CARGO);
+                }
+            } else {
+                auxiliarGeneral.errorWebService(getActivity(), mensaje);
+            }
+        }
+    }
+
     // enviar/editar articulo
     public class TaskComision extends AsyncTask<Request, Boolean, Boolean> {
         @Override
@@ -398,10 +521,10 @@ public class FragmentGenerarComision extends Fragment {
             //String UrlParsing = null;
             try {
                 //UrlParsing = params[1].getParametros().get("URL");
-                json = jsonParsing.parsingJsonObject(params[0],URL);
+                json = jsonParsing.parsingJsonObject(params[0], URL);
                 if (json != null) {
                     success = json.getInt(TAG_SUCCESS);
-                    mensaje =json.getString(TAG_MESSAGE);
+                    mensaje = json.getString(TAG_MESSAGE);
                     if (success == 0) {
                         if (insertar) {
                             int id = json.getInt(TAG_ID);
@@ -417,7 +540,7 @@ public class FragmentGenerarComision extends Fragment {
                         } else {
                             if (controladorAdeful.actualizarComisionAdeful(comision)) {
                                 precessOK = true;
-                            }else{
+                            } else {
                                 precessOK = false;
                             }
                         }
@@ -453,10 +576,12 @@ public class FragmentGenerarComision extends Fragment {
             }
         }
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
@@ -474,6 +599,7 @@ public class FragmentGenerarComision extends Fragment {
         menu.getItem(11).setVisible(false); // consultar
         super.onCreateOptionsMenu(menu, inflater);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -496,7 +622,7 @@ public class FragmentGenerarComision extends Fragment {
             if (nombreEditComision.getText().toString().equals("")) {
                 Toast.makeText(getActivity(), "Ingrese el nombre del integrante de la comisión.",
                         Toast.LENGTH_SHORT).show();
-            } else if (puestoSpinnerComision.getSelectedItem().toString().equals(getResources().getStringArray(R.array.ceroSpinnerCargo))) {
+            } else if (puestoSpinnerComision.getSelectedItem().toString().equals(getResources().getString(R.string.ceroSpinnerCargo))) {
                 Toast.makeText(getActivity(), "Debe agregar un Cargo (Menu-Cargo).",
                         Toast.LENGTH_SHORT).show();
             } else if (desdeButtonComision.getText().toString().equals("Desde") || hastaButtonComision.getText().toString().equals("Hasta")) {
@@ -504,10 +630,10 @@ public class FragmentGenerarComision extends Fragment {
                         Toast.LENGTH_SHORT).show();
             } else if (insertar) {
                 cargoSpinner = (Cargo) puestoSpinnerComision.getSelectedItem();
-                cargarEntidad(0,0);
+                cargarEntidad(0, 0);
             } else { //COMISION ACTUALIZAR
                 cargoSpinner = (Cargo) puestoSpinnerComision.getSelectedItem();
-                cargarEntidad(idComisionExtra,1);
+                cargarEntidad(idComisionExtra, 1);
             }
             return true;
         }
@@ -545,33 +671,15 @@ public class FragmentGenerarComision extends Fragment {
                                         @Override
                                         public void onClick(View v) {
                                             // TODO Auto-generated method stub
-                                            if (!dialogoAlerta.editTextUno
-                                                    .getText().toString()
+                                            String cargoInsert = dialogoAlerta.editTextUno
+                                                    .getText().toString();
+                                            if (!cargoInsert
                                                     .equals("")) {
-
-                                                cargo = new Cargo(0,
-                                                        dialogoAlerta.editTextUno
-                                                                .getText()
-                                                                .toString(), usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
-                                                if (controladorAdeful
-                                                        .insertCargoAdeful(cargo)) {
-                                                    //SPINNER
-                                                    loadSpinnerCargo();
-
-                                                    Toast.makeText(
-                                                            getActivity(),
-                                                            "Cargo generado correctamente.",
-                                                            Toast.LENGTH_SHORT)
-                                                            .show();
-                                                    dialogoAlerta.alertDialog
-                                                            .dismiss();
-                                                } else {
-                                                    auxiliarGeneral.errorDataBase(getActivity());
-                                                }
+                                                cargarEntidadCargo(0, 0, cargoInsert);
                                             } else {
                                                 Toast.makeText(
                                                         getActivity(),
-                                                        "Ingrese un Cargo.",
+                                                        "Ingrese un cargo.",
                                                         Toast.LENGTH_SHORT)
                                                         .show();
                                             }
@@ -624,24 +732,9 @@ public class FragmentGenerarComision extends Fragment {
                                         @Override
                                         public void onClick(View v) {
                                             // TODO Auto-generated method stub
-                                            if (!dialogoAlertaEditar.editTextUno.getText().toString().equals("")) {
-                                                String usuario = "Administrador";
-                                                cargo = new Cargo(
-                                                        cargoArray.get(position).getID_CARGO(),
-                                                        dialogoAlertaEditar.editTextUno.getText().toString(),
-                                                        null, null, usuario, auxiliarGeneral.getFechaOficial());
-                                                if (controladorAdeful
-                                                        .actualizarCargoAdeful(cargo)) {
-                                                    loadListViewMenu();
-                                                    loadSpinnerCargo();
-                                                    dialogoAlertaEditar.alertDialog.dismiss();
-                                                    Toast.makeText(
-                                                            getActivity(),
-                                                            "Cargo actualizado correctamente.",
-                                                            Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    auxiliarGeneral.errorDataBase(getActivity());
-                                                }
+                                            String cargoEdit = dialogoAlertaEditar.editTextUno.getText().toString();
+                                            if (!cargoEdit.equals("")) {
+                                                cargarEntidadCargo(cargoArray.get(position).getID_CARGO(), 1, cargoEdit);
                                             } else {
                                                 Toast.makeText(
                                                         getActivity(),

@@ -36,9 +36,9 @@ public class JsonParsing {
         context = c;
         auxiliarGeneral = new AuxiliarGeneral(context);
         URL = auxiliarGeneral.getURL();
-        URLARTICULO = auxiliarGeneral.getURLARTICULO();
+        URLARTICULO = auxiliarGeneral.getURLARTICULOADEFUL();
         URLSINCRONIZAR = auxiliarGeneral.getURLSINCRONIZARUSUARIO();
-        URLCOMISION = auxiliarGeneral.getURLCOMISION();
+        URLCOMISION = auxiliarGeneral.getURLCOMISIONADEFUL();
     }
 
     public JSONObject parsingJsonObject(Request request,String url_parsing) {
@@ -90,6 +90,7 @@ public class JsonParsing {
                 }
             }
             try {
+                if(json!=null)
                 jObj = new JSONObject(json);
             } catch (JSONException e) {
 

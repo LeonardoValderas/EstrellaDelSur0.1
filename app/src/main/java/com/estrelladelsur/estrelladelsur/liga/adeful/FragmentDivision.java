@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -43,6 +44,7 @@ public class FragmentDivision extends Fragment {
 	private ControladorAdeful controladorAdeful;
 	private int CheckedPositionFragment;
 	private ImageView imageButtonEquipo ;
+	private TextInputLayout editTextInputDescripcion;
 	private String GUARDAR_USUARIO = "División cargada correctamente";
 	private String ACTUALIZAR_USUARIO = "División actualizada correctamente";
 	private Typeface editTextFont;
@@ -80,6 +82,9 @@ public class FragmentDivision extends Fragment {
 		editTextDivision = (EditText) v.findViewById(
 				R.id.editTextDescripcion);
 		editTextDivision.setTypeface(editTextFont);
+
+		editTextInputDescripcion = (TextInputLayout) v.findViewById(R.id.editTextInputDescripcion);
+
 		imageButtonEquipo= (ImageView) v.findViewById(
 				R.id.imageButtonEquipo_Cancha);
 		imageButtonEquipo.setVisibility(View.GONE);
@@ -97,8 +102,9 @@ public class FragmentDivision extends Fragment {
 	
 	private void init() {
 
-		editTextDivision.setHint("Ingrese una División");
-		editTextDivision.setHintTextColor(Color.GRAY);
+	//	editTextDivision.setHint("Ingrese una División");
+//		editTextDivision.setHintTextColor(Color.GRAY);
+		editTextInputDescripcion.setHint("Ingrese una división");
 		recyclerViewLoadDivision();
 		recycleViewDivision.addOnItemTouchListener(new RecyclerTouchListener(
 				getActivity(), recycleViewDivision, new ClickListener() {

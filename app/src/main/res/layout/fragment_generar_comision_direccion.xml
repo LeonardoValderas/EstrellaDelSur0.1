@@ -19,44 +19,66 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/fotoImageComisionDireccion"
                     android:layout_width="110dp"
                     android:layout_height="110dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="15dp"
-                    android:background="@drawable/border_circle"
                     android:clickable="true"
-                    android:src="@mipmap/ic_foto_galery" />
+                    android:src="@mipmap/ic_foto_galery"
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="1dp" />
 
-                <EditText
-                    android:id="@+id/nombreEditComisionDireccion"
+                <android.support.design.widget.TextInputLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/nombreEditComisionDireccion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:hint="Nombre"
+                        android:maxLength="25"
+                        android:textSize="30dp">
+
+                        <requestFocus />
+                    </EditText>
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:hint="Nombre"
-                    android:textSize="30dp">
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
 
-                    <requestFocus />
-                </EditText>
+                    <TextView
+                        android:id="@+id/tituloTextCargo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Cargo"
+                        android:textSize="25dp" />
 
-             <Spinner
-                    android:id="@+id/puestoSpinnerComisionDireccion"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center"
-                    android:layout_margin="2dp"
-                    android:background="@drawable/style_spinner"
-                    android:layout_marginTop="30dp" />
+                    <Spinner
+                        android:id="@+id/puestoSpinnerComisionDireccion"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/style_spinner"
+                        android:gravity="center" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linerFoto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -67,12 +89,14 @@
                     android:text="Periodo"
                     android:textSize="25dp" />
             </LinearLayout>
+
             <LinearLayout
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
+
                 <Button
                     android:id="@+id/desdeEditComisionDireccion"
                     android:layout_width="wrap_content"

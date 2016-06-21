@@ -31,8 +31,6 @@ import java.util.ArrayList;
 public class ArticuloUsuario extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private TextView txtAbTitulo;
-    private TextView txtAbSubTitulo;
     private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Articulo> articuloArray;
@@ -53,19 +51,11 @@ public class ArticuloUsuario extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-
-        txtAbTitulo.setText("Articulo");
-        txtAbTitulo.setPaintFlags(txtAbTitulo.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        txtAbTitulo.setTypeface(titulos, Typeface.BOLD);
-        //txtAbTitulo.setTypeface(titulos);
         init();
     }
-
     public void init() {
         recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
         initRecycler();
@@ -77,7 +67,7 @@ public class ArticuloUsuario extends AppCompatActivity {
 
             @Override
             public void onClick(View view, int position) {
-                dialogoArticulo = new DialogoArticulo(ArticuloUsuario.this,"ARTICULO", articuloArray.get(position).getTITULO(),
+                dialogoArticulo = new DialogoArticulo(ArticuloUsuario.this,articuloArray.get(position).getTITULO(),
                         articuloArray.get(position).getARTICULO());
                 dialogoArticulo.btnCerrar.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -86,14 +76,11 @@ public class ArticuloUsuario extends AppCompatActivity {
                     }
                 });
             }
-
             @Override
             public void onLongClick(View view, final int position) {
-
             }
         }));
     }
-
     public void initRecycler(){
         recycleViewUsuarioGeneral.setLayoutManager(new LinearLayoutManager(
                 ArticuloUsuario.this, LinearLayoutManager.VERTICAL, false));
@@ -101,7 +88,6 @@ public class ArticuloUsuario extends AppCompatActivity {
                 ArticuloUsuario.this, DividerItemDecoration.VERTICAL_LIST));
         recycleViewUsuarioGeneral.setItemAnimator(new DefaultItemAnimator());
     }
-
     public void recyclerViewLoadArticulo() {
         articuloArray = controladorUsuario.selectListaArticuloAdeful();
         if(articuloArray!= null) {
@@ -111,14 +97,10 @@ public class ArticuloUsuario extends AppCompatActivity {
             auxiliarGeneral.errorDataBase(ArticuloUsuario.this);
         }
     }
-
-
-
     public static interface ClickListener {
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);
     }
-
     static class RecyclerTouchListener implements
             RecyclerView.OnItemTouchListener {
 
@@ -159,17 +141,11 @@ public class ArticuloUsuario extends AppCompatActivity {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
-
         }
-
     }
 }

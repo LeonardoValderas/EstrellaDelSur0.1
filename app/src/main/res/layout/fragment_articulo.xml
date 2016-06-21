@@ -1,9 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.estrelladelsur.institucion.TabsArticulo">
+    tools:context="com.estrelladelsur.estrelladelsur.institucion.adeful.TabsArticulo">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:ems="10"
+            android:maxLength="35"
             android:gravity="center"
             android:hint="Titulo"
             android:textSize="30dp">
@@ -41,6 +41,7 @@
                     android:ems="10"
                     android:gravity="center"
                     android:hint="Articulo"
+                    android:maxLength="698"
                     android:inputType="textMultiLine"
                     android:lines="5"
                     android:textSize="25dp" />
