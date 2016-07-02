@@ -264,14 +264,15 @@ public class FragmentGenerarComision extends Fragment {
             //     Bitmap bitmapImage = auxiliarGeneral.getRoundedBitmap(bitmapWeb);
 //            if (bitmapImage != null)
 //                fotoImageComision.setImageBitmap(bitmapImage);
-            if (bitmapWeb != null)
+            if (bitmapWeb != null) {
                 fotoImageComision.setImageBitmap(bitmapWeb);
 
 
-            baos = new ByteArrayOutputStream();
-            //bitmapImage.compress(Bitmap.CompressFormat.PNG, 0, baos);
-            bitmapWeb.compress(Bitmap.CompressFormat.PNG, 0, baos);
-            imageComision = baos.toByteArray();
+                baos = new ByteArrayOutputStream();
+                //bitmapImage.compress(Bitmap.CompressFormat.PNG, 0, baos);
+                bitmapWeb.compress(Bitmap.CompressFormat.PNG, 0, baos);
+                imageComision = baos.toByteArray();
+            }
         }
     }
 
@@ -360,14 +361,19 @@ public class FragmentGenerarComision extends Fragment {
     }
 
     public void cargarEntidad(int id, int ws) {
+
         String nombre = null;
         nombre = nombreEditComision.getText().toString();
-        url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
         URL = null;
+        url_foto_comision = null;
+        // si la foto es null(default) no enviaremos la url.
+        if (imageComision != null) {
+            url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
+            fechaFoto = auxiliarGeneral.getFechaFoto();
+            nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
+            url_foto_comision = auxiliarGeneral.getURLFOTOCOMISIONADEFUL() + nombre_foto;
+        }
         URL = auxiliarGeneral.getURLCOMISIONADEFULALL();
-        fechaFoto = auxiliarGeneral.getFechaFoto();
-        nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
-        url_foto_comision = auxiliarGeneral.getURLFOTOCOMISIONADEFUL() + nombre_foto;
 
         comision = new Comision(id, nombre,
                 imageComision, nombre_foto, cargoSpinner.getID_CARGO(), null, desdeButtonComision.getText().toString(),
@@ -417,7 +423,7 @@ public class FragmentGenerarComision extends Fragment {
             request.setParametrosDatos("foto", encodedImage);
             request.setParametrosDatos("url_foto",
                     comision.getURL_COMISION());
-         //   request.setParametrosDatos("nombre_foto", comision.getNOMBRE_FOTO());
+            request.setParametrosDatos("nombre_foto", comision.getNOMBRE_FOTO());
 
         }
         if (tipo == 0) {

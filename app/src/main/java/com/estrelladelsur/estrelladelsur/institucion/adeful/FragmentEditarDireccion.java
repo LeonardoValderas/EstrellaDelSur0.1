@@ -167,12 +167,13 @@ public class FragmentEditarDireccion extends Fragment {
     public void envioWebService() {
         request.setMethod("POST");
         request.setParametrosDatos("id_direccion", String.valueOf(posicion));
+        if(nombre_foto != null)
         request.setParametrosDatos("nombre_foto", nombre_foto);
         request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
 
         URL = null;
         URL = auxiliarGeneral.getURLDIRECCIONADEFULALL();
-        URL = URL + auxiliarGeneral.getDeletePHP("Comision");
+        URL = URL + auxiliarGeneral.getDeletePHP("Direccion");
 
         new TaskDireccion().execute(request);
     }
@@ -180,7 +181,7 @@ public class FragmentEditarDireccion extends Fragment {
     public void inicializarControles(String mensaje) {
         recyclerViewLoadDireccion();
         posicion = 0;
-        nombre_foto.isEmpty();
+        nombre_foto = null;
         dialogoAlerta.alertDialog.dismiss();
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();

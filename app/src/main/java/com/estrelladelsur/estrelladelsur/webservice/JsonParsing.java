@@ -69,6 +69,7 @@ public class JsonParsing {
                 write.flush();
             }
             con.setConnectTimeout(4000);
+
             StringBuilder sb = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(
                     con.getInputStream()));

@@ -162,6 +162,7 @@ public class FragmentEditarComision extends Fragment {
     public void envioWebService() {
         request.setMethod("POST");
         request.setParametrosDatos("id_comision", String.valueOf(posicion));
+        if(nombre_foto != null)
         request.setParametrosDatos("nombre_foto", nombre_foto);
         request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
         URL = null;
@@ -173,7 +174,7 @@ public class FragmentEditarComision extends Fragment {
     public void inicializarControles(String mensaje) {
         recyclerViewLoadComision();
         posicion = 0;
-        nombre_foto.isEmpty();
+        nombre_foto = null ;
         dialogoAlerta.alertDialog.dismiss();
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();

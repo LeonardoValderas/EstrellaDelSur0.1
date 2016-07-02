@@ -1256,7 +1256,7 @@ public class ControladorAdeful {
             cv.put("ID_CARGO", direccion.getID_CARGO());
             cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
             cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
-            cv.put("URL_COMISION", direccion.getURL_DIRECCION());
+            cv.put("URL_DIRECCION", direccion.getURL_DIRECCION());
             cv.put("USUARIO_CREADOR", direccion.getUSUARIO_CREADOR());
             cv.put("FECHA_CREACION", direccion.getFECHA_CREACION());
 
@@ -1436,7 +1436,7 @@ public class ControladorAdeful {
             cv.put("ID_CARGO", direccion.getID_CARGO());
             cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
             cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
-            cv.put("URL_COMISION", direccion.getURL_DIRECCION());
+            cv.put("URL_DIRECCION", direccion.getURL_DIRECCION());
             cv.put("USUARIO_ACTUALIZACION", direccion.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", direccion.getFECHA_ACTUALIZACION());
 

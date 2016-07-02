@@ -48,6 +48,7 @@ public class SplashUsuario extends AppCompatActivity {
     private String sinDatos = null;
     private Comision comision;
     private Direccion direccion;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +101,7 @@ public class SplashUsuario extends AppCompatActivity {
         request.setParametrosDatos("ARTICULO_ADEFUL", "2016-04-23--09-29-0");
         request.setParametrosDatos("COMISION_ADEFUL", "2016-04-23--09-29-0");
         request.setParametrosDatos("DIRECCION_ADEFUL", "2016-04-23--09-29-0");
-        requestUrl.setParametrosDatos("URL", auxiliarGeneral.getURL() +auxiliarGeneral.getURLSINCRONIZARUSUARIO());
+        requestUrl.setParametrosDatos("URL", auxiliarGeneral.getURL() + auxiliarGeneral.getURLSINCRONIZARUSUARIO());
 
 //
 //        if (tipo == 0) {
@@ -112,7 +113,7 @@ public class SplashUsuario extends AppCompatActivity {
 //            request.setParametrosDatos("id_articulo", String.valueOf(articulo.getID_ARTICULO()));
 //            request.setParametrosDatos("usuario_actualizacion", articulo.getUSUARIO_ACTUALIZACION());
 //        }
-        new TaskSincronizar().execute(request,requestUrl);
+        new TaskSincronizar().execute(request, requestUrl);
     }
 
 
@@ -132,19 +133,19 @@ public class SplashUsuario extends AppCompatActivity {
             JSONObject jsonArrayResponseAux = null;
             boolean precessOK = true;
             Articulo articulo;
-            String URL= null;
+            String URL = null;
             try {
 
                 URL = params[1].getParametros().get("URL");
-                json = jsonParsing.parsingJsonObject(params[0],URL);
+                json = jsonParsing.parsingJsonObject(params[0], URL);
 
                 if (json != null) {
 
                     //0=ok, 3 sin datos cargados
-                   jsonArrayResponse = json.optJSONArray("RESPONSE");
-                   jsonArrayResponseAux = jsonArrayResponse.getJSONObject(0);
-                        success = jsonArrayResponseAux.getInt(TAG_SUCCESS);
-                        mensaje = jsonArrayResponseAux.getString(TAG_MESSAGE);
+                    jsonArrayResponse = json.optJSONArray("RESPONSE");
+                    jsonArrayResponseAux = jsonArrayResponse.getJSONObject(0);
+                    success = jsonArrayResponseAux.getInt(TAG_SUCCESS);
+                    mensaje = jsonArrayResponseAux.getString(TAG_MESSAGE);
 
                     if (success == 0) {
                         jsonArray = json.optJSONArray("ARTICULO_ADEFUL");
@@ -181,13 +182,13 @@ public class SplashUsuario extends AppCompatActivity {
 
                                         Bitmap b = getBitmap(imageString);
                                         byte[] byteArray = null;
-                                        if(b != null) {
+                                        if (b != null) {
                                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                             b.compress(Bitmap.CompressFormat.PNG, 0, stream);
                                             byteArray = stream.toByteArray();
                                         }
                                         comision = new Comision(jsonAux.getInt("ID_COMISION"),
-                                                jsonAux.getString("NOMBRE_COMISION"), byteArray, jsonAux.getString("CARGO"),jsonAux.getString("PERIODO_DESDE"),jsonAux.getString("PERIODO_HASTA") );
+                                                jsonAux.getString("NOMBRE_COMISION"), byteArray, jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
 
                                         if (!controladorUsuario.insertComisionUsuario(comision)) {
                                             precessOK = false;
@@ -213,13 +214,13 @@ public class SplashUsuario extends AppCompatActivity {
 
                                         Bitmap b = getBitmap(imageString);
                                         byte[] byteArray = null;
-                                        if(b != null) {
+                                        if (b != null) {
                                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                             b.compress(Bitmap.CompressFormat.PNG, 0, stream);
                                             byteArray = stream.toByteArray();
                                         }
                                         direccion = new Direccion(jsonAux.getInt("ID_DIRECCION"),
-                                                jsonAux.getString("NOMBRE_DIRECCION"), byteArray, jsonAux.getString("CARGO"),jsonAux.getString("PERIODO_DESDE"),jsonAux.getString("PERIODO_HASTA") );
+                                                jsonAux.getString("NOMBRE_DIRECCION"), byteArray, jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
 
                                         if (!controladorUsuario.insertDireccionUsuario(direccion)) {
                                             precessOK = false;
@@ -271,18 +272,12 @@ public class SplashUsuario extends AppCompatActivity {
 
                 Intent i = new Intent(SplashUsuario.this, NavigationUsuario.class);
                 startActivity(i);
-//                if (insertar) {
-//                    inicializarControles(GUARDAR_USUARIO);
-//                } else {
-//                    actualizar = false;
-//                    insertar = true;
-//                    inicializarControles(ACTUALIZAR_USUARIO);
-//                }
-//            } else {
-//                auxiliarGeneral.errorWebService(getActivity(), mensaje);
+            } else {
+                auxiliarGeneral.errorWebService(SplashUsuario.this, mensaje);
             }
         }
     }
+
     public static Bitmap getBitmap(String url) {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
@@ -293,19 +288,20 @@ public class SplashUsuario extends AppCompatActivity {
         bmOptions = new BitmapFactory.Options();
         bmOptions.inSampleSize = 1;
 
-        if(bmOptions != null)
-        bm = loadBitmap(url, bmOptions);
+        if (bmOptions != null)
+            bm = loadBitmap(url, bmOptions);
 
         return bm;
     }
+
     public static Bitmap loadBitmap(String URL, BitmapFactory.Options options) {
         Bitmap bitmap = null;
         InputStream in = null;
         try {
             in = OpenHttpConnection(URL);
             bitmap = BitmapFactory.decodeStream(in, null, options);
-            if(in != null)
-            in.close();
+            if (in != null)
+                in.close();
         } catch (IOException e1) {
         }
         return bitmap;

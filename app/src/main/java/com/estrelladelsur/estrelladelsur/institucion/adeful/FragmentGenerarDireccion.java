@@ -260,11 +260,12 @@ public class FragmentGenerarDireccion extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
             Bitmap bitmapWeb = auxiliarGeneral.SeleccionarImagen(data, getContext(), true);
-            if (bitmapWeb != null)
+            if (bitmapWeb != null) {
                 fotoImageDireccion.setImageBitmap(bitmapWeb);
-            baos = new ByteArrayOutputStream();
-            bitmapWeb.compress(Bitmap.CompressFormat.PNG, 0, baos);
-            imageDireccion = baos.toByteArray();
+                baos = new ByteArrayOutputStream();
+                bitmapWeb.compress(Bitmap.CompressFormat.PNG, 0, baos);
+                imageDireccion = baos.toByteArray();
+            }
         }
     }
 
@@ -354,14 +355,15 @@ public class FragmentGenerarDireccion extends Fragment {
     public void cargarEntidad(int id, int ws) {
         String nombre = null;
         nombre = nombreEditDireccion.getText().toString();
-        url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
         URL = null;
+        url_foto_direccion = null;
+        if (imageDireccion != null) {
+            url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
+            fechaFoto = auxiliarGeneral.getFechaFoto();
+            nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
+            url_foto_direccion = auxiliarGeneral.getURLFOTODIRECCIONADEFUL() + nombre_foto;
+        }
         URL = auxiliarGeneral.getURLDIRECCIONADEFULALL();
-        fechaFoto = auxiliarGeneral.getFechaFoto();
-        nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
-        url_foto_direccion = auxiliarGeneral.getURLFOTODIRECCIONADEFUL() + nombre_foto;
-
-
         direccion = new Direccion(id, nombre,
                 imageDireccion, nombre_foto, cargoSpinner.getID_CARGO(), null, desdeButtonDireccion.getText().toString(),
                 hastaButtonDireccion.getText().toString(), url_foto_direccion, usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
@@ -380,7 +382,7 @@ public class FragmentGenerarDireccion extends Fragment {
     public void envioWebService(int tipo) {
         request.setMethod("POST");
         request.setParametrosDatos("nombre", direccion.getNOMBRE_DIRECCION());
-        request.setParametrosDatos("nombre_foto", direccion.getNOMBRE_FOTO());
+        // request.setParametrosDatos("nombre_foto", direccion.getNOMBRE_FOTO());
         request.setParametrosDatos("id_cargo", String.valueOf(direccion.getID_CARGO()));
         request.setParametrosDatos("periodo_desde", direccion.getPERIODO_DESDE());
         request.setParametrosDatos("periodo_hasta", direccion.getPERIODO_HASTA());
@@ -392,6 +394,8 @@ public class FragmentGenerarDireccion extends Fragment {
             request.setParametrosDatos("foto", encodedImage);
             request.setParametrosDatos("url_foto",
                     direccion.getURL_DIRECCION());
+            request.setParametrosDatos("nombre_foto", direccion.getNOMBRE_FOTO());
+
         }
         if (tipo == 0) {
             request.setParametrosDatos("usuario_creador", direccion.getUSUARIO_CREADOR());
