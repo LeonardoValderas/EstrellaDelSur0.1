@@ -4,23 +4,50 @@ public class Equipo {
 
     private int ID_EQUIPO;
     private String NOMBRE_EQUIPO;
+    private String NOMBRE_ESCUDO;
+    private String URL_ESCUDO;
     private String USUARIO_CREADOR;
     private String FECHA_CREACION;
     private String USUARIO_ACTUALIZACION;
     private String FECHA_ACTUALIZACION;
     private byte[] ESCUDO;
 
-    public Equipo(int id, String nombre, byte[] escudo, String usuario,
+    public Equipo(int id, String nombre, String nombre_escudo, byte[] escudo, String url_equipo, String usuario,
                   String fechaCreacion, String usuario_act, String fechaActualizacion) {
 
         ID_EQUIPO = id;
         NOMBRE_EQUIPO = nombre;
+        NOMBRE_ESCUDO = nombre_escudo;
         ESCUDO = escudo;
+        URL_ESCUDO = url_equipo;
         USUARIO_CREADOR = usuario;
         FECHA_CREACION = fechaCreacion;
         USUARIO_ACTUALIZACION = usuario_act;
         FECHA_ACTUALIZACION = fechaActualizacion;
 
+    }
+
+
+    public Equipo(int id, String nombre,  byte[] escudo) {
+
+        ID_EQUIPO = id;
+        NOMBRE_EQUIPO = nombre;
+        ESCUDO = escudo;
+    }
+    public String getURL_ESCUDO() {
+        return URL_ESCUDO;
+    }
+
+    public void setURL_ESCUDO(String URL_ESCUDO) {
+        this.URL_ESCUDO = URL_ESCUDO;
+    }
+
+    public String getNOMBRE_ESCUDO() {
+        return NOMBRE_ESCUDO;
+    }
+
+    public void setNOMBRE_ESCUDO(String NOMBRE_ESCUDO) {
+        this.NOMBRE_ESCUDO = NOMBRE_ESCUDO;
     }
 
     public int getID_EQUIPO() {

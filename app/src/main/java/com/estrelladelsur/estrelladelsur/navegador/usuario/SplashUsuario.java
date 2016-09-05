@@ -12,12 +12,12 @@ import android.widget.ProgressBar;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuario;
+import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
-import com.estrelladelsur.estrelladelsur.entidad.Usuario;
+import com.estrelladelsur.estrelladelsur.entidad.Equipo;
+import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
@@ -35,7 +35,7 @@ import java.net.URLConnection;
 
 public class SplashUsuario extends AppCompatActivity {
 
-    private ControladorUsuario controladorUsuario;
+    private ControladorUsuarioAdeful controladorUsuario;
     private AuxiliarGeneral auxiliarGeneral;
     private ProgressBar progressSplash;
     private Request request = new Request();
@@ -46,15 +46,18 @@ public class SplashUsuario extends AppCompatActivity {
     private static final String TAG_MESSAGE = "message";
     private String mensaje = null;
     private String sinDatos = null;
+    private Articulo articulo;
     private Comision comision;
     private Direccion direccion;
+    private Equipo equipo;
+    private Torneo torneo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
-        controladorUsuario = new ControladorUsuario(this);
+        controladorUsuario = new ControladorUsuarioAdeful(this);
         auxiliarGeneral = new AuxiliarGeneral(SplashUsuario.this);
 //
 //        titulos = auxiliarGeneral.tituloFont(NavigationUsuario.this);
@@ -68,8 +71,6 @@ public class SplashUsuario extends AppCompatActivity {
 
     public void init() {
         progressSplash = (ProgressBar) findViewById(R.id.progressSplash);
-
-
         envioWebService();
 //        fecha_articulo = controladorUsuario.selectFechaWebService();
 //        if (fecha_articulo != null) {
@@ -101,6 +102,8 @@ public class SplashUsuario extends AppCompatActivity {
         request.setParametrosDatos("ARTICULO_ADEFUL", "2016-04-23--09-29-0");
         request.setParametrosDatos("COMISION_ADEFUL", "2016-04-23--09-29-0");
         request.setParametrosDatos("DIRECCION_ADEFUL", "2016-04-23--09-29-0");
+        request.setParametrosDatos("EQUIPO_ADEFUL", "2016-04-23--09-29-0");
+        request.setParametrosDatos("TORNEO_ADEFUL", "2016-04-23--09-29-0");
         requestUrl.setParametrosDatos("URL", auxiliarGeneral.getURL() + auxiliarGeneral.getURLSINCRONIZARUSUARIO());
 
 //
@@ -132,7 +135,6 @@ public class SplashUsuario extends AppCompatActivity {
             JSONArray jsonArrayResponse = null;
             JSONObject jsonArrayResponseAux = null;
             boolean precessOK = true;
-            Articulo articulo;
             String URL = null;
             try {
 
@@ -173,7 +175,6 @@ public class SplashUsuario extends AppCompatActivity {
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
                                 if (controladorUsuario.eliminarComisionUsuario()) {
-
 
                                     for (int i = 0; i < jsonArray.length(); i++) {
                                         jsonAux = jsonArray.getJSONObject(i);
@@ -235,7 +236,61 @@ public class SplashUsuario extends AppCompatActivity {
                                 jsonAux = null;
                             }
                         }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray("EQUIPO_ADEFUL");
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (controladorUsuario.eliminarEquipoUsuario()) {
 
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        jsonAux = jsonArray.getJSONObject(i);
+
+                                        String imageString = jsonAux.getString("ESCUDO_EQUIPO");
+
+                                        Bitmap b = getBitmap(imageString);
+                                        byte[] byteArray = null;
+                                        if (b != null) {
+                                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                            b.compress(Bitmap.CompressFormat.PNG, 0, stream);
+                                            byteArray = stream.toByteArray();
+                                        }
+                                        equipo = new Equipo(jsonAux.getInt("ID_EQUIPO"),
+                                                jsonAux.getString("NOMBRE_EQUIPO"), byteArray);
+
+                                        if (!controladorUsuario.insertEquipoUsuario(equipo)) {
+                                            precessOK = false;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray("TORNEO_ADEFUL");
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (controladorUsuario.eliminarTorneoUsuario()) {
+
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        jsonAux = jsonArray.getJSONObject(i);
+
+                                        torneo = new Torneo(jsonAux.getInt("ID_TORNEO"),
+                                                jsonAux.getString("DESCRIPCION"));
+
+                                        if (!controladorUsuario.insertTorneoUsuario(torneo)) {
+                                            precessOK = false;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    precessOK = false;
+                                }
+                            }
+                        }
                     } else if (success == 3) {
                         Intent i = new Intent(SplashUsuario.this, NavigationUsuario.class);
                         startActivity(i);

@@ -25,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -91,7 +90,7 @@ public class FragmentGenerarDireccion extends Fragment {
     private static final String TAG_MESSAGE = "message";
     private JsonParsing jsonParsing = new JsonParsing(getActivity());
     private static final String TAG_ID = "id";
-    private String mensaje = null, fechaFoto = null, nombre_foto = null, url_foto_direccion = null,
+    private String mensaje = null, fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_direccion = null,
             URL = null, usuario = null, url_nombre_foto = null, encodedImage = null;
 
     public static FragmentGenerarDireccion newInstance() {
@@ -176,6 +175,7 @@ public class FragmentGenerarDireccion extends Fragment {
                 desdeButtonDireccion.setText(direccionArray.get(0).getPERIODO_DESDE().toString());
                 hastaButtonDireccion.setText(direccionArray.get(0).getPERIODO_HASTA().toString());
                 imageDireccion = direccionArray.get(0).getFOTO_DIRECCION();
+                nombre_foto_anterior = direccionArray.get(0).getNOMBRE_FOTO();
                 puestoSpinnerDireccion.setSelection(getPositionCargo(direccionArray.get(0).getID_CARGO()));
 
                 if (imageDireccion != null) {
@@ -359,7 +359,7 @@ public class FragmentGenerarDireccion extends Fragment {
         url_foto_direccion = null;
         if (imageDireccion != null) {
             url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
-            fechaFoto = auxiliarGeneral.getFechaFoto();
+            fechaFoto = auxiliarGeneral.getFechaImagen();
             nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
             url_foto_direccion = auxiliarGeneral.getURLFOTODIRECCIONADEFUL() + nombre_foto;
         }
@@ -405,6 +405,10 @@ public class FragmentGenerarDireccion extends Fragment {
             request.setParametrosDatos("id_direccion", String.valueOf(direccion.getID_DIRECCION()));
             request.setParametrosDatos("usuario_actualizacion", direccion.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", direccion.getFECHA_ACTUALIZACION());
+
+            if (nombre_foto_anterior != null)
+                request.setParametrosDatos("nombre_foto_anterior", nombre_foto_anterior);
+
             URL = URL + auxiliarGeneral.getUpdatePHP("Direccion");
         }
         new TaskDireccion().execute(request);

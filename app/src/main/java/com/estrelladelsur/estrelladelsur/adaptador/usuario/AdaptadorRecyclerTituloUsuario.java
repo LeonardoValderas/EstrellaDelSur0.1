@@ -12,8 +12,8 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import java.util.ArrayList;
 
-public class AdaptadorRecyclerTitulo extends
-        RecyclerView.Adapter<AdaptadorRecyclerTitulo.ArticuloViewHolder> implements
+public class AdaptadorRecyclerTituloUsuario extends
+        RecyclerView.Adapter<AdaptadorRecyclerTituloUsuario.ArticuloViewHolder> implements
         View.OnClickListener {
 
     private View.OnClickListener listener;
@@ -37,7 +37,7 @@ public class AdaptadorRecyclerTitulo extends
         }
     }
 
-    public AdaptadorRecyclerTitulo(ArrayList<Articulo> articuloArray, Context context) {
+    public AdaptadorRecyclerTituloUsuario(ArrayList<Articulo> articuloArray, Context context) {
         this.articuloArray = articuloArray;
         auxiliarGeneral = new AuxiliarGeneral(context);
         editTextFont = auxiliarGeneral.tituloFont(context);

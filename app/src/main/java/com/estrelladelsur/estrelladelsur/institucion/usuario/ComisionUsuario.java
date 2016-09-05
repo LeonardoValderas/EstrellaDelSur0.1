@@ -2,6 +2,7 @@ package com.estrelladelsur.estrelladelsur.institucion.usuario;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,11 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
+
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerComision;
+import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerComisionUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuario;
+import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import java.util.ArrayList;
 
@@ -23,16 +26,18 @@ public class ComisionUsuario extends AppCompatActivity {
     private Toolbar toolbar;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Comision> comisionArray;
-    private ControladorUsuario controladorUsuario;
-    private AdaptadorRecyclerComision adaptadorRecyclerComisionDireccion;
+    private ControladorUsuarioAdeful controladorUsuario;
+    private AdaptadorRecyclerComisionUsuario adaptadorRecyclerComisionDireccion;
     private RecyclerView recycleViewUsuarioGeneral;
+    private TextView txtToolBarTitulo;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario_general);
 
         auxiliarGeneral = new AuxiliarGeneral(ComisionUsuario.this);
-        controladorUsuario = new ControladorUsuario(ComisionUsuario.this);
+        controladorUsuario = new ControladorUsuarioAdeful(ComisionUsuario.this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
@@ -40,11 +45,15 @@ public class ComisionUsuario extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
+        txtToolBarTitulo.setText("COMISIÓN DIRECTIVA");
         init();
     }
 
     public void init() {
         recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         initRecycler();
         recyclerViewLoadComision();
 
@@ -58,6 +67,14 @@ public class ComisionUsuario extends AppCompatActivity {
             public void onLongClick(View view, final int position) {
             }
         }));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //Refreshing data on server
+                // new DownloadFilesTask().execute(feedUrl);
+                recyclerViewLoadComision();
+            }
+        });
     }
 
     public void initRecycler(){
@@ -71,10 +88,14 @@ public class ComisionUsuario extends AppCompatActivity {
     public void recyclerViewLoadComision() {
         comisionArray = controladorUsuario.selectListaComisionUsuario();
         if(comisionArray != null) {
-            adaptadorRecyclerComisionDireccion = new AdaptadorRecyclerComision(comisionArray,ComisionUsuario.this);
+            adaptadorRecyclerComisionDireccion = new AdaptadorRecyclerComisionUsuario(comisionArray,ComisionUsuario.this);
             recycleViewUsuarioGeneral.setAdapter(adaptadorRecyclerComisionDireccion);
         }else{
             auxiliarGeneral.errorDataBase(ComisionUsuario.this);
+        }
+
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
     public static interface ClickListener {

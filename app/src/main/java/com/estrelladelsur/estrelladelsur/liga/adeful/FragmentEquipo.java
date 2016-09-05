@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,7 +30,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
@@ -42,7 +40,6 @@ import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -64,14 +61,16 @@ public class FragmentEquipo extends Fragment {
     private String ELIMINAR = "Equipo eliminado correctamente";
     private Typeface editTextFont;
     private AuxiliarGeneral auxiliarGeneral;
-    private String nombreEquipoAnterior = null, usuario = null, mensaje = null,
+    private String nombreEscudoAnterior = null, usuario = null, mensaje = null,
             url_escudo_equipo = null, encodedImage = null, URL = null;
-    private Request request = new Request();
+    private Request request;
     private ProgressDialog dialog;
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private JsonParsing jsonParsing = new JsonParsing(getActivity());
     private static final String TAG_ID = "id";
+    private String url_nombre_escudo;
+    private String nombreEquipo;
 
     public static FragmentEquipo newInstance() {
         FragmentEquipo fragment = new FragmentEquipo();
@@ -144,8 +143,8 @@ public class FragmentEquipo extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-
-                                nombreEquipoAnterior = equipoAdefulArray.get(position).getNOMBRE_EQUIPO();
+                                gestion = 2;
+                                url_nombre_escudo = equipoAdefulArray.get(position).getNOMBRE_ESCUDO();
                                 cargarEntidad(equipoAdefulArray
                                         .get(position)
                                         .getID_EQUIPO(), 3);
@@ -165,9 +164,9 @@ public class FragmentEquipo extends Fragment {
             public void onClick(View view, int position) {
                 gestion = 1;
                 imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
-                nombreEquipoAnterior = equipoAdefulArray.get(position)
-                        .getNOMBRE_EQUIPO();
-                editTextNombre.setText(nombreEquipoAnterior);
+                nombreEscudoAnterior = equipoAdefulArray.get(position)
+                        .getNOMBRE_ESCUDO();
+                editTextNombre.setText(equipoAdefulArray.get(position).getNOMBRE_EQUIPO());
                 if (equipoAdefulArray.get(position).getESCUDO() != null) {
                     Bitmap theImage = BitmapFactory
                             .decodeByteArray(
@@ -238,6 +237,7 @@ public class FragmentEquipo extends Fragment {
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -279,9 +279,11 @@ public class FragmentEquipo extends Fragment {
             }
             return false;
         }
+
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
@@ -301,51 +303,58 @@ public class FragmentEquipo extends Fragment {
     }
 
     public void cargarEntidad(int id, int ws) {
-        String nombreEquipo = null;
-        nombreEquipo = editTextNombre.getText()
-                .toString();
-        String url_nombre_escudo = auxiliarGeneral.removeAccents(nombreEquipo.replace(" ", "").trim());
-
         URL = null;
         URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLEQUIPOADEFUL();
-        url_escudo_equipo = URL + auxiliarGeneral.getURLESCUDOEQUIPOADEFUL() +
-                auxiliarGeneral.getFechaFoto() + url_nombre_escudo + ".PNG";
-
-        equipoAdeful = new Equipo(id, nombreEquipo, imagenEscudo, usuario,
+        if (ws != 3) {
+            nombreEquipo = null;
+            nombreEquipo = editTextNombre.getText()
+                    .toString();
+            if (imagenEscudo != null) {
+                url_nombre_escudo = auxiliarGeneral.getFechaImagen() + auxiliarGeneral.removeAccents(nombreEquipo.replace(" ", "").trim()) + ".PNG";
+                url_escudo_equipo = URL + auxiliarGeneral.getURLESCUDOEQUIPOADEFUL() +
+                        url_nombre_escudo;
+            }
+        }
+        equipoAdeful = new Equipo(id, nombreEquipo, url_nombre_escudo, imagenEscudo, url_escudo_equipo, usuario,
                 auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
         envioWebService(ws);
     }
 
     public void envioWebService(int tipo) {
+        request = new Request();
         request.setMethod("POST");
-        request.setParametrosDatos("nombre_equipo", equipoAdeful.getNOMBRE_EQUIPO());
+
 
         if (imagenEscudo != null) {
+            encodedImage = null;
             encodedImage = Base64.encodeToString(imagenEscudo,
                     Base64.DEFAULT);
 
             request.setParametrosDatos("escudo_equipo", encodedImage);
             request.setParametrosDatos("url_escudo", url_escudo_equipo);
+            request.setParametrosDatos("nombre_escudo", url_nombre_escudo);
         }
         //0 = insert // 1 = update // 2 = delete
         if (tipo == 0) {
+            request.setParametrosDatos("nombre_equipo", equipoAdeful.getNOMBRE_EQUIPO());
             request.setParametrosDatos("usuario_creador", equipoAdeful.getUSUARIO_CREADOR());
             request.setParametrosDatos("fecha_creacion", equipoAdeful.getFECHA_CREACION());
             URL = URL + auxiliarGeneral.getInsertPHP("Equipo");
         } else if (tipo == 1) {
-            //   requestUrl.setParametrosDatos("URL", URL +auxiliarGeneral.getUpdatePHP("Equipo"));
+            request.setParametrosDatos("nombre_equipo", equipoAdeful.getNOMBRE_EQUIPO());
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
             request.setParametrosDatos("usuario_actualizacion", equipoAdeful.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", equipoAdeful.getFECHA_ACTUALIZACION());
 
-            nombreEquipoAnterior = nombreEquipoAnterior.equals(equipoAdeful.getNOMBRE_EQUIPO()) ? "" : nombreEquipoAnterior;
-            request.setParametrosDatos("nombre_anterior", nombreEquipoAnterior);
+        //    nombreEscudoAnterior = nombreEscudoAnterior.equals(equipoAdeful.getNOMBRE_EQUIPO()) ? "" : nombreEscudoAnterior;
+            request.setParametrosDatos("nombre_escudo_anterior", nombreEscudoAnterior);
             URL = URL + auxiliarGeneral.getUpdatePHP("Equipo");
         } else {
             // requestUrl.setParametrosDatos("URL", URL +auxiliarGeneral.getDeletePHP("Equipo"));
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
-            request.setParametrosDatos("nombre_anterior", nombreEquipoAnterior);
+            if(url_nombre_escudo != null)
+            request.setParametrosDatos("nombre_escudo", url_nombre_escudo);
             request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
             URL = URL + auxiliarGeneral.getDeletePHP("Equipo");
         }
@@ -354,7 +363,7 @@ public class FragmentEquipo extends Fragment {
     }
 
 
-    // enviar/editar articulo
+    // enviar/editar/delete equipo
 
     public class TaskEquipo extends AsyncTask<Request, Boolean, Boolean> {
         @Override
@@ -371,8 +380,7 @@ public class FragmentEquipo extends Fragment {
             boolean precessOK = true;
             //String UrlParsing = null;
             try {
-                // json = jsonParsing.parsingJsonObject(params[0], URL);
-                json = jsonParsing.parsingJsonObject(params[0], URL);
+              json = jsonParsing.parsingJsonObject(params[0], URL);
                 if (json != null) {
                     success = json.getInt(TAG_SUCCESS);
                     mensaje = json.getString(TAG_MESSAGE);
@@ -395,7 +403,7 @@ public class FragmentEquipo extends Fragment {
                                 precessOK = false;
                             }
                         } else {
-                            if (controladorAdeful.eliminarArticuloAdeful(equipoAdeful.getID_EQUIPO())) {
+                            if (controladorAdeful.eliminarEquipoAdeful(equipoAdeful.getID_EQUIPO())) {
                                 precessOK = true;
                             } else {
                                 precessOK = false;

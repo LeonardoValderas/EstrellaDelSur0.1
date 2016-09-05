@@ -11,20 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
-import com.estrelladelsur.estrelladelsur.entidad.Direccion;
-
 import java.util.ArrayList;
 
-public class AdaptadorRecyclerDireccion extends
-        RecyclerView.Adapter<AdaptadorRecyclerDireccion.ComisionViewHolder> implements
+public class AdaptadorRecyclerComisionUsuario extends
+        RecyclerView.Adapter<AdaptadorRecyclerComisionUsuario.ComisionViewHolder> implements
         View.OnClickListener {
 
     private View.OnClickListener listener;
-    private ArrayList<Direccion> direccionArray;
+    private ArrayList<Comision> comisionArray;
     private Typeface nombreFont;
     private Typeface cargoPeriodoFont;
     private AuxiliarGeneral auxiliarGeneral;
@@ -33,8 +30,8 @@ public class AdaptadorRecyclerDireccion extends
         private TextView textRecyclerViewNombre;
         private TextView textRecyclerViewCargo;
         private TextView textRecyclerViewPeriodo;
-        private ImageView imageRecyclerViewFoto;
         private TextView textRecyclerViewPeriodoText;
+        private ImageView imageRecyclerViewFoto;
         private byte[] foto;
 
         public ComisionViewHolder(View itemView) {
@@ -49,18 +46,21 @@ public class AdaptadorRecyclerDireccion extends
             textRecyclerViewPeriodoText = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewPeriodoText);
             textRecyclerViewPeriodoText.setPaintFlags(textRecyclerViewPeriodoText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
             imageRecyclerViewFoto = (ImageView) itemView
                     .findViewById(R.id.imageRecyclerViewFoto);
+
         }
 
-        public void bindTitular(Direccion direccion,Typeface nombre, Typeface cargo) {
-            textRecyclerViewNombre.setText(direccion.getNOMBRE_DIRECCION().toString());
+        public void bindTitular(Comision comision,Typeface nombre, Typeface cargo) {
+
+            textRecyclerViewNombre.setText(comision.getNOMBRE_COMISION().toString());
             textRecyclerViewNombre.setTypeface(nombre);
-            textRecyclerViewCargo.setText(direccion.getCARGO().toString());
+            textRecyclerViewCargo.setText(comision.getCARGO().toString());
             textRecyclerViewCargo.setTypeface(cargo, Typeface.BOLD);
-            textRecyclerViewPeriodo.setText(direccion.getPERIODO_DESDE().toString() + " - " + direccion.getPERIODO_HASTA().toString());
+            textRecyclerViewPeriodo.setText(comision.getPERIODO_DESDE().toString() + " - " + comision.getPERIODO_HASTA().toString());
             textRecyclerViewPeriodo.setTypeface(cargo);
-            foto = direccion.getFOTO_DIRECCION();
+            foto = comision.getFOTO_COMISION();
             if (foto == null) {
                 imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
             } else {
@@ -70,8 +70,8 @@ public class AdaptadorRecyclerDireccion extends
             }
         }
     }
-    public AdaptadorRecyclerDireccion(ArrayList<Direccion> direccionArray, Context context) {
-        this.direccionArray = direccionArray;
+    public AdaptadorRecyclerComisionUsuario(ArrayList<Comision> comisionArray, Context context) {
+        this.comisionArray = comisionArray;
         auxiliarGeneral = new AuxiliarGeneral(context);
         this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
         this.nombreFont = auxiliarGeneral.tituloFont(context);
@@ -89,13 +89,12 @@ public class AdaptadorRecyclerDireccion extends
     }
     @Override
     public void onBindViewHolder(ComisionViewHolder viewHolder, int pos) {
-        Direccion item = direccionArray.get(pos);
-
+        Comision item = comisionArray.get(pos);
         viewHolder.bindTitular(item,nombreFont,cargoPeriodoFont);
     }
     @Override
     public int getItemCount() {
-        return direccionArray.size();
+        return comisionArray.size();
     }
     public void setOnClickListener(View.OnClickListener listener) {
         this.listener = listener;

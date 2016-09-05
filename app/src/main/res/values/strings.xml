@@ -5,10 +5,15 @@
     <!-- Navigation -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <!--toolbar title activity-->
+    <!--toolbar title activity usuario-->
     <string name="institucion.articulo.usuario">Articulos</string>
     <string name="institucion.comision.usuario">Comisión Directiva</string>
     <string name="institucion.direccion.usuario">Dirección Técnica</string>
+    <!--toolbar title activity adeful-->
+    <string name="institucion.articulo.adeful">Articulo</string>
+    <!--<string name="institucion.comision.usuario">Comisión Directiva</string>-->
+    <!--<string name="institucion.direccion.usuario">Dirección Técnica</string>-->
+
 
     <!-- Array Tablas Adeful  -->
     <string-array name="tablasAdefulArray">
@@ -134,7 +139,7 @@
         <item>Genere un torneo.</item>
     </string-array>
     <string name="ceroSpinnerTorneo">Genere un torneo.</string>
-    <string name="torneo_actual">Torneo actual</string>
+    <string name="torneo_actual">Es torneo actual</string>
     <!-- Array SPINNER FECHA  -->
     <string-array name="ceroSpinnerFecha">
         <item>Genere un fecha.</item>

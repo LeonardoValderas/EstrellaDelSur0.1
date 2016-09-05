@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
+public class SQLiteDBConnectionUsuarioAdeful extends SQLiteOpenHelper {
 
     ///////MODULO GENERAL ADEFUL/////////
     //TABLAS
@@ -71,36 +71,29 @@ public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
             + " PERIODO_DESDE VARCHAR(100),"
             + " PERIODO_HASTA VARCHAR(100));";
     //DIRECCION
-    String TABLA_DIRECCION_USUARIO = "CREATE TABLE IF NOT EXISTS DIRECCION_USUARIO(ID_DIRECCION INTEGER PRIMARY KEY ,"
+    String TABLA_DIRECCION_USUARIO = "CREATE TABLE IF NOT EXISTS DIRECCION_USUARIO(ID_DIRECCION INTEGER PRIMARY KEY,"
             + " NOMBRE_DIRECCION VARCHAR(100),"
             + " FOTO_DIRECCION BLOB,"
             + " CARGO VARCHAR(100),"
             + " PERIODO_DESDE VARCHAR(100),"
             + " PERIODO_HASTA VARCHAR(100));";
-    //////MODULO LIGA ADEFUL/////////
+
+
+    //////MODULO LIGA USUARIO/////////
     //EQUIPO
-    String TABLA_EQUIPO_ADEFUL = "CREATE TABLE IF NOT EXISTS EQUIPO_ADEFUL (ID_EQUIPO INTEGER PRIMARY KEY AUTOINCREMENT,"
+    String TABLA_EQUIPO_USUARIO = "CREATE TABLE IF NOT EXISTS EQUIPO_USUARIO (ID_EQUIPO INTEGER PRIMARY KEY,"
             + " NOMBRE VARCHAR(100),"
-            + " ESCUDO BLOB,"
-            + " USUARIO_CREADOR VARCHAR(100),"
-            + " FECHA_CREACION VARCHAR(100),"
-            + " USUARIO_ACTUALIZACION VARCHAR(100),"
-            + " FECHA_ACTUALIZACION VARCHAR(100));";
+            + " ESCUDO BLOB);";
     //DIVISION
-    String TABLA_DIVISION_ADEFUL = "CREATE TABLE IF NOT EXISTS DIVISION_ADEFUL (ID_DIVISION INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + " DESCRIPCION VARCHAR(100),"
-            + " USUARIO_CREADOR VARCHAR(100),"
-            + " FECHA_CREACION VARCHAR(100),"
-            + " USUARIO_ACTUALIZACION VARCHAR(100),"
-            + " FECHA_ACTUALIZACION VARCHAR(100));";
+//    String TABLA_DIVISION_USUARIO = "CREATE TABLE IF NOT EXISTS DIVISION_USUARIO (ID_DIVISION INTEGER PRIMARY KEY AUTOINCREMENT,"
+//            + " DESCRIPCION VARCHAR(100),"
+//            + " USUARIO_CREADOR VARCHAR(100),"
+//            + " FECHA_CREACION VARCHAR(100),"
+//            + " USUARIO_ACTUALIZACION VARCHAR(100),"
+//            + " FECHA_ACTUALIZACION VARCHAR(100));";
     //TORNEO
-    String TABLA_TORNEO_ADEFUL = "CREATE TABLE IF NOT EXISTS TORNEO_ADEFUL (ID_TORNEO INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + " DESCRIPCION VARCHAR(100),"
-            + " ACTUAL BOOLEAN,"
-            + " USUARIO_CREADOR VARCHAR(100),"
-            + " FECHA_CREACION VARCHAR(100),"
-            + " USUARIO_ACTUALIZACION VARCHAR(100),"
-            + " FECHA_ACTUALIZACION VARCHAR(100));";
+    String TABLA_TORNEO_USUARIO = "CREATE TABLE IF NOT EXISTS TORNEO_USUARIO (ID_TORNEO INTEGER PRIMARY KEY,"
+            + " DESCRIPCION VARCHAR(100));";
     //TORNEO ACTUAL
     String TABLA_TORNEO_ACTUAL_ADEFUL = "CREATE TABLE IF NOT EXISTS TORNEO_ACTUAL_ADEFUL (ID_TORNEO_ACTUAL INTEGER DEFAULT 1,"
             + " ID_TORNEO INTEGER DEFAULT 0,"
@@ -270,8 +263,8 @@ public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
     String[] a = new String[5];
 
 
-    public SQLiteDBConnectionUsuario(Context context, String name,
-                                     CursorFactory factory, int version) {
+    public SQLiteDBConnectionUsuarioAdeful(Context context, String name,
+                                           CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
@@ -295,9 +288,9 @@ public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
         db.execSQL(TABLA_COMISION_USUARIO);
         db.execSQL(TABLA_DIRECCION_USUARIO);
 //        //MODULO LIGA
-//        db.execSQL(TABLA_EQUIPO_ADEFUL);
-//        db.execSQL(TABLA_DIVISION_ADEFUL);
-//        db.execSQL(TABLA_TORNEO_ADEFUL);
+        db.execSQL(TABLA_EQUIPO_USUARIO);
+ //       db.execSQL(TABLA_DIVISION_USUARIO);
+        db.execSQL(TABLA_TORNEO_USUARIO);
 //        db.execSQL(TABLA_TORNEO_ACTUAL_ADEFUL);
 //        db.execSQL(INSERT_TORNEO_ACTUAL_ADEFUL);
 //        db.execSQL(TABLA_CANCHA_ADEFUL);
@@ -335,10 +328,10 @@ public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
 //        db.execSQL("DROP TABLE IF EXISTS CARGO_ADEFUL");
         db.execSQL("DROP TABLE IF EXISTS COMISION_USUARIO");
         db.execSQL("DROP TABLE IF EXISTS DIRECCION_USUARIO");
-//        //MODULO LIGA
-//        db.execSQL("DROP TABLE IF EXISTS EQUIPO_ADEFUL");
+        //MODULO LIGA
+        db.execSQL("DROP TABLE IF EXISTS EQUIPO_USUARIO");
 //        db.execSQL("DROP TABLE IF EXISTS DIVISION_ADEFUL");
-//        db.execSQL("DROP TABLE IF EXISTS TORNEO_ADEFUL");
+        db.execSQL("DROP TABLE IF EXISTS TORNEO_USUARIO");
 //        db.execSQL("DROP TABLE IF EXISTS TORNEO_ACTUAL_ADEFUL");
 //        db.execSQL("DROP TABLE IF EXISTS CANCHA_ADEFUL");
 //        //MODULO MI EQUIPO
@@ -373,9 +366,9 @@ public class SQLiteDBConnectionUsuario extends SQLiteOpenHelper {
         db.execSQL(TABLA_COMISION_USUARIO);
         db.execSQL(TABLA_DIRECCION_USUARIO);
 //        //MODULO LIGA
-//        db.execSQL(TABLA_EQUIPO_ADEFUL);
-//        db.execSQL(TABLA_DIVISION_ADEFUL);
-//        db.execSQL(TABLA_TORNEO_ADEFUL);
+        db.execSQL(TABLA_EQUIPO_USUARIO);
+//        db.execSQL(TABLA_DIVISION_USUARIO);
+        db.execSQL(TABLA_TORNEO_USUARIO);
 //        db.execSQL(TABLA_TORNEO_ACTUAL_ADEFUL);
 //
 //        db.execSQL(TABLA_CANCHA_ADEFUL);

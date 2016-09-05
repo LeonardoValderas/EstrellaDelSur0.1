@@ -126,19 +126,7 @@ public class AuxiliarGeneral {
                 String valid_photo = UtilityImage.Paste_Target_Location
                         .toString();
                 bRect = Bitmap.createScaledBitmap(bRect, 150, 150, true);
-
-
-//                if(circle) {
-//                    //  pasamos la imagen a circulo
-//                    bCircle = getRoundedBitmap(bRect);
-//
-//                }else{
-//                    bRect = getRoundedBitmapRect(bRect);
-//                }
-
                 cursor.close();
-//                listBitmap.add(bCircle);
-//                listBitmap.add(bRect);
             } else {
                 Toast toast = Toast.makeText(context,
                         "No se selecciono una foto.", Toast.LENGTH_LONG);
@@ -213,7 +201,7 @@ public class AuxiliarGeneral {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss");
         return sdf.format(dateOficial);
     }
-    public String getFechaFoto() {
+    public String getFechaImagen() {
         Date dateOficial = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         return sdf.format(dateOficial);
@@ -235,48 +223,64 @@ public class AuxiliarGeneral {
     }
 
     //URLS
+    //Http
     public String getURL() {
         return "http://valdroide.com/";
     }
+    //SINCRONIZACION
+    public String getURLSINCRONIZARUSUARIO() {
+        return "estrella_del_sur/testing/ADEFUL/sincronizar/usuario/sincronizarUsuario.php";
+    }
+    //ARTICULO
     public String getURLARTICULOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Articulo/";
     }
     public String getURLARTICULOADEFULALL() {
         return getURL() + getURLARTICULOADEFUL();
     }
+    //COMISION
     public String getURLCOMISIONADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Comision/";
     }
     public String getURLCOMISIONADEFULALL() {
         return getURL() + getURLCOMISIONADEFUL();
     }
+    public String getURLFOTOCOMISIONADEFUL() {
+        return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Comision/foto_comision/";
+    }
+    //DIRECCION
     public String getURLDIRECCIONADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Direccion/";
     }
     public String getURLDIRECCIONADEFULALL() {
         return getURL() + getURLDIRECCIONADEFUL();
     }
+    public String getURLFOTODIRECCIONADEFUL() {
+        return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Direccion/foto_direccion/";
+    }
+    //CARGO
     public String getURLCARGOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Cargo/";
     }
     public String getURLCARGOADEFULALL() {
         return getURL() + getURLCARGOADEFUL();
     }
-    public String getURLFOTOCOMISIONADEFUL() {
-        return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Comision/foto_comision/";
-    }
-    public String getURLFOTODIRECCIONADEFUL() {
-        return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Direccion/foto_direccion/";
-    }
-    public String getURLSINCRONIZARUSUARIO() {
-        return "estrella_del_sur/testing/ADEFUL/sincronizar/usuario/sincronizarUsuario.php";
-    }
+     //EQUIPO
     public String getURLESCUDOEQUIPOADEFUL() {
         return "escudo_equipo/";
     }
     public String getURLEQUIPOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/equipo/";
     }
+    //DIVISION
+    public String getURLDIVISIONADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Liga/division/";
+    }
+    //TORNEO
+    public String getURLTORNEOADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Liga/torneo/";
+    }
+    //INSERT - UPDATE - DELETE
     public String getInsertPHP(String Modulo) {
         return "insert" + Modulo + ".php";
     }
@@ -359,6 +363,4 @@ public class AuxiliarGeneral {
         }
         return sb.toString();
     }
-
-
 }

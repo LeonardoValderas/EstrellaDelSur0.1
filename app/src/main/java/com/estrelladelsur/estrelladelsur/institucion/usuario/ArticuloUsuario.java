@@ -1,10 +1,9 @@
 package com.estrelladelsur.estrelladelsur.institucion.usuario;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,15 +15,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerArticulo;
-import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerTitulo;
+import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerTituloUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuario;
-import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
-import com.estrelladelsur.estrelladelsur.institucion.adeful.TabsArticulo;
 
 import java.util.ArrayList;
 
@@ -34,18 +30,20 @@ public class ArticuloUsuario extends AppCompatActivity {
     private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Articulo> articuloArray;
-    private ControladorUsuario controladorUsuario;
-    private AdaptadorRecyclerTitulo adaptadorRecyclerTitulo;
+    private ControladorUsuarioAdeful controladorUsuario;
+    private AdaptadorRecyclerTituloUsuario adaptadorRecyclerTitulo;
     private RecyclerView recycleViewUsuarioGeneral;
     private DialogoArticulo dialogoArticulo;
+    private TextView txtToolBarTitulo;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario_general);
 
         auxiliarGeneral = new AuxiliarGeneral(ArticuloUsuario.this);
-        controladorUsuario = new ControladorUsuario(ArticuloUsuario.this);
-        titulos = auxiliarGeneral.tituloFont(ArticuloUsuario.this);
+        controladorUsuario = new ControladorUsuarioAdeful(ArticuloUsuario.this);
+        //titulos = auxiliarGeneral.tituloFont(ArticuloUsuario.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
@@ -54,10 +52,16 @@ public class ArticuloUsuario extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
+        txtToolBarTitulo.setText("ARTICULO");
+
         init();
     }
     public void init() {
         recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         initRecycler();
         recyclerViewLoadArticulo();
 
@@ -80,6 +84,16 @@ public class ArticuloUsuario extends AppCompatActivity {
             public void onLongClick(View view, final int position) {
             }
         }));
+
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //Refreshing data on server
+               // new DownloadFilesTask().execute(feedUrl);
+                recyclerViewLoadArticulo();
+            }
+        });
     }
     public void initRecycler(){
         recycleViewUsuarioGeneral.setLayoutManager(new LinearLayoutManager(
@@ -91,10 +105,14 @@ public class ArticuloUsuario extends AppCompatActivity {
     public void recyclerViewLoadArticulo() {
         articuloArray = controladorUsuario.selectListaArticuloAdeful();
         if(articuloArray!= null) {
-            adaptadorRecyclerTitulo = new AdaptadorRecyclerTitulo(articuloArray,ArticuloUsuario.this);
+            adaptadorRecyclerTitulo = new AdaptadorRecyclerTituloUsuario(articuloArray,ArticuloUsuario.this);
             recycleViewUsuarioGeneral.setAdapter(adaptadorRecyclerTitulo);
         }else{
             auxiliarGeneral.errorDataBase(ArticuloUsuario.this);
+        }
+
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
     public static interface ClickListener {

@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur.liga.adeful;
+package com.estrelladelsur.estrelladelsur.liga.usuario;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -13,17 +13,22 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
+import com.estrelladelsur.estrelladelsur.liga.adeful.FragmentCancha;
+import com.estrelladelsur.estrelladelsur.liga.adeful.FragmentDivision;
+import com.estrelladelsur.estrelladelsur.liga.adeful.FragmentEquipo;
+import com.estrelladelsur.estrelladelsur.liga.adeful.FragmentTorneo;
 
-public class TabsAdeful extends AppCompatActivity {
+public class TabsAdefulUsuario extends AppCompatActivity {
 
 	private Toolbar toolbar;
 	private ViewPager viewPager;
 	private TabLayout tabLayout;
 	private int restarMap = 0;
 	private int viewpagerid;
-	final int PAGE_COUNT = 4;
+	final int PAGE_COUNT = 3;
 	private FragmentTransaction mCurTransaction;
 	private static final String TAG = "FragmentPagerAdapter";
 	private static final boolean DEBUG = false;
@@ -37,8 +42,8 @@ public class TabsAdeful extends AppCompatActivity {
 		setContentView(R.layout.tabs_general);
 
 
-		auxiliarGeneral = new AuxiliarGeneral(TabsAdeful.this);
-		titulos = auxiliarGeneral.tituloFont(TabsAdeful.this);
+		auxiliarGeneral = new AuxiliarGeneral(TabsAdefulUsuario.this);
+		titulos = auxiliarGeneral.tituloFont(TabsAdefulUsuario.this);
 		// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -102,8 +107,8 @@ public class TabsAdeful extends AppCompatActivity {
 	public class TabsAdefulAdapter extends FragmentPagerAdapter {
 		private FragmentManager fm;
 
-		private String tabTitles[] = new String[] { "EQUIPO", "DIVISION",
-				"TORNEO", "CANCHA" };
+		private String tabTitles[] = new String[] { "EQUIPOS",
+				"TORNEO ACTUAL", "CANCHAS" };
 
 		public TabsAdefulAdapter(FragmentManager fm) {
 			super(fm);
@@ -124,15 +129,12 @@ public class TabsAdeful extends AppCompatActivity {
 
 			switch (position) {
 			case 0:
-				fragmentTab = FragmentEquipo.newInstance();
+				fragmentTab = FragmentEquipoUsuario.newInstance();
 				break;
 			case 1:
-				fragmentTab = FragmentDivision.newInstance();
+				fragmentTab = FragmentTorneoUsuario.newInstance();
 				break;
 			case 2:
-				fragmentTab = FragmentTorneo.newInstance();
-				break;
-			case 3:
 				fragmentTab = FragmentCancha.newInstance();
 				break;
 			}

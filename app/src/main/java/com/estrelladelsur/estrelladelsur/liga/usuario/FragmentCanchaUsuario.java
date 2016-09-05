@@ -1,6 +1,5 @@
-package com.estrelladelsur.estrelladelsur.liga.adeful;
+package com.estrelladelsur.estrelladelsur.liga.usuario;
 
-import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,16 +20,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerCancha;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.entidad.Cancha;
-import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerCancha;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.entidad.Division;
+import com.estrelladelsur.estrelladelsur.entidad.Cancha;
+import com.estrelladelsur.estrelladelsur.liga.adeful.MapaCancha;
 
-public class FragmentCancha extends Fragment {
+import java.util.ArrayList;
+
+public class FragmentCanchaUsuario extends Fragment {
 
 	private DialogoAlerta dialogoAlerta;
 	private RecyclerView recycleViewCancha;
@@ -42,12 +43,12 @@ public class FragmentCancha extends Fragment {
 	private int CheckedPositionFragment;
 	private AuxiliarGeneral auxiliarGeneral;
 
-	public static FragmentCancha newInstance() {
-		FragmentCancha fragment = new FragmentCancha();
+	public static FragmentCanchaUsuario newInstance() {
+		FragmentCanchaUsuario fragment = new FragmentCanchaUsuario();
 		return fragment;
 	}
 
-	public FragmentCancha() {
+	public FragmentCanchaUsuario() {
 		// Required empty public constructor
 	}
 
@@ -90,7 +91,7 @@ public class FragmentCancha extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				Intent mapa = new Intent(getActivity(), MapaCancha.class);
+				Intent mapa = new Intent(getActivity(), com.estrelladelsur.estrelladelsur.liga.adeful.MapaCancha.class);
 				startActivity(mapa);
 			}
 		});

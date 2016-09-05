@@ -142,6 +142,7 @@ public class ControladorAdeful {
             return false;
         }
     }
+
     // ACTUALIZAR SUBMODULO FALSE
     public boolean actualizarSubModuloSelectedFalseAdeful(int id_submodulo)
             throws SQLiteException {
@@ -228,15 +229,16 @@ public class ControladorAdeful {
         nombre = null;
         return arraySubModuloAdeful;
     }
+
     //LISTA SUBMODULO
     public ArrayList<SubModulo> selectListaSubModuloPermisoAdeful(int id_permiso) {
 
         String sql = "SELECT P.ID_PERMISO_MODULO, P.ID_SUBMODULO, S.NOMBRE FROM PERMISO_MODULO_ADEFUL P "
-                +    "INNER JOIN SUBMODULO_ADEFUL S ON S.ID_SUBMODULO = P.ID_SUBMODULO "
-                +    "WHERE P.ID_PERMISO = "+id_permiso;
+                + "INNER JOIN SUBMODULO_ADEFUL S ON S.ID_SUBMODULO = P.ID_SUBMODULO "
+                + "WHERE P.ID_PERMISO = " + id_permiso;
         ArrayList<SubModulo> arraySubModuloAdeful = new ArrayList<SubModulo>();
         String nombre = null;
-        int id,id_sub;
+        int id, id_sub;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -253,7 +255,7 @@ public class ControladorAdeful {
                         nombre = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE"));
                         //CLASE AUX
-                        submodulo = new SubModulo(id, id_sub, nombre,true );
+                        submodulo = new SubModulo(id, id_sub, nombre, true);
                         //ARRAY SUBMODULO
                         arraySubModuloAdeful.add(submodulo);
                     }
@@ -302,7 +304,7 @@ public class ControladorAdeful {
                         isselected = cursor.getInt(cursor
                                 .getColumnIndex("ISSELECTED")) > 0;
                         //CLASE AUX
-                        submodulo = new SubModulo(id, nombre, id_sub, modnombre,isselected);
+                        submodulo = new SubModulo(id, nombre, id_sub, modnombre, isselected);
                         //ARRAY SUBMODULO
                         arraySubModuloAdeful.add(submodulo);
                     }
@@ -436,6 +438,7 @@ public class ControladorAdeful {
         pass = null;
         return arrayUsuarioAdeful;
     }
+
     //ELIMINAR USUARIO
     public boolean eliminarUsuarioAdeful(int id) {
 
@@ -538,7 +541,7 @@ public class ControladorAdeful {
 
         Cursor cursor = null;
         ArrayList<Permiso> arrayPermiso = new ArrayList<Permiso>();
-        int id, id_usuario, id_modulo,id_sub ;
+        int id, id_usuario, id_modulo, id_sub;
         String nombre = null, subnombre = null, usuario = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -554,7 +557,7 @@ public class ControladorAdeful {
                                 .getColumnIndex("ID_USUARIO"));
                         usuario = cursor.getString(cursor
                                 .getColumnIndex("USUARIO"));
-                        permiso = new Permiso(id,id_usuario, usuario);
+                        permiso = new Permiso(id, id_usuario, usuario);
                         arrayPermiso.add(permiso);
                     }
                 }
@@ -576,7 +579,7 @@ public class ControladorAdeful {
     public int selectIdPermisoAdefulIdUser(int id_usuario) {
 
         String sql = "SELECT ID_PERMISO"
-                + " FROM PERMISO_ADEFUL WHERE ID_USUARIO = "+id_usuario;
+                + " FROM PERMISO_ADEFUL WHERE ID_USUARIO = " + id_usuario;
 
         Cursor cursor = null;
         int id = 0;
@@ -604,6 +607,7 @@ public class ControladorAdeful {
         database = null;
         return id;
     }    //ELIMINAR PERMISO
+
     public boolean eliminarPermisoModuloAdeful(int id) {
 
         boolean res = false;
@@ -626,18 +630,19 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     //LISTA permisos
-    public ArrayList<Permiso> selectListaPermisoAdefulId( int id_permiso) {
+    public ArrayList<Permiso> selectListaPermisoAdefulId(int id_permiso) {
 
         String sql = "SELECT P.ID_MODULO, M.NOMBRE, P.ID_SUBMODULO, S.NOMBRE AS SUBNOMBRE"
                 + " FROM PERMISO_MODULO_ADEFUL P INNER JOIN MODULO_ADEFUL M ON"
                 + " P.ID_MODULO = M.ID_MODULO"
                 + " INNER JOIN SUBMODULO_ADEFUL S ON"
-                + " S.ID_SUBMODULO = P.ID_SUBMODULO WHERE P.ID_PERMISO = "+id_permiso+"";
+                + " S.ID_SUBMODULO = P.ID_SUBMODULO WHERE P.ID_PERMISO = " + id_permiso + "";
 
         Cursor cursor = null;
         ArrayList<Permiso> arrayPermiso = new ArrayList<Permiso>();
-        int id_modulo, id_sub ;
+        int id_modulo, id_sub;
         String nombre = null, subnombre = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -673,14 +678,15 @@ public class ControladorAdeful {
         database = null;
         return arrayPermiso;
     }
-    //LISTA id submodulos
-    public ArrayList<Integer> selectListaIdModulosAdefulId( int id_permiso) {
 
-        String sql = "SELECT ID_SUBMODULO FROM PERMISO_MODULO_ADEFUL WHERE ID_PERMISO = "+id_permiso;
+    //LISTA id submodulos
+    public ArrayList<Integer> selectListaIdModulosAdefulId(int id_permiso) {
+
+        String sql = "SELECT ID_SUBMODULO FROM PERMISO_MODULO_ADEFUL WHERE ID_PERMISO = " + id_permiso;
 
         Cursor cursor = null;
         ArrayList<Integer> arrayIdSubmodulo = new ArrayList<Integer>();
-        int id_sub ;
+        int id_sub;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
@@ -706,6 +712,7 @@ public class ControladorAdeful {
         database = null;
         return arrayIdSubmodulo;
     }
+
     //LISTA permisos por Id
     public int isPermiso(int id_user) {
         int isPermiso = 0;
@@ -720,7 +727,7 @@ public class ControladorAdeful {
 
                 if (cursor != null && cursor.getCount() > 0) {
                     isPermiso = 0;
-                }else{
+                } else {
                     isPermiso = 1;
                 }
             } catch (Exception e) {
@@ -1079,7 +1086,7 @@ public class ControladorAdeful {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        comision = new Comision(id, nombre, foto, nombre_foto, id_cargo, null, desde, hasta,url_comision, creador,
+                        comision = new Comision(id, nombre, foto, nombre_foto, id_cargo, null, desde, hasta, url_comision, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY CARGO
                         arrayComisionAdeful.add(comision);
@@ -1117,7 +1124,7 @@ public class ControladorAdeful {
                 "CA.CARGO FROM COMISION_ADEFUL C INNER JOIN CARGO_ADEFUL CA ON CA.ID_CARGO=C.ID_CARGO";
         ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
         String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_comision=null, nombre_foto = null;
+                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_comision = null, nombre_foto = null;
         int id;
         int id_cargo;
         byte[] foto = null;
@@ -1279,7 +1286,7 @@ public class ControladorAdeful {
         String sql = "SELECT * FROM DIRECCION_ADEFUL WHERE ID_DIRECCION=" + id_direccion;
         ArrayList<Direccion> arrayDireccionAdeful = new ArrayList<Direccion>();
         String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-                fechaActualizacion = null, creador = null, usuario_act = null, url_direccion=null, nombre_foto = null;
+                fechaActualizacion = null, creador = null, usuario_act = null, url_direccion = null, nombre_foto = null;
         int id;
         int id_cargo;
         byte[] foto = null;
@@ -1318,7 +1325,7 @@ public class ControladorAdeful {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        direccion = new Direccion(id, nombre, foto, nombre_foto,id_cargo, null, desde, hasta,url_direccion, creador,
+                        direccion = new Direccion(id, nombre, foto, nombre_foto, id_cargo, null, desde, hasta, url_direccion, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY CARGO
                         arrayDireccionAdeful.add(direccion);
@@ -1355,7 +1362,7 @@ public class ControladorAdeful {
                 "CA.CARGO FROM DIRECCION_ADEFUL C INNER JOIN CARGO_ADEFUL CA ON CA.ID_CARGO=C.ID_CARGO";
         ArrayList<Direccion> arrayDireccionAdeful = new ArrayList<Direccion>();
         String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null , url_direccion=null, nombre_foto = null;
+                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_direccion = null, nombre_foto = null;
         int id;
         int id_cargo;
         byte[] foto = null;
@@ -1396,7 +1403,7 @@ public class ControladorAdeful {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        direccion = new Direccion(id, nombre, foto, nombre_foto, id_cargo, cargo, desde, hasta,url_direccion, creador,
+                        direccion = new Direccion(id, nombre, foto, nombre_foto, id_cargo, cargo, desde, hasta, url_direccion, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY COMISION
                         arrayDireccionAdeful.add(direccion);
@@ -1491,7 +1498,9 @@ public class ControladorAdeful {
         try {
             cv.put("ID_EQUIPO", id);
             cv.put("NOMBRE", equipoAdeful.getNOMBRE_EQUIPO());
+            cv.put("NOMBRE_ESCUDO", equipoAdeful.getNOMBRE_ESCUDO());
             cv.put("ESCUDO", equipoAdeful.getESCUDO());
+            cv.put("URL_ESCUDO", equipoAdeful.getURL_ESCUDO());
             cv.put("USUARIO_CREADOR", equipoAdeful.getUSUARIO_CREADOR());
             cv.put("FECHA_CREACION", equipoAdeful.getFECHA_CREACION());
 
@@ -1513,7 +1522,8 @@ public class ControladorAdeful {
 
         String sql = "SELECT * FROM EQUIPO_ADEFUL";
         ArrayList<Equipo> arrayEquipoAdeful = new ArrayList<Equipo>();
-        String equipo = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null;
+        String equipo = null, nombre_escudo = null, url_escudo = null, usuario = null, fechaCreacion = null,
+                fechaActualizacion = null, usuario_act = null;
         byte[] escudo = null;
         int id;
         Cursor cursor = null;
@@ -1532,6 +1542,10 @@ public class ControladorAdeful {
                                 .getColumnIndex("NOMBRE"));
                         escudo = cursor
                                 .getBlob(cursor.getColumnIndex("ESCUDO"));
+                        nombre_escudo = cursor.getString(cursor
+                                .getColumnIndex("NOMBRE_ESCUDO"));
+                        url_escudo = cursor.getString(cursor
+                                .getColumnIndex("URL_ESCUDO"));
                         usuario = cursor.getString(cursor
                                 .getColumnIndex("USUARIO_CREADOR"));
                         fechaCreacion = cursor.getString(cursor
@@ -1541,7 +1555,7 @@ public class ControladorAdeful {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
 
-                        equipoAdeful = new Equipo(id, equipo, escudo, usuario,
+                        equipoAdeful = new Equipo(id, equipo, nombre_escudo, escudo, url_escudo, usuario,
                                 fechaCreacion, usuario_act, fechaActualizacion);
 
                         arrayEquipoAdeful.add(equipoAdeful);
@@ -1577,6 +1591,8 @@ public class ControladorAdeful {
         abrirBaseDeDatos();
         try {
             cv.put("NOMBRE", equipo.getNOMBRE_EQUIPO());
+            cv.put("NOMBRE_ESCUDO", equipo.getNOMBRE_ESCUDO());
+            cv.put("URL_ESCUDO", equipo.getURL_ESCUDO());
             cv.put("ESCUDO", equipo.getESCUDO());
             cv.put("USUARIO_ACTUALIZACION", equipo.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", equipo.getFECHA_ACTUALIZACION());
@@ -1618,36 +1634,27 @@ public class ControladorAdeful {
     }
 
     // DIVISION INSERTAR
-    public boolean insertDivisionAdeful(Division division) {
+    public boolean insertDivisionAdeful(int id, Division division) throws SQLiteException {
         boolean ban = false;
-
-        String sql = "INSERT INTO DIVISION_ADEFUL ( DESCRIPCION, USUARIO_CREADOR, FECHA_CREACION," +
-                " USUARIO_ACTUALIZACION, FECHA_ACTUALIZACION) VALUES ('"
-                + division.getDESCRIPCION()
-                + "', '"
-                + division.getUSUARIO_CREADOR()
-                + "', '"
-                + division.getFECHA_CREACION()
-                + "', '"
-                + division.getUSUARIO_ACTUALIZACION()
-                + "', '"
-                + division.getFECHA_ACTUALIZACION()
-                + "')";
+        ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-            } catch (Exception e) {
-                ban = false;
+        try {
+            cv.put("ID_DIVISION", id);
+            cv.put("DESCRIPCION", division.getDESCRIPCION());
+            cv.put("USUARIO_CREADOR", division.getUSUARIO_CREADOR());
+            cv.put("FECHA_CREACION", division.getFECHA_CREACION());
+
+            long valor = database.insert("DIVISION_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
             }
-        } else {
-            ban = false;
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
         }
-        cerrarBaseDeDatos();
-        sql = null;
-        database = null;
-        return ban;
     }
 
     //DIVISION LISTA
@@ -1706,7 +1713,7 @@ public class ControladorAdeful {
     }
 
     // ACTUALIZAR DIVISION
-    public boolean actualizarDivisionAdeful(Division division) {
+    public boolean actualizarDivisionAdeful(Division division) throws SQLiteException {
 
         boolean res = false;
         String sql = "UPDATE DIVISION_ADEFUL SET DESCRIPCION='"
@@ -1733,7 +1740,7 @@ public class ControladorAdeful {
     }
 
     //ELIMINAR DIVISION
-    public boolean eliminarDivisionAdeful(int id) {
+    public boolean eliminarDivisionAdeful(int id) throws SQLiteException {
 
         boolean res = false;
 
@@ -1757,11 +1764,12 @@ public class ControladorAdeful {
     }
 
     // INSERTAR TORNEO
-    public boolean insertTorneoAdeful(Torneo torneo) {
+    public boolean insertTorneoAdeful(int id, Torneo torneo) throws SQLiteException {
         long valorActual = 0;
         abrirBaseDeDatos();
         ContentValues cv = new ContentValues();
         try {
+            cv.put("ID_TORNEO", id);
             cv.put("DESCRIPCION", torneo.getDESCRIPCION());
             cv.put("ACTUAL", torneo.getACTUAL());
             cv.put("USUARIO_CREADOR", torneo.getUSUARIO_CREADOR());
@@ -1775,10 +1783,10 @@ public class ControladorAdeful {
                 if (torneo.getACTUAL()) {
                     abrirBaseDeDatos();
                     ContentValues cvA = new ContentValues();
-                    cvA.put("ID_TORNEO", valor);
+                    cvA.put("ID_TORNEO", id);
                     cvA.put("ID_ANIO", torneo.getFECHA_ANIO());
                     cvA.put("ISACTUAL", true);
-                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL="
+                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL = "
                             + 1, null);
                     cerrarBaseDeDatos();
                     if (valorActual > 0) {
@@ -1798,7 +1806,7 @@ public class ControladorAdeful {
     }
 
     //LISTA TORNEO
-    public ArrayList<Torneo> selectListaTorneoAdeful() {
+    public ArrayList<Torneo> selectListaTorneoAdeful() throws SQLiteException {
 
         String sql = "SELECT * FROM TORNEO_ADEFUL";
         ArrayList<Torneo> arrayTorneo = new ArrayList<Torneo>();
@@ -1855,7 +1863,7 @@ public class ControladorAdeful {
     }
 
     //ACTUALIZAR TORNEO
-    public boolean actualizarTorneoAdeful(Torneo torneo) {
+    public boolean actualizarTorneoAdeful(Torneo torneo) throws SQLiteException {
         long valorActual = 0;
         boolean updateOK = true;
         abrirBaseDeDatos();
@@ -1866,7 +1874,7 @@ public class ControladorAdeful {
             cv.put("USUARIO_ACTUALIZACION", torneo.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", torneo.getFECHA_ACTUALIZACION());
 
-            long valor = database.update("TORNEO_ADEFUL", cv, "ID_TORNEO="
+            long valor = database.update("TORNEO_ADEFUL", cv, "ID_TORNEO = "
                     + torneo.getID_TORNEO(), null);
             cerrarBaseDeDatos();
             if (valor > 0) {
@@ -1877,7 +1885,7 @@ public class ControladorAdeful {
                     cvA.put("ID_TORNEO", 0);
                     cvA.put("ID_ANIO", 0);
                     cvA.put("ISACTUAL", false);
-                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL="
+                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL = "
                             + 1, null);
                     cerrarBaseDeDatos();
 
@@ -1886,12 +1894,11 @@ public class ControladorAdeful {
                     } else {
                         updateOK = false;
                     }
-                }
-                if (torneo.getACTUAL() && torneo.getISACTUAL_ANTERIOR()) {
+                } else if (torneo.getACTUAL() && torneo.getISACTUAL_ANTERIOR()) {
                     abrirBaseDeDatos();
                     ContentValues cvA = new ContentValues();
                     cvA.put("ID_ANIO", torneo.getFECHA_ANIO());
-                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL="
+                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL = "
                             + 1, null);
                     cerrarBaseDeDatos();
 
@@ -1901,13 +1908,13 @@ public class ControladorAdeful {
                     } else {
                         updateOK = false;
                     }
-                }
-
-                if (torneo.getACTUAL() && !torneo.getISACTUAL_ANTERIOR()) {
+                } else if (torneo.getACTUAL() && !torneo.getISACTUAL_ANTERIOR()) {
                     abrirBaseDeDatos();
                     ContentValues cvA = new ContentValues();
+                    cvA.put("ID_TORNEO", torneo.getID_TORNEO());
                     cvA.put("ID_ANIO", torneo.getFECHA_ANIO());
-                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL="
+                    cvA.put("ISACTUAL", true);
+                    valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL = "
                             + 1, null);
                     cerrarBaseDeDatos();
 
@@ -1917,8 +1924,7 @@ public class ControladorAdeful {
                     } else {
                         updateOK = false;
                     }
-                }
-                if (!torneo.getACTUAL() && !torneo.getISACTUAL_ANTERIOR()) {
+                } else {
                     updateOK = true;
                 }
             } else {
@@ -1931,7 +1937,7 @@ public class ControladorAdeful {
     }
 
     //ELIMINAR TORNEO
-    public boolean eliminarTorneoAdeful(int id) {
+    public boolean eliminarTorneoAdeful(int id, boolean isActual) throws SQLiteException {
 
         boolean res = false;
         String sql = "DELETE FROM TORNEO_ADEFUL WHERE ID_TORNEO = " + id;
@@ -1946,6 +1952,24 @@ public class ControladorAdeful {
         } else {
             res = false;
         }
+        if (res) {
+
+            if (isActual) {
+                ContentValues cvA = new ContentValues();
+                cvA.put("ID_TORNEO", 0);
+                cvA.put("ID_ANIO", 0);
+                cvA.put("ISACTUAL", false);
+                long valorActual = database.update("TORNEO_ACTUAL_ADEFUL", cvA, "ID_TORNEO_ACTUAL = "
+                        + 1, null);
+                cerrarBaseDeDatos();
+
+                if (valorActual > 0) {
+                    res = true;
+                } else {
+                    res = false;
+                }
+            }
+        }
         cerrarBaseDeDatos();
         database = null;
         sql = null;
@@ -1953,12 +1977,12 @@ public class ControladorAdeful {
     }
 
     //ES TORNEO ACTUAL
-    public Torneo selectActualTorneoAdeful() {
+
+    public Torneo selectActualTorneoAdeful() throws SQLiteException {
 
         String sql = "SELECT * FROM TORNEO_ACTUAL_ADEFUL";
         Torneo torneo = null;
         boolean isActual = false;
-        abrirBaseDeDatos();
         int id, id_torneo, id_anio;
         Cursor cursor = null;
         abrirBaseDeDatos();
@@ -1976,8 +2000,9 @@ public class ControladorAdeful {
 
                         torneo = new Torneo(id, id_torneo, id_anio, isActual);
                         // arrayTorneo.add(torneo);
-                        cerrarBaseDeDatos();
+
                     }
+
                 }
             } catch (Exception e) {
                 torneo = null;
@@ -3267,7 +3292,7 @@ public class ControladorAdeful {
         ArrayList<Entrenamiento> arrayAsistenciaJugador = new ArrayList<Entrenamiento>();
 
         int id_jug, id_divi;
-        String nombre = null,descripcion = null;
+        String nombre = null, descripcion = null;
         Cursor cursorJ = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {

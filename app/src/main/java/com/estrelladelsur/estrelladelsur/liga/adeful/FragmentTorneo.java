@@ -1,10 +1,13 @@
 package com.estrelladelsur.estrelladelsur.liga.adeful;
 
 import java.util.ArrayList;
+
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -26,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
@@ -35,11 +39,21 @@ import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerTorneo;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FragmentTorneo extends Fragment {
 
     private DialogoAlerta dialogoAlerta;
-    private boolean insertar = true;
+    private ProgressDialog dialog;
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+    private JsonParsing jsonParsing = new JsonParsing(getActivity());
+    private static final String TAG_ID = "id";
+    //  private boolean insertar = true;
     private int posicion;
     private RecyclerView recycleViewTorneo;
     private ArrayList<Torneo> torneoArray;
@@ -50,7 +64,7 @@ public class FragmentTorneo extends Fragment {
     private Spinner spinnerAnioTorneoActual;
     private ControladorAdeful controladorAdeful;
     private int CheckedPositionFragment;
-    private ImageView imageButtonEquipo;
+    private ImageView imageButtonActual;
     private Torneo torneoActual;
     private LinearLayout linearTorneoActual;
     private boolean isChecked = false;
@@ -58,13 +72,18 @@ public class FragmentTorneo extends Fragment {
     private AdapterSpinnerAnio adapterSpinnerAnio;
     private ArrayAdapter<String> adaptadorInicial;
     private Anio anio;
-    String usuario = "Administrador";
+    private int gestion = 0;//0-insert //1-update//2-delete
+    private String usuario = null, URL = null, torneoText = null, mensaje = null;
     private boolean checkedAnterior = false;
-    private String GUARDAR_USUARIO = "Torneo cargado correctamente";
-    private String ACTUALIZAR_USUARIO = "Torneo actualizado correctamente";
+    // boolean isActual;
+    private String GUARDAR = "Torneo cargado correctamente";
+    private String ACTUALIZAR = "Torneo actualizado correctamente";
+    private String ELIMINAR = "Torneo eliminado correctamente";
     private Typeface editTextFont;
     private AuxiliarGeneral auxiliarGeneral;
     private TextView torneoActualtext;
+    private TextInputLayout editTextInputDescripcion;
+    private Request request;
 
     public static FragmentTorneo newInstance() {
         FragmentTorneo fragment = new FragmentTorneo();
@@ -96,9 +115,10 @@ public class FragmentTorneo extends Fragment {
         editTextTorneo = (EditText) v.findViewById(
                 R.id.editTextDescripcion);
         editTextTorneo.setTypeface(editTextFont);
-        imageButtonEquipo = (ImageView) v.findViewById(
+        editTextInputDescripcion = (TextInputLayout) v.findViewById(R.id.editTextInputDescripcion);
+        imageButtonActual = (ImageView) v.findViewById(
                 R.id.imageButtonEquipo_Cancha);
-        imageButtonEquipo.setVisibility(View.GONE);
+        imageButtonActual.setVisibility(View.GONE);
         checkboxTorneoActual = (CheckBox) v.findViewById(
                 R.id.checkboxTorneoActual);
         spinnerAnioTorneoActual = (Spinner) v.findViewById(
@@ -122,8 +142,8 @@ public class FragmentTorneo extends Fragment {
     }
 
     private void init() {
-        editTextTorneo.setHint("Ingrese un Torneo");
-        editTextTorneo.setHintTextColor(Color.GRAY);
+        editTextInputDescripcion.setHint("Ingrese un torneo");
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
         //VERICAMOS SI HAY UN TORNEO MARCADO COMO ACTUAL
         getIsActual();
         loadSpinnerAnio();
@@ -156,19 +176,26 @@ public class FragmentTorneo extends Fragment {
 
                                     @Override
                                     public void onClick(View v) {
-                                        // TODO Auto-generated method stub
-                                        if (controladorAdeful.eliminarTorneoAdeful(
-                                                torneoArray.get(position)
-                                                        .getID_TORNEO())) {
-                                            recyclerViewLoadTorneo();
-                                            Toast.makeText(
-                                                    getActivity(),
-                                                    "Torneo eliminado correctamente",
-                                                    Toast.LENGTH_SHORT).show();
-                                            dialogoAlerta.alertDialog.dismiss();
-                                        } else {
-                                            auxiliarGeneral.errorDataBase(getActivity());
-                                        }
+                                        gestion = 2;
+                                        isChecked = torneoArray.get(position).getACTUAL();
+
+                                        cargarEntidad(torneoArray
+                                                .get(position)
+                                                .getID_TORNEO(), 3);
+                                        dialogoAlerta.alertDialog.dismiss();
+//                                        if (controladorAdeful.eliminarTorneoUsuario(
+//
+//                                                torneoArray.get(position)
+//                                                        .getID_TORNEO(), isActual)) {
+//                                            //  recyclerViewLoadTorneo();
+//                                            if (isActual) {
+//                                                setVisibilityActual();
+//                                            }
+//                                            inicializarControles(ELIMINAR_USUARIO);
+//                                            dialogoAlerta.alertDialog.dismiss();
+//                                        } else {
+//                                            auxiliarGeneral.errorDataBase(getActivity());
+//                                        }
                                     }
                                 });
                         dialogoAlerta.btnCancelar
@@ -176,7 +203,6 @@ public class FragmentTorneo extends Fragment {
 
                                     @Override
                                     public void onClick(View v) {
-                                        // TODO Auto-generated method stub
                                         dialogoAlerta.alertDialog.dismiss();
                                     }
                                 });
@@ -184,8 +210,8 @@ public class FragmentTorneo extends Fragment {
 
                     @Override
                     public void onClick(View view, int position) {
-                        // TODO Auto-generated method stub
-                        insertar = false;
+                        gestion = 1;
+                        // insertar = false;
                         isChecked = torneoArray.get(position).getACTUAL();
                         checkedAnterior = torneoArray.get(position).getACTUAL();
                         if (isChecked) {
@@ -199,7 +225,6 @@ public class FragmentTorneo extends Fragment {
                         editTextTorneo.setText(torneoArray.get(position)
                                 .getDESCRIPCION());
                         posicion = position;
-
                     }
                 }
         ));
@@ -245,11 +270,11 @@ public class FragmentTorneo extends Fragment {
     private int getPositionSpinner(int anio) {
 
         int index = 0;
-                   for (int i = 0; i < anioArray.size(); i++) {
-                    if (anioArray.get(i).getID_ANIO()== anio) {
-                        index = i;
-                    }
-                }
+        for (int i = 0; i < anioArray.size(); i++) {
+            if (anioArray.get(i).getID_ANIO() == anio) {
+                index = i;
+            }
+        }
 
         return index;
     }
@@ -257,7 +282,7 @@ public class FragmentTorneo extends Fragment {
     public void inicializarControles(String mensaje) {
         recyclerViewLoadTorneo();
         editTextTorneo.setText("");
-        if(checkboxTorneoActual.isChecked()){
+        if (checkboxTorneoActual.isChecked()) {
             OcultarLayoutIsActual();
             getIsActual();
         }
@@ -265,49 +290,58 @@ public class FragmentTorneo extends Fragment {
                 mensaje,
                 Toast.LENGTH_SHORT).show();
     }
-    public void guardarTorneo() {
-        anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
-        torneo = new Torneo(0, editTextTorneo.getText()
-                .toString(), isChecked,isChecked, anio.getID_ANIO(), usuario, auxiliarGeneral.getFechaOficial(), usuario,
-                auxiliarGeneral.getFechaOficial());
-        if (controladorAdeful.insertTorneoAdeful(torneo)) {
-          inicializarControles(GUARDAR_USUARIO);
-        } else {
-            auxiliarGeneral.errorDataBase(getActivity());
-        }
-    }
 
-    public void actualizarTorneo() {
-        anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
-        torneo = new Torneo(torneoArray.get(posicion)
-                .getID_TORNEO(), editTextTorneo.getText()
-                .toString(), isChecked,checkedAnterior, anio.getID_ANIO(), null, null, usuario, auxiliarGeneral.getFechaOficial());
-        if (controladorAdeful.actualizarTorneoAdeful(torneo)) {
-            insertar = true;
-            inicializarControles(ACTUALIZAR_USUARIO);
-        } else {
-            auxiliarGeneral.errorDataBase(getActivity());
-        }
-    }
-public void OcultarLayoutIsActual(){
+//    public void guardarTorneo() {
+//        anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
+//        torneo = new Torneo(0, editTextTorneo.getText()
+//                .toString(), isChecked, isChecked, anio.getID_ANIO(), usuario, auxiliarGeneral.getFechaOficial(), usuario,
+//                auxiliarGeneral.getFechaOficial());
+//        if (controladorAdeful.insertTorneoUsuario(torneo)) {
+//            inicializarControles(GUARDAR_USUARIO);
+//        } else {
+//            auxiliarGeneral.errorDataBase(getActivity());
+//        }
+//    }
+
+//    public void actualizarTorneo() {
+//        anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
+//        torneo = new Torneo(torneoArray.get(posicion)
+//                .getID_TORNEO(), editTextTorneo.getText()
+//                .toString(), isChecked, checkedAnterior, anio.getID_ANIO(), null, null, usuario, auxiliarGeneral.getFechaOficial());
+//        if (controladorAdeful.actualizarTorneoAdeful(torneo)) {
+//            insertar = true;
+//            inicializarControles(ACTUALIZAR_USUARIO);
+//        } else {
+//            auxiliarGeneral.errorDataBase(getActivity());
+//        }
+//    }
+
+    public void OcultarLayoutIsActual() {
         checkboxTorneoActual.setChecked(false);
         linearTorneoActual.setVisibility(View.GONE);
         spinnerAnioTorneoActual.setVisibility(View.GONE);
-}
+    }
 
-    public void getIsActual(){
+    public void getIsActual() {
         torneoActual = controladorAdeful.selectActualTorneoAdeful();
-        if(torneoActual!=null){
+        if (torneoActual != null) {
             // SI ES TRUE OCULTAMOS
             if (torneoActual.getISACTUAL()) {
                 linearTorneoActual.setVisibility(View.GONE);
+                isChecked = false;
             }
-        }else{
+        } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
     }
+
+    public void setVisibilityActual() {
+        linearTorneoActual.setVisibility(View.VISIBLE);
+    }
+
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -354,11 +388,141 @@ public void OcultarLayoutIsActual(){
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
             // TODO Auto-generated method stub
         }
     }
+
+    public void cargarEntidad(int id, int ws) {
+        URL = null;
+        URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLTORNEOADEFUL();
+        if (ws != 3) {
+            torneoText = null;
+            torneoText = editTextTorneo.getText()
+                    .toString();
+            anio = (Anio) spinnerAnioTorneoActual.getSelectedItem();
+        }
+
+        torneo = new Torneo(id, editTextTorneo.getText()
+                .toString(), isChecked, checkedAnterior, anio.getID_ANIO(), usuario, auxiliarGeneral.getFechaOficial(), usuario,
+                auxiliarGeneral.getFechaOficial());
+
+        envioWebService(ws);
+    }
+
+    public void envioWebService(int tipo) {
+        request = new Request();
+        request.setMethod("POST");
+
+        if (torneo.getACTUAL()) {
+          request.setParametrosDatos("id_anio", String.valueOf(torneo.getFECHA_ANIO()));
+        }
+        request.setParametrosDatos("actual", String.valueOf(torneo.getACTUAL()));
+        //0 = insert // 1 = update // 2 = delete
+        if (tipo == 0) {
+            request.setParametrosDatos("descripcion", torneo.getDESCRIPCION());
+            request.setParametrosDatos("usuario_creador", torneo.getUSUARIO_CREADOR());
+            request.setParametrosDatos("fecha_creacion", torneo.getFECHA_CREACION());
+            URL = URL + auxiliarGeneral.getInsertPHP("Torneo");
+        } else if (tipo == 1) {
+            request.setParametrosDatos("descripcion", torneo.getDESCRIPCION());
+            request.setParametrosDatos("id_torneo", String.valueOf(torneo.getID_TORNEO()));
+            request.setParametrosDatos("actual_anterior", String.valueOf(torneo.getISACTUAL_ANTERIOR()));
+            request.setParametrosDatos("usuario_actualizacion", torneo.getUSUARIO_ACTUALIZACION());
+            request.setParametrosDatos("fecha_actualizacion", torneo.getFECHA_ACTUALIZACION());
+            URL = URL + auxiliarGeneral.getUpdatePHP("Torneo");
+        } else {
+            request.setParametrosDatos("id_torneo", String.valueOf(torneo.getID_TORNEO()));
+            request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+            URL = URL + auxiliarGeneral.getDeletePHP("Equipo");
+        }
+
+        new TaskTorneo().execute(request);
+    }
+
+    // enviar/editar/delete torneo
+
+    public class TaskTorneo extends AsyncTask<Request, Boolean, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(getActivity());
+            dialog.setMessage("Procesando...");
+            dialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Request... params) {
+            int success;
+            JSONObject json = null;
+            boolean precessOK = true;
+            //String UrlParsing = null;
+            try {
+                json = jsonParsing.parsingJsonObject(params[0], URL);
+                if (json != null) {
+                    success = json.getInt(TAG_SUCCESS);
+                    mensaje = json.getString(TAG_MESSAGE);
+                    if (success == 0) {
+                        if (gestion == 0) {
+                            int id = json.getInt(TAG_ID);
+                            if (id > 0) {
+                                if (controladorAdeful.insertTorneoAdeful(id, torneo)) {
+                                    precessOK = true;
+                                } else {
+                                    precessOK = false;
+                                }
+                            } else {
+                                precessOK = false;
+                            }
+                        } else if (gestion == 1) {
+                            if (controladorAdeful.actualizarTorneoAdeful(torneo)) {
+                                precessOK = true;
+                            } else {
+                                precessOK = false;
+                            }
+                        } else {
+                            if (controladorAdeful.eliminarTorneoAdeful(torneo.getID_TORNEO(), isChecked)) {
+                                precessOK = true;
+                            } else {
+                                precessOK = false;
+                            }
+                        }
+                        precessOK = true;
+                    } else {
+                        precessOK = false;
+                    }
+                } else {
+                    precessOK = false;
+                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
+                }
+            } catch (JSONException e) {
+                precessOK = false;
+                mensaje = "Error(5). Por favor comuniquese con el administrador.";
+            }
+            return precessOK;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            dialog.dismiss();
+
+            if (result) {
+                if (gestion == 0) {
+                    inicializarControles(GUARDAR);
+                } else if (gestion == 1) {
+                    gestion = 0;
+                    inicializarControles(ACTUALIZAR);
+                } else {
+                    gestion = 0;
+                    inicializarControles(ELIMINAR);
+                }
+            } else {
+                auxiliarGeneral.errorWebService(getActivity(), mensaje);
+            }
+        }
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -413,18 +577,21 @@ public void OcultarLayoutIsActual(){
                     Toast.makeText(getActivity(), "Debe agregar un año.",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    if (insertar) {
-                        guardarTorneo();
-                    } else {
-                        actualizarTorneo();
+
+                    if (gestion == 0) {
+                        cargarEntidad(0, 0);
+                    } else if (gestion == 1) {
+                        cargarEntidad(torneoArray.get(
+                                posicion).getID_TORNEO(), 1);
                     }
                 }
             } else {
 
-                if (insertar) {
-                    guardarTorneo();
-                } else {
-                    actualizarTorneo();
+                if (gestion == 0) {
+                    cargarEntidad(0, 0);
+                } else if (gestion == 1) {
+                    cargarEntidad(torneoArray.get(
+                            posicion).getID_TORNEO(), 1);
                 }
             }
 

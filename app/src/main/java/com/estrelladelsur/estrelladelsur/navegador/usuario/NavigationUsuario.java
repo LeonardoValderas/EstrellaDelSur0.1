@@ -31,6 +31,7 @@ import com.estrelladelsur.estrelladelsur.institucion.usuario.ArticuloUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ComisionUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.DireccionUsuario;
 import com.estrelladelsur.estrelladelsur.liga.adeful.TabsAdeful;
+import com.estrelladelsur.estrelladelsur.liga.usuario.TabsAdefulUsuario;
 import com.estrelladelsur.estrelladelsur.login.Login;
 import com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado;
 import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
@@ -180,7 +181,7 @@ public class NavigationUsuario extends AppCompatActivity {
                 } else if (groupPosition == 2) {
                     switch (childPosition) {
                         case 0:
-                            Intent liga = new Intent(NavigationUsuario.this, TabsAdeful.class);
+                            Intent liga = new Intent(NavigationUsuario.this, TabsAdefulUsuario.class);
                             startActivity(liga);
 //                            tituloClickFragment = ligaChild.get(childPosition)
 //                                    .toString();

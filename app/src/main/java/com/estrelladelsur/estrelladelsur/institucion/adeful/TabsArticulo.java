@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 
-public class TabsArticulo extends AppCompatActivity implements Communicator{
+public class TabsArticulo extends AppCompatActivity implements Communicator {
 
     private Toolbar toolbar;
     private ViewPager viewPager;
@@ -27,7 +27,7 @@ public class TabsArticulo extends AppCompatActivity implements Communicator{
     private FragmentTransaction mCurTransaction;
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
-    private TextView txtAbTitulo, txtAbSubTitulo;
+    private TextView txtToolBarTitulo;
     private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
 
@@ -35,9 +35,8 @@ public class TabsArticulo extends AppCompatActivity implements Communicator{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
         auxiliarGeneral = new AuxiliarGeneral(TabsArticulo.this);
-        titulos = auxiliarGeneral.tituloFont(TabsArticulo.this);
+//        titulos = auxiliarGeneral.tituloFont(TabsArticulo.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -47,12 +46,9 @@ public class TabsArticulo extends AppCompatActivity implements Communicator{
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-        txtAbTitulo.setVisibility(View.GONE);
-
-        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-        txtAbSubTitulo.setText("ARTICULO");
-        txtAbSubTitulo.setTypeface(titulos,Typeface.BOLD);
+        txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
+        txtToolBarTitulo.setText("ARTICULO");
+      //  txtToolBarTitulo.setTypeface(titulos);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -80,6 +76,7 @@ public class TabsArticulo extends AppCompatActivity implements Communicator{
         tabLayout.setupWithViewPager(viewPager);
         init();
     }
+
     public void init() {
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

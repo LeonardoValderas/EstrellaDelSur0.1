@@ -69,15 +69,19 @@ public class JsonParsing {
                 write.flush();
             }
             con.setConnectTimeout(4000);
+            if(con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                StringBuilder sb = new StringBuilder();
+                reader = new BufferedReader(new InputStreamReader(
+                        con.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                json = sb.toString();
+            }else {
 
-            StringBuilder sb = new StringBuilder();
-            reader = new BufferedReader(new InputStreamReader(
-                    con.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
+                return null;
             }
-            json = sb.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

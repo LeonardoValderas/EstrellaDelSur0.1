@@ -29,7 +29,7 @@ public class TabsComision extends AppCompatActivity implements Communicator{
     private FragmentTransaction mCurTransaction;
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
-    private TextView txtAbTitulo, txtAbSubTitulo;
+    private TextView txtToolBarTitulo;
     private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
     @Override
@@ -38,7 +38,7 @@ public class TabsComision extends AppCompatActivity implements Communicator{
         setContentView(R.layout.tabs_general);
 
         auxiliarGeneral = new AuxiliarGeneral(TabsComision.this);
-        titulos = auxiliarGeneral.tituloFont(TabsComision.this);
+      //  titulos = auxiliarGeneral.tituloFont(TabsComision.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -48,12 +48,12 @@ public class TabsComision extends AppCompatActivity implements Communicator{
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-        txtAbTitulo.setVisibility(View.GONE);
+//        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
+//        txtAbTitulo.setVisibility(View.GONE);
 
-        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-        txtAbSubTitulo.setText("COMISION");
-        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
+        txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
+        txtToolBarTitulo.setText("COMISION");
+        //txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);

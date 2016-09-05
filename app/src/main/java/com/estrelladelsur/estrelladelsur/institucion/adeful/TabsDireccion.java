@@ -26,7 +26,7 @@ public class TabsDireccion extends AppCompatActivity implements Communicator{
     private FragmentTransaction mCurTransaction;
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
-    private TextView txtAbTitulo, txtAbSubTitulo;
+    private TextView txtToolBarTitulo;
     private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
 
@@ -36,7 +36,7 @@ public class TabsDireccion extends AppCompatActivity implements Communicator{
         setContentView(R.layout.tabs_general);
 
         auxiliarGeneral = new AuxiliarGeneral(TabsDireccion.this);
-        titulos = auxiliarGeneral.tituloFont(TabsDireccion.this);
+       // titulos = auxiliarGeneral.tituloFont(TabsDireccion.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -46,12 +46,8 @@ public class TabsDireccion extends AppCompatActivity implements Communicator{
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-        txtAbTitulo.setVisibility(View.GONE);
-
-        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-        txtAbSubTitulo.setText("DIRECCION");
-        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
+        txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
+        txtToolBarTitulo.setText("DIRECCION");
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);

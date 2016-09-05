@@ -22,18 +22,11 @@
             app:civ_border_color="#FF000000"
             app:civ_border_width="1dp" />
 
-        <!--<ImageView-->
-        <!--android:id="@+id/imageRecyclerViewFoto"-->
-        <!--android:layout_width="150dp"-->
-        <!--android:layout_height="150dp"-->
-        <!--android:background="@drawable/border_circle"-->
-        <!--android:src="@android:drawable/ic_menu_my_calendar" />-->
-
         <TextView
             android:id="@+id/textRecyclerViewNombre"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:gravity="center"
             android:layout_marginTop="13dp"
             android:text="Nombre"
             android:textColor="#000000"
@@ -42,9 +35,9 @@
 
         <TextView
             android:id="@+id/textRecyclerViewCargo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:gravity="center"
             android:text="Cargo"
             android:textColor="#000000"
             android:textSize="25dp" />

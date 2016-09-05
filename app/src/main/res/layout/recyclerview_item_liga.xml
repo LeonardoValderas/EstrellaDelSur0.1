@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="120dp"
     android:layout_gravity="center_horizontal"
+    android:layout_margin="5dp"
     android:clickable="true"
     card_view:cardCornerRadius="10dp"
     card_view:cardElevation="5dp">
@@ -20,13 +21,14 @@
             android:layout_weight="0.1"
             android:orientation="horizontal">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/imageViewEscudo"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/border_circle" />
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="1dp" />
 
             <ImageView
                 android:id="@+id/imageViewFoto"
@@ -70,14 +72,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/imageViewMapa"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/border_circle"
                 android:src="@mipmap/ic_mapa_icon"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="1dp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -104,7 +107,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center|right"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="10dp"
         android:src="@drawable/ic_is_actual"
         android:visibility="gone" />
 

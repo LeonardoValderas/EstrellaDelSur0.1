@@ -25,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,7 +91,7 @@ public class FragmentGenerarComision extends Fragment {
     private JsonParsing jsonParsing = new JsonParsing(getActivity());
     private static final String TAG_ID = "id";
     private String encodedImage = null, url_nombre_foto = null, usuario = null, mensaje = null,
-            URL = null, fechaFoto = null, nombre_foto = null, url_foto_comision = null;
+            URL = null, fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_comision = null;
 
     public static FragmentGenerarComision newInstance() {
         FragmentGenerarComision fragment = new FragmentGenerarComision();
@@ -178,6 +177,7 @@ public class FragmentGenerarComision extends Fragment {
                 desdeButtonComision.setText(comisionArray.get(0).getPERIODO_DESDE().toString());
                 hastaButtonComision.setText(comisionArray.get(0).getPERIODO_HASTA().toString());
                 imageComision = comisionArray.get(0).getFOTO_COMISION();
+                nombre_foto_anterior = comisionArray.get(0).getNOMBRE_FOTO();
 
                 puestoSpinnerComision.setSelection(getPositionCargo(comisionArray.get(0).getID_CARGO()));
 
@@ -369,7 +369,7 @@ public class FragmentGenerarComision extends Fragment {
         // si la foto es null(default) no enviaremos la url.
         if (imageComision != null) {
             url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
-            fechaFoto = auxiliarGeneral.getFechaFoto();
+            fechaFoto = auxiliarGeneral.getFechaImagen();
             nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
             url_foto_comision = auxiliarGeneral.getURLFOTOCOMISIONADEFUL() + nombre_foto;
         }
@@ -437,6 +437,9 @@ public class FragmentGenerarComision extends Fragment {
             request.setParametrosDatos("id_comision", String.valueOf(comision.getID_COMISION()));
             request.setParametrosDatos("usuario_actualizacion", comision.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", comision.getFECHA_ACTUALIZACION());
+            if (nombre_foto_anterior != null)
+                request.setParametrosDatos("nombre_foto_anterior", nombre_foto_anterior);
+
             URL = URL + auxiliarGeneral.getUpdatePHP("Comision");
         }
         new TaskComision().execute(request);

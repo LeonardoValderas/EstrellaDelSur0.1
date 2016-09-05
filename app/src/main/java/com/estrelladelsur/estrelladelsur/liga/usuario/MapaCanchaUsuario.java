@@ -1,18 +1,26 @@
-package com.estrelladelsur.estrelladelsur.liga.adeful;
+package com.estrelladelsur.estrelladelsur.liga.usuario;
 
-import java.util.ArrayList;
-
+import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.Typeface;
-import android.support.v4.app.NavUtils;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.entidad.Cancha;
+import com.estrelladelsur.estrelladelsur.liga.adeful.LocationAddress;
+import com.estrelladelsur.estrelladelsur.liga.adeful.TabsAdeful;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,16 +32,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import android.content.Intent;
-import android.graphics.Point;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.widget.EditText;
-import android.widget.Toast;
 
-public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
+
+public class MapaCanchaUsuario extends AppCompatActivity implements OnMapReadyCallback {
 
     private ArrayList<Cancha> canchaAdefulArray;
     private TextView tvAddress;
@@ -71,7 +73,7 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
 //        editTextFont = auxiliarGeneral.textFont(MapaCanchaUsuario.this);
 
         controladorAdeful = new ControladorAdeful(this);
-        auxiliarGeneral = new AuxiliarGeneral(MapaCancha.this);
+        auxiliarGeneral = new AuxiliarGeneral(MapaCanchaUsuario.this);
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -157,7 +159,7 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
 
         canchaAdefulArray = controladorAdeful.selectListaCanchaAdeful();
         if (canchaAdefulArray == null)
-         auxiliarGeneral.errorDataBase(MapaCancha.this);
+         auxiliarGeneral.errorDataBase(MapaCanchaUsuario.this);
 
         tvAddress = (TextView) findViewById(R.id.tvAddress);
         tvAddress.setTypeface(editTextFont);
@@ -202,7 +204,7 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
         editTextNombre.setText("");
         tvAddress.setText("");
         volver();
-        Toast.makeText(MapaCancha.this,
+        Toast.makeText(MapaCanchaUsuario.this,
                 mensaje,
                 Toast.LENGTH_SHORT).show();
     }
@@ -262,7 +264,7 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
                 if (controladorAdeful.insertCanchaAdeful(cancha)) {
                        inicializarControles(GUARDAR_USUARIO);
                     } else {
-                    auxiliarGeneral.errorDataBase(MapaCancha.this);
+                    auxiliarGeneral.errorDataBase(MapaCanchaUsuario.this);
                     }
                 } else {
                     String usuario = "Administrador";
@@ -276,7 +278,7 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
                         insertar = true;
                      inicializarControles(ACTUALIZAR_USUARIO);
                     } else {
-                   auxiliarGeneral.errorDataBase(MapaCancha.this);
+                   auxiliarGeneral.errorDataBase(MapaCanchaUsuario.this);
                     }
                 }
             }
@@ -296,7 +298,7 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     public void volver() {
-        Intent i = new Intent(MapaCancha.this, TabsAdeful.class);
+        Intent i = new Intent(MapaCanchaUsuario.this, TabsAdeful.class);
         i.putExtra("restart", 1);
         startActivity(i);
     }
