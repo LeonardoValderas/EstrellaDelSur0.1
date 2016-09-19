@@ -1,14 +1,12 @@
 package com.estrelladelsur.estrelladelsur.institucion.adeful;
 
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -38,13 +36,10 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerC
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.SplashUsuario;
-import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,7 +47,7 @@ import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FragmentGenerarComision extends Fragment {
+public class FragmentGenerarComision extends Fragment implements MyAsyncTaskListener {
 
     private int CheckedPositionFragment, idComisionExtra;
     private CircleImageView fotoImageComision;
@@ -80,17 +75,9 @@ public class FragmentGenerarComision extends Fragment {
     private ArrayAdapter<String> adaptadorInicial;
     private Typeface editTextFont, textViewFont;
     private AuxiliarGeneral auxiliarGeneral;
-    private String GUARDAR_USUARIO = "Integrante ingresado correctamente";
-    private String ACTUALIZAR_USUARIO = "Integrante actualizado correctamente";
-    private String GUARDAR_CARGO = "Cargo generado correctamente";
-    private String ACTUALIZAR_CARGO = "Cargo actualizado correctamente";
     private Request request = new Request();
-    private ProgressDialog dialog;
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private JsonParsing jsonParsing = new JsonParsing(getActivity());
-    private static final String TAG_ID = "id";
-    private String encodedImage = null, url_nombre_foto = null, usuario = null, mensaje = null,
+    private boolean isComision = true;
+    private String encodedImage = null, url_nombre_foto = null, usuario = null,
             URL = null, fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_comision = null;
 
     public static FragmentGenerarComision newInstance() {
@@ -261,15 +248,9 @@ public class FragmentGenerarComision extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
             Bitmap bitmapWeb = auxiliarGeneral.SeleccionarImagen(data, getContext(), true);
-            //     Bitmap bitmapImage = auxiliarGeneral.getRoundedBitmap(bitmapWeb);
-//            if (bitmapImage != null)
-//                fotoImageComision.setImageBitmap(bitmapImage);
             if (bitmapWeb != null) {
                 fotoImageComision.setImageBitmap(bitmapWeb);
-
-
                 baos = new ByteArrayOutputStream();
-                //bitmapImage.compress(Bitmap.CompressFormat.PNG, 0, baos);
                 bitmapWeb.compress(Bitmap.CompressFormat.PNG, 0, baos);
                 imageComision = baos.toByteArray();
             }
@@ -406,7 +387,9 @@ public class FragmentGenerarComision extends Fragment {
             URL = URL + auxiliarGeneral.getUpdatePHP("Cargo");
             insertarCargo = false;
         }
-        new TaskCargo().execute(request);
+        isComision = false;
+        new AsyncTaskGeneric(getActivity(), this, URL, request, "Cargo", cargo, insertarCargo, "o");
+        //new TaskCargo().execute(request);
     }
 
     public void envioWebService(int tipo) {
@@ -442,150 +425,38 @@ public class FragmentGenerarComision extends Fragment {
 
             URL = URL + auxiliarGeneral.getUpdatePHP("Comision");
         }
-        new TaskComision().execute(request);
+        isComision = true;
+        new AsyncTaskGeneric(getActivity(), this, URL, request, "Comisión", comision, insertar, "a");
     }
 
-    public class TaskCargo extends AsyncTask<Request, Boolean, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Procesando...");
-            dialog.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(Request... params) {
-            int success;
-            JSONObject json = null;
-            boolean precessOK = true;
-            try {
-                json = jsonParsing.parsingJsonObject(params[0], URL);
-                if (json != null) {
-                    success = json.getInt(TAG_SUCCESS);
-                    mensaje = json.getString(TAG_MESSAGE);
-                    if (success == 0) {
-                        if (insertarCargo) {
-                            int id = json.getInt(TAG_ID);
-                            if (id > 0) {
-                                if (controladorAdeful.insertCargoAdeful(id, cargo)) {
-                                    precessOK = true;
-                                } else {
-                                    precessOK = false;
-                                }
-                            } else {
-                                precessOK = false;
-                            }
-                        } else {
-                            if (controladorAdeful.actualizarCargoAdeful(cargo)) {
-                                precessOK = true;
-                            } else {
-                                precessOK = false;
-                            }
-                        }
-                        precessOK = true;
-                    } else {
-                        precessOK = false;
-                    }
-                } else {
-                    precessOK = false;
-                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
-                }
-            } catch (JSONException e) {
-                precessOK = false;
-                mensaje = "Error(5). Por favor comuniquese con el administrador.";
-            }
-            return precessOK;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            dialog.dismiss();
-
-            if (result) {
-                if (insertarCargo) {
-                    inicializarControlesCargo(GUARDAR_CARGO);
-                } else {
-                    inicializarControlesCargo(ACTUALIZAR_CARGO);
-                }
-            } else {
-                auxiliarGeneral.errorWebService(getActivity(), mensaje);
-            }
-        }
-    }
-
-    // enviar/editar articulo
-    public class TaskComision extends AsyncTask<Request, Boolean, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Procesando...");
-            dialog.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(Request... params) {
-            int success;
-            JSONObject json = null;
-            boolean precessOK = true;
-            //String UrlParsing = null;
-            try {
-                //UrlParsing = params[1].getParametros().get("URL");
-                json = jsonParsing.parsingJsonObject(params[0], URL);
-                if (json != null) {
-                    success = json.getInt(TAG_SUCCESS);
-                    mensaje = json.getString(TAG_MESSAGE);
-                    if (success == 0) {
-                        if (insertar) {
-                            int id = json.getInt(TAG_ID);
-                            if (id > 0) {
-                                if (controladorAdeful.insertComisionAdeful(id, comision)) {
-                                    precessOK = true;
-                                } else {
-                                    precessOK = false;
-                                }
-                            } else {
-                                precessOK = false;
-                            }
-                        } else {
-                            if (controladorAdeful.actualizarComisionAdeful(comision)) {
-                                precessOK = true;
-                            } else {
-                                precessOK = false;
-                            }
-                        }
-                        precessOK = true;
-                    } else {
-                        precessOK = false;
-                    }
-                } else {
-                    precessOK = false;
-                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
-                }
-            } catch (JSONException e) {
-                precessOK = false;
-                mensaje = "Error(5). Por favor comuniquese con el administrador.";
-            }
-            return precessOK;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            dialog.dismiss();
-
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (isComision) {
             if (result) {
                 if (insertar) {
-                    inicializarControles(GUARDAR_USUARIO);
+                    inicializarControles(mensaje);
                 } else {
                     actualizar = false;
                     insertar = true;
-                    inicializarControles(ACTUALIZAR_USUARIO);
+                    inicializarControles(mensaje);
                 }
             } else {
                 auxiliarGeneral.errorWebService(getActivity(), mensaje);
             }
+        } else {
+            dialogoAlerta.alertDialog.dismiss();
+            if (result) {
+                if (insertarCargo) {
+                    inicializarControlesCargo(mensaje);
+                } else {
+                    inicializarControlesCargo(mensaje);
+                }
+            } else {
+                auxiliarGeneral.errorWebService(getActivity(), mensaje);
+            }
+            isComision = true;
         }
     }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);

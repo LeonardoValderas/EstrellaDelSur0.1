@@ -3,7 +3,6 @@ package com.estrelladelsur.estrelladelsur.institucion.adeful;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -26,16 +25,15 @@ import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerComision;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 
-public class FragmentEditarComision extends Fragment {
+public class FragmentEditarComision extends Fragment implements MyAsyncTaskListener{
 
     private int CheckedPositionFragment,posicion = 0;
     private RecyclerView recyclerComision;
@@ -168,8 +166,7 @@ public class FragmentEditarComision extends Fragment {
         URL = null;
         URL = auxiliarGeneral.getURLCOMISIONADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Comision");
-
-        new TaskComision().execute(request);
+        new AsyncTaskGeneric(getActivity(), this, URL, request, "Comisión", true, posicion, "a");
     }
     public void inicializarControles(String mensaje) {
         recyclerViewLoadComision();
@@ -179,55 +176,7 @@ public class FragmentEditarComision extends Fragment {
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
     }
-    public class TaskComision extends AsyncTask<Request, Boolean, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Procesando...");
-            dialog.show();
-        }
 
-        @Override
-        protected Boolean doInBackground(Request... params) {
-            int success;
-            JSONObject json = null;
-            boolean precessOK = true;
-            try {
-                json = jsonParsing.parsingJsonObject(params[0],URL);
-                if (json != null) {
-                    success = json.getInt(TAG_SUCCESS);
-                    mensaje =json.getString(TAG_MESSAGE);
-                    if (success == 0) {
-                        if (controladorAdeful.eliminarComisionAdeful(posicion)) {
-                            precessOK = true;
-                        } else {
-                            precessOK = false;
-                        }
-                    } else {
-                        precessOK = false;
-                    }
-                }else {
-                    precessOK = false;
-                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
-                }
-            } catch (JSONException e) {
-                precessOK = false;
-                mensaje = "Error(5). Por favor comuniquese con el administrador.";
-            }
-            return precessOK;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            dialog.dismiss();
-
-            if (result) {
-                inicializarControles(ELIMINAR_COMISION);
-            } else {
-                auxiliarGeneral.errorWebService(getActivity(), mensaje);
-            }
-        }
-    }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -241,7 +190,17 @@ public class FragmentEditarComision extends Fragment {
            auxiliarGeneral.errorDataBase(getActivity());
         }
     }
-    public static interface ClickListener {
+
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            inicializarControles(mensaje);
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
+        }
+    }
+
+public static interface ClickListener {
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);
     }

@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur.miequipo;
+package com.estrelladelsur.estrelladelsur.miequipo.adeful;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,18 +16,17 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 
-public class TabsSancion extends AppCompatActivity {
+public class TabsFixture extends AppCompatActivity {
 
 	private Toolbar toolbar;
 	private ViewPager viewPager;
 	private TabLayout tabLayout;
 	private int viewpagerid;
-	final int PAGE_COUNT = 2;
+	private final int PAGE_COUNT = 2;
 	private FragmentTransaction mCurTransaction;
 	private static final String TAG = "FragmentPagerAdapter";
 	private static final boolean DEBUG = false;
-	private TextView txtAbTitulo;
-	private TextView txtAbSubTitulo;
+	private TextView txtToolBarTitulo;
 	private Typeface titulos;
 	private AuxiliarGeneral auxiliarGeneral;
 	@Override
@@ -35,10 +34,8 @@ public class TabsSancion extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs_general);
 
-
-		auxiliarGeneral = new AuxiliarGeneral(TabsSancion.this);
-		titulos = auxiliarGeneral.tituloFont(TabsSancion.this);
-
+		auxiliarGeneral = new AuxiliarGeneral(TabsFixture.this);
+	//	titulos = auxiliarGeneral.tituloFont(TabsFixture.this);
 		// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -46,12 +43,10 @@ public class TabsSancion extends AppCompatActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-		txtAbTitulo.setVisibility(View.GONE);
 
-		txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-		txtAbSubTitulo.setText("SANCION");
-		txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
+		txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
+		txtToolBarTitulo.setText("FIXTURE");
+
 
 		if (savedInstanceState != null) {
 			viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -79,10 +74,10 @@ public class TabsSancion extends AppCompatActivity {
 		tabLayout.setupWithViewPager(viewPager);
 
 		init();
+
 	}
 
 	public void init() {
-
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageScrolled(int position, float positionOffset,
@@ -96,23 +91,24 @@ public class TabsSancion extends AppCompatActivity {
 			public void onPageScrollStateChanged(int state) {
 			}
 		});
-
 	}
 
 	public class TabsFixtureAdapter extends FragmentPagerAdapter {
 
 		private FragmentManager fm;
-		private String tabTitles[] = new String[] { "CREAR SANCION",
-				"EDITAR SANCION" };
+		private String tabTitles[] = new String[] { "CREAR FIXTURE",
+				"EDITAR FIXTURE" };
 
 		public TabsFixtureAdapter(FragmentManager fm) {
 			super(fm);
 			this.fm = fm;
 		}
+
 		@Override
 		public int getCount() {
 			return PAGE_COUNT;
 		}
+
 		@Override
 		public Fragment getItem(int position) {
 
@@ -125,10 +121,10 @@ public class TabsSancion extends AppCompatActivity {
 
 			switch (position) {
 			case 0:
-				fragmentTab = FragmentGenerarSancion.newInstance();
+				fragmentTab = FragmentGenerarFixture.newInstance();
 				break;
 			case 1:
-				fragmentTab = FragmentEditarSancion.newInstance();
+				fragmentTab = FragmentEditarFixture.newInstance();
 				break;
 			}
 			return fragmentTab;
@@ -159,11 +155,9 @@ public class TabsSancion extends AppCompatActivity {
 
 			return fragment;
 		}
-
 		private String makeFragmentName(int viewId, int index) {
 			return "android:switcher:" + viewId + ":" + index;
 		}
-
 		@Override
 		public CharSequence getPageTitle(int position) {
 			// Generate title based on item position

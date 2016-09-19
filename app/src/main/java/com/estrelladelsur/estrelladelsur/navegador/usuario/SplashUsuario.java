@@ -14,9 +14,12 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
+import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
+import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
+import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
@@ -51,6 +54,9 @@ public class SplashUsuario extends AppCompatActivity {
     private Direccion direccion;
     private Equipo equipo;
     private Torneo torneo;
+    private Cancha cancha;
+    private Division division;
+    private Fixture fixture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,11 +105,17 @@ public class SplashUsuario extends AppCompatActivity {
     public void envioWebService() {
         request.setMethod("POST");
         // request.setParametrosDatos("fecha_articulo", fecha_articulo);
+        //INSTITUCION
         request.setParametrosDatos("ARTICULO_ADEFUL", "2016-04-23--09-29-0");
         request.setParametrosDatos("COMISION_ADEFUL", "2016-04-23--09-29-0");
         request.setParametrosDatos("DIRECCION_ADEFUL", "2016-04-23--09-29-0");
+        //LIGA
         request.setParametrosDatos("EQUIPO_ADEFUL", "2016-04-23--09-29-0");
+        request.setParametrosDatos("DIVISION_ADEFUL", "2016-04-23--09-29-0");
         request.setParametrosDatos("TORNEO_ADEFUL", "2016-04-23--09-29-0");
+        request.setParametrosDatos("CANCHA_ADEFUL", "2016-04-23--09-29-0");
+        //MI EQUIPO
+        request.setParametrosDatos("FIXTURE_ADEFUL", "2016-04-23--09-29-0");
         requestUrl.setParametrosDatos("URL", auxiliarGeneral.getURL() + auxiliarGeneral.getURLSINCRONIZARUSUARIO());
 
 //
@@ -291,23 +303,88 @@ public class SplashUsuario extends AppCompatActivity {
                                 }
                             }
                         }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray("CANCHA_ADEFUL");
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (controladorUsuario.eliminarCanchaUsuarioAdeful()) {
+
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        jsonAux = jsonArray.getJSONObject(i);
+
+                                        cancha = new Cancha(jsonAux.getInt("ID_CANCHA"), jsonAux.getString("NOMBRE"), jsonAux.getString("LONGITUD"),
+                                                jsonAux.getString("LATITUD"), jsonAux.getString("DIRECCION"));
+
+                                        if (!controladorUsuario.insertCanchaUsuarioAdeful(cancha)) {
+                                            precessOK = false;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    precessOK = false;
+                                }
+                            }
+                            jsonArray = null;
+                            jsonAux = null;
+                            jsonArray = json.optJSONArray("DIVISION_ADEFUL");
+                            if (jsonArray != null) {
+                                if (jsonArray.length() > 0) {
+                                    if (controladorUsuario.eliminarDivisionUsuarioAdeful()) {
+
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            jsonAux = jsonArray.getJSONObject(i);
+
+                                            division = new Division(jsonAux.getInt("ID_DIVISION"),
+                                                    jsonAux.getString("DESCRIPCION"));
+
+                                            if (!controladorUsuario.insertDivisionUsuarioAdeful(division)) {
+                                                precessOK = false;
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        precessOK = false;
+                                    }
+                                }
+                            }
+                            jsonArray = null;
+                            jsonAux = null;
+                            jsonArray = json.optJSONArray("FIXTURE_ADEFUL");
+                            if (jsonArray != null) {
+                                if (jsonArray.length() > 0) {
+                                    if (controladorUsuario.eliminarFixtureUsuarioAdeful()) {
+
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            jsonAux = jsonArray.getJSONObject(i);
+
+                                            fixture = new Fixture(jsonAux.getInt("ID_FIXTURE"),
+                                                    jsonAux.getInt("ID_EQUIPO_LOCAL"),
+                                                    jsonAux.getInt("ID_EQUIPO_VISITA"),
+                                                    jsonAux.getInt("ID_DIVISION"),
+                                                    jsonAux.getInt("ID_TORNEO"),
+                                                    jsonAux.getInt("ID_CANCHA"), jsonAux.getString("FECHA"),
+                                                    jsonAux.getString("ANIO"), jsonAux.getString("DIA"),
+                                                    jsonAux.getString("HORA"), jsonAux.getString("RESULTADO_LOCAL"),
+                                                    jsonAux.getString("RESULTADO_VISITA"));
+
+                                            if (!controladorUsuario.insertFixtureUsuarioAdeful(fixture)) {
+                                                precessOK = false;
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        precessOK = false;
+                                    }
+                                }
+                            }
+                        }
                     } else if (success == 3) {
                         Intent i = new Intent(SplashUsuario.this, NavigationUsuario.class);
                         startActivity(i);
                     } else {
                         precessOK = false;
                     }
-
-//                            if (controladorAdeful.actualizarArticuloAdeful(articulo)) {
-//                                precessOK = true;
-//                            } else {
-//                                precessOK = false;
-//                            }
-//                        }
-//                        precessOK = true;
-//                    } else {
-//                        precessOK = false;
-//                    }
                 } else {
                     precessOK = false;
                     mensaje = "Error(4). Por favor comuniquese con soporte.";

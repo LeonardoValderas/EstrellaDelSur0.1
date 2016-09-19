@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur.miequipo;
+package com.estrelladelsur.estrelladelsur.miequipo.adeful;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,13 +16,13 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 
-public class TabsFixture extends AppCompatActivity {
+public class TabsEntrenamiento extends AppCompatActivity {
 
 	private Toolbar toolbar;
 	private ViewPager viewPager;
 	private TabLayout tabLayout;
+	final int PAGE_COUNT = 3;
 	private int viewpagerid;
-	private final int PAGE_COUNT = 2;
 	private FragmentTransaction mCurTransaction;
 	private static final String TAG = "FragmentPagerAdapter";
 	private static final boolean DEBUG = false;
@@ -35,8 +35,9 @@ public class TabsFixture extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs_general);
 
-		auxiliarGeneral = new AuxiliarGeneral(TabsFixture.this);
-		titulos = auxiliarGeneral.tituloFont(TabsFixture.this);
+		auxiliarGeneral = new AuxiliarGeneral(TabsEntrenamiento.this);
+		titulos = auxiliarGeneral.tituloFont(TabsEntrenamiento.this);
+
 		// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -48,8 +49,12 @@ public class TabsFixture extends AppCompatActivity {
 		txtAbTitulo.setVisibility(View.GONE);
 
 		txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-		txtAbSubTitulo.setText("FIXTURE");
+		txtAbSubTitulo.setText("ENTRENAMIENTO");
 		txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
+
+		viewPager = (ViewPager) findViewById(R.id.viewpager);
+		viewPager.setAdapter(new TabsEntrenamientoAdapter(
+				getSupportFragmentManager()));
 
 		if (savedInstanceState != null) {
 			viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -61,14 +66,14 @@ public class TabsFixture extends AppCompatActivity {
 				viewpagerid = viewPager.getId();
 			}
 
-			viewPager.setAdapter(new TabsFixtureAdapter(
+			viewPager.setAdapter(new TabsEntrenamientoAdapter(
 					getSupportFragmentManager()));
 		} else {
 			viewPager = (ViewPager) findViewById(R.id.viewpager);
 			viewPager.setOffscreenPageLimit(PAGE_COUNT - 1);
 			viewPager = (ViewPager) findViewById(R.id.viewpager);
 
-			viewPager.setAdapter(new TabsFixtureAdapter(
+			viewPager.setAdapter(new TabsEntrenamientoAdapter(
 					getSupportFragmentManager()));
 		}
 		tabLayout = (TabLayout) findViewById(R.id.appbartabs);
@@ -96,51 +101,48 @@ public class TabsFixture extends AppCompatActivity {
 		});
 	}
 
-	public class TabsFixtureAdapter extends FragmentPagerAdapter {
-
+	public class TabsEntrenamientoAdapter extends FragmentPagerAdapter {
 		private FragmentManager fm;
-		private String tabTitles[] = new String[] { "CREAR FIXTURE",
-				"EDITAR FIXTURE" };
 
-		public TabsFixtureAdapter(FragmentManager fm) {
+		private String tabTitles[] = new String[] { "CREAR ENTRENAMIENTO",
+				"EDITAR ENTRENAMIENTO", "ASISTENCIA" };
+
+		public TabsEntrenamientoAdapter(FragmentManager fm) {
 			super(fm);
 			this.fm = fm;
 		}
-
 		@Override
 		public int getCount() {
 			return PAGE_COUNT;
 		}
-
 		@Override
 		public Fragment getItem(int position) {
-
 			Fragment fragmentTab = fm.findFragmentByTag("android:switcher:"
 					+ viewPager.getId() + ":" + getItemId(position));
 
 			if (fragmentTab != null) {
 				return fragmentTab;
 			}
-
 			switch (position) {
 			case 0:
-				fragmentTab = FragmentGenerarFixture.newInstance();
-				break;
+				fragmentTab = FragmentGenerarEntrenamiento.newInstance();
+			    break;
 			case 1:
-				fragmentTab = FragmentEditarFixture.newInstance();
+				fragmentTab = FragmentEditarEntrenamiento.newInstance();
+				break;
+
+			case 2:
+				fragmentTab = FragmentAsistenciaEntrenamiento.newInstance();
 				break;
 			}
 			return fragmentTab;
 		}
-
 		@Override
 		public Object instantiateItem(View container, int position) {
-
 			if (fm == null) {
 				mCurTransaction = fm.beginTransaction();
 			}
 
-			// Do we already have this fragment?
 			String name = makeFragmentName(container.getId(), position);
 			Fragment fragment = fm.findFragmentByTag(name);
 			if (fragment != null) {
@@ -155,9 +157,9 @@ public class TabsFixture extends AppCompatActivity {
 				mCurTransaction.add(container.getId(), fragment,
 						makeFragmentName(container.getId(), position));
 			}
-
 			return fragment;
 		}
+
 		private String makeFragmentName(int viewId, int index) {
 			return "android:switcher:" + viewId + ":" + index;
 		}

@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur.miequipo;
+package com.estrelladelsur.estrelladelsur.miequipo.adeful;
 
 import java.util.ArrayList;
 
@@ -34,8 +34,10 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerF
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
 
-public class FragmentEditarFixture extends Fragment {
+public class FragmentEditarFixture extends Fragment implements MyAsyncTaskListener{
 
     private Division division;
     private Torneo torneo;
@@ -63,7 +65,9 @@ public class FragmentEditarFixture extends Fragment {
     private DialogoAlerta dialogoAlerta;
     private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
-
+    private String URL = null;
+    private Request request = new Request();
+    private int posicion = 0;
 
     public static FragmentEditarFixture newInstance() {
         FragmentEditarFixture fragment = new FragmentEditarFixture();
@@ -256,17 +260,20 @@ public class FragmentEditarFixture extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                if (controladorAdeful.eliminarEquipoAdeful(fixtureArray.get(position)
-                                        .getID_FIXTURE())) {
-                                    recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
-                                    Toast.makeText(
-                                            getActivity(),
-                                            "Partido eliminado correctamente",
-                                            Toast.LENGTH_SHORT).show();
-                                    dialogoAlerta.alertDialog.dismiss();
-                                } else {
-                                    auxiliarGeneral.errorDataBase(getActivity());
-                                }
+                                posicion = fixtureArray.get(position)
+                                        .getID_FIXTURE();
+                                envioWebService();
+//                                if (controladorAdeful.eliminarEquipoAdeful(fixtureArray.get(position)
+//                                        .getID_FIXTURE())) {
+//                                    recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+//                                    Toast.makeText(
+//                                            getActivity(),
+//                                            "Partido eliminado correctamente",
+//                                            Toast.LENGTH_SHORT).show();
+//                                    dialogoAlerta.alertDialog.dismiss();
+//                                } else {
+//                                    auxiliarGeneral.errorDataBase(getActivity());
+//                                }
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -291,7 +298,7 @@ public class FragmentEditarFixture extends Fragment {
             adaptadorFixtureEdit = new AdaptadorRecyclerFixture(fixtureArray, getActivity());
             recyclerViewFixture.setAdapter(adaptadorFixtureEdit);
             if (fixtureArray.isEmpty()) {
-               Toast.makeText(
+                Toast.makeText(
                         getActivity(),
                         "Selección sin datos",
                         Toast.LENGTH_SHORT).show();
@@ -301,8 +308,37 @@ public class FragmentEditarFixture extends Fragment {
         }
     }
 
+    public void envioWebService() {
+        request.setMethod("POST");
+        request.setParametrosDatos("id_fixture", String.valueOf(posicion));
+        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        URL = null;
+        URL = auxiliarGeneral.getURLFIXTUREADEFULAll();
+        URL = URL + auxiliarGeneral.getDeletePHP("Fixture");
+
+        new AsyncTaskGeneric(getActivity(), this, URL, request, "Fixture", true, posicion, "o");
+    }
+
+    public void inicializarControles(String mensaje) {
+        recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+        posicion = 0;
+        dialogoAlerta.alertDialog.dismiss();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            inicializarControles(mensaje);
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
+        }
+    }
+
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -348,6 +384,7 @@ public class FragmentEditarFixture extends Fragment {
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }

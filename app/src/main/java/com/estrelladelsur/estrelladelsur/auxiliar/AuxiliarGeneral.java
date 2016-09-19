@@ -195,12 +195,14 @@ public class AuxiliarGeneral {
         }
         return baos.toByteArray();
     }
+
     //FECHAS
     public String getFechaOficial() {
         Date dateOficial = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         return sdf.format(dateOficial);
     }
+
     public String getFechaImagen() {
         Date dateOficial = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -211,12 +213,15 @@ public class AuxiliarGeneral {
     public Typeface tituloFont(Context context) {
         return Typeface.createFromAsset(context.getAssets(), "aspace_demo.otf");
     }
+
     public Typeface textFont(Context context) {
         return Typeface.createFromAsset(context.getAssets(), "ATypewriterForMe.ttf");
     }
+
     public Typeface ligaFont(Context context) {
         return Typeface.createFromAsset(context.getAssets(), "androidnation.ttf");
     }
+
     public String getUsuarioPreferences(Context context) {
         SharedPreferences getUser = context.getSharedPreferences("UsuarioLog", context.MODE_PRIVATE);
         return getUser.getString("usuario", null);
@@ -227,66 +232,111 @@ public class AuxiliarGeneral {
     public String getURL() {
         return "http://valdroide.com/";
     }
+
     //SINCRONIZACION
     public String getURLSINCRONIZARUSUARIO() {
         return "estrella_del_sur/testing/ADEFUL/sincronizar/usuario/sincronizarUsuario.php";
     }
+
     //ARTICULO
     public String getURLARTICULOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Articulo/";
     }
+
     public String getURLARTICULOADEFULALL() {
         return getURL() + getURLARTICULOADEFUL();
     }
+
     //COMISION
     public String getURLCOMISIONADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Comision/";
     }
+
     public String getURLCOMISIONADEFULALL() {
         return getURL() + getURLCOMISIONADEFUL();
     }
+
     public String getURLFOTOCOMISIONADEFUL() {
         return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Comision/foto_comision/";
     }
+
     //DIRECCION
     public String getURLDIRECCIONADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Direccion/";
     }
+
     public String getURLDIRECCIONADEFULALL() {
         return getURL() + getURLDIRECCIONADEFUL();
     }
+
     public String getURLFOTODIRECCIONADEFUL() {
         return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Direccion/foto_direccion/";
     }
+
     //CARGO
     public String getURLCARGOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Institucion/Cargo/";
     }
+
     public String getURLCARGOADEFULALL() {
         return getURL() + getURLCARGOADEFUL();
     }
-     //EQUIPO
+
+    //EQUIPO
     public String getURLESCUDOEQUIPOADEFUL() {
         return "escudo_equipo/";
     }
+
     public String getURLEQUIPOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/equipo/";
     }
+
     //DIVISION
     public String getURLDIVISIONADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/division/";
     }
+
     //TORNEO
     public String getURLTORNEOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/torneo/";
     }
+    public String getURLTORNEOADEFULALL() {
+        return getURL() + getURLTORNEOADEFUL();
+    }
+
+    //MAPA
+    public String getURLCANCHAADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Liga/cancha/";
+    }
+    public String getURLCANCHAADEFULALL() {
+        return getURL() + getURLCANCHAADEFUL();
+    }
+
+    //MI EQUIPO
+    //FIXTURE
+    public String getURLFIXTUREADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Fixture/";
+    }
+    public String getURLFIXTUREADEFULAll() {
+        return getURL() + getURLFIXTUREADEFUL();
+    }
+    //RESULTADO
+    public String getURLRESULTADOADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Resultado/";
+    }
+    public String getURLRESULTADOADEFULAll() {
+        return getURL() + getURLRESULTADOADEFUL();
+    }
+
     //INSERT - UPDATE - DELETE
     public String getInsertPHP(String Modulo) {
         return "insert" + Modulo + ".php";
     }
+
     public String getUpdatePHP(String Modulo) {
         return "update" + Modulo + ".php";
     }
+
     public String getDeletePHP(String Modulo) {
         return "delete" + Modulo + ".php";
     }
@@ -363,4 +413,7 @@ public class AuxiliarGeneral {
         }
         return sb.toString();
     }
+
+
+
 }

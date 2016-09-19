@@ -1,7 +1,9 @@
-package com.estrelladelsur.estrelladelsur.miequipo;
+package com.estrelladelsur.estrelladelsur.miequipo.adeful;
 
 import com.estrelladelsur.estrelladelsur.R;
+
 import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
@@ -37,9 +40,11 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerT
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoResultado;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 
-public class ActivityResultado extends AppCompatActivity {
+public class ActivityResultado extends AppCompatActivity implements MyAsyncTaskListener {
 
     private Toolbar toolbar;
     private ActionBarDrawerToggle drawerToggle;
@@ -51,8 +56,7 @@ public class ActivityResultado extends AppCompatActivity {
     private RecyclerView recyclerViewResultado;
     private FloatingActionButton botonFloating;
     private ControladorAdeful controladorAdeful;
-    private TextView txtAbTitulo;
-    private TextView txtAbSubTitulo;
+    private TextView txtTitulo;
     private DialogoResultado dialogoResultado;
     private Division division;
     private Torneo torneo;
@@ -73,6 +77,10 @@ public class ActivityResultado extends AppCompatActivity {
     private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
     private Typeface titulos;
+    private String URL = null, usuario = null;
+    private Resultado resultado;
+    private Request request;
+    private boolean isReset = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,19 +93,17 @@ public class ActivityResultado extends AppCompatActivity {
 
         controladorAdeful = new ControladorAdeful(this);
         // Toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-        txtAbTitulo.setVisibility(View.GONE);
+        txtTitulo = (TextView) toolbar.findViewById(R.id.txtToolBarTitulo);
+        txtTitulo.setText("RESULTADO");
+        txtTitulo.setTypeface(titulos);
 
-        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-        txtAbSubTitulo.setText("RESULTADO");
-        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         // SPINNER DIVISION
         resultadoDivisionSpinner = (Spinner) findViewById(R.id.resultadoDivisionSpinner);
@@ -126,10 +132,11 @@ public class ActivityResultado extends AppCompatActivity {
 
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(ActivityResultado.this);
+        usuario = auxiliarGeneral.getUsuarioPreferences(ActivityResultado.this);
         // DIVISION
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
-           if (divisionArray.size() != 0) {
+            if (divisionArray.size() != 0) {
                 // DIVSION SPINNER
                 adapterFixtureDivision = new AdapterSpinnerDivision(
                         ActivityResultado.this, R.layout.simple_spinner_dropdown_item,
@@ -142,12 +149,12 @@ public class ActivityResultado extends AppCompatActivity {
                 resultadoDivisionSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-        auxiliarGeneral.errorDataBase(ActivityResultado.this);
+            auxiliarGeneral.errorDataBase(ActivityResultado.this);
         }
         // TORNEO
         torneoArray = controladorAdeful.selectListaTorneoAdeful();
         if (torneoArray != null) {
-          if (torneoArray.size() != 0) {
+            if (torneoArray.size() != 0) {
                 // TORNEO SPINNER
                 adapterFixtureTorneo = new AdapterSpinnerTorneo(ActivityResultado.this,
                         R.layout.simple_spinner_dropdown_item, torneoArray);
@@ -164,7 +171,7 @@ public class ActivityResultado extends AppCompatActivity {
         // FECHA
         fechaArray = controladorAdeful.selectListaFecha();
         if (fechaArray != null) {
-           // FECHA SPINNER
+            // FECHA SPINNER
             adapterFixtureFecha = new AdapterSpinnerFecha(ActivityResultado.this,
                     R.layout.simple_spinner_dropdown_item, fechaArray);
             resultadoFechaSpinner.setAdapter(adapterFixtureFecha);
@@ -174,7 +181,7 @@ public class ActivityResultado extends AppCompatActivity {
         // ANIO
         anioArray = controladorAdeful.selectListaAnio();
         if (anioArray != null) {
-           // ANIO SPINNER
+            // ANIO SPINNER
             adapterFixtureAnio = new AdapterSpinnerAnio(ActivityResultado.this,
                     R.layout.simple_spinner_dropdown_item, anioArray);
             resultadoAnioSpinner.setAdapter(adapterFixtureAnio);
@@ -220,9 +227,9 @@ public class ActivityResultado extends AppCompatActivity {
                     public void onClick(View view, int position) {
                         // TODO Auto-generated method stub
                         posicionRecycler = position;
-                        if (arrayResultado.get(position).getRESULTADO_LOCAL() != "-"
-                                && arrayResultado.get(position)
-                                .getRESULTADO_VISITA() != "-") {
+                        if (!arrayResultado.get(position).getRESULTADO_LOCAL().equals("-")
+                                && !arrayResultado.get(position)
+                                .getRESULTADO_VISITA().equals("-")) {
                             dialogoResultado = new DialogoResultado(
                                     ActivityResultado.this, "RESULTADO",
                                     arrayResultado.get(position)
@@ -252,62 +259,47 @@ public class ActivityResultado extends AppCompatActivity {
                         dialogoResultado.btnAceptar
                                 .setOnClickListener(new View.OnClickListener() {
 
-                                    @Override
-                                    public void onClick(View v) {
-                                        // TODO Auto-generated method stub
+                                                        @Override
+                                                        public void onClick(View v) {
 
-                                        if (!dialogoResultado.resultadoLocal
-                                                .getText().toString()
-                                                .equals("")
-                                                && !dialogoResultado.resultadoVisita
-                                                .getText().toString()
-                                                .equals("")) {
-                                            String usuario = "Administrador";
+                                                            if (!dialogoResultado.resultadoLocal
+                                                                    .getText().toString()
+                                                                    .equals("")
+                                                                    && !dialogoResultado.resultadoVisita
+                                                                    .getText().toString()
+                                                                    .equals("")) {
 
-                                            if(controladorAdeful
-                                                    .actualizarResultadoAdeful(
-                                                            arrayResultado
-                                                                    .get(posicionRecycler)
-                                                                    .getID_FIXTURE(),
-                                                            dialogoResultado.resultadoLocal
-                                                                    .getText()
-                                                                    .toString(),
-                                                            dialogoResultado.resultadoVisita
-                                                                    .getText()
-                                                                    .toString(), usuario, auxiliarGeneral.getFechaOficial())) {
-                                              recyclerViewLoadResultado(
-                                                        divisionSpinner,
-                                                        torneoSpinner,
-                                                        fechaSpinner, anioSpiner);
-                                                dialogoResultado.alertDialog
-                                                        .dismiss();
-                                            }else{
-                                                auxiliarGeneral.errorDataBase(ActivityResultado.this);
-                                            }
-                                        } else {
+                                                                cargarEntidad(arrayResultado
+                                                                                .get(posicionRecycler)
+                                                                                .getID_FIXTURE(), dialogoResultado.resultadoLocal
+                                                                                .getText()
+                                                                                .toString(),
+                                                                        dialogoResultado.resultadoVisita
+                                                                                .getText()
+                                                                                .toString());
+                                                            } else {
 
-                                            dialogoResultado.resultadoTextErrorVacio
-                                                    .setVisibility(View.VISIBLE);
-                                            dialogoResultado.resultadoTextErrorVacio
-                                                    .setText("Ingrese ambos resultados.");
-                                        }
-                                    }
-                                });
+                                                                dialogoResultado.resultadoTextErrorVacio
+                                                                        .setVisibility(View.VISIBLE);
+                                                                dialogoResultado.resultadoTextErrorVacio
+                                                                        .setText("Ingrese ambos resultados.");
+                                                            }
+                                                        }
+                                                    }
+                                );
 
                         dialogoResultado.btnCancelar
                                 .setOnClickListener(new View.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(View v) {
-                                        // TODO Auto-generated method stub
-                                        dialogoResultado.alertDialog.dismiss();
-                                    }
-                                });
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            dialogoResultado.alertDialog.dismiss();
+                                                        }
+                                                    }
+                                );
                     }
 
                     @Override
                     public void onLongClick(View view, final int position) {
-                        // TODO Auto-generated method stub
 
                         dialogoAlerta = new DialogoAlerta(ActivityResultado.this,
                                 "ALERTA", "Desea resetear el resultado?", null,
@@ -321,22 +313,11 @@ public class ActivityResultado extends AppCompatActivity {
                                     // @SuppressLint("NewApi")
                                     @Override
                                     public void onClick(View v) {
-                                        // TODO Auto-generated method stub
-                                        String usuario = "Administrador";
-
-                                        if (controladorAdeful
-                                                .actualizarResultadoAdeful(
-                                                        arrayResultado
-                                                                .get(position)
-                                                                .getID_FIXTURE(),
-                                                        null, null, usuario, auxiliarGeneral.getFechaOficial())){
-                                        recyclerViewLoadResultado(
-                                                    divisionSpinner, torneoSpinner,
-                                                    fechaSpinner, anioSpiner);
-                                            dialogoAlerta.alertDialog.dismiss();
-                                        }else{
-                                            auxiliarGeneral.errorDataBase(ActivityResultado.this);
-                                        }
+                                        isReset = true;
+                                        cargarEntidad(arrayResultado
+                                                        .get(posicionRecycler)
+                                                        .getID_FIXTURE(), "-",
+                                                "-");
                                     }
                                 });
 
@@ -345,12 +326,13 @@ public class ActivityResultado extends AppCompatActivity {
 
                                     @Override
                                     public void onClick(View v) {
-                                        // TODO Auto-generated method stub
                                         dialogoAlerta.alertDialog.dismiss();
                                     }
                                 });
                     }
-                }));
+                }
+
+        ));
     }
 
     // POPULATION RECYCLER
@@ -360,8 +342,8 @@ public class ActivityResultado extends AppCompatActivity {
                 torneo, fecha, anio);
         if (arrayResultado != null) {
             adaptadorResultado = new AdaptadorRecyclerResultado(arrayResultado, ActivityResultado.this);
-             recyclerViewResultado.setAdapter(adaptadorResultado);
-            if(arrayResultado.isEmpty()){
+            recyclerViewResultado.setAdapter(adaptadorResultado);
+            if (arrayResultado.isEmpty()) {
                 Toast.makeText(
                         ActivityResultado.this,
                         "Selección sin datos",
@@ -372,8 +354,54 @@ public class ActivityResultado extends AppCompatActivity {
         }
     }
 
+    public void inicializarControles(String mensaje) {
+        recyclerViewLoadResultado(
+                divisionSpinner,
+                torneoSpinner,
+                fechaSpinner, anioSpiner);
+        if(isReset)
+            dialogoAlerta.alertDialog.dismiss();
+        else
+            dialogoResultado.alertDialog
+                    .dismiss();
+        Toast.makeText(ActivityResultado.this, mensaje,
+                Toast.LENGTH_SHORT).show();
+        isReset = false;
+    }
+
+    public void cargarEntidad(int id, String rlocal, String rVisita) {
+        URL = null;
+        URL = auxiliarGeneral.getURLRESULTADOADEFULAll();
+
+        resultado = new Resultado(id, rlocal, rVisita, usuario, auxiliarGeneral.getFechaOficial());
+        envioWebService();
+    }
+
+    public void envioWebService() {
+        request = new Request();
+        request.setMethod("POST");
+        request.setParametrosDatos("id_fixture", String.valueOf(resultado.getID_FIXTURE()));
+        request.setParametrosDatos("rlocal", resultado.getRESULTADO_LOCAL());
+        request.setParametrosDatos("rvisita", resultado.getRESULTADO_VISITA());
+        request.setParametrosDatos("usuario_actualizacion", resultado.getUSUARIO_ACTUALIZACION());
+        request.setParametrosDatos("fecha_actualizacion", resultado.getFECHA_ACTUALIZACION());
+        URL = URL + auxiliarGeneral.getUpdatePHP("Resultado");
+
+        new AsyncTaskGeneric(ActivityResultado.this, this, URL, request, "Resultado", resultado, false, "o");
+    }
+
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            inicializarControles(mensaje);
+        } else {
+            auxiliarGeneral.errorWebService(ActivityResultado.this, mensaje);
+        }
+    }
+
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -406,6 +434,7 @@ public class ActivityResultado extends AppCompatActivity {
                         }
                     });
         }
+
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
             // TODO Auto-generated method stub
@@ -416,13 +445,16 @@ public class ActivityResultado extends AppCompatActivity {
             }
             return false;
         }
+
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
             // TODO Auto-generated method stub
         }
+
     }
 
     @Override
@@ -442,7 +474,7 @@ public class ActivityResultado extends AppCompatActivity {
         menu.getItem(9).setVisible(false);// Subir
         menu.getItem(10).setVisible(false); // eliminar
         menu.getItem(11).setVisible(false); // consultar
-       return super.onCreateOptionsMenu(menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

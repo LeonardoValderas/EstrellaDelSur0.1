@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -32,13 +31,12 @@ import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerDivision;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class FragmentDivision extends Fragment {
+public class FragmentDivision extends Fragment implements MyAsyncTaskListener {
 
     private DialogoAlerta dialogoAlerta;
     private RecyclerView recycleViewDivision;
@@ -65,6 +63,7 @@ public class FragmentDivision extends Fragment {
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private static final String TAG_ID = "id";
+    private boolean isInsert = true, isDelete = false;
 
     public static FragmentDivision newInstance() {
         FragmentDivision fragment = new FragmentDivision();
@@ -140,19 +139,6 @@ public class FragmentDivision extends Fragment {
                                         .get(position)
                                         .getID_DIVISION(), 3);
                                 dialogoAlerta.alertDialog.dismiss();
-
-//                                if (controladorAdeful.eliminarDivisionAdeful(divisionArray.get(position)
-//                                        .getID_DIVISION())) {
-//                                    recyclerViewLoadDivision();
-//                                    Toast.makeText(
-//                                            getActivity(),
-//                                            "División eliminada correctamente",
-//                                            Toast.LENGTH_SHORT).show();
-//                                    dialogoAlerta.alertDialog.dismiss();
-//
-//                                } else {
-//                                    auxiliarGeneral.errorDataBase(getActivity());
-//                                }
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -168,7 +154,7 @@ public class FragmentDivision extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 gestion = 1;
-              //  insertar = false;
+                //  insertar = false;
                 editTextDivision.setText(divisionArray.get(position)
                         .getDESCRIPCION());
                 posicion = position;
@@ -189,6 +175,27 @@ public class FragmentDivision extends Fragment {
             recycleViewDivision.setAdapter(adaptadorDivision);
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
+        }
+    }
+
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            if (isDelete) {
+                isDelete = false;
+                gestion = 0;
+                inicializarControles(mensaje);
+            } else {
+                if (isInsert) {
+                    inicializarControles(mensaje);
+                } else {
+                    isInsert = true;
+                    gestion = 0;
+                    inicializarControles(mensaje);
+                }
+            }
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
         }
     }
 
@@ -262,113 +269,36 @@ public class FragmentDivision extends Fragment {
                     .toString();
         }
         division = new Division(id, divisionText, usuario, auxiliarGeneral.getFechaOficial(),
-							usuario, auxiliarGeneral.getFechaOficial());
+                usuario, auxiliarGeneral.getFechaOficial());
         envioWebService(ws);
     }
+
     public void envioWebService(int tipo) {
         request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("division", division.getDESCRIPCION());
         //0 = insert // 1 = update // 2 = delete
         if (tipo == 0) {
+            isInsert = true;
             request.setParametrosDatos("usuario_creador", division.getUSUARIO_CREADOR());
             request.setParametrosDatos("fecha_creacion", division.getFECHA_CREACION());
             URL = URL + auxiliarGeneral.getInsertPHP("Division");
         } else if (tipo == 1) {
+            isInsert = false;
             request.setParametrosDatos("id_division", String.valueOf(division.getID_DIVISION()));
             request.setParametrosDatos("usuario_actualizacion", division.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", division.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Division");
         } else {
+            isDelete = true;
             request.setParametrosDatos("id_division", String.valueOf(division.getID_DIVISION()));
             request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
             URL = URL + auxiliarGeneral.getDeletePHP("Division");
         }
 
-        new TaskDivision().execute(request);
+        new AsyncTaskGeneric(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false);
     }
 
-
-    // enviar/editar articulo
-
-    public class TaskDivision extends AsyncTask<Request, Boolean, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Procesando...");
-            dialog.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(Request... params) {
-            int success;
-            JSONObject json = null;
-            boolean precessOK = true;
-            //String UrlParsing = null;
-            try {
-                json = jsonParsing.parsingJsonObject(params[0], URL);
-                if (json != null) {
-                    success = json.getInt(TAG_SUCCESS);
-                    mensaje = json.getString(TAG_MESSAGE);
-                    if (success == 0) {
-                        if (gestion == 0) {
-                            int id = json.getInt(TAG_ID);
-                            if (id > 0) {
-                                if (controladorAdeful.insertDivisionAdeful(id, division)) {
-                                    precessOK = true;
-                                } else {
-                                    precessOK = false;
-                                }
-                            } else {
-                                precessOK = false;
-                            }
-                        } else if (gestion == 1) {
-                            if (controladorAdeful.actualizarDivisionAdeful(division)) {
-                                precessOK = true;
-                            } else {
-                                precessOK = false;
-                            }
-                        } else {
-                            if (controladorAdeful.eliminarDivisionAdeful(division.getID_DIVISION())) {
-                                precessOK = true;
-                            } else {
-                                precessOK = false;
-                            }
-                        }
-                        precessOK = true;
-                    } else {
-                        precessOK = false;
-                    }
-                } else {
-                    precessOK = false;
-                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
-                }
-            } catch (JSONException e) {
-                precessOK = false;
-                mensaje = "Error(5). Por favor comuniquese con el administrador.";
-            }
-            return precessOK;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            dialog.dismiss();
-
-            if (result) {
-                if (gestion == 0) {
-                    inicializarControles(GUARDAR);
-                } else if (gestion == 1) {
-                    gestion = 0;
-                    inicializarControles(ACTUALIZAR);
-                } else {
-                    gestion = 0;
-                    inicializarControles(ELIMINAR);
-                }
-            } else {
-                auxiliarGeneral.errorWebService(getActivity(), mensaje);
-            }
-        }
-    }
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -422,33 +352,6 @@ public class FragmentDivision extends Fragment {
                     cargarEntidad(divisionArray.get(
                             posicion).getID_DIVISION(), 1);
                 }
-//				if (insertar) {
-//
-//					String usuario = "Administrador";
-//			    	division = new Division(0, editTextDivision.getText()
-//							.toString(), usuario, auxiliarGeneral.getFechaOficial(),
-//							usuario, auxiliarGeneral.getFechaOficial());
-//
-//					if(controladorAdeful.insertDivisionAdeful(division)) {
-//				    inicializarControles(GUARDAR_USUARIO);
-//					}else{
-//		            auxiliarGeneral.errorDataBase(getActivity());
-//					}
-//				} else {
-//
-//					String usuario = "Administrador";
-//
-//					division = new Division(divisionArray.get(posicion)
-//							.getID_DIVISION(), editTextDivision.getText()
-//							.toString(), null, null, usuario, auxiliarGeneral.getFechaOficial());
-//
-//					if(controladorAdeful.actualizarDivisionAdeful(division)) {
-//						insertar = true;
-//						inicializarControles(ACTUALIZAR_USUARIO);
-//					}else{
-//				    auxiliarGeneral.errorDataBase(getActivity());
-//					}
-//				}
             }
             return true;
         }

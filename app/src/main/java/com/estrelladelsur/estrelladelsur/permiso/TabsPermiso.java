@@ -16,8 +16,6 @@ import android.view.View;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.miequipo.FragmentEditarSancion;
-import com.estrelladelsur.estrelladelsur.miequipo.FragmentGenerarSancion;
 
 public class TabsPermiso extends AppCompatActivity implements Communicator{
 

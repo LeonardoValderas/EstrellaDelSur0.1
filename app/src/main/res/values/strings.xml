@@ -41,6 +41,14 @@
 
     </string-array>
 
+    <!-- Array Modulo usuario  -->
+    <string-array name="moduloArrayUsuario">
+        <item>INSTITUCION</item>
+        <item>MI EQUIPO</item>
+        <item>LIGA</item>
+        <item>SOCIAL</item>
+    </string-array>
+
     <!-- Array SubModulo -->
     <string-array name="subModuloArray">
         <!--1-->
@@ -65,6 +73,27 @@
         <item>Permisos</item>
     </string-array>
 
+    <!-- Array SubModulo -->
+    <string-array name="subModuloArrayUsuario">
+        <!--1-->
+        <item>Articulos</item>
+        <item>Comisión Directiva</item>
+        <item>Dirección Técnica</item>
+        <!--2-->
+        <item>Fixture</item>
+        <item>Jugadores</item>
+        <item>Entrenamientos</item>
+        <item>Sancionados</item>
+        <!--3-->
+        <item>Adeful</item>
+        <!--4-->
+        <item>Notificación</item>
+        <item>Noticias</item>
+        <item>Fotos</item>
+        <item>Publicidad</item>
+
+    </string-array>
+
 
     <!-- Array ListView Estrella -->
     <string-array name="NavigationInstitucion">
@@ -77,6 +106,13 @@
     <string-array name="NavigationCarga">
         <item>Fixture</item>
         <item>Resultados</item>
+        <item>Jugadores</item>
+        <item>Entrenamientos</item>
+        <item>Sancionados</item>
+    </string-array>
+    <!-- Array ListView MI equipo -->
+    <string-array name="NavigationCargaUsuario">
+        <item>Fixture</item>
         <item>Jugadores</item>
         <item>Entrenamientos</item>
         <item>Sancionados</item>

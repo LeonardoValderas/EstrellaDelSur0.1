@@ -135,7 +135,7 @@ public class TabsAdefulUsuario extends AppCompatActivity {
 				fragmentTab = FragmentTorneoUsuario.newInstance();
 				break;
 			case 2:
-				fragmentTab = FragmentCancha.newInstance();
+				fragmentTab = FragmentCanchaUsuario.newInstance();
 				break;
 			}
 			return fragmentTab;

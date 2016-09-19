@@ -1,4 +1,4 @@
-package com.estrelladelsur.estrelladelsur.miequipo;
+package com.estrelladelsur.estrelladelsur.miequipo.adeful;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,6 +22,7 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
@@ -39,8 +40,10 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerE
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerFecha;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
 
-public class FragmentGenerarFixture extends Fragment {
+public class FragmentGenerarFixture extends Fragment implements MyAsyncTaskListener {
 
     private Spinner fixtureDivisionSpinner;
     private Spinner fixtureTorneoSpinner;
@@ -76,6 +79,7 @@ public class FragmentGenerarFixture extends Fragment {
     private Equipo equipol;
     private Equipo equipov;
     private Torneo torneo;
+    private Torneo torneoActual;
     private Cancha cancha;
     private int CheckedPositionFragment;
     private ControladorAdeful controladorAdeful;
@@ -85,6 +89,8 @@ public class FragmentGenerarFixture extends Fragment {
     private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
     private Typeface editTextFont;
+    private Request request;
+    private String URL = null, usuario = null;
 
     public static FragmentGenerarFixture newInstance() {
         FragmentGenerarFixture fragment = new FragmentGenerarFixture();
@@ -115,7 +121,7 @@ public class FragmentGenerarFixture extends Fragment {
                 false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
-          // DIVISION
+        // DIVISION
         fixtureDivisionSpinner = (Spinner) v
                 .findViewById(R.id.fixtureDivisionSpinner);
         // TORNEO
@@ -151,7 +157,8 @@ public class FragmentGenerarFixture extends Fragment {
     }
 
     private void init() {
-         // DIVISION
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        // DIVISION
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
             // DIVSION SPINNER
@@ -200,7 +207,7 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureFechaSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-        auxiliarGeneral.errorDataBase(getActivity());
+            auxiliarGeneral.errorDataBase(getActivity());
         }
         // ANIO
         anioArray = controladorAdeful.selectListaAnio();
@@ -217,7 +224,7 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureAnioSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-                auxiliarGeneral.errorDataBase(getActivity());
+            auxiliarGeneral.errorDataBase(getActivity());
         }
         // CANCHA
         canchaArray = controladorAdeful.selectListaCanchaAdeful();
@@ -234,7 +241,7 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureCanchaSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-         auxiliarGeneral.errorDataBase(getActivity());
+            auxiliarGeneral.errorDataBase(getActivity());
         }
         // EQUIPO
         equipoArray = controladorAdeful.selectListaEquipoAdeful();
@@ -257,7 +264,7 @@ public class FragmentGenerarFixture extends Fragment {
                 fixtureVisitaSpinner.setAdapter(adaptadorInicial);
             }
         } else {
-         auxiliarGeneral.errorDataBase(getActivity());
+            auxiliarGeneral.errorDataBase(getActivity());
         }
         // DIA
         btn_dia.setOnClickListener(new View.OnClickListener() {
@@ -418,6 +425,74 @@ public class FragmentGenerarFixture extends Fragment {
         return index;
     }
 
+    public void showToast(String mgs) {
+        Toast.makeText(getActivity(), mgs,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public void cargarEntidad(int id) {
+        URL = null;
+        URL = auxiliarGeneral.getURLFIXTUREADEFULAll();
+
+        division = (Division) fixtureDivisionSpinner.getSelectedItem();
+        equipol = (Equipo) fixtureLocalSpinner.getSelectedItem();
+        equipov = (Equipo) fixtureVisitaSpinner.getSelectedItem();
+        torneo = (Torneo) fixtureTorneoSpinner.getSelectedItem();
+        cancha = (Cancha) fixtureCanchaSpinner.getSelectedItem();
+        fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
+        anio = (Anio) fixtureAnioSpinner.getSelectedItem();
+
+        fixture = new Fixture(id, equipol.getID_EQUIPO(),
+                equipov.getID_EQUIPO(), division.getID_DIVISION(),
+                torneo.getID_TORNEO(), cancha.getID_CANCHA(),
+                fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText().toString()
+                , btn_hora.getText().toString(),
+                usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
+
+        envioWebService();
+    }
+
+    public void envioWebService() {
+        request = new Request();
+        request.setMethod("POST");
+        request.setParametrosDatos("equipol", String.valueOf(fixture.getID_EQUIPO_LOCAL()));
+        request.setParametrosDatos("equipov", String.valueOf(fixture.getID_EQUIPO_VISITA()));
+        request.setParametrosDatos("division", String.valueOf(fixture.getID_DIVISION()));
+        request.setParametrosDatos("torneo", String.valueOf(fixture.getID_TORNEO()));
+        request.setParametrosDatos("cancha", String.valueOf(fixture.getID_CANCHA()));
+        request.setParametrosDatos("fecha", String.valueOf(fixture.getID_FECHA()));
+        request.setParametrosDatos("anio", String.valueOf(fixture.getID_ANIO()));
+        request.setParametrosDatos("dia", fixture.getDIA());
+        request.setParametrosDatos("hora", fixture.getHORA());
+        //request.setParametrosDatos("dia", fixture.getDIA().replace("-",""));
+        //request.setParametrosDatos("hora", fixture.getHORA().replace(":",""));
+        if (insertar) {
+            request.setParametrosDatos("usuario_creador", fixture.getUSUARIO_CREACION());
+            request.setParametrosDatos("fecha_creacion", fixture.getFECHA_CREACION());
+            URL = URL + auxiliarGeneral.getInsertPHP("Fixture");
+        } else {
+            request.setParametrosDatos("id_fixture", String.valueOf(fixture.getID_FIXTURE()));
+            request.setParametrosDatos("usuario_actualizacion", fixture.getUSUARIO_ACTUALIZACION());
+            request.setParametrosDatos("fecha_actualizacion", fixture.getFECHA_ACTUALIZACION());
+            URL = URL + auxiliarGeneral.getUpdatePHP("Fixture");
+        }
+
+        new AsyncTaskGeneric(getContext(), this, URL, request, "Fixture", fixture, insertar, "o");
+    }
+
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            if (!insertar) {
+                actualizar = false;
+                insertar = true;
+            }
+            showToast(mensaje);
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
+        }
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -464,82 +539,79 @@ public class FragmentGenerarFixture extends Fragment {
 
             if (fixtureDivisionSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerDivision))) {
-                Toast.makeText(getActivity(), "Debe agregar un division (Liga).",
-                        Toast.LENGTH_SHORT).show();
+                showToast("Debe agregar un division (Liga).");
             } else if (fixtureTorneoSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerTorneo))) {
-                Toast.makeText(getActivity(), "Debe agregar un torneo (Liga).",
-                        Toast.LENGTH_SHORT).show();
+                showToast("Debe agregar un torneo (Liga).");
             } else if (fixtureFechaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerFecha))) {
-                Toast.makeText(getActivity(), "Debe agregar una fecha.",
-                        Toast.LENGTH_SHORT).show();
+                showToast("Debe agregar una fecha.");
             } else if (fixtureAnioSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerAnio))) {
-                Toast.makeText(getActivity(), "Debe agregar un año.",
-                        Toast.LENGTH_SHORT).show();
+                showToast("Debe agregar un año.");
             } else if (fixtureLocalSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerEquipo)) || fixtureVisitaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerEquipo))) {
-                Toast.makeText(getActivity(), "Debe agregar un equipo (Liga).",
-                        Toast.LENGTH_SHORT).show();
+                showToast("Debe agregar un equipo (Liga).");
             } else if (fixtureCanchaSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerCancha))) {
-                Toast.makeText(getActivity(), "Debe agregar una cancha (Liga).",
-                        Toast.LENGTH_SHORT).show();
+                showToast("Debe agregar una cancha (Liga).");
             } else if (btn_dia.getText()
                     .toString().equals("Día")) {
-                Toast.makeText(getActivity(), "Debe ingresar el día.",
-                        Toast.LENGTH_SHORT).show();
+                showToast("Debe ingresar el día.");
             } else if (btn_hora.getText()
                     .toString().equals("Hora")) {
-                Toast.makeText(getActivity(), "Debe ingresar la hora.",
-                        Toast.LENGTH_SHORT).show();
+                showToast("Debe ingresar la hora.");
             } else {
-                String usuario = "Administrador";
-                division = (Division) fixtureDivisionSpinner.getSelectedItem();
-                equipol = (Equipo) fixtureLocalSpinner.getSelectedItem();
-                equipov = (Equipo) fixtureVisitaSpinner.getSelectedItem();
-                torneo = (Torneo) fixtureTorneoSpinner.getSelectedItem();
-                cancha = (Cancha) fixtureCanchaSpinner.getSelectedItem();
-                fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
-                anio = (Anio) fixtureAnioSpinner.getSelectedItem();
 
-                //FIXTURE NVO
-                if (insertar) {
+                torneoActual = controladorAdeful.selectActualTorneoAdeful();
 
-                    fixture = new Fixture(0, equipol.getID_EQUIPO(),
-                            equipov.getID_EQUIPO(), division.getID_DIVISION(),
-                            torneo.getID_TORNEO(), cancha.getID_CANCHA(),
-                            fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText().toString()
-                            , btn_hora.getText().toString(),
-                            usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
+                if (torneoActual.getISACTUAL()) {
+                    //                  String usuario = "Administrador";
 
-                    if (controladorAdeful.insertFixtureAdeful(fixture)) {
-                          Toast.makeText(getActivity(), "Partido cargado correctamente",
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        auxiliarGeneral.errorDataBase(getActivity());
+//
+//                    division = (Division) fixtureDivisionSpinner.getSelectedItem();
+//                    equipol = (Equipo) fixtureLocalSpinner.getSelectedItem();
+//                    equipov = (Equipo) fixtureVisitaSpinner.getSelectedItem();
+//                    torneo = (Torneo) fixtureTorneoSpinner.getSelectedItem();
+//                    cancha = (Cancha) fixtureCanchaSpinner.getSelectedItem();
+//                    fecha = (Fecha) fixtureFechaSpinner.getSelectedItem();
+//                    anio = (Anio) fixtureAnioSpinner.getSelectedItem();
+
+                    //FIXTURE NVO
+                    if (insertar) {
+                        cargarEntidad(0);
+//                        fixture = new Fixture(0, equipol.getID_EQUIPO(),
+//                                equipov.getID_EQUIPO(), division.getID_DIVISION(),
+//                                torneo.getID_TORNEO(), cancha.getID_CANCHA(),
+//                                fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText().toString()
+//                                , btn_hora.getText().toString(),
+//                                usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
+
+//                        if (controladorAdeful.insertFixtureAdeful(fixture)) {
+//                            showToast("Partido cargado correctamente");
+//                        } else {
+//                            auxiliarGeneral.errorDataBase(getActivity());
+//                        }
+                    } else { //FIXTURE ACTUALIZAR
+                        cargarEntidad(idFixtureExtra);
+//                        fixture = new Fixture(idFixtureExtra, equipol.getID_EQUIPO(),
+//                                equipov.getID_EQUIPO(), division.getID_DIVISION(),
+//                                torneo.getID_TORNEO(), cancha.getID_CANCHA(),
+//                                fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText()
+//                                .toString(), btn_hora.getText().toString(),
+//                                null, null, usuario, auxiliarGeneral.getFechaOficial());
+
+//                        if (controladorAdeful.actualizarFixtureAdeful(fixture)) {
+//                            actualizar = false;
+//                            insertar = true;
+//                            showToast("Partido actualizado correctamente");
+//                        } else {
+//                            auxiliarGeneral.errorDataBase(getActivity());
+//                        }
                     }
-                } else { //FIXTURE ACTUALIZAR
-
-                    fixture = new Fixture(idFixtureExtra, equipol.getID_EQUIPO(),
-                            equipov.getID_EQUIPO(), division.getID_DIVISION(),
-                            torneo.getID_TORNEO(), cancha.getID_CANCHA(),
-                            fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText()
-                            .toString(), btn_hora.getText().toString(),
-                            null, null, usuario, auxiliarGeneral.getFechaOficial());
-
-                    if (controladorAdeful.actualizarFixtureAdeful(fixture)) {
-
-                        actualizar = false;
-                        insertar = true;
-                        Toast.makeText(getActivity(), "Partido actualizado correctamente",
-                                Toast.LENGTH_SHORT).show();
-
-                    } else {
-                        auxiliarGeneral.errorDataBase(getActivity());
-                    }
+                } else {
+                    showToast("Debe seleccionar un torneo actual.");
                 }
             }
             return true;

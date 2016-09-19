@@ -1,9 +1,7 @@
 package com.estrelladelsur.estrelladelsur.institucion.adeful;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -19,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
@@ -26,14 +25,14 @@ import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerArticulo;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 
-public class FragmentEditarArticulo extends Fragment {
+public class FragmentEditarArticulo extends Fragment implements MyAsyncTaskListener {
 
     private int CheckedPositionFragment, posicion = 0;
     private RecyclerView recyclerArticulo;
@@ -42,12 +41,7 @@ public class FragmentEditarArticulo extends Fragment {
     private AdaptadorRecyclerArticulo adaptadorRecyclerArticulo;
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
-    private ProgressDialog dialog;
-    private JsonParsing jsonParsing = new JsonParsing(getActivity());
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private String mensaje = null, URL = null;
-    private String ELIMINAR_ARTICULO = "Articulo eliminado correctamente";
+    private String URL = null;
     private Request request = new Request();
 
     public static FragmentEditarArticulo newInstance() {
@@ -90,7 +84,6 @@ public class FragmentEditarArticulo extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
     }
-
 
 
     private void init() {
@@ -162,11 +155,11 @@ public class FragmentEditarArticulo extends Fragment {
 
     public void recyclerViewLoadArticulo() {
         articuloArray = controladorAdeful.selectListaArticuloAdeful();
-        if(articuloArray!= null) {
-            adaptadorRecyclerArticulo = new AdaptadorRecyclerArticulo(articuloArray,getActivity());
+        if (articuloArray != null) {
+            adaptadorRecyclerArticulo = new AdaptadorRecyclerArticulo(articuloArray, getActivity());
             recyclerArticulo.setAdapter(adaptadorRecyclerArticulo);
-        }else{
-        auxiliarGeneral.errorDataBase(getActivity());
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
         }
     }
 
@@ -185,64 +178,22 @@ public class FragmentEditarArticulo extends Fragment {
         URL = null;
         URL = auxiliarGeneral.getURLARTICULOADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Articulo");
-        new TaskArticulo().execute(request);
-    }
-    // enviar/editar/eliminar articulo
 
-    public class TaskArticulo extends AsyncTask<Request, Boolean, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Procesando...");
-            dialog.show();
-
-        }
-
-        @Override
-        protected Boolean doInBackground(Request... params) {
-            int success;
-            JSONObject json = null;
-            boolean precessOK = true;
-            try {
-                json = jsonParsing.parsingJsonObject(params[0],URL);
-                if (json != null) {
-                    success = json.getInt(TAG_SUCCESS);
-                    mensaje = json.getString(TAG_MESSAGE);
-                    if (success == 0) {
-                        if (controladorAdeful.eliminarArticuloAdeful(posicion)) {
-                         precessOK = true;
-                        } else {
-                            precessOK = false;
-                        }
-                    } else {
-                        precessOK = false;
-                    }
-                }else {
-                    precessOK = false;
-                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
-                }
-            } catch (JSONException e) {
-                precessOK = false;
-                mensaje = "Error(5). Por favor comuniquese con el administrador.";
-            }
-            return precessOK;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            dialog.dismiss();
-
-            if (result) {
-            inicializarControles(ELIMINAR_ARTICULO);
-            } else {
-                auxiliarGeneral.errorWebService(getActivity(), mensaje);
-            }
-        }
+        new AsyncTaskGeneric(getActivity(), this, URL, request, "Articulo", true, posicion, "o");
     }
 
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            inicializarControles(mensaje);
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
+        }
+    }
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 

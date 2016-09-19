@@ -1,18 +1,18 @@
 package com.estrelladelsur.estrelladelsur.liga.adeful;
 
-import java.util.ArrayList;
-
 import android.graphics.Typeface;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.LocationManager;
@@ -33,9 +34,9 @@ import android.os.Message;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback {
+public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback, MyAsyncTaskListener {
 
-    private ArrayList<Cancha> canchaAdefulArray;
+
     private TextView tvAddress;
     private GoogleMap mapa;
     public static double latBache = -41.139755445793554;
@@ -50,27 +51,23 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
     private Cancha cancha;
     private EditText editTextNombre;
     private boolean actualizar = false;
-    private int posicion;
-    private String nombre = null;
+    private int id_extra;
+    private String nombre = null, URL = null, usuario = null;
     private boolean insertar = true;
-    private ControladorAdeful controladorAdeful;
     private SupportMapFragment mapFragment;
     private Typeface titulos;
     private Typeface editTextFont;
     private Handler touchScreem;
     private AuxiliarGeneral auxiliarGeneral;
-    private String GUARDAR_USUARIO = "Cancha cargada correctamente";
-    private String ACTUALIZAR_USUARIO = "Cancha actualizada correctamente";
+    private Request request;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mapa_cancha);
-      //  auxiliarGeneral = new AuxiliarGeneral(MapaCanchaUsuario.this);
-       // titulos = auxiliarGeneral.tituloFont(MapaCanchaUsuario.this);
-//        editTextFont = auxiliarGeneral.textFont(MapaCanchaUsuario.this);
 
-        controladorAdeful = new ControladorAdeful(this);
+
         auxiliarGeneral = new AuxiliarGeneral(MapaCancha.this);
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
@@ -78,8 +75,8 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        txtTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-        txtTitulo.setText("MAPA CANCHA");
+        txtTitulo = (TextView) toolbar.findViewById(R.id.txtToolBarTitulo);
+        txtTitulo.setText("MAPA");
         txtTitulo.setTypeface(titulos);
 
         actualizar = getIntent().getBooleanExtra("actualizar", false);
@@ -131,12 +128,12 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
         });
 
         if (actualizar) {
+            id_extra = getIntent().getIntExtra("id", 0);
             longitud = getIntent().getStringExtra("longitud");
             latitud = getIntent().getStringExtra("latitud");
             longitudExtra = Double.valueOf(longitud);
             latitudExtra = Double.valueOf(latitud);
             locationAddress = getIntent().getStringExtra("direccion");
-            posicion = getIntent().getIntExtra("posicion", 0);
             nombre = getIntent().getStringExtra("nombre");
             editTextNombre.setText(nombre);
 
@@ -150,19 +147,15 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     public void init() {
+        usuario = auxiliarGeneral.getUsuarioPreferences(MapaCancha.this);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        canchaAdefulArray = controladorAdeful.selectListaCanchaAdeful();
-        if (canchaAdefulArray == null)
-         auxiliarGeneral.errorDataBase(MapaCancha.this);
-
         tvAddress = (TextView) findViewById(R.id.tvAddress);
         tvAddress.setTypeface(editTextFont);
         editTextNombre = (EditText) findViewById(R.id.editTextNombre);
-        editTextNombre.setTypeface(editTextFont,Typeface.BOLD);
     }
 
     public boolean isGpsActivo() {
@@ -176,6 +169,19 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
             gps = false;
         }
         return gps;
+    }
+
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            if (insertar) {
+                inicializarControles(mensaje);
+            } else {
+                inicializarControles(mensaje);
+            }
+        } else {
+            auxiliarGeneral.errorWebService(MapaCancha.this, mensaje);
+        }
     }
 
     private class GeocoderHandler extends Handler {
@@ -206,14 +212,43 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
                 mensaje,
                 Toast.LENGTH_SHORT).show();
     }
+
+    public void cargarEntidad(int id) {
+        URL = null;
+        URL = auxiliarGeneral.getURLCANCHAADEFULALL();
+
+        cancha = new Cancha(id, editTextNombre.getText().toString(),
+                longitud, latitud, tvAddress.getText().toString(),
+                usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
+
+        envioWebService();
+    }
+
+    public void envioWebService() {
+        request = new Request();
+        request.setMethod("POST");
+        request.setParametrosDatos("nombre", cancha.getNOMBRE());
+        request.setParametrosDatos("direccion", cancha.getDIRECCION());
+        request.setParametrosDatos("latitud", cancha.getLATITUD());
+        request.setParametrosDatos("longitud", cancha.getLONGITUD());
+
+        //0 = insert // 1 = update //
+        if (insertar) {
+            request.setParametrosDatos("usuario_creador", cancha.getUSUARIO_CREADOR());
+            request.setParametrosDatos("fecha_creacion", cancha.getFECHA_CREACION());
+            URL = URL + auxiliarGeneral.getInsertPHP("Cancha");
+        } else {
+            request.setParametrosDatos("id_cancha", String.valueOf(cancha.getID_CANCHA()));
+            request.setParametrosDatos("usuario_actualizacion", cancha.getUSUARIO_ACTUALIZACION());
+            request.setParametrosDatos("fecha_actualizacion", cancha.getFECHA_ACTUALIZACION());
+            URL = URL + auxiliarGeneral.getUpdatePHP("Cancha");
+        }
+        new AsyncTaskGeneric(MapaCancha.this, this, URL, request, "Cancha", cancha, insertar, "a");
+    }
+
     @Override
     public void onBackPressed() {
-
         volver();
-
-//		Intent i = new Intent(MapaCanchaUsuario.this, TabsAdeful.class);
-//		i.putExtra("restart", 1);
-//		startActivity(i);
         super.onBackPressed();
     }
 
@@ -226,7 +261,7 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
         menu.getItem(2).setVisible(false);// lifuba
         menu.getItem(3).setVisible(false);// adeful
         menu.getItem(4).setVisible(false);// puesto
-        menu.getItem(5).setVisible(false);// posicion
+        menu.getItem(5).setVisible(false);// id_extra
         menu.getItem(6).setVisible(false);// cargo
         menu.getItem(7).setVisible(false);// cerrar
         // menu.getItem(8).setVisible(false);//gudar
@@ -239,7 +274,6 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
         if (id == R.id.action_guardar) {
 
             if (editTextNombre.getText().toString().equals("")) {
@@ -255,29 +289,9 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
                         Toast.LENGTH_SHORT).show();
             } else {
                 if (insertar) {
-                    String usuario = "Administrador";
-                    cancha = new Cancha(0, editTextNombre.getText().toString(),
-                            longitud, latitud, tvAddress.getText().toString(),
-                            usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
-                if (controladorAdeful.insertCanchaAdeful(cancha)) {
-                       inicializarControles(GUARDAR_USUARIO);
-                    } else {
-                    auxiliarGeneral.errorDataBase(MapaCancha.this);
-                    }
+                    cargarEntidad(0);
                 } else {
-                    String usuario = "Administrador";
-
-                    cancha = new Cancha(canchaAdefulArray.get(posicion)
-                            .getID_CANCHA(), editTextNombre.getText()
-                            .toString(), longitud, latitud, tvAddress.getText()
-                            .toString(), null, null, usuario, auxiliarGeneral.getFechaOficial());
-
-                    if (controladorAdeful.actualizarCanchaAdeful(cancha)) {
-                        insertar = true;
-                     inicializarControles(ACTUALIZAR_USUARIO);
-                    } else {
-                   auxiliarGeneral.errorDataBase(MapaCancha.this);
-                    }
+                    cargarEntidad(id_extra);
                 }
             }
             return true;
@@ -285,7 +299,7 @@ public class MapaCancha extends AppCompatActivity implements OnMapReadyCallback 
 
         if (id == android.R.id.home) {
 
-             //NavUtils.navigateUpFromSameTask(this);
+            //NavUtils.navigateUpFromSameTask(this);
 
             //a.refreshs();
             //comm.refresh();

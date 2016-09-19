@@ -3,23 +3,19 @@ package com.estrelladelsur.estrelladelsur.liga.usuario;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
-import com.estrelladelsur.estrelladelsur.entidad.Anio;
-import com.estrelladelsur.estrelladelsur.entidad.Torneo;
-
-import java.util.ArrayList;
 
 public class FragmentTorneoUsuario extends Fragment {
 
@@ -29,6 +25,7 @@ public class FragmentTorneoUsuario extends Fragment {
     private AuxiliarGeneral auxiliarGeneral;
     private TextView torneoActualtext;
     private LinearLayout linearLayout;
+    private RecyclerView recycleViewTorneo;
 
     public static FragmentTorneoUsuario newInstance() {
         FragmentTorneoUsuario fragment = new FragmentTorneoUsuario();
@@ -47,6 +44,7 @@ public class FragmentTorneoUsuario extends Fragment {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
             init();
+            recyclerViewLoadTorneo();
         }
     }
 
@@ -61,7 +59,8 @@ public class FragmentTorneoUsuario extends Fragment {
         torneoActualtext = (TextView) v.findViewById(
                 R.id.torneoActual);
         torneoActualtext.setTypeface(editTextFont, Typeface.BOLD);
-
+        recycleViewTorneo = (RecyclerView) v.findViewById(R.id.recycleViewGeneral);
+        recycleViewTorneo.setVisibility(View.GONE);
         return v;
     }
 
@@ -78,6 +77,13 @@ public class FragmentTorneoUsuario extends Fragment {
         }
     }
 
+    public void recyclerViewLoadTorneo() {
+        recycleViewTorneo.setLayoutManager(new LinearLayoutManager(
+                getActivity(), LinearLayoutManager.VERTICAL, false));
+        recycleViewTorneo.addItemDecoration(new DividerItemDecoration(
+                getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        recycleViewTorneo.setItemAnimator(new DefaultItemAnimator());
+    }
 //    public void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
 //        setHasOptionsMenu(true);

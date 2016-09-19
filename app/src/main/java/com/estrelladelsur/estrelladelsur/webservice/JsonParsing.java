@@ -47,14 +47,6 @@ public class JsonParsing {
         String json = null;
         String uri = null;
         uri = url_parsing;
-//        if (request.getQuery().equals("SUBIR")) {
-//            uri = URL + URLARTICULO + "insertArticulo.php";
-//        } else if (request.getQuery().equals("EDITAR")) {
-//            uri = URL + URLARTICULO + "updateArticulo.php";
-//        } else if (request.getQuery().equals("ELIMINAR")) {
-//            uri = URL + URLARTICULO + "deleteArticulo.php";
-//        }
-
         BufferedReader reader = null;
         try {
             URL url = new URL(uri);

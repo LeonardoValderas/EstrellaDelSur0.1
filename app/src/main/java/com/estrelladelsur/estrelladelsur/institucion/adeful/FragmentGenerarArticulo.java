@@ -1,8 +1,6 @@
 package com.estrelladelsur.estrelladelsur.institucion.adeful;
 
-import android.app.ProgressDialog;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -19,13 +17,12 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
-public class FragmentGenerarArticulo extends Fragment {
+public class FragmentGenerarArticulo extends Fragment implements MyAsyncTaskListener {
 
     private int CheckedPositionFragment;
     private EditText articuloEditTituto;
@@ -37,27 +34,21 @@ public class FragmentGenerarArticulo extends Fragment {
     private boolean actualizar = false;
     private int idArticuloExtra;
     private AuxiliarGeneral auxiliarGeneral;
-    private String GUARDAR_USUARIO = "Articulo cargado correctamente";
-    private String ACTUALIZAR_USUARIO = "Articulo actualizado correctamente";
     private Typeface editTextFont;
     private Request request = new Request();
-    private ProgressDialog dialog;
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private JsonParsing jsonParsing = new JsonParsing(getActivity());
-    private static final String TAG_ID = "id";
     private String usuario = null;
-    private String mensaje = null;
-    private Request requestUrl = new Request();
     private String URL = null;
+
 
     public static FragmentGenerarArticulo newInstance() {
         FragmentGenerarArticulo fragment = new FragmentGenerarArticulo();
         return fragment;
     }
+
     public FragmentGenerarArticulo() {
         // Required empty public constructor
     }
+
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
@@ -69,6 +60,7 @@ public class FragmentGenerarArticulo extends Fragment {
             init();
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,11 +77,13 @@ public class FragmentGenerarArticulo extends Fragment {
         articuloEditArticulo.setTypeface(editTextFont);
         return v;
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
     }
+
     private void init() {
         // VER DONDE EJECUCTAR ESTA LINEA
         controladorAdeful = new ControladorAdeful(getActivity());
@@ -114,102 +108,50 @@ public class FragmentGenerarArticulo extends Fragment {
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
     }
-    public void cargarEntidad(int id,int ws) {
+
+    public void cargarEntidad(int id) {
         articulo = new Articulo(id, articuloEditTituto.getText().toString(),
                 articuloEditArticulo.getText().toString(),
                 usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
         URL = null;
-        URL = auxiliarGeneral.getURL()+auxiliarGeneral.getURLARTICULOADEFUL();
-        envioWebService(ws);
+        URL = auxiliarGeneral.getURLARTICULOADEFULALL();
+        envioWebService();
     }
-    public void envioWebService(int tipo) {
-            request.setMethod("POST");
-            request.setParametrosDatos("titulo", articulo.getTITULO());
-            request.setParametrosDatos("articulo", articulo.getARTICULO());
 
-            if (tipo == 0) {
-                request.setParametrosDatos("usuario_creador", articulo.getUSUARIO_CREADOR());
-                request.setParametrosDatos("fecha_creacion", articulo.getFECHA_CREACION());
-                URL = URL+auxiliarGeneral.getInsertPHP("Articulo");
+    public void envioWebService() {
+        request.setMethod("POST");
+        request.setParametrosDatos("titulo", articulo.getTITULO());
+        request.setParametrosDatos("articulo", articulo.getARTICULO());
 
-            }else{
-                request.setParametrosDatos("id_articulo", String.valueOf(articulo.getID_ARTICULO()));
-                request.setParametrosDatos("usuario_actualizacion", articulo.getUSUARIO_ACTUALIZACION());
-                request.setParametrosDatos("fecha_actualizacion", articulo.getFECHA_ACTUALIZACION());
-                URL = URL+auxiliarGeneral.getUpdatePHP("Articulo");
-            }
+        if (insertar) {
+            request.setParametrosDatos("usuario_creador", articulo.getUSUARIO_CREADOR());
+            request.setParametrosDatos("fecha_creacion", articulo.getFECHA_CREACION());
+            URL = URL + auxiliarGeneral.getInsertPHP("Articulo");
 
-            new TaskArticulo().execute(request);
-    }
-    // enviar/editar articulo
-    public class TaskArticulo extends AsyncTask<Request, Boolean, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Procesando...");
-            dialog.show();
+        } else {
+            request.setParametrosDatos("id_articulo", String.valueOf(articulo.getID_ARTICULO()));
+            request.setParametrosDatos("usuario_actualizacion", articulo.getUSUARIO_ACTUALIZACION());
+            request.setParametrosDatos("fecha_actualizacion", articulo.getFECHA_ACTUALIZACION());
+            URL = URL + auxiliarGeneral.getUpdatePHP("Articulo");
         }
 
-        @Override
-        protected Boolean doInBackground(Request... params) {
-            int success;
-            JSONObject json = null;
-            boolean precessOK = true;
-            try {
-                json = jsonParsing.parsingJsonObject(params[0],URL);
-                if (json != null) {
-                    success = json.getInt(TAG_SUCCESS);
-                    mensaje =json.getString(TAG_MESSAGE);
-                    if (success == 0) {
-                        if (insertar) {
-                            int id = json.getInt(TAG_ID);
-                            if (id > 0) {
-                                if (controladorAdeful.insertArticuloAdeful(id, articulo)) {
-                                    precessOK = true;
-                                } else {
-                                    precessOK = false;
-                                }
-                            } else {
-                                precessOK = false;
-                            }
-                        } else {
-                            if (controladorAdeful.actualizarArticuloAdeful(articulo)) {
-                                precessOK = true;
-                            }else{
-                                precessOK = false;
-                            }
-                        }
-                        precessOK = true;
-                    } else {
-                        precessOK = false;
-                    }
-                } else {
-                    precessOK = false;
-                    mensaje = "Error(4). Por favor comuniquese con soporte.";
-                }
-            } catch (JSONException e) {
-                precessOK = false;
-                mensaje = "Error(5). Por favor comuniquese con soporte.";
-            }
-            return precessOK;
-        }
+        new AsyncTaskGeneric(getActivity(), this, URL, request, "Articulo", articulo, insertar, "o");
+    }
 
-        @Override
-        protected void onPostExecute(Boolean result) {
-            dialog.dismiss();
-
-            if (result) {
-                if (insertar) {
-                    inicializarControles(GUARDAR_USUARIO);
-                } else {
-                    actualizar = false;
-                    insertar = true;
-                    inicializarControles(ACTUALIZAR_USUARIO);
-                }
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            if (insertar) {
+                inicializarControles(mensaje);
             } else {
-                auxiliarGeneral.errorWebService(getActivity(), mensaje);
+                actualizar = false;
+                insertar = true;
+                inicializarControles(mensaje);
             }
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
         }
+
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -259,9 +201,9 @@ public class FragmentGenerarArticulo extends Fragment {
                 Toast.makeText(getActivity(), "Debe completar todos los campos.",
                         Toast.LENGTH_SHORT).show();
             } else if (insertar) {
-                cargarEntidad(0,0);
+                cargarEntidad(0);
             } else { //ACTUALIZAR ACTUALIZAR
-                cargarEntidad(idArticuloExtra,1);
+                cargarEntidad(idArticuloExtra);
             }
             return true;
         }

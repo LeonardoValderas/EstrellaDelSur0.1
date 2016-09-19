@@ -1,9 +1,7 @@
 package com.estrelladelsur.estrelladelsur.institucion.adeful;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -26,16 +24,13 @@ import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerDireccion;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 
-public class FragmentEditarDireccion extends Fragment {
+public class FragmentEditarDireccion extends Fragment implements MyAsyncTaskListener{
 
     private int CheckedPositionFragment, posicion = 0;
     private RecyclerView recyclerDireccion;
@@ -44,12 +39,7 @@ public class FragmentEditarDireccion extends Fragment {
     private AdaptadorRecyclerDireccion adaptadorRecyclerDireccion;
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
-    private ProgressDialog dialog;
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private String ELIMINAR_DIRECCION = "Integrante eliminado correctamente";
-    private String mensaje = null, nombre_foto = null;
-    private JsonParsing jsonParsing = new JsonParsing(getActivity());
+    private String nombre_foto = null;
     private Request request = new Request();
     private String URL = null;
 
@@ -174,8 +164,7 @@ public class FragmentEditarDireccion extends Fragment {
         URL = null;
         URL = auxiliarGeneral.getURLDIRECCIONADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Direccion");
-
-        new TaskDireccion().execute(request);
+        new AsyncTaskGeneric(getActivity(), this, URL, request, "Dirección", true, posicion, "a");
     }
 
     public void inicializarControles(String mensaje) {
@@ -187,54 +176,14 @@ public class FragmentEditarDireccion extends Fragment {
                 Toast.LENGTH_SHORT).show();
     }
 
-    public class TaskDireccion extends AsyncTask<Request, Boolean, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Procesando...");
-            dialog.show();
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            inicializarControles(mensaje);
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
         }
 
-        @Override
-        protected Boolean doInBackground(Request... params) {
-            int success;
-            JSONObject json = null;
-            boolean precessOK = true;
-            try {
-                json = jsonParsing.parsingJsonObject(params[0],URL);
-                if (json != null) {
-                    success = json.getInt(TAG_SUCCESS);
-                    mensaje =json.getString(TAG_MESSAGE);
-                    if (success == 0) {
-                        if (controladorAdeful.eliminarDireccionAdeful(posicion)) {
-                            precessOK = true;
-                        } else {
-                            precessOK = false;
-                        }
-                    } else {
-                        precessOK = false;
-                    }
-                }else {
-                    precessOK = false;
-                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
-                }
-            } catch (JSONException e) {
-                precessOK = false;
-                mensaje = "Error(5). Por favor comuniquese con el administrador.";
-            }
-            return precessOK;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            dialog.dismiss();
-
-            if (result) {
-                inicializarControles(ELIMINAR_DIRECCION);
-            } else {
-                auxiliarGeneral.errorWebService(getActivity(), mensaje);
-            }
-        }
     }
     public static interface ClickListener {
         public void onClick(View view, int position);

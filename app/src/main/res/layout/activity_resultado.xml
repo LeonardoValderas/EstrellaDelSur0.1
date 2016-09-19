@@ -5,17 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado">
+    tools:context=".miequipo.adeful.ActivityResultado">
 
     <!-- Toolbar -->
 
     <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
-
-    <include
-        android:id="@+id/toolbar_sub"
-        layout="@layout/toolbar_sub" />
+        android:id="@+id/appbar"
+        layout="@layout/toolbar_usuario_lifuba_adeful" />
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"

@@ -30,14 +30,12 @@ import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ArticuloUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ComisionUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.DireccionUsuario;
-import com.estrelladelsur.estrelladelsur.liga.adeful.TabsAdeful;
 import com.estrelladelsur.estrelladelsur.liga.usuario.TabsAdefulUsuario;
 import com.estrelladelsur.estrelladelsur.login.Login;
-import com.estrelladelsur.estrelladelsur.miequipo.ActivityResultado;
-import com.estrelladelsur.estrelladelsur.miequipo.TabsEntrenamiento;
-import com.estrelladelsur.estrelladelsur.miequipo.TabsFixture;
-import com.estrelladelsur.estrelladelsur.miequipo.TabsJugador;
-import com.estrelladelsur.estrelladelsur.miequipo.TabsSancion;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.TabsEntrenamiento;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.TabsJugador;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.TabsSancion;
+import com.estrelladelsur.estrelladelsur.miequipo.usuario.TabsFixtureUsuario;
 import com.estrelladelsur.estrelladelsur.permiso.TabsPermiso;
 import com.estrelladelsur.estrelladelsur.permiso.TabsUsuario;
 import com.estrelladelsur.estrelladelsur.social.TabsFoto;
@@ -147,35 +145,34 @@ public class NavigationUsuario extends AppCompatActivity {
                 } else if (groupPosition == 1) {
                     switch (childPosition) {
                         case 0:
-                            Intent fixture = new Intent(NavigationUsuario.this, TabsFixture.class);
+                            Intent fixture = new Intent(NavigationUsuario.this, TabsFixtureUsuario.class);
                             startActivity(fixture);
 //                            tituloClickFragment = mi_equipoChild.get(childPosition)
 //                                    .toString();
                             break;
                         case 1:
-                            Intent resultado = new Intent(NavigationUsuario.this, ActivityResultado.class);
-                            startActivity(resultado);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
-                            break;
-                        case 2:
                             Intent jugadores = new Intent(NavigationUsuario.this, TabsJugador.class);
                             startActivity(jugadores);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
+
+//                            Intent resultado = new Intent(NavigationUsuario.this, ActivityResultado.class);
+//                            startActivity(resultado);
                             break;
-                        case 3:
+                        case 2:
                             Intent entrenamiento = new Intent(NavigationUsuario.this, TabsEntrenamiento.class);
                             startActivity(entrenamiento);
 //                            tituloClickFragment = mi_equipoChild.get(childPosition)
 //                                    .toString();
                             break;
-                        case 4:
+                        case 3:
                             Intent sanciones = new Intent(NavigationUsuario.this, TabsSancion.class);
                             startActivity(sanciones);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
                             break;
+//                        case 4:
+//                            Intent sanciones = new Intent(NavigationUsuario.this, TabsSancion.class);
+//                            startActivity(sanciones);
+////                            tituloClickFragment = mi_equipoChild.get(childPosition)
+////                                    .toString();
+//                            break;
                     }
 
                 } else if (groupPosition == 2) {
@@ -279,9 +276,9 @@ public class NavigationUsuario extends AppCompatActivity {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
-        for (int i = 0; i < getResources().getStringArray(R.array.moduloArray).length; i++) {
+        for (int i = 0; i < getResources().getStringArray(R.array.moduloArrayUsuario).length; i++) {
 
-            listDataHeader.add(getResources().getStringArray(R.array.moduloArray)[i]);
+            listDataHeader.add(getResources().getStringArray(R.array.moduloArrayUsuario)[i]);
 
         }
 
@@ -304,10 +301,10 @@ public class NavigationUsuario extends AppCompatActivity {
         mi_equipoChild = new ArrayList<String>();
 
         for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationCarga).length; i++) {
+                R.array.NavigationCargaUsuario).length; i++) {
 
             mi_equipoChild.add(getResources().getStringArray(
-                    R.array.NavigationCarga)[i]);
+                    R.array.NavigationCargaUsuario)[i]);
         }
 
         ligaChild = new ArrayList<String>();
@@ -326,17 +323,17 @@ public class NavigationUsuario extends AppCompatActivity {
         }
         permisoChild = new ArrayList<String>();
 
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationPermiso).length; i++) {
-
-            permisoChild.add(getResources().getStringArray(R.array.NavigationPermiso)[i]);
-        }
+//        for (int i = 0; i < getResources().getStringArray(
+//                R.array.NavigationPermiso).length; i++) {
+//
+//            permisoChild.add(getResources().getStringArray(R.array.NavigationPermiso)[i]);
+//        }
 
         listDataChild.put(listDataHeader.get(0), institucionalChild);
         listDataChild.put(listDataHeader.get(1), mi_equipoChild);
         listDataChild.put(listDataHeader.get(2), ligaChild);
         listDataChild.put(listDataHeader.get(3), socialChild);
-        listDataChild.put(listDataHeader.get(4), permisoChild);
+      //  listDataChild.put(listDataHeader.get(4), permisoChild);
     }
 
     //	/**

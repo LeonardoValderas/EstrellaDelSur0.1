@@ -378,7 +378,6 @@ public class ControladorAdeful {
         }
     }
 
-
     //LISTA USUARIO
     public ArrayList<Usuario> selectListaUsuarioAdeful() {
 
@@ -1635,7 +1634,6 @@ public class ControladorAdeful {
 
     // DIVISION INSERTAR
     public boolean insertDivisionAdeful(int id, Division division) throws SQLiteException {
-        boolean ban = false;
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
@@ -2019,41 +2017,30 @@ public class ControladorAdeful {
     }
 
     // INSERTAR CANCHA
-    public boolean insertCanchaAdeful(Cancha cancha) {
-        boolean ban = false;
+    public boolean insertCanchaAdeful(int id, Cancha cancha) {
 
-        String sql = "INSERT INTO CANCHA_ADEFUL ( NOMBRE, LONGITUD, LATITUD, DIRECCION, USUARIO_CREADOR, FECHA_CREACION, USUARIO_ACTUALIZACION, FECHA_ACTUALIZACION) VALUES ('"
-                + cancha.getNOMBRE()
-                + "', '"
-                + cancha.getLONGITUD()
-                + "', '"
-                + cancha.getLATITUD()
-                + "', '"
-                + cancha.getDIRECCION()
-                + "', '"
-                + cancha.getUSUARIO_CREADOR()
-                + "', '"
-                + cancha.getFECHA_CREACION()
-                + "', '"
-                + cancha.getUSUARIO_ACTUALIZACION()
-                + "', '"
-                + cancha.getFECHA_ACTUALIZACION()
-                + "')";
+        ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-            } catch (Exception e) {
-                ban = false;
+        try {
+            cv.put("ID_CANCHA", id);
+            cv.put("NOMBRE", cancha.getNOMBRE());
+            cv.put("LONGITUD", cancha.getLONGITUD());
+            cv.put("LATITUD", cancha.getLATITUD());
+            cv.put("DIRECCION", cancha.getDIRECCION());
+            cv.put("USUARIO_CREADOR", cancha.getUSUARIO_CREADOR());
+            cv.put("FECHA_CREACION", cancha.getFECHA_CREACION());
+
+            long valor = database.insert("CANCHA_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
             }
-        } else {
-            ban = false;
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
         }
-        cerrarBaseDeDatos();
-        sql = null;
-        database = null;
-        return ban;
     }
 
     //LISTA CANCHA
@@ -2120,30 +2107,28 @@ public class ControladorAdeful {
 
     //ACTUALIZAR CANCHA
     public boolean actualizarCanchaAdeful(Cancha cancha) {
-
-        boolean res = false;
-        String sql = "UPDATE CANCHA_ADEFUL SET NOMBRE='" + cancha.getNOMBRE()
-                + "', LONGITUD='" + cancha.getLONGITUD() + "', LATITUD='"
-                + cancha.getLATITUD() + "', DIRECCION='"
-                + cancha.getDIRECCION() + "', USUARIO_ACTUALIZACION='"
-                + cancha.getUSUARIO_ACTUALIZACION() + "', FECHA_ACTUALIZACION='"
-                + cancha.getFECHA_ACTUALIZACION()
-                + "' WHERE ID_CANCHA ='" + cancha.getID_CANCHA() + "'";
+        ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
+        try {
+
+            cv.put("NOMBRE", cancha.getNOMBRE());
+            cv.put("LONGITUD", cancha.getLONGITUD());
+            cv.put("LATITUD", cancha.getLATITUD());
+            cv.put("DIRECCION", cancha.getDIRECCION());
+            cv.put("USUARIO_ACTUALIZACION", cancha.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", cancha.getFECHA_ACTUALIZACION());
+
+            long valor = database.update("CANCHA_ADEFUL", cv, "ID_CANCHA = " + cancha.getID_CANCHA(), null);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
             }
-        } else {
-            res = false;
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
         }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
     }
 
     // ELIMINAR CANCHA
@@ -2356,11 +2341,12 @@ public class ControladorAdeful {
     }
 
     // INSERTAR FIXTURE
-    public boolean insertFixtureAdeful(Fixture fixture) throws SQLiteException {
+    public boolean insertFixtureAdeful(int id, Fixture fixture) throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
+            cv.put("ID_FIXTURE", id);
             cv.put("ID_EQUIPO_LOCAL", fixture.getID_EQUIPO_LOCAL());
             cv.put("ID_EQUIPO_VISITA", fixture.getID_EQUIPO_VISITA());
             cv.put("ID_DIVISION", fixture.getID_DIVISION());
@@ -2407,7 +2393,7 @@ public class ControladorAdeful {
             cv.put("USUARIO_ACTUALIZACION", fixture.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_ACTUALIZACION", fixture.getFECHA_ACTUALIZACION());
 
-            long valor = database.update("FIXTURE_ADEFUL", cv, "ID_FIXTURE="
+            long valor = database.update("FIXTURE_ADEFUL", cv, "ID_FIXTURE = "
                     + fixture.getID_FIXTURE(), null);
             cerrarBaseDeDatos();
             if (valor > 0) {
@@ -2505,25 +2491,41 @@ public class ControladorAdeful {
 
         return arrayFixture;
     }
+    // ELIMINAR CANCHA
+    public boolean eliminarFixtureAdeful(int id) {
 
+        boolean res = false;
+        String sql = "DELETE FROM FIXTURE_ADEFUL WHERE ID_FIXTURE = " + id;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
     ////RESULTADOS////
     //ACTUALIZAR RESULTADO/FIXTURE
-    public boolean actualizarResultadoAdeful(int id_fixture,
-                                             String resultado_local,
-                                             String resultado_visita,
-                                             String usuario_act,
-                                             String fecha_act) throws SQLiteException {
+    public boolean actualizarResultadoAdeful(Resultado resultado) throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
-            cv.put("RESULTADO_LOCAL", resultado_local);
-            cv.put("RESULTADO_VISITA", resultado_visita);
-            cv.put("USUARIO_ACTUALIZACION", usuario_act);
-            cv.put("FECHA_ACTUALIZACION", fecha_act);
+            cv.put("RESULTADO_LOCAL", resultado.getRESULTADO_LOCAL());
+            cv.put("RESULTADO_VISITA", resultado.getRESULTADO_VISITA());
+            cv.put("USUARIO_ACTUALIZACION", resultado.getUSUARIO_ACTUALIZACION());
+            cv.put("FECHA_ACTUALIZACION", resultado.getFECHA_ACTUALIZACION());
 
             long valor = database.update("FIXTURE_ADEFUL", cv, "ID_FIXTURE="
-                    + id_fixture, null);
+                    + resultado.getID_FIXTURE(), null);
             cerrarBaseDeDatos();
             if (valor > 0) {
                 return true;

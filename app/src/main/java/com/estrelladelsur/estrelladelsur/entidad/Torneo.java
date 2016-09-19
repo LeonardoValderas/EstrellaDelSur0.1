@@ -52,6 +52,11 @@ public class Torneo {
         ID_TORNEO = id;
         DESCRIPCION = descripcion;
     }
+    public Torneo(int id, boolean isActual) {
+        ID_TORNEO = id;
+        ACTUAL = isActual;
+    }
+
 
     public int getID_TORNEO() {
         return ID_TORNEO;

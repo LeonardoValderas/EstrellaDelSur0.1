@@ -2,14 +2,12 @@ package com.estrelladelsur.estrelladelsur.liga.adeful;
 
 import java.util.ArrayList;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -30,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
@@ -38,12 +37,11 @@ import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerEquipo;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.miequipo.adeful.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-public class FragmentEquipo extends Fragment {
+public class FragmentEquipo extends Fragment implements MyAsyncTaskListener {
     private byte[] imagenEscudo = null;
     private RecyclerView recycleViewEquipo;
     private EditText editTextNombre;
@@ -56,21 +54,15 @@ public class FragmentEquipo extends Fragment {
     private int gestion = 0;//0-insert //1-update//2-delete
     private int posicion, CheckedPositionFragment;
     private ControladorAdeful controladorAdeful;
-    private String GUARDAR = "Equipo cargado correctamente";
-    private String ACTUALIZAR = "Equipo actualizado correctamente";
-    private String ELIMINAR = "Equipo eliminado correctamente";
     private Typeface editTextFont;
     private AuxiliarGeneral auxiliarGeneral;
-    private String nombreEscudoAnterior = null, usuario = null, mensaje = null,
+    private String nombreEscudoAnterior = null, usuario = null,
             url_escudo_equipo = null, encodedImage = null, URL = null;
     private Request request;
-    private ProgressDialog dialog;
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private JsonParsing jsonParsing = new JsonParsing(getActivity());
-    private static final String TAG_ID = "id";
     private String url_nombre_escudo;
     private String nombreEquipo;
+    private boolean isDelete = false;
+    private boolean isInsert = true;
 
     public static FragmentEquipo newInstance() {
         FragmentEquipo fragment = new FragmentEquipo();
@@ -144,6 +136,7 @@ public class FragmentEquipo extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 gestion = 2;
+                                isDelete = true;
                                 url_nombre_escudo = equipoAdefulArray.get(position).getNOMBRE_ESCUDO();
                                 cargarEntidad(equipoAdefulArray
                                         .get(position)
@@ -163,6 +156,7 @@ public class FragmentEquipo extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 gestion = 1;
+                isInsert = false;
                 imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
                 nombreEscudoAnterior = equipoAdefulArray.get(position)
                         .getNOMBRE_ESCUDO();
@@ -232,6 +226,27 @@ public class FragmentEquipo extends Fragment {
             if (b != null)
                 imageEquipo.setImageBitmap(b);
             imagenEscudo = auxiliarGeneral.pasarBitmapByte(b);
+        }
+    }
+
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            if (isDelete) {
+                isDelete = false;
+                gestion = 0;
+                inicializarControles(mensaje);
+            } else {
+                if (isInsert) {
+                    inicializarControles(mensaje);
+                } else {
+                    isInsert = true;
+                    gestion = 0;
+                    inicializarControles(mensaje);
+                }
+            }
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
         }
     }
 
@@ -305,7 +320,7 @@ public class FragmentEquipo extends Fragment {
     public void cargarEntidad(int id, int ws) {
         URL = null;
         URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLEQUIPOADEFUL();
-        if (ws != 3) {
+        if (ws != 2) {
             nombreEquipo = null;
             nombreEquipo = editTextNombre.getText()
                     .toString();
@@ -337,113 +352,31 @@ public class FragmentEquipo extends Fragment {
         }
         //0 = insert // 1 = update // 2 = delete
         if (tipo == 0) {
+            isInsert = true;
             request.setParametrosDatos("nombre_equipo", equipoAdeful.getNOMBRE_EQUIPO());
             request.setParametrosDatos("usuario_creador", equipoAdeful.getUSUARIO_CREADOR());
             request.setParametrosDatos("fecha_creacion", equipoAdeful.getFECHA_CREACION());
             URL = URL + auxiliarGeneral.getInsertPHP("Equipo");
         } else if (tipo == 1) {
+            isInsert = false;
             request.setParametrosDatos("nombre_equipo", equipoAdeful.getNOMBRE_EQUIPO());
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
             request.setParametrosDatos("usuario_actualizacion", equipoAdeful.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", equipoAdeful.getFECHA_ACTUALIZACION());
-
-        //    nombreEscudoAnterior = nombreEscudoAnterior.equals(equipoAdeful.getNOMBRE_EQUIPO()) ? "" : nombreEscudoAnterior;
+            if(nombreEscudoAnterior != null)
             request.setParametrosDatos("nombre_escudo_anterior", nombreEscudoAnterior);
             URL = URL + auxiliarGeneral.getUpdatePHP("Equipo");
         } else {
-            // requestUrl.setParametrosDatos("URL", URL +auxiliarGeneral.getDeletePHP("Equipo"));
+            isDelete = true;
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
-            if(url_nombre_escudo != null)
-            request.setParametrosDatos("nombre_escudo", url_nombre_escudo);
+            if (url_nombre_escudo != null)
+                request.setParametrosDatos("nombre_escudo", url_nombre_escudo);
             request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
             URL = URL + auxiliarGeneral.getDeletePHP("Equipo");
         }
+        new AsyncTaskGeneric(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false);
 
-        new TaskEquipo().execute(request);
     }
-
-
-    // enviar/editar/delete equipo
-
-    public class TaskEquipo extends AsyncTask<Request, Boolean, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Procesando...");
-            dialog.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(Request... params) {
-            int success;
-            JSONObject json = null;
-            boolean precessOK = true;
-            //String UrlParsing = null;
-            try {
-              json = jsonParsing.parsingJsonObject(params[0], URL);
-                if (json != null) {
-                    success = json.getInt(TAG_SUCCESS);
-                    mensaje = json.getString(TAG_MESSAGE);
-                    if (success == 0) {
-                        if (gestion == 0) {
-                            int id = json.getInt(TAG_ID);
-                            if (id > 0) {
-                                if (controladorAdeful.insertEquipoAdeful(id, equipoAdeful)) {
-                                    precessOK = true;
-                                } else {
-                                    precessOK = false;
-                                }
-                            } else {
-                                precessOK = false;
-                            }
-                        } else if (gestion == 1) {
-                            if (controladorAdeful.actualizarEquipoAdeful(equipoAdeful)) {
-                                precessOK = true;
-                            } else {
-                                precessOK = false;
-                            }
-                        } else {
-                            if (controladorAdeful.eliminarEquipoAdeful(equipoAdeful.getID_EQUIPO())) {
-                                precessOK = true;
-                            } else {
-                                precessOK = false;
-                            }
-                        }
-                        precessOK = true;
-                    } else {
-                        precessOK = false;
-                    }
-                } else {
-                    precessOK = false;
-                    mensaje = "Error(4). Por favor comuniquese con el administrador.";
-                }
-            } catch (JSONException e) {
-                precessOK = false;
-                mensaje = "Error(5). Por favor comuniquese con el administrador.";
-            }
-            return precessOK;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            dialog.dismiss();
-
-            if (result) {
-                if (gestion == 0) {
-                    inicializarControles(GUARDAR);
-                } else if (gestion == 1) {
-                    gestion = 0;
-                    inicializarControles(ACTUALIZAR);
-                } else {
-                    gestion = 0;
-                    inicializarControles(ELIMINAR);
-                }
-            } else {
-                auxiliarGeneral.errorWebService(getActivity(), mensaje);
-            }
-        }
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
