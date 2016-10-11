@@ -19,6 +19,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Foto;
 
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 
 public class FragmentEditarFoto extends Fragment {
 
-	private ControladorAdeful controladorAdeful;
+	private ControladorGeneral controladorGeneral;
 	private int CheckedPositionFragment;
 	private RecyclerView recyclerViewFoto;
     private ArrayList<Foto> fotoArray;
@@ -46,7 +47,7 @@ public class FragmentEditarFoto extends Fragment {
 	public void onActivityCreated(Bundle state) {
 		super.onActivityCreated(state);
 
-		controladorAdeful = new ControladorAdeful(getActivity());
+		controladorGeneral = new ControladorGeneral(getActivity());
 
 		if (state != null) {
 			CheckedPositionFragment = state.getInt("curChoice", 0);
@@ -118,7 +119,7 @@ public class FragmentEditarFoto extends Fragment {
 
 							@Override
 							public void onClick(View v) {
-								controladorAdeful.eliminarFotoAdeful(fotoArray.get(position)
+								controladorGeneral.eliminarFoto(fotoArray.get(position)
 										.getID_FOTO());
 								recyclerViewLoadFoto();
 								Toast.makeText(
@@ -148,7 +149,7 @@ public class FragmentEditarFoto extends Fragment {
 
 	public void recyclerViewLoadFoto() {
 
-		fotoArray = controladorAdeful.selectListaFotoAdeful();
+		fotoArray = controladorGeneral.selectListaFoto();
 		if(fotoArray != null) {
 			adaptadorEditarFoto = new AdaptadorRecyclerFoto(fotoArray, getActivity());
 			recyclerViewFoto.setAdapter(adaptadorEditarFoto);

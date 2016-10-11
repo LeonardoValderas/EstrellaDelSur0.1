@@ -14,9 +14,9 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
-import com.estrelladelsur.estrelladelsur.institucion.adeful.Communicator;
+import com.estrelladelsur.estrelladelsur.institucion.administrador.CommunicatorAdeful;
 
 import java.util.ArrayList;
 
@@ -25,10 +25,10 @@ public class FragmentGenerarUsuario extends Fragment {
     private int CheckedPositionFragment;
     private EditText usuarioEditUser;
     private EditText usuarioEditPass;
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private boolean insertar = true;
     private Usuario usuario;
-    private Communicator communicator;
+    private CommunicatorAdeful communicator;
     private boolean actualizar = false;
     private int idUsuarioExtra;
     private String fechaCreacionExtra;
@@ -50,7 +50,7 @@ public class FragmentGenerarUsuario extends Fragment {
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
 
-        communicator = (Communicator) getActivity();
+        communicator = (CommunicatorAdeful) getActivity();
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -82,9 +82,9 @@ public class FragmentGenerarUsuario extends Fragment {
 
     private void init() {
         // VER DONDE EJECUCTAR ESTA LINEA
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
-        arrayUsuario = controladorAdeful.selectListaUsuarioAdeful();
+        arrayUsuario = controladorGeneral.selectListaUsuario();
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
@@ -103,7 +103,7 @@ public class FragmentGenerarUsuario extends Fragment {
 
         usuarioEditUser.setText("");
         usuarioEditPass.setText("");
-        communicator.refresh();
+        communicator.refreshAdeful();
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
 
@@ -180,7 +180,7 @@ public class FragmentGenerarUsuario extends Fragment {
                 usuario = new Usuario(0, usuarioEditUser.getText().toString(),
                         usuarioEditPass.getText().toString(),true,
                         usuarios, auxiliarGeneral.getFechaOficial(), usuarios, auxiliarGeneral.getFechaOficial());
-                if (controladorAdeful.insertUsuarioAdeful(usuario)) {
+                if (controladorGeneral.insertUsuario(usuario)) {
                     inicializarControles(GUARDAR_USUARIO);
                 } else {
                     auxiliarGeneral.errorDataBase(getActivity());
@@ -189,10 +189,10 @@ public class FragmentGenerarUsuario extends Fragment {
                 usuario = new Usuario(idUsuarioExtra, usuarioEditUser.getText().toString(),
                         usuarioEditPass.getText().toString(),true,
                         null, null, usuarios, auxiliarGeneral.getFechaOficial());
-                if (controladorAdeful.actualizarUsuarioAdeful(usuario)) {
+                if (controladorGeneral.actualizarUsuario(usuario)) {
                     actualizar = false;
                     insertar = true;
-                    communicator.refresh();
+                    communicator.refreshAdeful();
                     inicializarControles(ACTUALIZAR_USUARIO);
                 } else {
                     auxiliarGeneral.errorDataBase(getActivity());

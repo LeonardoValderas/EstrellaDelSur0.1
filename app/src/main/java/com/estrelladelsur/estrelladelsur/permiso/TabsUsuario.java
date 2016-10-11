@@ -15,9 +15,9 @@ import android.view.View;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.institucion.adeful.Communicator;
+import com.estrelladelsur.estrelladelsur.institucion.administrador.CommunicatorAdeful;
 
-public class TabsUsuario extends AppCompatActivity implements Communicator{
+public class TabsUsuario extends AppCompatActivity implements CommunicatorAdeful {
 
     private Toolbar toolbar;
     private ViewPager viewPager;
@@ -28,8 +28,7 @@ public class TabsUsuario extends AppCompatActivity implements Communicator{
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private AuxiliarGeneral auxiliarGeneral;
-    private TextView txtAbTitulo;
-    private TextView txtAbSubTitulo;
+    private TextView txtToolBarTitulo;
     private Typeface titulos;
 
     @Override
@@ -47,12 +46,8 @@ public class TabsUsuario extends AppCompatActivity implements Communicator{
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-        txtAbTitulo.setVisibility(View.GONE);
-
-        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-        txtAbSubTitulo.setText("USUARIO");
-        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
+        txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
+        txtToolBarTitulo.setText("USUARIO");
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -182,7 +177,7 @@ public class TabsUsuario extends AppCompatActivity implements Communicator{
     }
 
 
-    public void refresh() {
+    public void refreshAdeful() {
         // TODO Auto-generated method stub
 
         FragmentManager manager = getSupportFragmentManager();

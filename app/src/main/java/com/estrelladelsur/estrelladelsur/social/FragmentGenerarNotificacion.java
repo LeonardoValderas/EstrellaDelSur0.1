@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
 
 
@@ -23,7 +24,7 @@ public class FragmentGenerarNotificacion extends Fragment {
     private int CheckedPositionFragment;
     private EditText notificacionEditTituto;
     private EditText notificacionEditArticulo;
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private boolean insertar = true;
     private Notificacion notificacion;
     private Communicator communicator;
@@ -80,7 +81,7 @@ public class FragmentGenerarNotificacion extends Fragment {
     }
 
     private void init() {
-         controladorAdeful = new ControladorAdeful(getActivity());
+         controladorGeneral = new ControladorGeneral(getActivity());
          actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
@@ -153,7 +154,7 @@ public class FragmentGenerarNotificacion extends Fragment {
                 notificacion = new Notificacion(0, notificacionEditTituto.getText().toString(),
                         notificacionEditArticulo.getText().toString(),
                         usuario, auxiliarGeneral.getFechaOficial(),usuario,auxiliarGeneral.getFechaOficial());
-               if(controladorAdeful.insertNotificacionAdeful(notificacion)) {
+               if(controladorGeneral.insertNotificacion(notificacion)) {
                   inicializarControles(GUARDAR_USUARIO);
                }else {
                 auxiliarGeneral.errorDataBase(getActivity());
@@ -162,7 +163,7 @@ public class FragmentGenerarNotificacion extends Fragment {
                 notificacion = new Notificacion(idNotificacionExtra, notificacionEditTituto.getText().toString(),
                         notificacionEditArticulo.getText().toString(),
                         null, null, usuario,auxiliarGeneral.getFechaOficial());
-                if(controladorAdeful.actualizarNotificacionAdeful(notificacion)){
+                if(controladorGeneral.actualizarNotificacion(notificacion)){
                 actualizar = false;
                 insertar = true;
                 inicializarControles(ACTUALIZAR_USUARIO);

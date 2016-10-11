@@ -63,6 +63,7 @@
         <item>Sancionados</item>
         <!--3-->
         <item>Adeful</item>
+        <item>Lifuba</item>
         <!--4-->
         <item>Notificación</item>
         <item>Noticias</item>
@@ -86,6 +87,7 @@
         <item>Sancionados</item>
         <!--3-->
         <item>Adeful</item>
+        <item>Lifuba</item>
         <!--4-->
         <item>Notificación</item>
         <item>Noticias</item>
@@ -119,14 +121,15 @@
     </string-array>
 
     <!-- Array ListView LigaAdeful -->
-    <string-array name="NavigationLigaAdeful">
+    <string-array name="NavigationLiga">
         <item>Adeful</item>
-    </string-array>
-
-    <!-- Array ListView LigaAdeful -->
-    <string-array name="NavigationLigaLifuba">
         <item>Lifuba</item>
     </string-array>
+
+    <!--&lt;!&ndash; Array ListView LigaAdeful &ndash;&gt;-->
+    <!--<string-array name="NavigationLigaLifuba">-->
+        <!--<item>Lifuba</item>-->
+    <!--</string-array>-->
 
     <!-- Array ListView LigaAdeful -->
     <string-array name="NavigationSocial">
@@ -294,5 +297,11 @@
     <string name="error_data_base">Error en la base de datos interna,
         vuelva a intentar.\nSi el error persiste comuniquese con soporte.</string>
 
+
+    <!--USUARIO-->
+    <string-array name="vacioSpinnerDivision">
+        <item>Sin Datos.</item>
+    </string-array>
+    <string name="vacioSpinnerDivision">Sin Datos.</string>
 
 </resources>

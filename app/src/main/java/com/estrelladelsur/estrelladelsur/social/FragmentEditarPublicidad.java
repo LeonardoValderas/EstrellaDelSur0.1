@@ -19,6 +19,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 
 public class FragmentEditarPublicidad extends Fragment {
 
-	private ControladorAdeful controladorAdeful;
+	private ControladorGeneral controladorGeneral;
 	private int CheckedPositionFragment;
 	private RecyclerView recyclerViewPublicidad;
     private ArrayList<Publicidad> publicidadArray;
@@ -46,7 +47,7 @@ public class FragmentEditarPublicidad extends Fragment {
 	public void onActivityCreated(Bundle state) {
 		super.onActivityCreated(state);
 
-		controladorAdeful = new ControladorAdeful(getActivity());
+		controladorGeneral = new ControladorGeneral(getActivity());
 
 		if (state != null) {
 			CheckedPositionFragment = state.getInt("curChoice", 0);
@@ -120,7 +121,7 @@ public class FragmentEditarPublicidad extends Fragment {
 
 							@Override
 							public void onClick(View v) {
-								controladorAdeful.eliminarPublicidadAdeful(publicidadArray.get(position)
+								controladorGeneral.eliminarPublicidad(publicidadArray.get(position)
 										.getID_PUBLICIDAD());
 								recyclerViewLoadPublicidad();
 								Toast.makeText(
@@ -150,7 +151,7 @@ public class FragmentEditarPublicidad extends Fragment {
 
 	public void recyclerViewLoadPublicidad() {
 
-		publicidadArray = controladorAdeful.selectListaPublicidadAdeful();
+		publicidadArray = controladorGeneral.selectListaPublicidad();
 		if(publicidadArray != null) {
 			adaptadorEditarPublicidad = new AdaptadorRecyclerPublicidad(publicidadArray, getActivity());
 			recyclerViewPublicidad.setAdapter(adaptadorEditarPublicidad);

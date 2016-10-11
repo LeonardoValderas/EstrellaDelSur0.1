@@ -25,10 +25,11 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerU
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
-import com.estrelladelsur.estrelladelsur.navegador.adeful.NavigationAdeful;
+import com.estrelladelsur.estrelladelsur.navegador.administrador.Navigation;
 
 import java.util.ArrayList;
 
@@ -39,7 +40,7 @@ public class FragmentGenerarPermiso extends Fragment {
     private Spinner spinnerUsuario;
     private Button buttonFechaEntrenamiento;
     private Button buttonHoraEntrenamiento;
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private ArrayList<Usuario> usuarioArray;
     private AdapterSpinnerUsuario adapterSpinnerUsuario;
     private RecyclerView recycleViewGeneral;
@@ -68,7 +69,7 @@ public class FragmentGenerarPermiso extends Fragment {
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
         communicator = (Communicator) getActivity();
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -116,7 +117,7 @@ public class FragmentGenerarPermiso extends Fragment {
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         // USUARIO
-        usuarioArray = controladorAdeful.selectListaUsuarioAdeful();
+        usuarioArray = controladorGeneral.selectListaUsuario();
         if (usuarioArray != null) {
             if (usuarioArray.size() != 0) {
                 // USUARIO SPINNER
@@ -158,14 +159,14 @@ public class FragmentGenerarPermiso extends Fragment {
         int position = 0;
         submoduloArrayExtraTotal = new ArrayList<SubModulo>();
         //MODULOS FALSE
-        submoduloArrayFalse = controladorAdeful
-                .selectListaModuloSubModuloFalseAdeful();
+        submoduloArrayFalse = controladorGeneral
+                .selectListaModuloSubModuloFalse();
         if (submoduloArrayFalse != null) {
             //EDITAR
             if (!insertar) {
                 //MODULOS TRUE
-                submoduloArrayExtraTrue = controladorAdeful
-                        .selectListaSubModuloPermisoAdeful(idPermisoExtra);
+                submoduloArrayExtraTrue = controladorGeneral
+                        .selectListaSubModuloPermiso(idPermisoExtra);
                if (submoduloArrayExtraTrue != null) {
                    for (int i = 0; i < submoduloArrayExtraTrue.size(); i++) {
                        submoduloArrayExtraTotal.add(submoduloArrayExtraTrue.get(i));
@@ -267,7 +268,7 @@ public class FragmentGenerarPermiso extends Fragment {
                         if (insertar) {
                             usuario = (Usuario) spinnerUsuario
                                     .getSelectedItem();
-                            int ispermiso = controladorAdeful.isPermiso(usuario.getID_USUARIO());
+                            int ispermiso = controladorGeneral.isPermiso(usuario.getID_USUARIO());
 
                             if(ispermiso == 0) {
                                 Toast.makeText(getActivity(),
@@ -280,8 +281,8 @@ public class FragmentGenerarPermiso extends Fragment {
                                 permiso = new Permiso(0, usuario.getID_USUARIO(),
                                         usuarioa, auxiliarGeneral.getFechaOficial(), usuarioa, auxiliarGeneral.getFechaOficial());
 
-                                int id_permiso = controladorAdeful
-                                        .insertPermisosAdeful(permiso);
+                                int id_permiso = controladorGeneral
+                                        .insertPermisos(permiso);
 
                                 if (id_permiso > 0) {
                                     for (int i = 0; i < subModulosTrue.size(); i++) {
@@ -291,11 +292,11 @@ public class FragmentGenerarPermiso extends Fragment {
                                                 subModulosTrue.get(i).getID_MODULO(),
                                                 subModulosTrue.get(i).getID_SUBMODULO());
 
-                                        if (controladorAdeful
-                                                .insertPermisoModuloAdeful(permiso)) {
+                                        if (controladorGeneral
+                                                .insertPermisoModulo(permiso)) {
 
-                                            if (controladorAdeful
-                                                    .actualizarSubModuloSelectedTrueAdeful(subModulosTrue.get(i).getID_SUBMODULO())) {
+                                            if (controladorGeneral
+                                                    .actualizarSubModuloSelectedTrue(subModulosTrue.get(i).getID_SUBMODULO())) {
                                                 salving = true;
                                             } else {
                                                 auxiliarGeneral.errorDataBase(getActivity());
@@ -317,7 +318,7 @@ public class FragmentGenerarPermiso extends Fragment {
                                                 getActivity(),
                                                 "Permiso cargado correctamente.",
                                                 Toast.LENGTH_SHORT).show();
-                                        Intent nav = new Intent(getActivity(),NavigationAdeful.class);
+                                        Intent nav = new Intent(getActivity(),Navigation.class);
                                         nav.putExtra("usuario", "ADM");
                                         startActivity(nav);
                                     }
@@ -330,16 +331,16 @@ public class FragmentGenerarPermiso extends Fragment {
                          permiso = new Permiso(idPermisoExtra,
                                     0, null, null, usuarioa, auxiliarGeneral.getFechaOficial());
                          // actualizo fecha permiso
-                         if (controladorAdeful
-                                    .actualizarPermisosAdeful(permiso)) {
+                         if (controladorGeneral
+                                    .actualizarPermisos(permiso)) {
 
                                for (int i = 0; i < submoduloArrayExtraTrue.size(); i++) {
 
                                   if(!submoduloArrayExtraTrue.get(i).ISSELECTED()){
-                                      if (controladorAdeful
-                                                   .eliminarPermisoModuloAdeful(submoduloArrayExtraTrue.get(i).getID_PERMISO_MODULO())) {
-                                          if (controladorAdeful
-                                                  .actualizarSubModuloSelectedFalseAdeful(submoduloArrayExtraTrue.get(i).getID_SUBMODULO())) {
+                                      if (controladorGeneral
+                                                   .eliminarPermisoModulo(submoduloArrayExtraTrue.get(i).getID_PERMISO_MODULO())) {
+                                          if (controladorGeneral
+                                                  .actualizarSubModuloSelectedFalse(submoduloArrayExtraTrue.get(i).getID_SUBMODULO())) {
 
                                           } else {
                                               auxiliarGeneral.errorDataBase(getActivity());
@@ -355,10 +356,10 @@ public class FragmentGenerarPermiso extends Fragment {
                                     permiso = new Permiso(
                                             0, idPermisoExtra, submoduloArrayFalse.get(i).getID_MODULO()
                                             ,submoduloArrayFalse.get(i).getID_SUBMODULO());
-                                    if (controladorAdeful
-                                            .insertPermisoModuloAdeful(permiso)) {
-                                        if (controladorAdeful
-                                                .actualizarSubModuloSelectedTrueAdeful(submoduloArrayFalse.get(i).getID_SUBMODULO())) {
+                                    if (controladorGeneral
+                                            .insertPermisoModulo(permiso)) {
+                                        if (controladorGeneral
+                                                .actualizarSubModuloSelectedTrue(submoduloArrayFalse.get(i).getID_SUBMODULO())) {
 
                                         } else {
                                             auxiliarGeneral.errorDataBase(getActivity());

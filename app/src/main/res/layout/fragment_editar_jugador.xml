@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".miequipo.adeful.TabsJugador">
+    tools:context=".miequipo.tabs_general.TabsJugador">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"

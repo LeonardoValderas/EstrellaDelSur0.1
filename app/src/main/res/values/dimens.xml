@@ -9,7 +9,7 @@
 
     <!-- NAVIGATION -->
     <dimen name="nav_escudo">250dp</dimen>
-    <dimen name="nav_escudo_top">15dp</dimen>
+    <dimen name="nav_escudo_top">23dp</dimen>
 
     <!--<dimen name="maxLength">30</dimen>-->
 

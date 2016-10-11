@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
@@ -30,12 +30,14 @@ import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ArticuloUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ComisionUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.DireccionUsuario;
-import com.estrelladelsur.estrelladelsur.liga.usuario.TabsAdefulUsuario;
+import com.estrelladelsur.estrelladelsur.liga.tabs_user.TabsAdefulUsuario;
 import com.estrelladelsur.estrelladelsur.login.Login;
-import com.estrelladelsur.estrelladelsur.miequipo.adeful.TabsEntrenamiento;
-import com.estrelladelsur.estrelladelsur.miequipo.adeful.TabsJugador;
-import com.estrelladelsur.estrelladelsur.miequipo.adeful.TabsSancion;
-import com.estrelladelsur.estrelladelsur.miequipo.usuario.TabsFixtureUsuario;
+import com.estrelladelsur.estrelladelsur.miequipo.tabs_general.TabsEntrenamiento;
+import com.estrelladelsur.estrelladelsur.miequipo.tabs_general.TabsSancion;
+import com.estrelladelsur.estrelladelsur.miequipo.tabs_user.EntrenamientoUsuario;
+import com.estrelladelsur.estrelladelsur.miequipo.tabs_user.JugadorUsuario;
+import com.estrelladelsur.estrelladelsur.miequipo.tabs_user.TabsEntrenamientoUsuario;
+import com.estrelladelsur.estrelladelsur.miequipo.tabs_user.TabsFixtureUsuario;
 import com.estrelladelsur.estrelladelsur.permiso.TabsPermiso;
 import com.estrelladelsur.estrelladelsur.permiso.TabsUsuario;
 import com.estrelladelsur.estrelladelsur.social.TabsFoto;
@@ -65,7 +67,7 @@ public class NavigationUsuario extends AppCompatActivity {
     private HashMap<String, List<String>> listDataChild;
     private List<String> institucionalChild;
     private TextView txtAbSubTitulo, txtAbTitulo, textViewLiga;
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private Typeface titulos;
     private Typeface adeful;
     private AuxiliarGeneral auxiliarGeneral;
@@ -75,7 +77,7 @@ public class NavigationUsuario extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
-        controladorAdeful = new ControladorAdeful(this);
+        controladorGeneral = new ControladorGeneral(this);
         auxiliarGeneral = new AuxiliarGeneral(NavigationUsuario.this);
 
         titulos = auxiliarGeneral.tituloFont(NavigationUsuario.this);
@@ -102,8 +104,8 @@ public class NavigationUsuario extends AppCompatActivity {
 //        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
 //        txtAbSubTitulo.setTypeface(titulos);
 
-        textViewLiga = (TextView) findViewById(R.id.textViewLiga);
-        textViewLiga.setTypeface(adeful, Typeface.BOLD);
+      //  textViewLiga = (TextView) findViewById(R.id.textViewLiga);
+      //  textViewLiga.setTypeface(adeful, Typeface.BOLD);
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
         // preparing list data
         prepareListData();
@@ -151,14 +153,14 @@ public class NavigationUsuario extends AppCompatActivity {
 //                                    .toString();
                             break;
                         case 1:
-                            Intent jugadores = new Intent(NavigationUsuario.this, TabsJugador.class);
+                            Intent jugadores = new Intent(NavigationUsuario.this, JugadorUsuario.class);
                             startActivity(jugadores);
 
-//                            Intent resultado = new Intent(NavigationUsuario.this, ActivityResultado.class);
+//                            Intent resultado = new Intent(NavigationUsuario.this, ActivityResultadoAdeful.class);
 //                            startActivity(resultado);
                             break;
                         case 2:
-                            Intent entrenamiento = new Intent(NavigationUsuario.this, TabsEntrenamiento.class);
+                            Intent entrenamiento = new Intent(NavigationUsuario.this, TabsEntrenamientoUsuario.class);
                             startActivity(entrenamiento);
 //                            tituloClickFragment = mi_equipoChild.get(childPosition)
 //                                    .toString();
@@ -309,10 +311,10 @@ public class NavigationUsuario extends AppCompatActivity {
 
         ligaChild = new ArrayList<String>();
         for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationLigaAdeful).length; i++) {
+                R.array.NavigationLiga).length; i++) {
 
             ligaChild.add(getResources().getStringArray(
-                    R.array.NavigationLigaAdeful)[i]);
+                    R.array.NavigationLiga)[i]);
         }
 
         socialChild = new ArrayList<String>();
@@ -370,13 +372,13 @@ public class NavigationUsuario extends AppCompatActivity {
 
     public void iniciarFecha() {
         ArrayList<Fecha> fechaArray = new ArrayList<Fecha>();
-        fechaArray = controladorAdeful.selectListaFecha();
+        fechaArray = controladorGeneral.selectListaFecha();
         if (fechaArray != null) {
             if (fechaArray.isEmpty()) {
                 for (int i = 0; i < getResources().getStringArray(R.array.fechaArray).length; i++) {
                     Fecha fecha = new Fecha(i, getResources().getStringArray(
                             R.array.fechaArray)[i]);
-                    controladorAdeful.insertFecha(fecha);
+                    controladorGeneral.insertFecha(fecha);
                 }
             }
         } else {
@@ -386,13 +388,13 @@ public class NavigationUsuario extends AppCompatActivity {
 
     public void iniciarAnio() {
         ArrayList<Anio> anioArray = new ArrayList<Anio>();
-        anioArray = controladorAdeful.selectListaAnio();
+        anioArray = controladorGeneral.selectListaAnio();
         if (anioArray != null) {
             if (anioArray.isEmpty()) {
                 for (int i = 0; i < getResources().getStringArray(R.array.anioArray).length; i++) {
                     Anio anio = new Anio(i,
                             getResources().getStringArray(R.array.anioArray)[i]);
-                    controladorAdeful.insertAnio(anio);
+                    controladorGeneral.insertAnio(anio);
                 }
             }
 
@@ -403,13 +405,13 @@ public class NavigationUsuario extends AppCompatActivity {
 
     public void iniciarMes() {
         ArrayList<Mes> mesArray = new ArrayList<Mes>();
-        mesArray = controladorAdeful.selectListaMes();
+        mesArray = controladorGeneral.selectListaMes();
         if (mesArray != null) {
             if (mesArray.isEmpty()) {
                 for (int i = 0; i < getResources().getStringArray(R.array.mesArray).length; i++) {
                     Mes mes = new Mes(i,
                             getResources().getStringArray(R.array.mesArray)[i]);
-                    controladorAdeful.insertMes(mes);
+                    controladorGeneral.insertMes(mes);
                 }
             }
         } else {
@@ -419,20 +421,20 @@ public class NavigationUsuario extends AppCompatActivity {
 public void insertUsuarioAdm(){
 
     Usuario u = new Usuario(0,"ADM","123",true,"","","","");
-    controladorAdeful.insertUsuarioAdeful(u);
+    controladorGeneral.insertUsuario(u);
     }
     public void iniciarModulos() {
 
         ArrayList<Modulo> arrayModulo = new ArrayList<Modulo>();
         ArrayList<SubModulo> arraySubModulo = new ArrayList<SubModulo>();
-        arrayModulo = controladorAdeful.selectListaModuloAdeful();
-        arraySubModulo = controladorAdeful.selectListaSubModuloAdeful();
+        arrayModulo = controladorGeneral.selectListaModulo();
+        arraySubModulo = controladorGeneral.selectListaSubModulo();
 
         if (arrayModulo != null) {
             if (arrayModulo.isEmpty()) {
                 for (int i = 0; i < getResources().getStringArray(R.array.moduloArray).length; i++) {
                     Modulo modulo = new Modulo(0, getResources().getStringArray(R.array.moduloArray)[i]);
-                    controladorAdeful.insertModuloAdeful(modulo);
+                    controladorGeneral.insertModulo(modulo);
                 }
             }
         } else {
@@ -445,23 +447,20 @@ public void insertUsuarioAdm(){
                     int key = i + 1;
                     if (key >= 1 && key <= 3) {
                         SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 1);
-                        controladorAdeful.insertSubModuloAdeful(submodulo);
-                    }
-                    if (key >= 4 && key <= 8) {
+                        controladorGeneral.insertSubModulo(submodulo);
+                    }else if (key >= 4 && key <= 8) {
                         SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 2);
-                        controladorAdeful.insertSubModuloAdeful(submodulo);
-                    }
-                    if (key == 9) {
+                        controladorGeneral.insertSubModulo(submodulo);
+                    } else if (key == 9 || key == 10) {
                         SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 3);
-                        controladorAdeful.insertSubModuloAdeful(submodulo);
-                    }
-                    if (key >= 10 && key <= 13) {
+                        controladorGeneral.insertSubModulo(submodulo);
+                    } else if (key >= 11 && key <= 14) {
                         SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
-                        controladorAdeful.insertSubModuloAdeful(submodulo);
+                        controladorGeneral.insertSubModulo(submodulo);
                     }
-                    if (key >= 14 && key <= 15) {
+                    if (key == 15 || key == 16) {
                         SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 5);
-                        controladorAdeful.insertSubModuloAdeful(submodulo);
+                        controladorGeneral.insertSubModulo(submodulo);
                     }
 
                 }
@@ -479,9 +478,9 @@ public void insertUsuarioAdm(){
 
                 Fecha fecha = new Fecha(i, getResources().getStringArray(
                         R.array.fechaArray)[i]);
-                controladorAdeful.abrirBaseDeDatos();
-                controladorAdeful.insertFecha(fecha);
-                controladorAdeful.cerrarBaseDeDatos();
+                controladorGeneral.abrirBaseDeDatos();
+                controladorGeneral.insertFecha(fecha);
+                controladorGeneral.cerrarBaseDeDatos();
                 // BL.getBl().insertarFecha(fecha);
             }
             // Anio ver donde implementar
@@ -490,9 +489,9 @@ public void insertUsuarioAdm(){
                 Anio anio = new Anio(i,
                         getResources().getStringArray(R.array.anioArray)[i]);
 
-                controladorAdeful.abrirBaseDeDatos();
-                controladorAdeful.insertAnio(anio);
-                controladorAdeful.cerrarBaseDeDatos();
+                controladorGeneral.abrirBaseDeDatos();
+                controladorGeneral.insertAnio(anio);
+                controladorGeneral.cerrarBaseDeDatos();
                 // BL.getBl().insertarAnio(anio);
             }
 
@@ -501,9 +500,9 @@ public void insertUsuarioAdm(){
                 Mes mes = new Mes(i,
                         getResources().getStringArray(R.array.mesArray)[i]);
 
-                controladorAdeful.abrirBaseDeDatos();
-                controladorAdeful.insertMes(mes);
-                controladorAdeful.cerrarBaseDeDatos();
+                controladorGeneral.abrirBaseDeDatos();
+                controladorGeneral.insertMes(mes);
+                controladorGeneral.cerrarBaseDeDatos();
 
             }
         }*/

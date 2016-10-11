@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import java.util.ArrayList;
 
@@ -37,7 +38,8 @@ public class AdaptadorRecyclerEditarPermiso extends
 		private TextView textRecyclerViewResultadoV;
 		private TextView textRecyclerViewResultadoL;
         private String permisos ="";
-		private ControladorAdeful controladorAdeful;
+		//private ControladorAdeful controladorAdeful;
+		private ControladorGeneral controladorGeneral;
 		private ArrayList<Permiso> permisoDivisionArray;
 		private LinearLayout linearEscudoL, linearEscudoV, linearVisita;
 
@@ -98,8 +100,9 @@ public class AdaptadorRecyclerEditarPermiso extends
 			textRecyclerViewEquipoL.setTypeface(u,Typeface.BOLD);
 			textRecyclerViewDia.setText("Permisos:");
 			textRecyclerViewDia.setTypeface(m, Typeface.BOLD);
-			controladorAdeful = new ControladorAdeful(context);
-			permisoDivisionArray =controladorAdeful.selectListaPermisoAdefulId(permiso.getID_PERMISO());
+			//controladorAdeful = new ControladorAdeful(context);
+			controladorGeneral = new ControladorGeneral(context);
+			permisoDivisionArray =controladorGeneral.selectListaPermisoId(permiso.getID_PERMISO());
 			if(permisoDivisionArray != null) {
 				int dato = permisoDivisionArray.size();
 				for (int i = 0; i < dato; i++) {

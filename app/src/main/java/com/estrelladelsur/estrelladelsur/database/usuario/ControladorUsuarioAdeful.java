@@ -7,13 +7,20 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
+import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
+import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
+import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
+import com.estrelladelsur.estrelladelsur.entidad.Jugador;
+import com.estrelladelsur.estrelladelsur.entidad.Mes;
+import com.estrelladelsur.estrelladelsur.entidad.Posicion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 
 import java.util.ArrayList;
@@ -1358,6 +1365,48 @@ public class ControladorUsuarioAdeful {
             return false;
         }
     }
+
+    //LISTA CANCHA
+    public ArrayList<Division> selectListaDivisionUsuarioAdeful() {
+
+        String sql = "SELECT * FROM DIVISION_USUARIO_ADEFUL";
+        ArrayList<Division> arrayDivision = new ArrayList<>();
+        String nombre = null;
+        int id;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        Division division = null;
+                        id = cursor.getInt(cursor
+                                .getColumnIndex("ID_DIVISION"));
+                        nombre = cursor.getString(cursor
+                                .getColumnIndex("DESCRIPCION"));
+
+                        division = new Division(id, nombre);
+
+                        arrayDivision.add(division);
+                    }
+                }
+            } catch (Exception e) {
+                arrayDivision = null;
+            }
+        } else {
+            arrayDivision = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        nombre = null;
+
+        return arrayDivision;
+    }
     // ELIMINAR CANCHA
     public boolean eliminarDivisionUsuarioAdeful() {
 
@@ -1405,7 +1454,6 @@ public class ControladorUsuarioAdeful {
         }
     }
 
-    //
     //LISTA CANCHA
     public ArrayList<Cancha> selectListaCanchaUsuarioAdeful() {
 
@@ -1504,194 +1552,194 @@ public class ControladorUsuarioAdeful {
         sql = null;
         return res;
     }
-//
-//    ///////MI EQUIPO////////
-//
-//    // FECHA INSERTAR
-//    public boolean insertFecha(Fecha fecha) {
-//        boolean ban = false;
-//
-//        String sql = "INSERT INTO FECHA ( FECHA) VALUES ('" + fecha.getFECHA()
-//                + "')";
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                database.execSQL(sql);
-//                ban = true;
-//                cerrarBaseDeDatos();
-//            } catch (Exception e) {
-//                ban = false;
-//            }
-//        } else {
-//            ban = false;
-//        }
-//        sql = null;
-//        database = null;
-//        return ban;
-//    }
-//
-//    // LISTA FECHA
-//    public ArrayList<Fecha> selectListaFecha() {
-//
-//        String sql = "SELECT * FROM FECHA";
-//        ArrayList<Fecha> arrayFecha = new ArrayList<Fecha>();
-//        String fechaa = null;
-//        int id;
-//        Cursor cursor = null;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//
-//                    while (cursor.moveToNext()) {
-//                        Fecha fecha = null;
-//                        id = cursor.getInt(cursor.getColumnIndex("ID_FECHA"));
-//                        fechaa = cursor.getString(cursor
-//                                .getColumnIndex("FECHA"));
-//                        fecha = new Fecha(id, fechaa);
-//                        arrayFecha.add(fecha);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayFecha = null;
-//            }
-//        } else {
-//            arrayFecha = null;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        fechaa = null;
-//        return arrayFecha;
-//    }
-//
-//    // INSERTA ANIO
-//    public boolean insertAnio(Anio anio) {
-//        boolean ban = false;
-//
-//        String sql = "INSERT INTO ANIO ( ANIO) VALUES ('" + anio.getANIO()
-//                + "')";
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                database.execSQL(sql);
-//                ban = true;
-//
-//            } catch (Exception e) {
-//                ban = false;
-//            }
-//        } else {
-//            ban = false;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        database = null;
-//        return ban;
-//    }
-//
-//    //LISTA ANIO
-//    public ArrayList<Anio> selectListaAnio() {
-//
-//        String sql = "SELECT * FROM ANIO";
-//        ArrayList<Anio> arrayAnio = new ArrayList<Anio>();
-//        String anioo = null;
-//        int id;
-//        Cursor cursor = null;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//
-//                    while (cursor.moveToNext()) {
-//
-//                        Anio anio = null;
-//                        id = cursor.getInt(cursor.getColumnIndex("ID_ANIO"));
-//                        anioo = cursor.getString(cursor.getColumnIndex("ANIO"));
-//                        anio = new Anio(id, anioo);
-//
-//                        arrayAnio.add(anio);
-//                        cerrarBaseDeDatos();
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayAnio = null;
-//            }
-//        } else {
-//            arrayAnio = null;
-//        }
-//
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        anioo = null;
-//        return arrayAnio;
-//    }
-//
-//    //INSERTAR MES
-//    public boolean insertMes(Mes mes) {
-//        boolean ban = false;
-//
-//        String sql = "INSERT INTO MES ( MES) VALUES ('" + mes.getMES()
-//                + "')";
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                database.execSQL(sql);
-//                ban = true;
-//            } catch (Exception e) {
-//                ban = false;
-//            }
-//        } else {
-//            ban = false;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        database = null;
-//        return ban;
-//    }
-//
-//    //LISTA MES
-//    public ArrayList<Mes> selectListaMes() {
-//
-//        String sql = "SELECT * FROM MES";
-//        ArrayList<Mes> arrayMes = new ArrayList<Mes>();
-//        String mess = null;
-//        int id;
-//        Cursor cursor = null;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//
-//                    while (cursor.moveToNext()) {
-//
-//                        Mes mes = null;
-//                        id = cursor.getInt(cursor.getColumnIndex("ID_MES"));
-//                        mess = cursor.getString(cursor.getColumnIndex("MES"));
-//                        mes = new Mes(id, mess);
-//
-//                        arrayMes.add(mes);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayMes = null;
-//            }
-//        } else {
-//            arrayMes = null;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        mess = null;
-//        return arrayMes;
-//    }
-//
+
+    ///////MI EQUIPO////////
+
+    // FECHA INSERTAR
+    public boolean insertFecha(Fecha fecha) {
+        boolean ban = false;
+
+        String sql = "INSERT INTO FECHA ( FECHA) VALUES ('" + fecha.getFECHA()
+                + "')";
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                ban = true;
+                cerrarBaseDeDatos();
+            } catch (Exception e) {
+                ban = false;
+            }
+        } else {
+            ban = false;
+        }
+        sql = null;
+        database = null;
+        return ban;
+    }
+
+    // LISTA FECHA
+    public ArrayList<Fecha> selectListaFecha() {
+
+        String sql = "SELECT * FROM FECHA";
+        ArrayList<Fecha> arrayFecha = new ArrayList<Fecha>();
+        String fechaa = null;
+        int id;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+                        Fecha fecha = null;
+                        id = cursor.getInt(cursor.getColumnIndex("ID_FECHA"));
+                        fechaa = cursor.getString(cursor
+                                .getColumnIndex("FECHA"));
+                        fecha = new Fecha(id, fechaa);
+                        arrayFecha.add(fecha);
+                    }
+                }
+            } catch (Exception e) {
+                arrayFecha = null;
+            }
+        } else {
+            arrayFecha = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        fechaa = null;
+        return arrayFecha;
+    }
+
+    // INSERTA ANIO
+    public boolean insertAnio(Anio anio) {
+        boolean ban = false;
+
+        String sql = "INSERT INTO ANIO ( ANIO) VALUES ('" + anio.getANIO()
+                + "')";
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                ban = true;
+
+            } catch (Exception e) {
+                ban = false;
+            }
+        } else {
+            ban = false;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        database = null;
+        return ban;
+    }
+
+    //LISTA ANIO
+    public ArrayList<Anio> selectListaAnio() {
+
+        String sql = "SELECT * FROM ANIO";
+        ArrayList<Anio> arrayAnio = new ArrayList<Anio>();
+        String anioo = null;
+        int id;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        Anio anio = null;
+                        id = cursor.getInt(cursor.getColumnIndex("ID_ANIO"));
+                        anioo = cursor.getString(cursor.getColumnIndex("ANIO"));
+                        anio = new Anio(id, anioo);
+
+                        arrayAnio.add(anio);
+                        cerrarBaseDeDatos();
+                    }
+                }
+            } catch (Exception e) {
+                arrayAnio = null;
+            }
+        } else {
+            arrayAnio = null;
+        }
+
+        sql = null;
+        cursor = null;
+        database = null;
+        anioo = null;
+        return arrayAnio;
+    }
+
+    //INSERTAR MES
+    public boolean insertMes(Mes mes) {
+        boolean ban = false;
+
+        String sql = "INSERT INTO MES ( MES) VALUES ('" + mes.getMES()
+                + "')";
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                ban = true;
+            } catch (Exception e) {
+                ban = false;
+            }
+        } else {
+            ban = false;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        database = null;
+        return ban;
+    }
+
+    //LISTA MES
+    public ArrayList<Mes> selectListaMes() {
+
+        String sql = "SELECT * FROM MES";
+        ArrayList<Mes> arrayMes = new ArrayList<>();
+        String mess = null;
+        int id;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        Mes mes = null;
+                        id = cursor.getInt(cursor.getColumnIndex("ID_MES"));
+                        mess = cursor.getString(cursor.getColumnIndex("MES"));
+                        mes = new Mes(id, mess);
+
+                        arrayMes.add(mes);
+                    }
+                }
+            } catch (Exception e) {
+                arrayMes = null;
+            }
+        } else {
+            arrayMes = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        mess = null;
+        return arrayMes;
+    }
+
 //    // INSERTAR FIXTURE
     public boolean insertFixtureUsuarioAdeful(Fixture fixture) throws SQLiteException {
 
@@ -1965,94 +2013,105 @@ public class ControladorUsuarioAdeful {
 //    // ///////////////////////////////////JUGADORES////////////////////////////////////////////
 //
 //    // INSERTAR JUGADOR
-//    public boolean insertJugadorAdeful(Jugador jugador) throws SQLiteException {
-//
-//        ContentValues cv = new ContentValues();
-//        abrirBaseDeDatos();
-//        try {
-//            cv.put("NOMBRE_JUGADOR", jugador.getNOMBRE_JUGADOR());
-//            cv.put("FOTO_JUGADOR", jugador.getFOTO_JUGADOR());
-//            cv.put("ID_DIVISION", jugador.getID_DIVISION());
-//            cv.put("ID_POSICION", jugador.getID_POSICION());
-//            cv.put("USUARIO_CREADOR", jugador.getUSUARIO_CREACION());
-//            cv.put("FECHA_CREACION", jugador.getFECHA_CREACION());
-//            cv.put("USUARIO_ACTUALIZACION", jugador.getUSUARIO_ACTUALIZACION());
-//            cv.put("FECHA_ACTUALIZACION", jugador.getFECHA_ACTUALIZACION());
-//
-//            long valor = database.insert("JUGADOR_ADEFUL", null, cv);
-//            cerrarBaseDeDatos();
-//            if (valor > 0) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        } catch (SQLiteException e) {
-//            cerrarBaseDeDatos();
-//            return false;
-//        }
-//    }
-//
-//    // LISTA JUGADOR
-//    public ArrayList<Jugador> selectListaJugadorAdeful(int division) {
-//
-//        String sql = "SELECT J.ID_JUGADOR AS ID_JUGADOR, J.NOMBRE_JUGADOR AS NOMBRE_JUGADOR, J.FOTO_JUGADOR AS FOTO_JUGADOR,"
-//                + " J.ID_DIVISION AS ID_DIVISION, D.DESCRIPCION AS DESCRIPCION_DIVISION,"
-//                + " J.ID_POSICION AS ID_POSICION, P.DESCRIPCION AS DESCRIPCION_POSICION"
-//                + " FROM JUGADOR_ADEFUL J  INNER JOIN  DIVISION_ADEFUL D ON J.ID_DIVISION = D.ID_DIVISION"
-//                + " INNER JOIN POSICION_ADEFUL P ON P.ID_POSICION = J.ID_POSICION"
-//                + " WHERE J.ID_DIVISION=" + division;
-//
-//        ArrayList<Jugador> arrayJugador = new ArrayList<Jugador>();
-//        String nombre = null, descripcion_division = null, descripcion_posicion = null;
-//        byte[] foto = null;
-//        int id;
-//        int id_division;
-//        int id_posicion;
-//        Cursor cursor = null;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//                    while (cursor.moveToNext()) {
-//
-//                        Jugador jugador = null;
-//
-//                        id = cursor.getInt(cursor.getColumnIndex("ID_JUGADOR"));
-//                        nombre = cursor.getString(cursor
-//                                .getColumnIndex("NOMBRE_JUGADOR"));
-//                        foto = cursor.getBlob(cursor
-//                                .getColumnIndex("FOTO_JUGADOR"));
-//                        id_division = cursor.getInt(cursor
-//                                .getColumnIndex("ID_DIVISION"));
-//                        descripcion_division = cursor.getString(cursor
-//                                .getColumnIndex("DESCRIPCION_DIVISION"));
-//                        id_posicion = cursor.getInt(cursor
-//                                .getColumnIndex("ID_POSICION"));
-//                        descripcion_posicion = cursor.getString(cursor
-//                                .getColumnIndex("DESCRIPCION_POSICION"));
-//
-//                        jugador = new Jugador(id, nombre, foto,
-//                                id_division, descripcion_division, id_posicion,
-//                                descripcion_posicion);
-//                        arrayJugador.add(jugador);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayJugador = null;
-//            }
-//        } else {
-//            arrayJugador = null;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        nombre = null;
-//
-//        return arrayJugador;
-//    }
+    public boolean insertJugadorUsuarioAdeful(Jugador jugador) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("ID_JUGADOR", jugador.getID_JUGADOR());
+            cv.put("NOMBRE_JUGADOR", jugador.getNOMBRE_JUGADOR());
+            cv.put("FOTO_JUGADOR", jugador.getFOTO_JUGADOR());
+            cv.put("ID_DIVISION", jugador.getID_DIVISION());
+            cv.put("DIVISION", jugador.getNOMBRE_DIVISION());
+            cv.put("POSICION", jugador.getNOMBRE_POSICION());
+
+            long valor = database.insert("JUGADOR_USUARIO_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
+
+    // ELIMINAR JUGADOR
+    public boolean eliminarJugadorUsuarioAdeful() {
+
+        boolean res = false;
+        String sql = "DELETE FROM JUGADOR_USUARIO_ADEFUL";
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
+
+    // LISTA JUGADOR
+    public ArrayList<Jugador> selectListaJugadorUsuarioAdeful(int division) {
+
+        String sql = "SELECT ID_JUGADOR, NOMBRE_JUGADOR, FOTO_JUGADOR,"
+                + " DIVISION, POSICION "
+                + " FROM JUGADOR_USUARIO_ADEFUL WHERE ID_DIVISION=" + division;
+
+        ArrayList<Jugador> arrayJugador = new ArrayList<Jugador>();
+        String nombre = null, descripcion_division = null, descripcion_posicion = null;
+        byte[] foto = null;
+        int id;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+
+                        Jugador jugador = null;
+
+                        id = cursor.getInt(cursor.getColumnIndex("ID_JUGADOR"));
+                        nombre = cursor.getString(cursor
+                                .getColumnIndex("NOMBRE_JUGADOR"));
+                        foto = cursor.getBlob(cursor
+                                .getColumnIndex("FOTO_JUGADOR"));
+                        descripcion_division = cursor.getString(cursor
+                                .getColumnIndex("DIVISION"));
+                        descripcion_posicion = cursor.getString(cursor
+                                .getColumnIndex("POSICION"));
+
+                        jugador = new Jugador(id, nombre, foto,
+                                0, descripcion_division,
+                                descripcion_posicion);
+                        arrayJugador.add(jugador);
+                    }
+                }
+            } catch (Exception e) {
+                arrayJugador = null;
+            }
+        } else {
+            arrayJugador = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        nombre = null;
+
+        return arrayJugador;
+    }
 //
 //    //ACTUALIZAR JUGADOR
 //    public boolean actualizarJugadorAdeful(Jugador jugador)
@@ -2104,32 +2163,29 @@ public class ControladorUsuarioAdeful {
 //        return res;
 //    }
 //
-//    //POSICION
-//    //INSERTAR
-//    public boolean insertPosicionAdeful(Posicion posicion)
-//            throws SQLiteException {
-//
-//        ContentValues cv = new ContentValues();
-//        abrirBaseDeDatos();
-//        try {
-//            cv.put("DESCRIPCION", posicion.getDESCRIPCION());
-//            cv.put("USUARIO_CREADOR", posicion.getUSUARIO_CREADOR());
-//            cv.put("FECHA_CREACION", posicion.getFECHA_CREACION());
-//            cv.put("USUARIO_ACTUALIZACION", posicion.getUSUARIO_ACTUALIZACION());
-//            cv.put("FECHA_ACTUALIZACION", posicion.getFECHA_ACTUALIZACION());
-//
-//            long valor = database.insert("POSICION_ADEFUL", null, cv);
-//            cerrarBaseDeDatos();
-//            if (valor > 0) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        } catch (SQLiteException e) {
-//            cerrarBaseDeDatos();
-//            return false;
-//        }
-//    }
+    //POSICION
+    //INSERTAR
+    public boolean insertPosicionUsuarioAdeful(Posicion posicion)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("ID_POSICION", posicion.getID_POSICION());
+            cv.put("DESCRIPCION", posicion.getDESCRIPCION());
+
+            long valor = database.insert("POSICION_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
 //
 //    //ACTUALIZAR
 //    public boolean actualizarPosicionAdeful(Posicion posicion)
@@ -2156,99 +2212,120 @@ public class ControladorUsuarioAdeful {
 //        }
 //    }
 //
-//    //LISTA POSICION
-//    public ArrayList<Posicion> selectListaPosicionAdeful() {
-//
-//        String sql = "SELECT * FROM POSICION_ADEFUL";
-//        ArrayList<Posicion> arrayPosicion = new ArrayList<Posicion>();
-//        String descripcion = null;
-//        int id;
-//        Cursor cursor = null;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//
-//                    while (cursor.moveToNext()) {
-//                        Posicion posicion = null;
-//                        id = cursor
-//                                .getInt(cursor.getColumnIndex("ID_POSICION"));
-//                        descripcion = cursor.getString(cursor
-//                                .getColumnIndex("DESCRIPCION"));
-//                        posicion = new Posicion(id, descripcion, null, null, null, null);
-//
-//                        arrayPosicion.add(posicion);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayPosicion = null;
-//            }
-//        } else {
-//            arrayPosicion = null;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        descripcion = null;
-//
-//        return arrayPosicion;
-//    }
-//
-//    ////ENTRENAMIENTO//////
-////INSERTAR
-//    public int insertEntrenamientoAdeful(Entrenamiento entrenamiento)
-//            throws SQLiteException {
-//        int id_entrenamiento = 0;
-//        ContentValues cv = new ContentValues();
-//        abrirBaseDeDatos();
-//        try {
-//            cv.put("DIA_ENTRENAMIENTO", entrenamiento.getDIA());
-//            cv.put("HORA_ENTRENAMIENTO", entrenamiento.getHORA());
-//            cv.put("ID_CANCHA", entrenamiento.getID_CANCHA());
-//            cv.put("USUARIO_CREADOR", entrenamiento.getUSUARIO_CREADOR());
-//            cv.put("FECHA_CREACION", entrenamiento.getFECHA_CREACION());
-//            cv.put("USUARIO_ACTUALIZACION", entrenamiento.getUSUARIO_ACTUALIZACION());
-//            cv.put("FECHA_ACTUALIZACION", entrenamiento.getFECHA_ACTUALIZACION());
-//
-//            long valor = database.insert("ENTRENAMIENTO_ADEFUL", null, cv);
-//            cerrarBaseDeDatos();
-//            if (valor > 0) {
-//                return id_entrenamiento = (int) valor;
-//            } else {
-//                return id_entrenamiento;
-//            }
-//        } catch (SQLiteException e) {
-//            cerrarBaseDeDatos();
-//            return id_entrenamiento;
-//        }
-//    }
-//
-//    // INSERT TABLA INTERMEDIA
-//    public boolean insertEntrenamientoDivisionAdeful(Entrenamiento entrenamiento_Division)
-//            throws SQLiteException {
-//
-//        ContentValues cv = new ContentValues();
-//        abrirBaseDeDatos();
-//        try {
-//            cv.put("ID_ENTRENAMIENTO",
-//                    entrenamiento_Division.getID_ENTRENAMIENTO());
-//            cv.put("ID_DIVISION", entrenamiento_Division.getID_DIVISION());
-//
-//            long valor = database.insert("ENTRENAMIENTO_DIVISION_ADEFUL", null,
-//                    cv);
-//            cerrarBaseDeDatos();
-//            if (valor > 0) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        } catch (SQLiteException e) {
-//            cerrarBaseDeDatos();
-//            return false;
-//        }
-//    }
+    //LISTA POSICION
+    public ArrayList<Posicion> selectListaPosicionAdeful() {
+
+        String sql = "SELECT * FROM POSICION_USUARIO_ADEFUL";
+        ArrayList<Posicion> arrayPosicion = new ArrayList<Posicion>();
+        String descripcion = null;
+        int id;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+                        Posicion posicion = null;
+                        id = cursor
+                                .getInt(cursor.getColumnIndex("ID_POSICION"));
+                        descripcion = cursor.getString(cursor
+                                .getColumnIndex("DESCRIPCION"));
+                        posicion = new Posicion(id, descripcion);
+
+                        arrayPosicion.add(posicion);
+                    }
+                }
+            } catch (Exception e) {
+                arrayPosicion = null;
+            }
+        } else {
+            arrayPosicion = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        descripcion = null;
+
+        return arrayPosicion;
+    }
+
+    // ELIMINAR POSICION
+    public boolean eliminarPosicionUsuarioAdeful() {
+
+        boolean res = false;
+        String sql = "DELETE FROM POSICION_USUARIO_ADEFUL";
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
+
+
+    ////ENTRENAMIENTO//////
+//INSERTAR
+    public boolean insertEntrenamientoUsuarioAdeful(Entrenamiento entrenamiento)
+            throws SQLiteException {
+        int id_entrenamiento = 0;
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("ID_ENTRENAMIENTO", entrenamiento.getID_ENTRENAMIENTO());
+            cv.put("DIA_ENTRENAMIENTO", entrenamiento.getDIA());
+            cv.put("HORA_ENTRENAMIENTO", entrenamiento.getHORA());
+            cv.put("CANCHA", entrenamiento.getCANCHA());
+
+            long valor = database.insert("ENTRENAMIENTO_USUARIO_ADEFUL", null, cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            return false;
+        }
+    }
+
+    // INSERT TABLA INTERMEDIA
+    public boolean insertEntrenamientoDivisionUsuarioAdeful(Entrenamiento entrenamiento_Division)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("ID_ENTRENAMIENTO_DIVISION",
+                    entrenamiento_Division.getID_ENTRENAMIENTO_DIVISION());
+            cv.put("ID_ENTRENAMIENTO",
+                    entrenamiento_Division.getID_ENTRENAMIENTO());
+            cv.put("ID_DIVISION", entrenamiento_Division.getID_DIVISION());
+
+            long valor = database.insert("ENTRENAMIENTO_DIVISION_USUARIO_ADEFUL", null,
+                    cv);
+            cerrarBaseDeDatos();
+            if (valor > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
+    }
 //
 //    //ACTUALIZAR
 //    public boolean actualizarEntrenamientoAdeful(Entrenamiento entrenamiento)
@@ -2312,190 +2389,188 @@ public class ControladorUsuarioAdeful {
 //        return id;
 //    }
 //
-//    //LISTA ENTRENAMIENTO sin division
-//    public ArrayList<EntrenamientoRecycler> selectListaEntrenamientoAdeful(String fecha) {
-//
-//        String sql = "SELECT EA.ID_ENTRENAMIENTO, EA.DIA_ENTRENAMIENTO, EA.HORA_ENTRENAMIENTO, EA.ID_CANCHA, CA.NOMBRE"
-//                + " FROM ENTRENAMIENTO_ADEFUL EA INNER JOIN CANCHA_ADEFUL CA ON EA.ID_CANCHA = CA.ID_CANCHA"
-//                + " WHERE substr(EA.DIA_ENTRENAMIENTO , 4, 7) = '" + fecha + "'";
-//
-//        ArrayList<EntrenamientoRecycler> arrayEntrenamiento = new ArrayList<EntrenamientoRecycler>();
-//        int id_entrenamiento, id_cancha;
-//        String dia = null, hora = null, nombre = null;
-//        Cursor cursor = null;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//
-//                    while (cursor.moveToNext()) {
-//                        EntrenamientoRecycler entrenamientoRecycler = null;
-//
-//                        id_entrenamiento = cursor.getInt(cursor
-//                                .getColumnIndex("ID_ENTRENAMIENTO"));
-//                        dia = cursor.getString(cursor
-//                                .getColumnIndex("DIA_ENTRENAMIENTO"));
-//                        hora = cursor.getString(cursor
-//                                .getColumnIndex("HORA_ENTRENAMIENTO"));
-//                        id_cancha = cursor.getInt(cursor
-//                                .getColumnIndex("ID_CANCHA"));
-//                        nombre = cursor.getString(cursor.getColumnIndex("NOMBRE"));
-//
-//                        entrenamientoRecycler = new EntrenamientoRecycler(id_entrenamiento,
-//                                dia, hora, id_cancha, nombre);
-//
-//                        arrayEntrenamiento.add(entrenamientoRecycler);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayEntrenamiento = null;
-//            }
-//        } else {
-//            arrayEntrenamiento = null;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        dia = null;
-//        hora = null;
-//        nombre = null;
-//        return arrayEntrenamiento;
-//    }
-//
-//    //LISTA Division por Id
-//    public ArrayList<Entrenamiento> selectListaDivisionEntrenamientoAdefulId(int id_entrenamiento) {
-//
-//        String sql = "SELECT ED.ID_ENTRENAMIENTO_DIVISION, ED.ID_DIVISION, D.DESCRIPCION"
-//                + " FROM ENTRENAMIENTO_DIVISION_ADEFUL ED INNER JOIN DIVISION_ADEFUL D ON"
-//                + " ED.ID_DIVISION = D.ID_DIVISION"
-//                + " WHERE ID_ENTRENAMIENTO = " + id_entrenamiento + "";
-//
-//        Cursor cursor = null;
-//        ArrayList<Entrenamiento> arrayDivision = new ArrayList<Entrenamiento>();
-//        int id, id_division;
-//        String descripcion = null;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//
-//                if (cursor != null && cursor.getCount() > 0) {
-//                    while (cursor.moveToNext()) {
-//                        Entrenamiento entrenamiento_division = null;
-//                        id = cursor.getInt(cursor
-//                                .getColumnIndex("ID_ENTRENAMIENTO_DIVISION"));
-//                        id_division = cursor.getInt(cursor
-//                                .getColumnIndex("ID_DIVISION"));
-//                        descripcion = cursor.getString(cursor
-//                                .getColumnIndex("DESCRIPCION"));
-//
-//                        entrenamiento_division = new Entrenamiento(id,
-//                                id_entrenamiento, id_division, descripcion, false);
-//                        arrayDivision.add(entrenamiento_division);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayDivision = null;
-//            }
-//        } else {
-//            arrayDivision = null;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        return arrayDivision;
-//    }
-//
-//    //lISTA ENTRENAMIENTO division
-//    public ArrayList<Entrenamiento> selectListaDivisionEntrenamientoAdeful() {
-//
-//        String sql = "SELECT * FROM DIVISION_ADEFUL";
-//        ArrayList<Entrenamiento> arrayDivision = new ArrayList<Entrenamiento>();
-//        int id, id_division;
-//        String descripcion = null;
-//        Cursor cursor = null;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                cursor = database.rawQuery(sql, null);
-//                if (cursor != null && cursor.getCount() > 0) {
-//
-//                    while (cursor.moveToNext()) {
-//
-//                        Entrenamiento entrenamiento_division = null;
-//                        id = 0;
-//                        id_division = cursor.getInt(cursor
-//                                .getColumnIndex("ID_DIVISION"));
-//                        descripcion = cursor.getString(cursor
-//                                .getColumnIndex("DESCRIPCION"));
-//
-//                        entrenamiento_division = new Entrenamiento(id,
-//                                id, id_division, descripcion, false);
-//
-//                        arrayDivision.add(entrenamiento_division);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                arrayDivision = null;
-//            }
-//        } else {
-//            arrayDivision = null;
-//        }
-//        cerrarBaseDeDatos();
-//        sql = null;
-//        cursor = null;
-//        database = null;
-//        descripcion = null;
-//        return arrayDivision;
-//    }
-//
+    //LISTA ENTRENAMIENTO sin division
+    public ArrayList<EntrenamientoRecycler> selectListaEntrenamientoUsuario(String fecha) {
+
+        String sql = "SELECT ID_ENTRENAMIENTO, DIA_ENTRENAMIENTO, HORA_ENTRENAMIENTO, CANCHA"
+                + " FROM ENTRENAMIENTO_USUARIO_ADEFUL"
+                + " WHERE substr(DIA_ENTRENAMIENTO , 4, 7) >= '" + fecha + "' ORDER BY ID_ENTRENAMIENTO DESC";
+
+        ArrayList<EntrenamientoRecycler> arrayEntrenamiento = new ArrayList<EntrenamientoRecycler>();
+        int id_entrenamiento, id_cancha;
+        String dia = null, hora = null, nombre = null;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+                        EntrenamientoRecycler entrenamientoRecycler = null;
+
+                        id_entrenamiento = cursor.getInt(cursor
+                                .getColumnIndex("ID_ENTRENAMIENTO"));
+                        dia = cursor.getString(cursor
+                                .getColumnIndex("DIA_ENTRENAMIENTO"));
+                        hora = cursor.getString(cursor
+                                .getColumnIndex("HORA_ENTRENAMIENTO"));
+                        nombre = cursor.getString(cursor.getColumnIndex("CANCHA"));
+
+                        entrenamientoRecycler = new EntrenamientoRecycler(id_entrenamiento,
+                                dia, hora, nombre);
+
+                        arrayEntrenamiento.add(entrenamientoRecycler);
+                    }
+                }
+            } catch (Exception e) {
+                arrayEntrenamiento = null;
+            }
+        } else {
+            arrayEntrenamiento = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        dia = null;
+        hora = null;
+        nombre = null;
+        return arrayEntrenamiento;
+    }
+
+    //LISTA Division por Id
+    public ArrayList<Entrenamiento> selectListaDivisionEntrenamientoAdefulId(int id_entrenamiento) {
+
+        String sql = "SELECT ED.ID_ENTRENAMIENTO_DIVISION, ED.ID_DIVISION, D.DESCRIPCION"
+                + " FROM ENTRENAMIENTO_DIVISION_USUARIO_ADEFUL ED INNER JOIN DIVISION_USUARIO_ADEFUL D ON"
+                + " ED.ID_DIVISION = D.ID_DIVISION"
+                + " WHERE ID_ENTRENAMIENTO = " + id_entrenamiento + "";
+
+        Cursor cursor = null;
+        ArrayList<Entrenamiento> arrayDivision = new ArrayList<Entrenamiento>();
+        int id, id_division;
+        String descripcion = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        Entrenamiento entrenamiento_division = null;
+                        id = cursor.getInt(cursor
+                                .getColumnIndex("ID_ENTRENAMIENTO_DIVISION"));
+                        id_division = cursor.getInt(cursor
+                                .getColumnIndex("ID_DIVISION"));
+                        descripcion = cursor.getString(cursor
+                                .getColumnIndex("DESCRIPCION"));
+
+                        entrenamiento_division = new Entrenamiento(id,
+                                id_entrenamiento, id_division, descripcion, false);
+                        arrayDivision.add(entrenamiento_division);
+                    }
+                }
+            } catch (Exception e) {
+                arrayDivision = null;
+            }
+        } else {
+            arrayDivision = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        return arrayDivision;
+    }
+
+    //lISTA ENTRENAMIENTO division
+    public ArrayList<Entrenamiento> selectListaDivisionEntrenamientoAdeful() {
+
+        String sql = "SELECT * FROM DIVISION_ADEFUL";
+        ArrayList<Entrenamiento> arrayDivision = new ArrayList<Entrenamiento>();
+        int id, id_division;
+        String descripcion = null;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+
+                    while (cursor.moveToNext()) {
+
+                        Entrenamiento entrenamiento_division = null;
+                        id = 0;
+                        id_division = cursor.getInt(cursor
+                                .getColumnIndex("ID_DIVISION"));
+                        descripcion = cursor.getString(cursor
+                                .getColumnIndex("DESCRIPCION"));
+
+                        entrenamiento_division = new Entrenamiento(id,
+                                id, id_division, descripcion, false);
+
+                        arrayDivision.add(entrenamiento_division);
+                    }
+                }
+            } catch (Exception e) {
+                arrayDivision = null;
+            }
+        } else {
+            arrayDivision = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        descripcion = null;
+        return arrayDivision;
+    }
+
 //    //ELIMINAR ENTRENAMIENTO
-//    public boolean eliminarEntrenamientoAdeful(int id) {
-//
-//        boolean res = false;
-//        String sql = "DELETE FROM ENTRENAMIENTO_ADEFUL WHERE ID_ENTRENAMIENTO = " + id;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                database.execSQL(sql);
-//                res = true;
-//            } catch (Exception e) {
-//                res = false;
-//            }
-//        } else {
-//            res = false;
-//        }
-//        cerrarBaseDeDatos();
-//        database = null;
-//        sql = null;
-//        return res;
-//    }
+    public boolean eliminarEntrenamientoUsuarioAdeful() {
+
+        boolean res = false;
+        String sql = "DELETE FROM ENTRENAMIENTO_USUARIO_ADEFUL";
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
 //
 //    //ELIMINAR DIVISION_ENTRENAMIENTO
-//    public boolean eliminarDivisionEntrenamientoAdeful(int id) {
-//
-//        boolean res = false;
-//        String sql = "DELETE FROM ENTRENAMIENTO_DIVISION_ADEFUL WHERE ID_ENTRENAMIENTO_DIVISION = " + id;
-//        abrirBaseDeDatos();
-//        if (database != null && database.isOpen()) {
-//            try {
-//                database.execSQL(sql);
-//                res = true;
-//            } catch (Exception e) {
-//                res = false;
-//            }
-//        } else {
-//            res = false;
-//        }
-//        cerrarBaseDeDatos();
-//        database = null;
-//        sql = null;
-//        return res;
-//    }
+    public boolean eliminarDivisionEntrenamientoUsuarioAdeful() {
+
+        boolean res = false;
+        String sql = "DELETE FROM ENTRENAMIENTO_DIVISION_USUARIO_ADEFUL";
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
 //
 //
 //    // INSERT ASISTENCIA

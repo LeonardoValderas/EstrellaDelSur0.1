@@ -22,6 +22,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class FragmentEditarNotificacion extends Fragment {
 
     private int CheckedPositionFragment;
     private RecyclerView recyclerArticulo;
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private ArrayList<Notificacion> notificacionArray;
     private AdaptadorRecyclerNotificacion adaptadorRecyclerNotificacion;
     private DialogoAlerta dialogoAlerta;
@@ -48,7 +49,7 @@ public class FragmentEditarNotificacion extends Fragment {
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -114,7 +115,7 @@ public class FragmentEditarNotificacion extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                if (controladorAdeful.eliminarNotificacionAdeful(notificacionArray.get(position)
+                                if (controladorGeneral.eliminarNotificacion(notificacionArray.get(position)
                                         .getID_NOTIFICACION())) {
                                     recyclerViewLoadNotificacion();
                                     Toast.makeText(
@@ -146,7 +147,7 @@ public class FragmentEditarNotificacion extends Fragment {
     }
 
     public void recyclerViewLoadNotificacion() {
-        notificacionArray = controladorAdeful.selectListaNotificacionAdeful();
+        notificacionArray = controladorGeneral.selectListaNotificacion();
         if(notificacionArray != null) {
             adaptadorRecyclerNotificacion = new AdaptadorRecyclerNotificacion(notificacionArray, getActivity());
             recyclerArticulo.setAdapter(adaptadorRecyclerNotificacion);

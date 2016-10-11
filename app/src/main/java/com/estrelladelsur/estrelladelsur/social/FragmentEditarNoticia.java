@@ -23,6 +23,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Noticia;
 
@@ -33,7 +34,7 @@ public class FragmentEditarNoticia extends Fragment {
 
     private int CheckedPositionFragment;
     private RecyclerView recyclerArticulo;
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private ArrayList<Noticia> noticiaArray;
     private AdaptadorRecyclerNoticia adaptadorRecyclerNoticia;
     private DialogoAlerta dialogoAlerta;
@@ -51,7 +52,7 @@ public class FragmentEditarNoticia extends Fragment {
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -124,7 +125,7 @@ public class FragmentEditarNoticia extends Fragment {
 
                             @Override
                             public void onClick(View v) {
-                                if (controladorAdeful.eliminarNoticiaAdeful(noticiaArray.get(position)
+                                if (controladorGeneral.eliminarNoticia(noticiaArray.get(position)
                                         .getID_NOTICIA())) {
                                     recyclerViewLoadNoticia();
                                     Toast.makeText(
@@ -156,7 +157,7 @@ public class FragmentEditarNoticia extends Fragment {
     }
 
     public void recyclerViewLoadNoticia() {
-        noticiaArray = controladorAdeful.selectListaNoticiaAdeful();
+        noticiaArray = controladorGeneral.selectListaNoticia();
         if(noticiaArray != null) {
             adaptadorRecyclerNoticia = new AdaptadorRecyclerNoticia(noticiaArray, getActivity());
             adaptadorRecyclerNoticia.notifyDataSetChanged();

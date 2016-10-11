@@ -11,11 +11,6 @@
     <include android:id="@+id/appbar"
         layout="@layout/toolbar" />
 
-    <!-- Toolbar -->
-    <!--<include android:id="@+id/appbar_sub"-->
-        <!--layout="@layout/toolbar_sub" />-->
-
-
 
     <!-- Resto de la interfaz de usuario -->
     <FrameLayout

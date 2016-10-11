@@ -11,8 +11,9 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
-import com.estrelladelsur.estrelladelsur.navegador.adeful.NavigationAdeful;
+import com.estrelladelsur.estrelladelsur.navegador.administrador.Navigation;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class Login extends AppCompatActivity {
     private EditText usuarioEdit, passEdit;
     private Button aceptar, cancelar;
     private TextView errorText;
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Usuario> usuarioUsuario = new ArrayList<Usuario>();
     private String usuario = null, pass = null;
@@ -48,8 +49,8 @@ public class Login extends AppCompatActivity {
     }
 
     private void init() {
-        controladorAdeful = new ControladorAdeful(Login.this);
-        usuarioUsuario = controladorAdeful.selectListaUsuarioAdeful();
+        controladorGeneral = new ControladorGeneral(Login.this);
+        usuarioUsuario = controladorGeneral.selectListaUsuario();
         auxiliarGeneral = new AuxiliarGeneral(Login.this);
 
         aceptar.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +117,7 @@ public class Login extends AppCompatActivity {
     public void intentAdeful(boolean liga){
       //  Intent ligaIntente = null;
         if(liga) {
-        ligaIntente = new Intent(Login.this, NavigationAdeful.class);
+        ligaIntente = new Intent(Login.this, Navigation.class);
         }else{
        // ligaIntente = new Intent(Login.this, NavigationLifuba.class);
         }

@@ -19,10 +19,9 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import android.graphics.Bitmap.CompressFormat;
@@ -300,6 +299,7 @@ public class AuxiliarGeneral {
     public String getURLTORNEOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/torneo/";
     }
+
     public String getURLTORNEOADEFULALL() {
         return getURL() + getURLTORNEOADEFUL();
     }
@@ -308,6 +308,7 @@ public class AuxiliarGeneral {
     public String getURLCANCHAADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/cancha/";
     }
+
     public String getURLCANCHAADEFULALL() {
         return getURL() + getURLCANCHAADEFUL();
     }
@@ -317,16 +318,58 @@ public class AuxiliarGeneral {
     public String getURLFIXTUREADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Fixture/";
     }
+
     public String getURLFIXTUREADEFULAll() {
         return getURL() + getURLFIXTUREADEFUL();
     }
+
     //RESULTADO
     public String getURLRESULTADOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Resultado/";
     }
+
     public String getURLRESULTADOADEFULAll() {
         return getURL() + getURLRESULTADOADEFUL();
     }
+
+    //JUGADOR
+    public String getURLJUGADORADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Jugador/";
+    }
+
+    public String getURLJUGADORADEFULAll() {
+        return getURL() + getURLJUGADORADEFUL();
+    }
+
+    public String getURLFOTOJUGADORADEFUL() {
+        return getURL() + "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Jugador/foto_jugador/";
+    }
+
+    //POSICION
+    public String getURLPOSICIONADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Posicion/";
+    }
+
+    public String getURLPOSICIONADEFULALL() {
+        return getURL() + getURLPOSICIONADEFUL();
+    }
+
+    public String getURLENTRENAMIENTOADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Entrenamiento/";
+    }
+
+    public String getURLENTRENAMIENTOADEFULALL() {
+        return getURL() + getURLENTRENAMIENTOADEFUL();
+    }
+
+    public String getURLENTRENAMIENTOASISTENCIAADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/EntrenamientoAsistencia/";
+    }
+
+    public String getURLENTRENAMIENTOASISTENCIAADEFULALL() {
+        return getURL() + getURLENTRENAMIENTOASISTENCIAADEFUL();
+    }
+
 
     //INSERT - UPDATE - DELETE
     public String getInsertPHP(String Modulo) {
@@ -414,6 +457,25 @@ public class AuxiliarGeneral {
         return sb.toString();
     }
 
+    public String getMounthCurrent() {
+//        Calendar cal = Calendar.getInstance();
+//        SimpleDateFormat df = new SimpleDateFormat("MM");
+//        int year = cal.get(Calendar.YEAR);
+//        String firstWkDay = df.format(cal.get(Calendar.MONTH));
+
+        Calendar c = Calendar.getInstance();
+
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH) + 1;
+        String monthStg = String.valueOf(month);
+        if (monthStg.length() == 1)
+            monthStg = "0" + monthStg;
+
+
+
+        return String.valueOf(monthStg  + "-" + year);
+
+    }
 
 
 }

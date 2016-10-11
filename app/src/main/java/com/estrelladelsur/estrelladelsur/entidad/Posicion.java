@@ -18,6 +18,11 @@ public class Posicion {
 		USUARIO_ACTUALIZACION = usuario_act;
 		FECHA_ACTUALIZACION = fechaActualizacion;
 	}
+	public Posicion(int id, String descripcion) {
+		ID_POSICION = id;
+		DESCRIPCION = descripcion;
+
+	}
 
 	public String getUSUARIO_CREADOR() {
 		return USUARIO_CREADOR;

@@ -5,17 +5,21 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Cargo;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
+import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
+import com.estrelladelsur.estrelladelsur.entidad.Jugador;
+import com.estrelladelsur.estrelladelsur.entidad.Posicion;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
-import com.estrelladelsur.estrelladelsur.miequipo.adeful.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +47,7 @@ public class AsyncTaskGeneric {
     private String URL = null, mensaje = null, genero;
     private MyAsyncTaskListener mListener;
 
-//FOR INSERT-UPDATE-DELETE
+    //FOR INSERT-UPDATE-DELETE
     public AsyncTaskGeneric(Context context, MyAsyncTaskListener listener, String URL, Request request, String entity, Object object, boolean insert, boolean delete, int id_delete, String genero, boolean isActual) {
         this.context = context;
         mListener = listener;
@@ -58,6 +62,7 @@ public class AsyncTaskGeneric {
         this.isActual = isActual;
         new TaskGeneric().execute(request);
     }
+
     //FOR INSERT-UPDATE
     public AsyncTaskGeneric(Context context, MyAsyncTaskListener listener, String URL, Request request, String entity, Object object, boolean insert, String genero) {
         this.context = context;
@@ -71,6 +76,7 @@ public class AsyncTaskGeneric {
         this.delete = false;
         new TaskGeneric().execute(request);
     }
+
     //FOR DELETE
     public AsyncTaskGeneric(Context context, MyAsyncTaskListener listener, String URL, Request request, String entity, boolean delete, int id_delete, String genero) {
         this.context = context;
@@ -160,26 +166,27 @@ public class AsyncTaskGeneric {
 
     public boolean insertEntity(String entity, int id, Object object) {
         ControladorAdeful controladorAdeful = new ControladorAdeful(context);
+        ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean insertOk = true;
         switch (entity) {
             //INSTITUCION
             case "Articulo": {
-                if (!controladorAdeful.insertArticuloAdeful(id, (Articulo) object))
+                if (!controladorGeneral.insertArticulo(id, (Articulo) object))
                     insertOk = false;
                 break;
             }
             case "Comisión": {
-                if (!controladorAdeful.insertComisionAdeful(id, (Comision) object))
+                if (!controladorGeneral.insertComision(id, (Comision) object))
                     insertOk = false;
                 break;
             }
             case "Dirección": {
-                if (!controladorAdeful.insertDireccionAdeful(id, (Direccion) object))
+                if (!controladorGeneral.insertDireccion(id, (Direccion) object))
                     insertOk = false;
                 break;
             }
             case "Cargo": {
-                if (!controladorAdeful.insertCargoAdeful(id, (Cargo) object))
+                if (!controladorGeneral.insertCargo(id, (Cargo) object))
                     insertOk = false;
                 break;
             }
@@ -210,33 +217,78 @@ public class AsyncTaskGeneric {
                     insertOk = false;
                 break;
             }
+            case "Jugador": {
+                if (!controladorAdeful.insertJugadorAdeful(id, (Jugador) object))
+                    insertOk = false;
+                break;
+            }
+            case "Posicion": {
+                if (!controladorAdeful.insertPosicionAdeful(id, (Posicion) object))
+                    insertOk = false;
+                break;
+            }
+            case "Entrenamiento": {
+                if (controladorAdeful.insertEntrenamientoAdeful(id, (Entrenamiento) object)) {
+                    for (int i : ((Entrenamiento) object).getDivisionArrayAdd()) {
+                        if (!controladorAdeful.insertEntrenamientoDivisionAdeful(id, i)) {
+                            insertOk = false;
+                            break;
+                        }
+                    }
+                } else {
+                    insertOk = false;
+                }
+                break;
+            }
+            case "Asistencia": {
 
+                if (((Entrenamiento) object).getJugadorArrayAdd() != null) {
+                    for (int i : ((Entrenamiento) object).getJugadorArrayAdd()) {
+                        if (!controladorAdeful.insertAsistenciaEntrenamientoAdeful(((Entrenamiento) object).getID_ENTRENAMIENTO(), i)) {
+                            insertOk = false;
+                            break;
+                        }
+                    }
+                }
+                if(insertOk){
+                    if (((Entrenamiento) object).getJugadorArrayDelete() != null) {
+                        for (int i : ((Entrenamiento) object).getJugadorArrayDelete()) {
+                            if (!controladorAdeful.eliminarAsistenciaEntrenamientoAdeful(((Entrenamiento) object).getID_ENTRENAMIENTO(), i)) {
+                                insertOk = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+               break;
+            }
         }
         return insertOk;
     }
 
     public boolean updateEntity(String entity, Object object) {
         ControladorAdeful controladorAdeful = new ControladorAdeful(context);
+        ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean updateOk = true;
         switch (entity) {
             //INSTITUCION
             case "Articulo": {
-                if (!controladorAdeful.actualizarArticuloAdeful((Articulo) object))
+                if (!controladorGeneral.actualizarArticulo((Articulo) object))
                     updateOk = false;
                 break;
             }
             case "Comisión": {
-                if (!controladorAdeful.actualizarComisionAdeful((Comision) object))
+                if (!controladorGeneral.actualizarComision((Comision) object))
                     updateOk = false;
                 break;
             }
             case "Dirección": {
-                if (!controladorAdeful.actualizarDireccionAdeful((Direccion) object))
+                if (!controladorGeneral.actualizarDireccion((Direccion) object))
                     updateOk = false;
                 break;
             }
             case "Cargo": {
-                if (!controladorAdeful.actualizarCargoAdeful((Cargo) object))
+                if (!controladorGeneral.actualizarCargo((Cargo) object))
                     updateOk = false;
                 break;
             }
@@ -272,27 +324,63 @@ public class AsyncTaskGeneric {
                     updateOk = false;
                 break;
             }
+            case "Jugador": {
+                if (!controladorAdeful.actualizarJugadorAdeful((Jugador) object))
+                    updateOk = false;
+                break;
+            }
+            case "Posicion": {
+                if (!controladorAdeful.actualizarPosicionAdeful((Posicion) object))
+                    updateOk = false;
+                break;
+            }
+            case "Entrenamiento": {
+                if (controladorAdeful.actualizarEntrenamientoAdeful((Entrenamiento) object)) {
+                    if (((Entrenamiento) object).getDivisionArrayAdd() != null) {
+                        for (int i : ((Entrenamiento) object).getDivisionArrayAdd()) {
+                            if (!controladorAdeful.insertEntrenamientoDivisionAdeful(((Entrenamiento) object).getID_ENTRENAMIENTO(), i)) {
+                                updateOk = false;
+                                break;
+                            }
+                        }
+                    }
+                    if(updateOk) {
+                        if (((Entrenamiento) object).getDivisionArrayDelete() != null) {
+                            for (int i : ((Entrenamiento) object).getDivisionArrayDelete()) {
+                                if (!controladorAdeful.eliminarDivisionEntrenamientoAdeful(((Entrenamiento) object).getID_ENTRENAMIENTO(), i)) {
+                                    updateOk = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    updateOk = false;
+                }
+                break;
+            }
         }
         return updateOk;
     }
 
     public boolean deleteEntity(String entity, int id) {
         ControladorAdeful controladorAdeful = new ControladorAdeful(context);
+        ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean deleteOk = true;
         switch (entity) {
             //INSTITUCION
             case "Articulo": {
-                if (!controladorAdeful.eliminarArticuloAdeful(id))
+                if (!controladorGeneral.eliminarArticulo(id))
                     deleteOk = false;
                 break;
             }
             case "Comisión": {
-                if (!controladorAdeful.eliminarComisionAdeful(id))
+                if (!controladorGeneral.eliminarComision(id))
                     deleteOk = false;
                 break;
             }
             case "Dirección": {
-                if (!controladorAdeful.eliminarDireccionAdeful(id))
+                if (!controladorGeneral.eliminarDireccion(id))
                     deleteOk = false;
                 break;
             }
@@ -321,6 +409,20 @@ public class AsyncTaskGeneric {
             case "Fixture": {
                 if (!controladorAdeful.eliminarFixtureAdeful(id))
                     deleteOk = false;
+                break;
+            }
+            case "Jugador": {
+                if (!controladorAdeful.eliminarJugadorAdeful(id))
+                    deleteOk = false;
+                break;
+            }
+            case "Entrenamiento": {
+                if (controladorAdeful.eliminarEntrenamientoAdeful(id)){
+                    if(!controladorAdeful.eliminarDivisionEntrenamientoAdeful(id))
+                        deleteOk = false;
+                }else{
+                    deleteOk = false;
+                }
                 break;
             }
         }

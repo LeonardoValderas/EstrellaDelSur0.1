@@ -26,8 +26,7 @@ public class TabsFoto extends AppCompatActivity implements Communicator{
     private FragmentTransaction mCurTransaction;
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
-    private TextView txtAbTitulo;
-    private TextView txtAbSubTitulo;
+    private TextView txtToolBarTitulo;
     private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
 
@@ -48,12 +47,8 @@ public class TabsFoto extends AppCompatActivity implements Communicator{
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-        txtAbTitulo.setVisibility(View.GONE);
-
-        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-        txtAbSubTitulo.setText("FOTO");
-        txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
+        txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
+        txtToolBarTitulo.setText("FOTO");
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);

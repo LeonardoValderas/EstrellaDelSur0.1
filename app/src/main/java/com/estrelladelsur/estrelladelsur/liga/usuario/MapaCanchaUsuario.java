@@ -2,14 +2,9 @@ package com.estrelladelsur.estrelladelsur.liga.usuario;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Point;
 import android.graphics.Typeface;
-import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -17,30 +12,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
-import com.estrelladelsur.estrelladelsur.liga.adeful.LocationAddress;
-import com.estrelladelsur.estrelladelsur.liga.adeful.TabsAdeful;
+import com.estrelladelsur.estrelladelsur.liga.tabs_user.TabsAdefulUsuario;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -202,7 +189,7 @@ public class MapaCanchaUsuario extends AppCompatActivity implements OnMapReadyCa
             //    NavUtils.navigateUpFromSameTask(this);
 
             //a.refreshs();
-            //comm.refresh();
+            //comm.refreshAdeful();
             volver();
             return true;
         }

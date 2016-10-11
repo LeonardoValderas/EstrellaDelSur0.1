@@ -20,6 +20,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class FragmentEditarPermiso extends Fragment {
 
     private Spinner entrenamientoAnioSpinner;
     private Spinner entrenamientoMesSpinner;
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private RecyclerView recycleViewGeneral;
     private int CheckedPositionFragment;
     private FloatingActionButton botonFloating;
@@ -51,7 +52,7 @@ public class FragmentEditarPermiso extends Fragment {
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         communicator = (Communicator) getActivity();
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
@@ -120,14 +121,14 @@ public class FragmentEditarPermiso extends Fragment {
                                                 public void onClick(View v) {
                                                     boolean isSalving = true;
                                                     int id_permiso = permisoArray.get(position).getID_PERMISO();
-                                                    ArrayList<Integer> idSubmodulo = controladorAdeful.selectListaIdModulosAdefulId(id_permiso);
+                                                    ArrayList<Integer> idSubmodulo = controladorGeneral.selectListaIdModulosId(id_permiso);
 
                                                     if(idSubmodulo == null){
                                                         auxiliarGeneral.errorDataBase(getActivity());
                                                     }else {
                                                         for (int i = 0; i < idSubmodulo.size(); i++) {
 
-                                                            if (!controladorAdeful.actualizarSubModuloSelectedFalseAdeful(idSubmodulo.get(i))) {
+                                                            if (!controladorGeneral.actualizarSubModuloSelectedFalse(idSubmodulo.get(i))) {
                                                                 auxiliarGeneral.errorDataBase(getActivity());
                                                                 isSalving = false;
                                                                 break;
@@ -136,7 +137,7 @@ public class FragmentEditarPermiso extends Fragment {
                                                         }
                                                     }
                                                     if(isSalving) {
-                                                    if (controladorAdeful.eliminarPermisoAdeful(id_permiso)) {
+                                                    if (controladorGeneral.eliminarPermiso(id_permiso)) {
                                                         recyclerViewLoadPermiso();
                                                         communicator.refreshDelete();
                                                         Toast.makeText(
@@ -148,7 +149,7 @@ public class FragmentEditarPermiso extends Fragment {
                                                         }else{
                                                         for (int i = 0; i < idSubmodulo.size(); i++) {
 
-                                                            if (!controladorAdeful.actualizarSubModuloSelectedTrueAdeful(idSubmodulo.get(i))) {
+                                                            if (!controladorGeneral.actualizarSubModuloSelectedTrue(idSubmodulo.get(i))) {
                                                                 auxiliarGeneral.errorDataBase(getActivity());
                                                                 break;
                                                             }
@@ -190,7 +191,7 @@ public class FragmentEditarPermiso extends Fragment {
     }
 
     public void recyclerViewLoadPermiso() {
-        permisoArray = controladorAdeful.selectListaPermisoAdeful();
+        permisoArray = controladorGeneral.selectListaPermiso();
         if (permisoArray != null) {
             adaptadorPermiso = new AdaptadorRecyclerEditarPermiso(permisoArray, getActivity());
             recycleViewGeneral.setAdapter(adaptadorPermiso);

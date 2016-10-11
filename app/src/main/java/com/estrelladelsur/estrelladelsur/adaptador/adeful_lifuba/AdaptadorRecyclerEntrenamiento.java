@@ -29,11 +29,11 @@ public class AdaptadorRecyclerEntrenamiento extends
 
 	public static class EntrenamientoViewHolder extends RecyclerView.ViewHolder {
 		private TextView textRecyclerViewEquipoL;
-		private TextView textRecyclerViewDia;
-		private TextView textRecyclerViewHora;
+		private TextView textRecyclerViewDivision;
+		private TextView textRecyclerViewDivisiones;
 		private TextView textRecyclerViewCancha;
 		private TextView textRecyclerViewResultadoL;
-		private LinearLayout linearEscudoL, linearEscudoV, linearVisita;
+		private LinearLayout linearEscudoL, linearEscudoV, linearVisita, linearFechaAnio, linearDiaHora, linearDivisiones;
         private String divisiones="";
 		private ControladorAdeful controladorAdeful;
 		private ArrayList<Entrenamiento> entrenamientoDivisionArray;
@@ -55,14 +55,26 @@ public class AdaptadorRecyclerEntrenamiento extends
 					.findViewById(R.id.linearVisita);
 			linearVisita.setVisibility(View.GONE);
 
+			linearFechaAnio = (LinearLayout) itemView
+					.findViewById(R.id.linearFechaAnio);
+			linearFechaAnio.setVisibility(View.GONE);
+
+			linearDiaHora = (LinearLayout) itemView
+					.findViewById(R.id.linearDiaHora);
+			linearDiaHora.setVisibility(View.GONE);
+
+			linearDivisiones = (LinearLayout) itemView
+					.findViewById(R.id.linearDivisiones);
+			linearDivisiones.setVisibility(View.VISIBLE);
+
 			textRecyclerViewEquipoL = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewEquipoL);
-	    	// DIA
-			textRecyclerViewDia = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewDia);
-			// HORA
-			textRecyclerViewHora = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewHora);
+			// titulo divisiom
+			textRecyclerViewDivision = (TextView) itemView
+					.findViewById(R.id.textRecyclerViewDivision);
+			// divisiones
+			textRecyclerViewDivisiones = (TextView) itemView
+					.findViewById(R.id.textRecyclerViewDivisiones);
 			// CANCHA
 			textRecyclerViewCancha = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewCancha);
@@ -77,10 +89,10 @@ public class AdaptadorRecyclerEntrenamiento extends
 			textRecyclerViewEquipoL.setText("Entrenamiento");
 			textRecyclerViewEquipoL.setTextSize(25);
 			textRecyclerViewEquipoL.setTypeface(texto, Typeface.BOLD);
-			textRecyclerViewResultadoL.setText(entrenamientoRecycler.getDIA().toString() + "-" + entrenamientoRecycler.getHORA().toString());
+			textRecyclerViewResultadoL.setText(entrenamientoRecycler.getDIA().toString() + " " + entrenamientoRecycler.getHORA().toString()+ " hs.");
 			textRecyclerViewResultadoL.setTypeface(equipo);
-			textRecyclerViewDia.setText("División citada: ");
-			textRecyclerViewDia.setTypeface(texto);
+			textRecyclerViewDivision.setText("Divisines citadas");
+			textRecyclerViewDivision.setTypeface(texto);
 			controladorAdeful = new ControladorAdeful(context);
 			entrenamientoDivisionArray =controladorAdeful.selectListaDivisionEntrenamientoAdefulId(entrenamientoRecycler.getID_ENTRENAMIENTO());
 			if(entrenamientoDivisionArray != null) {
@@ -94,8 +106,8 @@ public class AdaptadorRecyclerEntrenamiento extends
     		}else{
 				a.errorDataBase(context);
 			}
-			textRecyclerViewHora.setText(divisiones);
-			textRecyclerViewHora.setTypeface(equipo);
+			textRecyclerViewDivisiones.setText(divisiones);
+			textRecyclerViewDivisiones.setTypeface(equipo);
 			textRecyclerViewCancha.setText("Lugar: " + entrenamientoRecycler.getNOMBRE().toString());
 			textRecyclerViewCancha.setTextSize(15);
 			textRecyclerViewCancha.setTypeface(equipo);

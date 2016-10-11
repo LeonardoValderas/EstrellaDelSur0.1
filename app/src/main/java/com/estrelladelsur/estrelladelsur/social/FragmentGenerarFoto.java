@@ -22,13 +22,14 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import java.io.ByteArrayOutputStream;
 
 
 public class FragmentGenerarFoto extends Fragment {
 
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private ImageView imageFoto;
     private EditText tituloFotoEdit;
     private int CheckedPositionFragment;
@@ -85,7 +86,7 @@ public class FragmentGenerarFoto extends Fragment {
         outState.putInt("curChoice", CheckedPositionFragment);
     }
     private void init() {
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         communicator = (Communicator)getActivity();
         usuario = "Administrador";
 
@@ -222,7 +223,7 @@ public class FragmentGenerarFoto extends Fragment {
                             .toString(), imageFotoByte,
                             usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
-                    if (controladorAdeful.insertFotoAdeful(foto)) {
+                    if (controladorGeneral.insertFoto(foto)) {
                         setBotonGuardar(GUARDAR_TOAST);
                     } else {
                     auxiliarGeneral.errorDataBase(getActivity());
@@ -232,7 +233,7 @@ public class FragmentGenerarFoto extends Fragment {
                     foto = new Foto(idFotoExtra, tituloFotoEdit.getText()
                             .toString(), imageFotoByte,
                            null, null, usuario, auxiliarGeneral.getFechaOficial());
-                    if (controladorAdeful.actualizarFotoAdeful(foto)) {
+                    if (controladorGeneral.actualizarFoto(foto)) {
                         setBotonGuardar(ACTUALIZAR_TOAST);
                         actualizar = false;
                         insertar = true;

@@ -16,6 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/linearFechaAnio"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -159,6 +160,32 @@
                 android:textSize="15dp" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/linearDivisiones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textRecyclerViewDivision"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dia"
+                android:textColor="#000000"
+                android:textSize="15dp" />
+
+            <TextView
+                android:id="@+id/textRecyclerViewDivisiones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Hora"
+                android:textColor="#000000"
+                android:textSize="15dp" />
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/linearCancha"
             android:layout_width="match_parent"

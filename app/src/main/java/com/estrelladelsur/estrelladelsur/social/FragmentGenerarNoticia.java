@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Noticia;
 
 public class FragmentGenerarNoticia extends Fragment {
@@ -24,7 +25,7 @@ public class FragmentGenerarNoticia extends Fragment {
     private EditText noticiaEditTituto;
     private EditText noticiaEditArticulo;
     private EditText noticiaEditLink;
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private boolean insertar = true;
     private Noticia noticia;
     private Communicator communicator;
@@ -88,7 +89,7 @@ public class FragmentGenerarNoticia extends Fragment {
 
     private void init() {
 
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
@@ -167,7 +168,7 @@ public class FragmentGenerarNoticia extends Fragment {
                 noticia = new Noticia(0, noticiaEditTituto.getText().toString(),noticiaEditArticulo.getText().toString(),
                         noticiaEditLink.getText().toString(),
                         usuario, fechaCreacion,usuario,fechaActualizacion);
-               if(controladorAdeful.insertNoticiaAdeful(noticia)) {
+               if(controladorGeneral.insertNoticia(noticia)) {
                    setBotonGuardar(GUARDAR_TOAST);
                }else {
                 auxiliarGeneral.errorDataBase(getActivity());
@@ -176,7 +177,7 @@ public class FragmentGenerarNoticia extends Fragment {
                 noticia = new Noticia(idNoticianExtra, noticiaEditTituto.getText().toString(),noticiaEditArticulo.getText().toString(),
                         noticiaEditLink.getText().toString(),
                         null, null, usuario,fechaCreacion);
-                if(controladorAdeful.actualizarNoticiaAdeful(noticia)) {
+                if(controladorGeneral.actualizarNoticia(noticia)) {
                     setBotonGuardar(ACTUALIZAR_TOAST);
                 actualizar = false;
                 insertar = true;

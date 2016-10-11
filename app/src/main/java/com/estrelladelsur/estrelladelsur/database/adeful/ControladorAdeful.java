@@ -59,1433 +59,1433 @@ public class ControladorAdeful {
     }
 
     // INSERTAR MODULO
-    public boolean insertModuloAdeful(Modulo modulo)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("NOMBRE", modulo.getMODULO());
-
-            long valor = database.insert("MODULO_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA MODULO
-    public ArrayList<Modulo> selectListaModuloAdeful() {
-
-        String sql = "SELECT * FROM MODULO_ADEFUL";
-        ArrayList<Modulo> arrayModuloAdeful = new ArrayList<Modulo>();
-        String nombre = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Modulo modulo = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_MODULO"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE"));
-                        //CLASE AUX
-                        modulo = new Modulo(id, nombre);
-                        //ARRAY MODULO
-                        arrayModuloAdeful.add(modulo);
-                    }
-                }
-            } catch (Exception e) {
-                arrayModuloAdeful = null;
-            }
-        } else {
-            arrayModuloAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        return arrayModuloAdeful;
-    }
-
-    // ACTUALIZAR SUBMODULO TRUE
-    public boolean actualizarSubModuloSelectedTrueAdeful(int id_submodulo)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ISSELECTED", true);
-            long valor = database.update("SUBMODULO_ADEFUL", cv, "ID_SUBMODULO=" + id_submodulo, null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    // ACTUALIZAR SUBMODULO FALSE
-    public boolean actualizarSubModuloSelectedFalseAdeful(int id_submodulo)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ISSELECTED", false);
-            long valor = database.update("SUBMODULO_ADEFUL", cv, "ID_SUBMODULO=" + id_submodulo, null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    // INSERTAR SUBMODULO
-    public boolean insertSubModuloAdeful(SubModulo Submodulo)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("NOMBRE", Submodulo.getSUBMODULO());
-            cv.put("ID_MODULO", Submodulo.getID_MODULO());
-            cv.put("ISSELECTED", false);
-            long valor = database.insert("SUBMODULO_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA SUBMODULO
-    public ArrayList<SubModulo> selectListaSubModuloAdeful() {
-
-        String sql = "SELECT * FROM SUBMODULO_ADEFUL";
-        ArrayList<SubModulo> arraySubModuloAdeful = new ArrayList<SubModulo>();
-        String nombre = null;
-        int id, id_sub;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        SubModulo submodulo = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_SUBMODULO"));
-                        id_sub = cursor.getInt(cursor.getColumnIndex("ID_MODULO"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE"));
-                        //CLASE AUX
-                        submodulo = new SubModulo(id, nombre, id_sub);
-                        //ARRAY SUBMODULO
-                        arraySubModuloAdeful.add(submodulo);
-                    }
-                }
-            } catch (Exception e) {
-                arraySubModuloAdeful = null;
-            }
-        } else {
-            arraySubModuloAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        return arraySubModuloAdeful;
-    }
-
-    //LISTA SUBMODULO
-    public ArrayList<SubModulo> selectListaSubModuloPermisoAdeful(int id_permiso) {
-
-        String sql = "SELECT P.ID_PERMISO_MODULO, P.ID_SUBMODULO, S.NOMBRE FROM PERMISO_MODULO_ADEFUL P "
-                + "INNER JOIN SUBMODULO_ADEFUL S ON S.ID_SUBMODULO = P.ID_SUBMODULO "
-                + "WHERE P.ID_PERMISO = " + id_permiso;
-        ArrayList<SubModulo> arraySubModuloAdeful = new ArrayList<SubModulo>();
-        String nombre = null;
-        int id, id_sub;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        SubModulo submodulo = null;
-                        id = cursor.getInt(cursor.getColumnIndex("ID_PERMISO_MODULO"));
-                        id_sub = cursor.getInt(cursor.getColumnIndex("ID_SUBMODULO"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE"));
-                        //CLASE AUX
-                        submodulo = new SubModulo(id, id_sub, nombre, true);
-                        //ARRAY SUBMODULO
-                        arraySubModuloAdeful.add(submodulo);
-                    }
-                }
-            } catch (Exception e) {
-                arraySubModuloAdeful = null;
-            }
-        } else {
-            arraySubModuloAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        return arraySubModuloAdeful;
-    }
-
-    //LISTA MODULO SUBMODULO
-    public ArrayList<SubModulo> selectListaModuloSubModuloFalseAdeful() {
-
-        String sql = "SELECT S.ID_SUBMODULO, S.ID_MODULO, S.NOMBRE, M.NOMBRE AS MODNOMBRE,S.ISSELECTED " +
-                "FROM SUBMODULO_ADEFUL S, MODULO_ADEFUL M WHERE M.ID_MODULO = S.ID_MODULO AND S.ISSELECTED = 0 ";
-        ArrayList<SubModulo> arraySubModuloAdeful = new ArrayList<SubModulo>();
-        String nombre = null, modnombre = null;
-        int id, id_sub;
-        boolean isselected;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        SubModulo submodulo = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_SUBMODULO"));
-                        id_sub = cursor.getInt(cursor.getColumnIndex("ID_MODULO"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE"));
-                        modnombre = cursor.getString(cursor
-                                .getColumnIndex("MODNOMBRE"));
-                        isselected = cursor.getInt(cursor
-                                .getColumnIndex("ISSELECTED")) > 0;
-                        //CLASE AUX
-                        submodulo = new SubModulo(id, nombre, id_sub, modnombre, isselected);
-                        //ARRAY SUBMODULO
-                        arraySubModuloAdeful.add(submodulo);
-                    }
-                }
-            } catch (Exception e) {
-                arraySubModuloAdeful = null;
-            }
-        } else {
-            arraySubModuloAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        return arraySubModuloAdeful;
-    }
-
-    // INSERTAR USUARIO
-    public boolean insertUsuarioAdeful(Usuario usuario)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("USUARIO", usuario.getUSUARIO());
-            cv.put("PASSWORD", usuario.getPASSWORD());
-            cv.put("LIGA", usuario.isLIGA());
-            cv.put("USUARIO_CREADOR", usuario.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", usuario.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
-
-            long valor = database.insert("USUARIO_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    // ACTUALIZAR USUARIO
-    public boolean actualizarUsuarioAdeful(Usuario usuario)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("USUARIO", usuario.getUSUARIO());
-            cv.put("PASSWORD", usuario.getPASSWORD());
-            cv.put("LIGA", usuario.isLIGA());
-            cv.put("USUARIO_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
-
-            long valor = database.update("USUARIO_ADEFUL", cv, "ID_USUARIO=" + usuario.getID_USUARIO(), null);
-
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA USUARIO
-    public ArrayList<Usuario> selectListaUsuarioAdeful() {
-
-        String sql = "SELECT * FROM USUARIO_ADEFUL";
-        ArrayList<Usuario> arrayUsuarioAdeful = new ArrayList<Usuario>();
-        String user = null, pass = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
-        int id;
-        boolean liga;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Usuario usuario = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_USUARIO"));
-                        user = cursor.getString(cursor
-                                .getColumnIndex("USUARIO"));
-                        pass = cursor.getString(cursor
-                                .getColumnIndex("PASSWORD"));
-                        liga = cursor.getInt(cursor
-                                .getColumnIndex("LIGA")) > 0;
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        //CLASE AUX
-                        usuario = new Usuario(id, user, pass, liga, creador, fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY USUARIO
-                        arrayUsuarioAdeful.add(usuario);
-                    }
-                }
-            } catch (Exception e) {
-                arrayUsuarioAdeful = null;
-            }
-        } else {
-            arrayUsuarioAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        usuario_act = null;
-        creador = null;
-        user = null;
-        pass = null;
-        return arrayUsuarioAdeful;
-    }
-
-    //ELIMINAR USUARIO
-    public boolean eliminarUsuarioAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM USUARIO_ADEFUL WHERE ID_USUARIO = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                database.execSQL(sql);
-                res = true;
-
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    public int insertPermisosAdeful(Permiso permiso)
-            throws SQLiteException {
-        int id_permiso = 0;
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_USUARIO", permiso.getID_USUARIO());
-            cv.put("USUARIO_CREADOR", permiso.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", permiso.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", permiso.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", permiso.getFECHA_ACTUALIZACION());
-
-            long valor = database.insert("PERMISO_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return id_permiso = (int) valor;
-            } else {
-                return id_permiso;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return id_permiso;
-        }
-    }
-
-    public boolean insertPermisoModuloAdeful(Permiso permiso)
-            throws SQLiteException {
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_PERMISO", permiso.getID_PERMISO());
-            cv.put("ID_MODULO", permiso.getID_MODULO());
-            cv.put("ID_SUBMODULO", permiso.getID_SUBMODULO());
-
-            long valor = database.insert("PERMISO_MODULO_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    public boolean actualizarPermisosAdeful(Permiso permiso)
-            throws SQLiteException {
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("USUARIO_ACTUALIZACION", permiso.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", permiso.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("PERMISO_ADEFUL", cv, "ID_PERMISO=" + permiso.getID_PERMISO(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA permisos
-    public ArrayList<Permiso> selectListaPermisoAdeful() {
-
-        String sql = "SELECT P.ID_PERMISO, P.ID_USUARIO,U.USUARIO"
-                + " FROM PERMISO_ADEFUL P"
-                + " INNER JOIN USUARIO_ADEFUL U ON"
-                + " U.ID_USUARIO = P.ID_USUARIO";
-
-        Cursor cursor = null;
-        ArrayList<Permiso> arrayPermiso = new ArrayList<Permiso>();
-        int id, id_usuario, id_modulo, id_sub;
-        String nombre = null, subnombre = null, usuario = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-
-                if (cursor != null && cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-                        Permiso permiso = null;
-                        id = cursor.getInt(cursor
-                                .getColumnIndex("ID_PERMISO"));
-                        id_usuario = cursor.getInt(cursor
-                                .getColumnIndex("ID_USUARIO"));
-                        usuario = cursor.getString(cursor
-                                .getColumnIndex("USUARIO"));
-                        permiso = new Permiso(id, id_usuario, usuario);
-                        arrayPermiso.add(permiso);
-                    }
-                }
-            } catch (Exception e) {
-                arrayPermiso = null;
-            }
-        } else {
-            arrayPermiso = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        usuario = null;
-        database = null;
-        return arrayPermiso;
-    }
-
-    //LISTA permisos
-    public int selectIdPermisoAdefulIdUser(int id_usuario) {
-
-        String sql = "SELECT ID_PERMISO"
-                + " FROM PERMISO_ADEFUL WHERE ID_USUARIO = " + id_usuario;
-
-        Cursor cursor = null;
-        int id = 0;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-
-                if (cursor != null && cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-                        Permiso permiso = null;
-                        id = cursor.getInt(cursor
-                                .getColumnIndex("ID_PERMISO"));
-                    }
-                }
-            } catch (Exception e) {
-                id = 0;
-            }
-        } else {
-            id = 0;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        return id;
-    }    //ELIMINAR PERMISO
-
-    public boolean eliminarPermisoModuloAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM PERMISO_MODULO_ADEFUL WHERE ID_PERMISO_MODULO = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                database.execSQL(sql);
-                res = true;
-
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    //LISTA permisos
-    public ArrayList<Permiso> selectListaPermisoAdefulId(int id_permiso) {
-
-        String sql = "SELECT P.ID_MODULO, M.NOMBRE, P.ID_SUBMODULO, S.NOMBRE AS SUBNOMBRE"
-                + " FROM PERMISO_MODULO_ADEFUL P INNER JOIN MODULO_ADEFUL M ON"
-                + " P.ID_MODULO = M.ID_MODULO"
-                + " INNER JOIN SUBMODULO_ADEFUL S ON"
-                + " S.ID_SUBMODULO = P.ID_SUBMODULO WHERE P.ID_PERMISO = " + id_permiso + "";
-
-        Cursor cursor = null;
-        ArrayList<Permiso> arrayPermiso = new ArrayList<Permiso>();
-        int id_modulo, id_sub;
-        String nombre = null, subnombre = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-
-                if (cursor != null && cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-                        Permiso permiso = null;
-                        id_modulo = cursor.getInt(cursor
-                                .getColumnIndex("ID_MODULO"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE"));
-                        id_sub = cursor.getInt(cursor
-                                .getColumnIndex("ID_SUBMODULO"));
-                        subnombre = cursor.getString(cursor
-                                .getColumnIndex("SUBNOMBRE"));
-                        permiso = new Permiso(id_modulo, nombre, id_sub, subnombre);
-                        arrayPermiso.add(permiso);
-                    }
-                }
-            } catch (Exception e) {
-                arrayPermiso = null;
-            }
-        } else {
-            arrayPermiso = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        nombre = null;
-        subnombre = null;
-        database = null;
-        return arrayPermiso;
-    }
-
-    //LISTA id submodulos
-    public ArrayList<Integer> selectListaIdModulosAdefulId(int id_permiso) {
-
-        String sql = "SELECT ID_SUBMODULO FROM PERMISO_MODULO_ADEFUL WHERE ID_PERMISO = " + id_permiso;
-
-        Cursor cursor = null;
-        ArrayList<Integer> arrayIdSubmodulo = new ArrayList<Integer>();
-        int id_sub;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-
-                if (cursor != null && cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-
-                        id_sub = cursor.getInt(cursor
-                                .getColumnIndex("ID_SUBMODULO"));
-                        arrayIdSubmodulo.add(id_sub);
-                    }
-                }
-            } catch (Exception e) {
-                arrayIdSubmodulo = null;
-            }
-        } else {
-            arrayIdSubmodulo = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        return arrayIdSubmodulo;
-    }
-
-    //LISTA permisos por Id
-    public int isPermiso(int id_user) {
-        int isPermiso = 0;
-
-        String sql = "SELECT ID_USUARIO FROM PERMISO_ADEFUL WHERE ID_USUARIO = " + id_user + "";
-
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-
-                if (cursor != null && cursor.getCount() > 0) {
-                    isPermiso = 0;
-                } else {
-                    isPermiso = 1;
-                }
-            } catch (Exception e) {
-                isPermiso = 2;
-            }
-        } else {
-            isPermiso = 2;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        return isPermiso;
-    }
-
-    //ELIMINAR USUARIO
-    public boolean eliminarPermisoAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM PERMISO_ADEFUL WHERE ID_PERMISO = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                database.execSQL(sql);
-                res = true;
-
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-
-    // INSERTAR ARTICULO
-    public boolean insertArticuloAdeful(int id, Articulo articulo)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_ARTICULO", id);
-            cv.put("TITULO", articulo.getTITULO());
-            cv.put("ARTICULO", articulo.getARTICULO());
-            cv.put("USUARIO_CREADOR", articulo.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", articulo.getFECHA_CREACION());
-            cv.put("FECHA_ACTUALIZACION", articulo.getFECHA_ACTUALIZACION());
-
-            long valor = database.insert("ARTICULO_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //ACTUALIZAR ARTICULO
-    public boolean actualizarArticuloAdeful(Articulo articulo)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TITULO", articulo.getTITULO());
-            cv.put("ARTICULO", articulo.getARTICULO());
-            cv.put("USUARIO_ACTUALIZACION", articulo.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", articulo.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("ARTICULO_ADEFUL", cv, "ID_ARTICULO=" + articulo.getID_ARTICULO(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA ARTICULO
-    public ArrayList<Articulo> selectListaArticuloAdeful() {
-
-        String sql = "SELECT * FROM ARTICULO_ADEFUL";
-        ArrayList<Articulo> arrayArticuloAdeful = new ArrayList<Articulo>();
-        String titulo = null, articulo = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Articulo articuloAdeful = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_ARTICULO"));
-                        titulo = cursor.getString(cursor
-                                .getColumnIndex("TITULO"));
-                        articulo = cursor.getString(cursor
-                                .getColumnIndex("ARTICULO"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        //CLASE AUX
-                        articuloAdeful = new Articulo(id, titulo, articulo, creador,
-                                fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY ARTICULO
-                        arrayArticuloAdeful.add(articuloAdeful);
-                    }
-                }
-            } catch (Exception e) {
-                arrayArticuloAdeful = null;
-            }
-        } else {
-            arrayArticuloAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        titulo = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        usuario_act = null;
-        creador = null;
-        articulo = null;
-        return arrayArticuloAdeful;
-    }
-
-    //ELIMINAR ARTICULO
-    public boolean eliminarArticuloAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM ARTICULO_ADEFUL WHERE ID_ARTICULO = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                database.execSQL(sql);
-                res = true;
-
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    /////////CARGO//////////////
-    // INSERTAR CARGO
-    public boolean insertCargoAdeful(int id, Cargo cargo)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_CARGO", id);
-            cv.put("CARGO", cargo.getCARGO());
-            cv.put("USUARIO_CREADOR", cargo.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", cargo.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", cargo.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", cargo.getFECHA_ACTUALIZACION());
-
-            long valor = database.insert("CARGO_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    // ACTUALIZAR CARGO
-    public boolean actualizarCargoAdeful(Cargo cargo)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("CARGO", cargo.getCARGO());
-            cv.put("USUARIO_ACTUALIZACION", cargo.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", cargo.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("CARGO_ADEFUL", cv, "ID_CARGO=" + cargo.getID_CARGO(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA CARGOS
-    public ArrayList<Cargo> selectListaCargoAdeful() {
-
-        String sql = "SELECT * FROM CARGO_ADEFUL";
-        ArrayList<Cargo> arrayCargoAdeful = new ArrayList<Cargo>();
-        String cargoS = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Cargo cargo = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
-                        cargoS = cursor.getString(cursor
-                                .getColumnIndex("CARGO"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        // CLASE AUX
-                        cargo = new Cargo(id, cargoS, creador,
-                                fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY CARGO
-                        arrayCargoAdeful.add(cargo);
-                    }
-                }
-            } catch (Exception e) {
-                arrayCargoAdeful = null;
-            }
-        } else {
-            arrayCargoAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        cargoS = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        creador = null;
-        usuario_act = null;
-
-        return arrayCargoAdeful;
-    }
-
-    ////////COMISION/////////
-    //INSERTAR
-    public boolean insertComisionAdeful(int id, Comision comision) throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_COMISION", id);
-            cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
-            cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
-            cv.put("NOMBRE_FOTO", comision.getNOMBRE_FOTO());
-            cv.put("ID_CARGO", comision.getID_CARGO());
-            cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
-            cv.put("PERIODO_HASTA", comision.getPERIODO_HASTA());
-            cv.put("URL_COMISION", comision.getURL_COMISION());
-            cv.put("USUARIO_CREADOR", comision.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", comision.getFECHA_CREACION());
-
-            long valor = database.insert("COMISION_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //COMISION POR ID
-    public ArrayList<Comision> selectComisionAdeful(int id_comision) {
-
-        String sql = "SELECT * FROM COMISION_ADEFUL WHERE ID_COMISION=" + id_comision;
-        ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
-        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-                fechaActualizacion = null, creador = null, usuario_act = null, url_comision = null, nombre_foto = null;
-        int id;
-        int id_cargo;
-        byte[] foto = null;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Comision comision = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_COMISION"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE_COMISION"));
-                        foto = cursor.getBlob(cursor
-                                .getColumnIndex("FOTO_COMISION"));
-                        nombre_foto = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE_FOTO"));
-                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
-                        desde = cursor.getString(cursor
-                                .getColumnIndex("PERIODO_DESDE"));
-                        hasta = cursor.getString(cursor
-                                .getColumnIndex("PERIODO_HASTA"));
-                        url_comision = cursor.getString(cursor
-                                .getColumnIndex("URL_COMISION"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        // CLASE AUX
-                        comision = new Comision(id, nombre, foto, nombre_foto, id_cargo, null, desde, hasta, url_comision, creador,
-                                fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY CARGO
-                        arrayComisionAdeful.add(comision);
-                    }
-                }
-            } catch (Exception e) {
-                arrayComisionAdeful = null;
-            }
-        } else {
-            arrayComisionAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        desde = null;
-        hasta = null;
-        foto = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        creador = null;
-        usuario_act = null;
-        url_comision = null;
-
-        return arrayComisionAdeful;
-    }
-
-    //LISTA COMISION
-    public ArrayList<Comision> selectListaComisionAdeful() {
-
-        String sql = "SELECT C.ID_COMISION, C.NOMBRE_COMISION, C.FOTO_COMISION, C.NOMBRE_FOTO, " +
-                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.URL_COMISION, C.USUARIO_CREADOR, " +
-                "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
-                "CA.CARGO FROM COMISION_ADEFUL C INNER JOIN CARGO_ADEFUL CA ON CA.ID_CARGO=C.ID_CARGO";
-        ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
-        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_comision = null, nombre_foto = null;
-        int id;
-        int id_cargo;
-        byte[] foto = null;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Comision comision = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_COMISION"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE_COMISION"));
-                        foto = cursor.getBlob(cursor
-                                .getColumnIndex("FOTO_COMISION"));
-                        nombre_foto = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE_FOTO"));
-                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
-                        cargo = cursor.getString(cursor
-                                .getColumnIndex("CARGO"));
-                        desde = cursor.getString(cursor
-                                .getColumnIndex("PERIODO_DESDE"));
-                        hasta = cursor.getString(cursor
-                                .getColumnIndex("PERIODO_HASTA"));
-                        url_comision = cursor.getString(cursor
-                                .getColumnIndex("URL_COMISION"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        // CLASE AUX
-                        comision = new Comision(id, nombre, foto, nombre_foto, id_cargo, cargo, desde, hasta, url_comision, creador,
-                                fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY COMISION
-                        arrayComisionAdeful.add(comision);
-                    }
-                }
-            } catch (Exception e) {
-                arrayComisionAdeful = null;
-            }
-        } else {
-            arrayComisionAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        desde = null;
-        hasta = null;
-        foto = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        creador = null;
-        usuario_act = null;
-        url_comision = null;
-
-        return arrayComisionAdeful;
-    }
-
-    //ACTUALIZAR
-    public boolean actualizarComisionAdeful(Comision comision) throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
-            cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
-            cv.put("NOMBRE_FOTO", comision.getNOMBRE_FOTO());
-            cv.put("ID_CARGO", comision.getID_CARGO());
-            cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
-            cv.put("PERIODO_HASTA", comision.getPERIODO_HASTA());
-            cv.put("URL_COMISION", comision.getURL_COMISION());
-            cv.put("USUARIO_ACTUALIZACION", comision.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", comision.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("COMISION_ADEFUL", cv, "ID_COMISION=" + comision.getID_COMISION(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //ELIMINAR COMISION
-    public boolean eliminarComisionAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM COMISION_ADEFUL WHERE ID_COMISION = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-
-                database.execSQL(sql);
-                res = true;
-
-            } catch (Exception e) {
-
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    ////////DIRECCION/////////
-    //INSERTAR
-    public boolean insertDireccionAdeful(int id, Direccion direccion) throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_DIRECCION", id);
-            cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
-            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
-            cv.put("NOMBRE_FOTO", direccion.getNOMBRE_FOTO());
-            cv.put("ID_CARGO", direccion.getID_CARGO());
-            cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
-            cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
-            cv.put("URL_DIRECCION", direccion.getURL_DIRECCION());
-            cv.put("USUARIO_CREADOR", direccion.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", direccion.getFECHA_CREACION());
-
-            long valor = database.insert("DIRECCION_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //DIRECCION POR ID
-    public ArrayList<Direccion> selectDireccionAdeful(int id_direccion) {
-
-        String sql = "SELECT * FROM DIRECCION_ADEFUL WHERE ID_DIRECCION=" + id_direccion;
-        ArrayList<Direccion> arrayDireccionAdeful = new ArrayList<Direccion>();
-        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-                fechaActualizacion = null, creador = null, usuario_act = null, url_direccion = null, nombre_foto = null;
-        int id;
-        int id_cargo;
-        byte[] foto = null;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Direccion direccion = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_DIRECCION"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE_DIRECCION"));
-                        foto = cursor.getBlob(cursor
-                                .getColumnIndex("FOTO_DIRECCION"));
-                        nombre_foto = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE_FOTO"));
-                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
-                        desde = cursor.getString(cursor
-                                .getColumnIndex("PERIODO_DESDE"));
-                        hasta = cursor.getString(cursor
-                                .getColumnIndex("PERIODO_HASTA"));
-                        url_direccion = cursor.getString(cursor
-                                .getColumnIndex("URL_DIRECCION"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        // CLASE AUX
-                        direccion = new Direccion(id, nombre, foto, nombre_foto, id_cargo, null, desde, hasta, url_direccion, creador,
-                                fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY CARGO
-                        arrayDireccionAdeful.add(direccion);
-                    }
-                }
-            } catch (Exception e) {
-                arrayDireccionAdeful = null;
-            }
-        } else {
-            arrayDireccionAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        desde = null;
-        hasta = null;
-        foto = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        creador = null;
-        usuario_act = null;
-
-        return arrayDireccionAdeful;
-    }
-
-    //LISTA COMISION
-    public ArrayList<Direccion> selectListaDireccionAdeful() {
-
-        String sql = "SELECT C.ID_DIRECCION, C.NOMBRE_DIRECCION, C.FOTO_DIRECCION, C.NOMBRE_FOTO, " +
-                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.URL_DIRECCION, C.USUARIO_CREADOR, " +
-                "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
-                "CA.CARGO FROM DIRECCION_ADEFUL C INNER JOIN CARGO_ADEFUL CA ON CA.ID_CARGO=C.ID_CARGO";
-        ArrayList<Direccion> arrayDireccionAdeful = new ArrayList<Direccion>();
-        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
-                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_direccion = null, nombre_foto = null;
-        int id;
-        int id_cargo;
-        byte[] foto = null;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Direccion direccion = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_DIRECCION"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE_DIRECCION"));
-                        foto = cursor.getBlob(cursor
-                                .getColumnIndex("FOTO_DIRECCION"));
-                        nombre_foto = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE_FOTO"));
-                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
-                        cargo = cursor.getString(cursor
-                                .getColumnIndex("CARGO"));
-                        desde = cursor.getString(cursor
-                                .getColumnIndex("PERIODO_DESDE"));
-                        hasta = cursor.getString(cursor
-                                .getColumnIndex("PERIODO_HASTA"));
-                        url_direccion = cursor.getString(cursor
-                                .getColumnIndex("URL_DIRECCION"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        // CLASE AUX
-                        direccion = new Direccion(id, nombre, foto, nombre_foto, id_cargo, cargo, desde, hasta, url_direccion, creador,
-                                fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY COMISION
-                        arrayDireccionAdeful.add(direccion);
-                    }
-                }
-            } catch (Exception e) {
-                arrayDireccionAdeful = null;
-            }
-        } else {
-            arrayDireccionAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        desde = null;
-        hasta = null;
-        foto = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        creador = null;
-        usuario_act = null;
-
-        return arrayDireccionAdeful;
-    }
-
-    //ACTUALIZAR
-    public boolean actualizarDireccionAdeful(Direccion direccion) throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
-            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
-            cv.put("NOMBRE_FOTO", direccion.getNOMBRE_FOTO());
-            cv.put("ID_CARGO", direccion.getID_CARGO());
-            cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
-            cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
-            cv.put("URL_DIRECCION", direccion.getURL_DIRECCION());
-            cv.put("USUARIO_ACTUALIZACION", direccion.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", direccion.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("DIRECCION_ADEFUL", cv, "ID_DIRECCION=" + direccion.getID_DIRECCION(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //ELIMINAR COMISION
-    public boolean eliminarDireccionAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM DIRECCION_ADEFUL WHERE ID_DIRECCION = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-
-                database.execSQL(sql);
-                res = true;
-
-            } catch (Exception e) {
-
-                res = false;
-            }
-
-        } else {
-
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
+//    public boolean insertModuloAdeful(Modulo modulo)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("NOMBRE", modulo.getMODULO());
+//
+//            long valor = database.insert("MODULO_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //LISTA MODULO
+//    public ArrayList<Modulo> selectListaModuloAdeful() {
+//
+//        String sql = "SELECT * FROM MODULO_ADEFUL";
+//        ArrayList<Modulo> arrayModuloAdeful = new ArrayList<Modulo>();
+//        String nombre = null;
+//        int id;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Modulo modulo = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_MODULO"));
+//                        nombre = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE"));
+//                        //CLASE AUX
+//                        modulo = new Modulo(id, nombre);
+//                        //ARRAY MODULO
+//                        arrayModuloAdeful.add(modulo);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayModuloAdeful = null;
+//            }
+//        } else {
+//            arrayModuloAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        nombre = null;
+//        return arrayModuloAdeful;
+//    }
+//
+//    // ACTUALIZAR SUBMODULO TRUE
+//    public boolean actualizarSubModuloSelectedTrueAdeful(int id_submodulo)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("ISSELECTED", true);
+//            long valor = database.update("SUBMODULO_ADEFUL", cv, "ID_SUBMODULO=" + id_submodulo, null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    // ACTUALIZAR SUBMODULO FALSE
+//    public boolean actualizarSubModuloSelectedFalseAdeful(int id_submodulo)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("ISSELECTED", false);
+//            long valor = database.update("SUBMODULO_ADEFUL", cv, "ID_SUBMODULO=" + id_submodulo, null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    // INSERTAR SUBMODULO
+//    public boolean insertSubModuloAdeful(SubModulo Submodulo)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("NOMBRE", Submodulo.getSUBMODULO());
+//            cv.put("ID_MODULO", Submodulo.getID_MODULO());
+//            cv.put("ISSELECTED", false);
+//            long valor = database.insert("SUBMODULO_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //LISTA SUBMODULO
+//    public ArrayList<SubModulo> selectListaSubModuloAdeful() {
+//
+//        String sql = "SELECT * FROM SUBMODULO_ADEFUL";
+//        ArrayList<SubModulo> arraySubModuloAdeful = new ArrayList<SubModulo>();
+//        String nombre = null;
+//        int id, id_sub;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        SubModulo submodulo = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_SUBMODULO"));
+//                        id_sub = cursor.getInt(cursor.getColumnIndex("ID_MODULO"));
+//                        nombre = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE"));
+//                        //CLASE AUX
+//                        submodulo = new SubModulo(id, nombre, id_sub);
+//                        //ARRAY SUBMODULO
+//                        arraySubModuloAdeful.add(submodulo);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arraySubModuloAdeful = null;
+//            }
+//        } else {
+//            arraySubModuloAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        nombre = null;
+//        return arraySubModuloAdeful;
+//    }
+//
+//    //LISTA SUBMODULO
+//    public ArrayList<SubModulo> selectListaSubModuloPermisoAdeful(int id_permiso) {
+//
+//        String sql = "SELECT P.ID_PERMISO_MODULO, P.ID_SUBMODULO, S.NOMBRE FROM PERMISO_MODULO_ADEFUL P "
+//                + "INNER JOIN SUBMODULO_ADEFUL S ON S.ID_SUBMODULO = P.ID_SUBMODULO "
+//                + "WHERE P.ID_PERMISO = " + id_permiso;
+//        ArrayList<SubModulo> arraySubModuloAdeful = new ArrayList<SubModulo>();
+//        String nombre = null;
+//        int id, id_sub;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        SubModulo submodulo = null;
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_PERMISO_MODULO"));
+//                        id_sub = cursor.getInt(cursor.getColumnIndex("ID_SUBMODULO"));
+//                        nombre = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE"));
+//                        //CLASE AUX
+//                        submodulo = new SubModulo(id, id_sub, nombre, true);
+//                        //ARRAY SUBMODULO
+//                        arraySubModuloAdeful.add(submodulo);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arraySubModuloAdeful = null;
+//            }
+//        } else {
+//            arraySubModuloAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        nombre = null;
+//        return arraySubModuloAdeful;
+//    }
+//
+//    //LISTA MODULO SUBMODULO
+//    public ArrayList<SubModulo> selectListaModuloSubModuloFalseAdeful() {
+//
+//        String sql = "SELECT S.ID_SUBMODULO, S.ID_MODULO, S.NOMBRE, M.NOMBRE AS MODNOMBRE,S.ISSELECTED " +
+//                "FROM SUBMODULO_ADEFUL S, MODULO_ADEFUL M WHERE M.ID_MODULO = S.ID_MODULO AND S.ISSELECTED = 0 ";
+//        ArrayList<SubModulo> arraySubModuloAdeful = new ArrayList<SubModulo>();
+//        String nombre = null, modnombre = null;
+//        int id, id_sub;
+//        boolean isselected;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        SubModulo submodulo = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_SUBMODULO"));
+//                        id_sub = cursor.getInt(cursor.getColumnIndex("ID_MODULO"));
+//                        nombre = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE"));
+//                        modnombre = cursor.getString(cursor
+//                                .getColumnIndex("MODNOMBRE"));
+//                        isselected = cursor.getInt(cursor
+//                                .getColumnIndex("ISSELECTED")) > 0;
+//                        //CLASE AUX
+//                        submodulo = new SubModulo(id, nombre, id_sub, modnombre, isselected);
+//                        //ARRAY SUBMODULO
+//                        arraySubModuloAdeful.add(submodulo);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arraySubModuloAdeful = null;
+//            }
+//        } else {
+//            arraySubModuloAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        nombre = null;
+//        return arraySubModuloAdeful;
+//    }
+//
+//    // INSERTAR USUARIO
+//    public boolean insertUsuarioAdeful(Usuario usuario)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("USUARIO", usuario.getUSUARIO());
+//            cv.put("PASSWORD", usuario.getPASSWORD());
+//            cv.put("LIGA", usuario.isLIGA());
+//            cv.put("USUARIO_CREADOR", usuario.getUSUARIO_CREADOR());
+//            cv.put("FECHA_CREACION", usuario.getFECHA_CREACION());
+//            cv.put("USUARIO_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
+//
+//            long valor = database.insert("USUARIO_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    // ACTUALIZAR USUARIO
+//    public boolean actualizarUsuarioAdeful(Usuario usuario)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("USUARIO", usuario.getUSUARIO());
+//            cv.put("PASSWORD", usuario.getPASSWORD());
+//            cv.put("LIGA", usuario.isLIGA());
+//            cv.put("USUARIO_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
+//
+//            long valor = database.update("USUARIO_ADEFUL", cv, "ID_USUARIO=" + usuario.getID_USUARIO(), null);
+//
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //LISTA USUARIO
+//    public ArrayList<Usuario> selectListaUsuarioAdeful() {
+//
+//        String sql = "SELECT * FROM USUARIO_ADEFUL";
+//        ArrayList<Usuario> arrayUsuarioAdeful = new ArrayList<Usuario>();
+//        String user = null, pass = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
+//        int id;
+//        boolean liga;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Usuario usuario = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_USUARIO"));
+//                        user = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO"));
+//                        pass = cursor.getString(cursor
+//                                .getColumnIndex("PASSWORD"));
+//                        liga = cursor.getInt(cursor
+//                                .getColumnIndex("LIGA")) > 0;
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        //CLASE AUX
+//                        usuario = new Usuario(id, user, pass, liga, creador, fechaCreacion, usuario_act, fechaActualizacion);
+//                        //ARRAY USUARIO
+//                        arrayUsuarioAdeful.add(usuario);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayUsuarioAdeful = null;
+//            }
+//        } else {
+//            arrayUsuarioAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        usuario_act = null;
+//        creador = null;
+//        user = null;
+//        pass = null;
+//        return arrayUsuarioAdeful;
+//    }
+//
+//    //ELIMINAR USUARIO
+//    public boolean eliminarUsuarioAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM USUARIO_ADEFUL WHERE ID_USUARIO = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                database.execSQL(sql);
+//                res = true;
+//
+//            } catch (Exception e) {
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
+//
+//    public int insertPermisosAdeful(Permiso permiso)
+//            throws SQLiteException {
+//        int id_permiso = 0;
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("ID_USUARIO", permiso.getID_USUARIO());
+//            cv.put("USUARIO_CREADOR", permiso.getUSUARIO_CREADOR());
+//            cv.put("FECHA_CREACION", permiso.getFECHA_CREACION());
+//            cv.put("USUARIO_ACTUALIZACION", permiso.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", permiso.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.insert("PERMISO_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return id_permiso = (int) valor;
+//            } else {
+//                return id_permiso;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return id_permiso;
+//        }
+//    }
+//
+//    public boolean insertPermisoModuloAdeful(Permiso permiso)
+//            throws SQLiteException {
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("ID_PERMISO", permiso.getID_PERMISO());
+//            cv.put("ID_MODULO", permiso.getID_MODULO());
+//            cv.put("ID_SUBMODULO", permiso.getID_SUBMODULO());
+//
+//            long valor = database.insert("PERMISO_MODULO_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    public boolean actualizarPermisosAdeful(Permiso permiso)
+//            throws SQLiteException {
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("USUARIO_ACTUALIZACION", permiso.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", permiso.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.update("PERMISO_ADEFUL", cv, "ID_PERMISO=" + permiso.getID_PERMISO(), null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //LISTA permisos
+//    public ArrayList<Permiso> selectListaPermisoAdeful() {
+//
+//        String sql = "SELECT P.ID_PERMISO, P.ID_USUARIO,U.USUARIO"
+//                + " FROM PERMISO_ADEFUL P"
+//                + " INNER JOIN USUARIO_ADEFUL U ON"
+//                + " U.ID_USUARIO = P.ID_USUARIO";
+//
+//        Cursor cursor = null;
+//        ArrayList<Permiso> arrayPermiso = new ArrayList<Permiso>();
+//        int id, id_usuario, id_modulo, id_sub;
+//        String nombre = null, subnombre = null, usuario = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//
+//                if (cursor != null && cursor.getCount() > 0) {
+//                    while (cursor.moveToNext()) {
+//                        Permiso permiso = null;
+//                        id = cursor.getInt(cursor
+//                                .getColumnIndex("ID_PERMISO"));
+//                        id_usuario = cursor.getInt(cursor
+//                                .getColumnIndex("ID_USUARIO"));
+//                        usuario = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO"));
+//                        permiso = new Permiso(id, id_usuario, usuario);
+//                        arrayPermiso.add(permiso);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayPermiso = null;
+//            }
+//        } else {
+//            arrayPermiso = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        usuario = null;
+//        database = null;
+//        return arrayPermiso;
+//    }
+//
+//    //LISTA permisos
+//    public int selectIdPermisoAdefulIdUser(int id_usuario) {
+//
+//        String sql = "SELECT ID_PERMISO"
+//                + " FROM PERMISO_ADEFUL WHERE ID_USUARIO = " + id_usuario;
+//
+//        Cursor cursor = null;
+//        int id = 0;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//
+//                if (cursor != null && cursor.getCount() > 0) {
+//                    while (cursor.moveToNext()) {
+//                        Permiso permiso = null;
+//                        id = cursor.getInt(cursor
+//                                .getColumnIndex("ID_PERMISO"));
+//                    }
+//                }
+//            } catch (Exception e) {
+//                id = 0;
+//            }
+//        } else {
+//            id = 0;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        return id;
+//    }    //ELIMINAR PERMISO
+//
+//    public boolean eliminarPermisoModuloAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM PERMISO_MODULO_ADEFUL WHERE ID_PERMISO_MODULO = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                database.execSQL(sql);
+//                res = true;
+//
+//            } catch (Exception e) {
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
+//
+//    //LISTA permisos
+//    public ArrayList<Permiso> selectListaPermisoAdefulId(int id_permiso) {
+//
+//        String sql = "SELECT P.ID_MODULO, M.NOMBRE, P.ID_SUBMODULO, S.NOMBRE AS SUBNOMBRE"
+//                + " FROM PERMISO_MODULO_ADEFUL P INNER JOIN MODULO_ADEFUL M ON"
+//                + " P.ID_MODULO = M.ID_MODULO"
+//                + " INNER JOIN SUBMODULO_ADEFUL S ON"
+//                + " S.ID_SUBMODULO = P.ID_SUBMODULO WHERE P.ID_PERMISO = " + id_permiso + "";
+//
+//        Cursor cursor = null;
+//        ArrayList<Permiso> arrayPermiso = new ArrayList<Permiso>();
+//        int id_modulo, id_sub;
+//        String nombre = null, subnombre = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//
+//                if (cursor != null && cursor.getCount() > 0) {
+//                    while (cursor.moveToNext()) {
+//                        Permiso permiso = null;
+//                        id_modulo = cursor.getInt(cursor
+//                                .getColumnIndex("ID_MODULO"));
+//                        nombre = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE"));
+//                        id_sub = cursor.getInt(cursor
+//                                .getColumnIndex("ID_SUBMODULO"));
+//                        subnombre = cursor.getString(cursor
+//                                .getColumnIndex("SUBNOMBRE"));
+//                        permiso = new Permiso(id_modulo, nombre, id_sub, subnombre);
+//                        arrayPermiso.add(permiso);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayPermiso = null;
+//            }
+//        } else {
+//            arrayPermiso = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        nombre = null;
+//        subnombre = null;
+//        database = null;
+//        return arrayPermiso;
+//    }
+//
+//    //LISTA id submodulos
+//    public ArrayList<Integer> selectListaIdModulosAdefulId(int id_permiso) {
+//
+//        String sql = "SELECT ID_SUBMODULO FROM PERMISO_MODULO_ADEFUL WHERE ID_PERMISO = " + id_permiso;
+//
+//        Cursor cursor = null;
+//        ArrayList<Integer> arrayIdSubmodulo = new ArrayList<Integer>();
+//        int id_sub;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//
+//                if (cursor != null && cursor.getCount() > 0) {
+//                    while (cursor.moveToNext()) {
+//
+//                        id_sub = cursor.getInt(cursor
+//                                .getColumnIndex("ID_SUBMODULO"));
+//                        arrayIdSubmodulo.add(id_sub);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayIdSubmodulo = null;
+//            }
+//        } else {
+//            arrayIdSubmodulo = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        return arrayIdSubmodulo;
+//    }
+//
+//    //LISTA permisos por Id
+//    public int isPermiso(int id_user) {
+//        int isPermiso = 0;
+//
+//        String sql = "SELECT ID_USUARIO FROM PERMISO_ADEFUL WHERE ID_USUARIO = " + id_user + "";
+//
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//
+//                if (cursor != null && cursor.getCount() > 0) {
+//                    isPermiso = 0;
+//                } else {
+//                    isPermiso = 1;
+//                }
+//            } catch (Exception e) {
+//                isPermiso = 2;
+//            }
+//        } else {
+//            isPermiso = 2;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        return isPermiso;
+//    }
+//
+//    //ELIMINAR USUARIO
+//    public boolean eliminarPermisoAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM PERMISO_ADEFUL WHERE ID_PERMISO = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                database.execSQL(sql);
+//                res = true;
+//
+//            } catch (Exception e) {
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
+//
+//
+//    // INSERTAR ARTICULO
+//    public boolean insertArticuloAdeful(int id, Articulo articulo)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("ID_ARTICULO", id);
+//            cv.put("TITULO", articulo.getTITULO());
+//            cv.put("ARTICULO", articulo.getARTICULO());
+//            cv.put("USUARIO_CREADOR", articulo.getUSUARIO_CREADOR());
+//            cv.put("FECHA_CREACION", articulo.getFECHA_CREACION());
+//            cv.put("FECHA_ACTUALIZACION", articulo.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.insert("ARTICULO_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //ACTUALIZAR ARTICULO
+//    public boolean actualizarArticuloAdeful(Articulo articulo)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("TITULO", articulo.getTITULO());
+//            cv.put("ARTICULO", articulo.getARTICULO());
+//            cv.put("USUARIO_ACTUALIZACION", articulo.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", articulo.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.update("ARTICULO_ADEFUL", cv, "ID_ARTICULO=" + articulo.getID_ARTICULO(), null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //LISTA ARTICULO
+//    public ArrayList<Articulo> selectListaArticuloAdeful() {
+//
+//        String sql = "SELECT * FROM ARTICULO_ADEFUL";
+//        ArrayList<Articulo> arrayArticuloAdeful = new ArrayList<Articulo>();
+//        String titulo = null, articulo = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
+//        int id;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Articulo articuloAdeful = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_ARTICULO"));
+//                        titulo = cursor.getString(cursor
+//                                .getColumnIndex("TITULO"));
+//                        articulo = cursor.getString(cursor
+//                                .getColumnIndex("ARTICULO"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        //CLASE AUX
+//                        articuloAdeful = new Articulo(id, titulo, articulo, creador,
+//                                fechaCreacion, usuario_act, fechaActualizacion);
+//                        //ARRAY ARTICULO
+//                        arrayArticuloAdeful.add(articuloAdeful);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayArticuloAdeful = null;
+//            }
+//        } else {
+//            arrayArticuloAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        titulo = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        usuario_act = null;
+//        creador = null;
+//        articulo = null;
+//        return arrayArticuloAdeful;
+//    }
+//
+//    //ELIMINAR ARTICULO
+//    public boolean eliminarArticuloAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM ARTICULO_ADEFUL WHERE ID_ARTICULO = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                database.execSQL(sql);
+//                res = true;
+//
+//            } catch (Exception e) {
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
+//
+//    /////////CARGO//////////////
+//    // INSERTAR CARGO
+//    public boolean insertCargoAdeful(int id, Cargo cargo)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("ID_CARGO", id);
+//            cv.put("CARGO", cargo.getCARGO());
+//            cv.put("USUARIO_CREADOR", cargo.getUSUARIO_CREADOR());
+//            cv.put("FECHA_CREACION", cargo.getFECHA_CREACION());
+//            cv.put("USUARIO_ACTUALIZACION", cargo.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", cargo.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.insert("CARGO_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    // ACTUALIZAR CARGO
+//    public boolean actualizarCargoAdeful(Cargo cargo)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("CARGO", cargo.getCARGO());
+//            cv.put("USUARIO_ACTUALIZACION", cargo.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", cargo.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.update("CARGO_ADEFUL", cv, "ID_CARGO=" + cargo.getID_CARGO(), null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //LISTA CARGOS
+//    public ArrayList<Cargo> selectListaCargoAdeful() {
+//
+//        String sql = "SELECT * FROM CARGO_ADEFUL";
+//        ArrayList<Cargo> arrayCargoAdeful = new ArrayList<Cargo>();
+//        String cargoS = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
+//        int id;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Cargo cargo = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
+//                        cargoS = cursor.getString(cursor
+//                                .getColumnIndex("CARGO"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        // CLASE AUX
+//                        cargo = new Cargo(id, cargoS, creador,
+//                                fechaCreacion, usuario_act, fechaActualizacion);
+//                        //ARRAY CARGO
+//                        arrayCargoAdeful.add(cargo);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayCargoAdeful = null;
+//            }
+//        } else {
+//            arrayCargoAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        cargoS = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        creador = null;
+//        usuario_act = null;
+//
+//        return arrayCargoAdeful;
+//    }
+//
+//    ////////COMISION/////////
+//    //INSERTAR
+//    public boolean insertComisionAdeful(int id, Comision comision) throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("ID_COMISION", id);
+//            cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
+//            cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
+//            cv.put("NOMBRE_FOTO", comision.getNOMBRE_FOTO());
+//            cv.put("ID_CARGO", comision.getID_CARGO());
+//            cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
+//            cv.put("PERIODO_HASTA", comision.getPERIODO_HASTA());
+//            cv.put("URL_COMISION", comision.getURL_COMISION());
+//            cv.put("USUARIO_CREADOR", comision.getUSUARIO_CREADOR());
+//            cv.put("FECHA_CREACION", comision.getFECHA_CREACION());
+//
+//            long valor = database.insert("COMISION_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //COMISION POR ID
+//    public ArrayList<Comision> selectComisionAdeful(int id_comision) {
+//
+//        String sql = "SELECT * FROM COMISION_ADEFUL WHERE ID_COMISION=" + id_comision;
+//        ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
+//        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
+//                fechaActualizacion = null, creador = null, usuario_act = null, url_comision = null, nombre_foto = null;
+//        int id;
+//        int id_cargo;
+//        byte[] foto = null;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Comision comision = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_COMISION"));
+//                        nombre = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE_COMISION"));
+//                        foto = cursor.getBlob(cursor
+//                                .getColumnIndex("FOTO_COMISION"));
+//                        nombre_foto = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE_FOTO"));
+//                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
+//                        desde = cursor.getString(cursor
+//                                .getColumnIndex("PERIODO_DESDE"));
+//                        hasta = cursor.getString(cursor
+//                                .getColumnIndex("PERIODO_HASTA"));
+//                        url_comision = cursor.getString(cursor
+//                                .getColumnIndex("URL_COMISION"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        // CLASE AUX
+//                        comision = new Comision(id, nombre, foto, nombre_foto, id_cargo, null, desde, hasta, url_comision, creador,
+//                                fechaCreacion, usuario_act, fechaActualizacion);
+//                        //ARRAY CARGO
+//                        arrayComisionAdeful.add(comision);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayComisionAdeful = null;
+//            }
+//        } else {
+//            arrayComisionAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        nombre = null;
+//        desde = null;
+//        hasta = null;
+//        foto = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        creador = null;
+//        usuario_act = null;
+//        url_comision = null;
+//
+//        return arrayComisionAdeful;
+//    }
+//
+//    //LISTA COMISION
+//    public ArrayList<Comision> selectListaComisionAdeful() {
+//
+//        String sql = "SELECT C.ID_COMISION, C.NOMBRE_COMISION, C.FOTO_COMISION, C.NOMBRE_FOTO, " +
+//                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.URL_COMISION, C.USUARIO_CREADOR, " +
+//                "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
+//                "CA.CARGO FROM COMISION_ADEFUL C INNER JOIN CARGO_ADEFUL CA ON CA.ID_CARGO=C.ID_CARGO";
+//        ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
+//        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
+//                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_comision = null, nombre_foto = null;
+//        int id;
+//        int id_cargo;
+//        byte[] foto = null;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Comision comision = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_COMISION"));
+//                        nombre = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE_COMISION"));
+//                        foto = cursor.getBlob(cursor
+//                                .getColumnIndex("FOTO_COMISION"));
+//                        nombre_foto = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE_FOTO"));
+//                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
+//                        cargo = cursor.getString(cursor
+//                                .getColumnIndex("CARGO"));
+//                        desde = cursor.getString(cursor
+//                                .getColumnIndex("PERIODO_DESDE"));
+//                        hasta = cursor.getString(cursor
+//                                .getColumnIndex("PERIODO_HASTA"));
+//                        url_comision = cursor.getString(cursor
+//                                .getColumnIndex("URL_COMISION"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        // CLASE AUX
+//                        comision = new Comision(id, nombre, foto, nombre_foto, id_cargo, cargo, desde, hasta, url_comision, creador,
+//                                fechaCreacion, usuario_act, fechaActualizacion);
+//                        //ARRAY COMISION
+//                        arrayComisionAdeful.add(comision);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayComisionAdeful = null;
+//            }
+//        } else {
+//            arrayComisionAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        nombre = null;
+//        desde = null;
+//        hasta = null;
+//        foto = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        creador = null;
+//        usuario_act = null;
+//        url_comision = null;
+//
+//        return arrayComisionAdeful;
+//    }
+//
+//    //ACTUALIZAR
+//    public boolean actualizarComisionAdeful(Comision comision) throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
+//            cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
+//            cv.put("NOMBRE_FOTO", comision.getNOMBRE_FOTO());
+//            cv.put("ID_CARGO", comision.getID_CARGO());
+//            cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
+//            cv.put("PERIODO_HASTA", comision.getPERIODO_HASTA());
+//            cv.put("URL_COMISION", comision.getURL_COMISION());
+//            cv.put("USUARIO_ACTUALIZACION", comision.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", comision.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.update("COMISION_ADEFUL", cv, "ID_COMISION=" + comision.getID_COMISION(), null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //ELIMINAR COMISION
+//    public boolean eliminarComisionAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM COMISION_ADEFUL WHERE ID_COMISION = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//
+//                database.execSQL(sql);
+//                res = true;
+//
+//            } catch (Exception e) {
+//
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
+//
+//    ////////DIRECCION/////////
+//    //INSERTAR
+//    public boolean insertDireccionAdeful(int id, Direccion direccion) throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("ID_DIRECCION", id);
+//            cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
+//            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
+//            cv.put("NOMBRE_FOTO", direccion.getNOMBRE_FOTO());
+//            cv.put("ID_CARGO", direccion.getID_CARGO());
+//            cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
+//            cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
+//            cv.put("URL_DIRECCION", direccion.getURL_DIRECCION());
+//            cv.put("USUARIO_CREADOR", direccion.getUSUARIO_CREADOR());
+//            cv.put("FECHA_CREACION", direccion.getFECHA_CREACION());
+//
+//            long valor = database.insert("DIRECCION_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //DIRECCION POR ID
+//    public ArrayList<Direccion> selectDireccionAdeful(int id_direccion) {
+//
+//        String sql = "SELECT * FROM DIRECCION_ADEFUL WHERE ID_DIRECCION=" + id_direccion;
+//        ArrayList<Direccion> arrayDireccionAdeful = new ArrayList<Direccion>();
+//        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
+//                fechaActualizacion = null, creador = null, usuario_act = null, url_direccion = null, nombre_foto = null;
+//        int id;
+//        int id_cargo;
+//        byte[] foto = null;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Direccion direccion = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_DIRECCION"));
+//                        nombre = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE_DIRECCION"));
+//                        foto = cursor.getBlob(cursor
+//                                .getColumnIndex("FOTO_DIRECCION"));
+//                        nombre_foto = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE_FOTO"));
+//                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
+//                        desde = cursor.getString(cursor
+//                                .getColumnIndex("PERIODO_DESDE"));
+//                        hasta = cursor.getString(cursor
+//                                .getColumnIndex("PERIODO_HASTA"));
+//                        url_direccion = cursor.getString(cursor
+//                                .getColumnIndex("URL_DIRECCION"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        // CLASE AUX
+//                        direccion = new Direccion(id, nombre, foto, nombre_foto, id_cargo, null, desde, hasta, url_direccion, creador,
+//                                fechaCreacion, usuario_act, fechaActualizacion);
+//                        //ARRAY CARGO
+//                        arrayDireccionAdeful.add(direccion);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayDireccionAdeful = null;
+//            }
+//        } else {
+//            arrayDireccionAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        nombre = null;
+//        desde = null;
+//        hasta = null;
+//        foto = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        creador = null;
+//        usuario_act = null;
+//
+//        return arrayDireccionAdeful;
+//    }
+//
+//    //LISTA COMISION
+//    public ArrayList<Direccion> selectListaDireccionAdeful() {
+//
+//        String sql = "SELECT C.ID_DIRECCION, C.NOMBRE_DIRECCION, C.FOTO_DIRECCION, C.NOMBRE_FOTO, " +
+//                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.URL_DIRECCION, C.USUARIO_CREADOR, " +
+//                "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
+//                "CA.CARGO FROM DIRECCION_ADEFUL C INNER JOIN CARGO_ADEFUL CA ON CA.ID_CARGO=C.ID_CARGO";
+//        ArrayList<Direccion> arrayDireccionAdeful = new ArrayList<Direccion>();
+//        String nombre = null, desde = null, hasta = null, fechaCreacion = null,
+//                fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_direccion = null, nombre_foto = null;
+//        int id;
+//        int id_cargo;
+//        byte[] foto = null;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Direccion direccion = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_DIRECCION"));
+//                        nombre = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE_DIRECCION"));
+//                        foto = cursor.getBlob(cursor
+//                                .getColumnIndex("FOTO_DIRECCION"));
+//                        nombre_foto = cursor.getString(cursor
+//                                .getColumnIndex("NOMBRE_FOTO"));
+//                        id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
+//                        cargo = cursor.getString(cursor
+//                                .getColumnIndex("CARGO"));
+//                        desde = cursor.getString(cursor
+//                                .getColumnIndex("PERIODO_DESDE"));
+//                        hasta = cursor.getString(cursor
+//                                .getColumnIndex("PERIODO_HASTA"));
+//                        url_direccion = cursor.getString(cursor
+//                                .getColumnIndex("URL_DIRECCION"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        // CLASE AUX
+//                        direccion = new Direccion(id, nombre, foto, nombre_foto, id_cargo, cargo, desde, hasta, url_direccion, creador,
+//                                fechaCreacion, usuario_act, fechaActualizacion);
+//                        //ARRAY COMISION
+//                        arrayDireccionAdeful.add(direccion);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayDireccionAdeful = null;
+//            }
+//        } else {
+//            arrayDireccionAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        nombre = null;
+//        desde = null;
+//        hasta = null;
+//        foto = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        creador = null;
+//        usuario_act = null;
+//
+//        return arrayDireccionAdeful;
+//    }
+//
+//    //ACTUALIZAR
+//    public boolean actualizarDireccionAdeful(Direccion direccion) throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
+//            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
+//            cv.put("NOMBRE_FOTO", direccion.getNOMBRE_FOTO());
+//            cv.put("ID_CARGO", direccion.getID_CARGO());
+//            cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
+//            cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
+//            cv.put("URL_DIRECCION", direccion.getURL_DIRECCION());
+//            cv.put("USUARIO_ACTUALIZACION", direccion.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", direccion.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.update("DIRECCION_ADEFUL", cv, "ID_DIRECCION=" + direccion.getID_DIRECCION(), null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //ELIMINAR COMISION
+//    public boolean eliminarDireccionAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM DIRECCION_ADEFUL WHERE ID_DIRECCION = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//
+//                database.execSQL(sql);
+//                res = true;
+//
+//            } catch (Exception e) {
+//
+//                res = false;
+//            }
+//
+//        } else {
+//
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
 
     ////////LIGA ADEFUL/////////
     //EQUIPO INSERTAR
@@ -2219,8 +2219,7 @@ public class ControladorAdeful {
     public boolean insertAnio(Anio anio) {
         boolean ban = false;
 
-        String sql = "INSERT INTO ANIO ( ANIO) VALUES ('" + anio.getANIO()
-                + "')";
+        String sql = "INSERT INTO ANIO (ANIO) VALUES ('" + anio.getANIO() + "')";
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
@@ -2261,7 +2260,6 @@ public class ControladorAdeful {
                         anio = new Anio(id, anioo);
 
                         arrayAnio.add(anio);
-                        cerrarBaseDeDatos();
                     }
                 }
             } catch (Exception e) {
@@ -2270,7 +2268,7 @@ public class ControladorAdeful {
         } else {
             arrayAnio = null;
         }
-
+        cerrarBaseDeDatos();
         sql = null;
         cursor = null;
         database = null;
@@ -2305,7 +2303,7 @@ public class ControladorAdeful {
     public ArrayList<Mes> selectListaMes() {
 
         String sql = "SELECT * FROM MES";
-        ArrayList<Mes> arrayMes = new ArrayList<Mes>();
+        ArrayList<Mes> arrayMes = new ArrayList<>();
         String mess = null;
         int id;
         Cursor cursor = null;
@@ -2614,11 +2612,12 @@ public class ControladorAdeful {
     // ///////////////////////////////////JUGADORES////////////////////////////////////////////
 
     // INSERTAR JUGADOR
-    public boolean insertJugadorAdeful(Jugador jugador) throws SQLiteException {
+    public boolean insertJugadorAdeful(int id, Jugador jugador) throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
+            cv.put("ID_JUGADOR", id);
             cv.put("NOMBRE_JUGADOR", jugador.getNOMBRE_JUGADOR());
             cv.put("FOTO_JUGADOR", jugador.getFOTO_JUGADOR());
             cv.put("ID_DIVISION", jugador.getID_DIVISION());
@@ -2755,12 +2754,13 @@ public class ControladorAdeful {
 
     //POSICION
     //INSERTAR
-    public boolean insertPosicionAdeful(Posicion posicion)
+    public boolean insertPosicionAdeful(int id, Posicion posicion)
             throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
+            cv.put("ID_POSICION", id);
             cv.put("DESCRIPCION", posicion.getDESCRIPCION());
             cv.put("USUARIO_CREADOR", posicion.getUSUARIO_CREADOR());
             cv.put("FECHA_CREACION", posicion.getFECHA_CREACION());
@@ -2847,12 +2847,12 @@ public class ControladorAdeful {
 
     ////ENTRENAMIENTO//////
 //INSERTAR
-    public int insertEntrenamientoAdeful(Entrenamiento entrenamiento)
+    public boolean insertEntrenamientoAdeful(int id, Entrenamiento entrenamiento)
             throws SQLiteException {
-        int id_entrenamiento = 0;
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
+            cv.put("ID_ENTRENAMIENTO", id);
             cv.put("DIA_ENTRENAMIENTO", entrenamiento.getDIA());
             cv.put("HORA_ENTRENAMIENTO", entrenamiento.getHORA());
             cv.put("ID_CANCHA", entrenamiento.getID_CANCHA());
@@ -2864,26 +2864,25 @@ public class ControladorAdeful {
             long valor = database.insert("ENTRENAMIENTO_ADEFUL", null, cv);
             cerrarBaseDeDatos();
             if (valor > 0) {
-                return id_entrenamiento = (int) valor;
+                return true;
             } else {
-                return id_entrenamiento;
+                return false;
             }
         } catch (SQLiteException e) {
             cerrarBaseDeDatos();
-            return id_entrenamiento;
+            return false;
         }
     }
 
     // INSERT TABLA INTERMEDIA
-    public boolean insertEntrenamientoDivisionAdeful(Entrenamiento entrenamiento_Division)
+    public boolean insertEntrenamientoDivisionAdeful(int id, int division)
             throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
-            cv.put("ID_ENTRENAMIENTO",
-                    entrenamiento_Division.getID_ENTRENAMIENTO());
-            cv.put("ID_DIVISION", entrenamiento_Division.getID_DIVISION());
+            cv.put("ID_ENTRENAMIENTO", id);
+            cv.put("ID_DIVISION", division);
 
             long valor = database.insert("ENTRENAMIENTO_DIVISION_ADEFUL", null,
                     cv);
@@ -2966,7 +2965,7 @@ public class ControladorAdeful {
 
         String sql = "SELECT EA.ID_ENTRENAMIENTO, EA.DIA_ENTRENAMIENTO, EA.HORA_ENTRENAMIENTO, EA.ID_CANCHA, CA.NOMBRE"
                 + " FROM ENTRENAMIENTO_ADEFUL EA INNER JOIN CANCHA_ADEFUL CA ON EA.ID_CANCHA = CA.ID_CANCHA"
-                + " WHERE substr(EA.DIA_ENTRENAMIENTO , 4, 7) = '" + fecha + "'";
+                + " WHERE substr(EA.DIA_ENTRENAMIENTO , 4, 7) = '" + fecha + "' ORDER BY EA.ID_ENTRENAMIENTO DESC";
 
         ArrayList<EntrenamientoRecycler> arrayEntrenamiento = new ArrayList<EntrenamientoRecycler>();
         int id_entrenamiento, id_cancha;
@@ -3125,10 +3124,31 @@ public class ControladorAdeful {
     }
 
     //ELIMINAR DIVISION_ENTRENAMIENTO
+    public boolean eliminarDivisionEntrenamientoAdeful(int id, int division) {
+
+        boolean res = false;
+        String sql = "DELETE FROM ENTRENAMIENTO_DIVISION_ADEFUL WHERE ID_ENTRENAMIENTO = " + id+ " AND ID_DIVISION ="+division;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                database.execSQL(sql);
+                res = true;
+            } catch (Exception e) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+        cerrarBaseDeDatos();
+        database = null;
+        sql = null;
+        return res;
+    }
+    //ELIMINAR DIVISION_ENTRENAMIENTO
     public boolean eliminarDivisionEntrenamientoAdeful(int id) {
 
         boolean res = false;
-        String sql = "DELETE FROM ENTRENAMIENTO_DIVISION_ADEFUL WHERE ID_ENTRENAMIENTO_DIVISION = " + id;
+        String sql = "DELETE FROM ENTRENAMIENTO_DIVISION_ADEFUL WHERE ID_ENTRENAMIENTO = " + id;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
@@ -3148,15 +3168,15 @@ public class ControladorAdeful {
 
 
     // INSERT ASISTENCIA
-    public boolean insertAsistenciaEntrenamientoAdeful(Entrenamiento entrenamientoAsistencia)
+    public boolean insertAsistenciaEntrenamientoAdeful(int id, int id_jugador)
             throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         long valor = 0;
         abrirBaseDeDatos();
         try {
-            cv.put("ID_ENTRENAMIENTO", entrenamientoAsistencia.getID_ENTRENAMIENTO());
-            cv.put("ID_JUGADOR", entrenamientoAsistencia.getID_JUGADOR());
+            cv.put("ID_ENTRENAMIENTO", id);
+            cv.put("ID_JUGADOR", id_jugador);
 
             valor = database.insert("ENTRENAMIENTO_ASISTENCIA_ADEFUL", null,
                     cv);
@@ -3175,10 +3195,10 @@ public class ControladorAdeful {
     }
 
     //ELIMINAR ASISTENCIA ENTRENAMIENTO
-    public boolean eliminarAsistenciaEntrenamientoAdeful(int id_asistencia, int id_jugador) {
+    public boolean eliminarAsistenciaEntrenamientoAdeful(int id_entrenamiento, int id_jugador) {
 
         boolean res = false;
-        String sql = "DELETE FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO =" + id_asistencia + " AND ID_JUGADOR=" + id_jugador;
+        String sql = "DELETE FROM ENTRENAMIENTO_ASISTENCIA_ADEFUL WHERE ID_ENTRENAMIENTO =" + id_entrenamiento + " AND ID_JUGADOR=" + id_jugador;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
             try {
@@ -3281,7 +3301,7 @@ public class ControladorAdeful {
                 if (ids == 0) {
                     sqlId = "" + id_division_array.get(0);
                 } else {
-                    sqlId += " OR ID_DIVISION=" + id_division_array.get(ids);
+                    sqlId += " OR J.ID_DIVISION=" + id_division_array.get(ids);
                 }
             } else {
                 sqlId = "" + id_division_array.get(ids);
@@ -3544,547 +3564,547 @@ public class ControladorAdeful {
         return arraySancion;
     }
 
-    /**
-     * MODULO SOCIAL
-     */
-
-    // INSERTAR NOTIFICACION
-    public boolean insertNotificacionAdeful(Notificacion notificacion)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TITULO", notificacion.getTITULO());
-            cv.put("NOTIFICACION", notificacion.getNOTIFICACION());
-            cv.put("USUARIO_CREADOR", notificacion.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", notificacion.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", notificacion.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", notificacion.getFECHA_ACTUALIZACION());
-
-            long valor = database.insert("NOTIFICACION_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //ACTUALIZAR NOTIFICACION
-    public boolean actualizarNotificacionAdeful(Notificacion notificacion)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TITULO", notificacion.getTITULO());
-            cv.put("NOTIFICACION", notificacion.getNOTIFICACION());
-            cv.put("USUARIO_ACTUALIZACION", notificacion.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", notificacion.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("NOTIFICACION_ADEFUL", cv, "ID_NOTIFICACION=" + notificacion.getID_NOTIFICACION(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA NOTIFICACION
-    public ArrayList<Notificacion> selectListaNotificacionAdeful() {
-
-        String sql = "SELECT * FROM NOTIFICACION_ADEFUL";
-        ArrayList<Notificacion> arrayNotificacionAdeful = new ArrayList<Notificacion>();
-        String titulo = null, notificacion = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Notificacion notificacionAdeful = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_NOTIFICACION"));
-                        titulo = cursor.getString(cursor
-                                .getColumnIndex("TITULO"));
-                        notificacion = cursor.getString(cursor
-                                .getColumnIndex("NOTIFICACION"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        //CLASE AUX
-                        notificacionAdeful = new Notificacion(id, titulo, notificacion, creador,
-                                fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY ARTICULO
-                        arrayNotificacionAdeful.add(notificacionAdeful);
-                    }
-                }
-
-            } catch (Exception e) {
-                arrayNotificacionAdeful = null;
-            }
-        } else {
-
-            arrayNotificacionAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        titulo = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        usuario_act = null;
-        creador = null;
-        notificacion = null;
-        return arrayNotificacionAdeful;
-    }
-
-    //ELIMINAR NOTIFICACION
-    public boolean eliminarNotificacionAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM NOTIFICACION_ADEFUL WHERE ID_NOTIFICACION = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    // INSERTAR NOTICIA
-    public boolean insertNoticiaAdeful(Noticia noticia)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TITULO", noticia.getTITULO());
-            cv.put("DESCRIPCION", noticia.getDESCRIPCION());
-            cv.put("LINK", noticia.getLINK());
-            cv.put("USUARIO_CREADOR", noticia.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", noticia.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", noticia.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", noticia.getFECHA_ACTUALIZACION());
-
-            long valor = database.insert("NOTICIA_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //ACTUALIZAR NOTIFICACION
-    public boolean actualizarNoticiaAdeful(Noticia noticia)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TITULO", noticia.getTITULO());
-            cv.put("DESCRIPCION", noticia.getDESCRIPCION());
-            cv.put("LINK", noticia.getLINK());
-            cv.put("USUARIO_ACTUALIZACION", noticia.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", noticia.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("NOTICIA_ADEFUL", cv, "ID_NOTICIA=" + noticia.getID_NOTICIA(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA NOTIFICACION
-    public ArrayList<Noticia> selectListaNoticiaAdeful() {
-
-        String sql = "SELECT * FROM NOTICIA_ADEFUL";
-        ArrayList<Noticia> arrayNoticiaAdeful = new ArrayList<Noticia>();
-        String titulo = null, descripcion = null, link = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Noticia noticiaAdeful = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_NOTICIA"));
-                        titulo = cursor.getString(cursor
-                                .getColumnIndex("TITULO"));
-                        descripcion = cursor.getString(cursor
-                                .getColumnIndex("DESCRIPCION"));
-                        link = cursor.getString(cursor
-                                .getColumnIndex("LINK"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        //CLASE AUX
-                        noticiaAdeful = new Noticia(id, titulo, descripcion, link, creador,
-                                fechaCreacion, usuario_act, fechaActualizacion);
-                        //ARRAY NOTICIA
-                        arrayNoticiaAdeful.add(noticiaAdeful);
-                    }
-                }
-
-            } catch (Exception e) {
-                arrayNoticiaAdeful = null;
-            }
-        } else {
-            arrayNoticiaAdeful = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        titulo = null;
-        link = null;
-        descripcion = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        usuario_act = null;
-        creador = null;
-
-        return arrayNoticiaAdeful;
-    }
-
-    //ELIMINAR NOTICIA
-    public boolean eliminarNoticiaAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM NOTICIA_ADEFUL WHERE ID_NOTICIA = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    //FOTO
-    // INSERTAR FOTO
-    public boolean insertFotoAdeful(Foto foto) throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TITULO", foto.getTITULO());
-            cv.put("FOTO", foto.getFOTO());
-            cv.put("USUARIO_CREADOR", foto.getUSUARIO_CREACION());
-            cv.put("FECHA_CREACION", foto.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", foto.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", foto.getFECHA_ACTUALIZACION());
-
-            long valor = database.insert("FOTO_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    // LISTA FOTO
-    public ArrayList<Foto> selectListaFotoAdeful() {
-
-        String sql = "SELECT * FROM FOTO_ADEFUL";
-        ArrayList<Foto> arrayFoto = new ArrayList<Foto>();
-        String titulo = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
-        int id;
-        byte[] foto_byte = null;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-
-                        Foto foto = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_FOTO"));
-                        titulo = cursor.getString(cursor
-                                .getColumnIndex("TITULO"));
-                        foto_byte = cursor.getBlob(cursor
-                                .getColumnIndex("FOTO"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        foto = new Foto(id, titulo, foto_byte, creador, fechaCreacion, usuario_act,
-                                fechaActualizacion);
-                        arrayFoto.add(foto);
-                    }
-                }
-            } catch (Exception e) {
-                arrayFoto = null;
-            }
-        } else {
-            arrayFoto = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        titulo = null;
-        foto_byte = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        usuario_act = null;
-        creador = null;
-        return arrayFoto;
-    }
-
-    //ACTUALIZAR FOTO
-    public boolean actualizarFotoAdeful(Foto foto)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TITULO", foto.getTITULO());
-            cv.put("FOTO", foto.getFOTO());
-            cv.put("USUARIO_ACTUALIZACION", foto.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", foto.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("FOTO_ADEFUL", cv, "ID_FOTO="
-                    + foto.getID_FOTO(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //ELIMINAR FOTO
-    public boolean eliminarFotoAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM FOTO_ADEFUL WHERE ID_FOTO = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    //PUBLICIDAD
-    // INSERTAR PUBLICIDAD
-    public boolean insertPublicidadAdeful(Publicidad publicidad) throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TITULO", publicidad.getTITULO());
-            cv.put("LOGO", publicidad.getLOGO());
-            cv.put("OTROS", publicidad.getOTROS());
-            cv.put("USUARIO_CREADOR", publicidad.getUSUARIO_CREACION());
-            cv.put("FECHA_CREACION", publicidad.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", publicidad.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", publicidad.getFECHA_ACTUALIZACION());
-
-            long valor = database.insert("PUBLICIDAD_ADEFUL", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    // LISTA PUBLICIDAD
-    public ArrayList<Publicidad> selectListaPublicidadAdeful() {
-
-        String sql = "SELECT * FROM PUBLICIDAD_ADEFUL";
-        ArrayList<Publicidad> arrayPublicidad = new ArrayList<Publicidad>();
-        String titulo = null, otros = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
-        int id;
-        byte[] logo_byte = null;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-
-                        Publicidad publicidad = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_PUBLICIDAD"));
-                        titulo = cursor.getString(cursor
-                                .getColumnIndex("TITULO"));
-                        logo_byte = cursor.getBlob(cursor
-                                .getColumnIndex("LOGO"));
-                        otros = cursor.getString(cursor
-                                .getColumnIndex("OTROS"));
-                        creador = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_CREADOR"));
-                        fechaCreacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_CREACION"));
-                        usuario_act = cursor.getString(cursor
-                                .getColumnIndex("USUARIO_ACTUALIZACION"));
-                        fechaActualizacion = cursor.getString(cursor
-                                .getColumnIndex("FECHA_ACTUALIZACION"));
-                        publicidad = new Publicidad(id, titulo, logo_byte, otros, creador, fechaCreacion, usuario_act,
-                                fechaActualizacion);
-                        arrayPublicidad.add(publicidad);
-                    }
-                }
-            } catch (Exception e) {
-                arrayPublicidad = null;
-            }
-        } else {
-            arrayPublicidad = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        titulo = null;
-        logo_byte = null;
-        otros = null;
-        fechaCreacion = null;
-        fechaActualizacion = null;
-        usuario_act = null;
-        creador = null;
-        return arrayPublicidad;
-    }
-
-    //ACTUALIZAR PUBLICIDAD
-    public boolean actualizarPublicidadAdeful(Publicidad publicidad)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TITULO", publicidad.getTITULO());
-            cv.put("LOGO", publicidad.getLOGO());
-            cv.put("OTROS", publicidad.getOTROS());
-            cv.put("USUARIO_ACTUALIZACION", publicidad.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", publicidad.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("PUBLICIDAD_ADEFUL", cv, "ID_PUBLICIDAD="
-                    + publicidad.getID_PUBLICIDAD(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //ELIMINAR PUBLICIDAD
-    public boolean eliminarPublicidadAdeful(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM PUBLICIDAD_ADEFUL WHERE ID_PUBLICIDAD = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
+//    /**
+//     * MODULO SOCIAL
+//     */
+//
+//    // INSERTAR NOTIFICACION
+//    public boolean insertNotificacionAdeful(Notificacion notificacion)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("TITULO", notificacion.getTITULO());
+//            cv.put("NOTIFICACION", notificacion.getNOTIFICACION());
+//            cv.put("USUARIO_CREADOR", notificacion.getUSUARIO_CREADOR());
+//            cv.put("FECHA_CREACION", notificacion.getFECHA_CREACION());
+//            cv.put("USUARIO_ACTUALIZACION", notificacion.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", notificacion.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.insert("NOTIFICACION_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //ACTUALIZAR NOTIFICACION
+//    public boolean actualizarNotificacionAdeful(Notificacion notificacion)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("TITULO", notificacion.getTITULO());
+//            cv.put("NOTIFICACION", notificacion.getNOTIFICACION());
+//            cv.put("USUARIO_ACTUALIZACION", notificacion.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", notificacion.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.update("NOTIFICACION_ADEFUL", cv, "ID_NOTIFICACION=" + notificacion.getID_NOTIFICACION(), null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //LISTA NOTIFICACION
+//    public ArrayList<Notificacion> selectListaNotificacionAdeful() {
+//
+//        String sql = "SELECT * FROM NOTIFICACION_ADEFUL";
+//        ArrayList<Notificacion> arrayNotificacionAdeful = new ArrayList<Notificacion>();
+//        String titulo = null, notificacion = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
+//        int id;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Notificacion notificacionAdeful = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_NOTIFICACION"));
+//                        titulo = cursor.getString(cursor
+//                                .getColumnIndex("TITULO"));
+//                        notificacion = cursor.getString(cursor
+//                                .getColumnIndex("NOTIFICACION"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        //CLASE AUX
+//                        notificacionAdeful = new Notificacion(id, titulo, notificacion, creador,
+//                                fechaCreacion, usuario_act, fechaActualizacion);
+//                        //ARRAY ARTICULO
+//                        arrayNotificacionAdeful.add(notificacionAdeful);
+//                    }
+//                }
+//
+//            } catch (Exception e) {
+//                arrayNotificacionAdeful = null;
+//            }
+//        } else {
+//
+//            arrayNotificacionAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        titulo = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        usuario_act = null;
+//        creador = null;
+//        notificacion = null;
+//        return arrayNotificacionAdeful;
+//    }
+//
+//    //ELIMINAR NOTIFICACION
+//    public boolean eliminarNotificacionAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM NOTIFICACION_ADEFUL WHERE ID_NOTIFICACION = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//            try {
+//                database.execSQL(sql);
+//                res = true;
+//            } catch (Exception e) {
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
+//
+//    // INSERTAR NOTICIA
+//    public boolean insertNoticiaAdeful(Noticia noticia)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("TITULO", noticia.getTITULO());
+//            cv.put("DESCRIPCION", noticia.getDESCRIPCION());
+//            cv.put("LINK", noticia.getLINK());
+//            cv.put("USUARIO_CREADOR", noticia.getUSUARIO_CREADOR());
+//            cv.put("FECHA_CREACION", noticia.getFECHA_CREACION());
+//            cv.put("USUARIO_ACTUALIZACION", noticia.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", noticia.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.insert("NOTICIA_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //ACTUALIZAR NOTIFICACION
+//    public boolean actualizarNoticiaAdeful(Noticia noticia)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("TITULO", noticia.getTITULO());
+//            cv.put("DESCRIPCION", noticia.getDESCRIPCION());
+//            cv.put("LINK", noticia.getLINK());
+//            cv.put("USUARIO_ACTUALIZACION", noticia.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", noticia.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.update("NOTICIA_ADEFUL", cv, "ID_NOTICIA=" + noticia.getID_NOTICIA(), null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //LISTA NOTIFICACION
+//    public ArrayList<Noticia> selectListaNoticiaAdeful() {
+//
+//        String sql = "SELECT * FROM NOTICIA_ADEFUL";
+//        ArrayList<Noticia> arrayNoticiaAdeful = new ArrayList<Noticia>();
+//        String titulo = null, descripcion = null, link = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
+//        int id;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//
+//                    while (cursor.moveToNext()) {
+//
+//                        Noticia noticiaAdeful = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_NOTICIA"));
+//                        titulo = cursor.getString(cursor
+//                                .getColumnIndex("TITULO"));
+//                        descripcion = cursor.getString(cursor
+//                                .getColumnIndex("DESCRIPCION"));
+//                        link = cursor.getString(cursor
+//                                .getColumnIndex("LINK"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        //CLASE AUX
+//                        noticiaAdeful = new Noticia(id, titulo, descripcion, link, creador,
+//                                fechaCreacion, usuario_act, fechaActualizacion);
+//                        //ARRAY NOTICIA
+//                        arrayNoticiaAdeful.add(noticiaAdeful);
+//                    }
+//                }
+//
+//            } catch (Exception e) {
+//                arrayNoticiaAdeful = null;
+//            }
+//        } else {
+//            arrayNoticiaAdeful = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        titulo = null;
+//        link = null;
+//        descripcion = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        usuario_act = null;
+//        creador = null;
+//
+//        return arrayNoticiaAdeful;
+//    }
+//
+//    //ELIMINAR NOTICIA
+//    public boolean eliminarNoticiaAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM NOTICIA_ADEFUL WHERE ID_NOTICIA = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//            try {
+//                database.execSQL(sql);
+//                res = true;
+//            } catch (Exception e) {
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
+//
+//    //FOTO
+//    // INSERTAR FOTO
+//    public boolean insertFotoAdeful(Foto foto) throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("TITULO", foto.getTITULO());
+//            cv.put("FOTO", foto.getFOTO());
+//            cv.put("USUARIO_CREADOR", foto.getUSUARIO_CREACION());
+//            cv.put("FECHA_CREACION", foto.getFECHA_CREACION());
+//            cv.put("USUARIO_ACTUALIZACION", foto.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", foto.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.insert("FOTO_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    // LISTA FOTO
+//    public ArrayList<Foto> selectListaFotoAdeful() {
+//
+//        String sql = "SELECT * FROM FOTO_ADEFUL";
+//        ArrayList<Foto> arrayFoto = new ArrayList<Foto>();
+//        String titulo = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
+//        int id;
+//        byte[] foto_byte = null;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//                    while (cursor.moveToNext()) {
+//
+//                        Foto foto = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_FOTO"));
+//                        titulo = cursor.getString(cursor
+//                                .getColumnIndex("TITULO"));
+//                        foto_byte = cursor.getBlob(cursor
+//                                .getColumnIndex("FOTO"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        foto = new Foto(id, titulo, foto_byte, creador, fechaCreacion, usuario_act,
+//                                fechaActualizacion);
+//                        arrayFoto.add(foto);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayFoto = null;
+//            }
+//        } else {
+//            arrayFoto = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        titulo = null;
+//        foto_byte = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        usuario_act = null;
+//        creador = null;
+//        return arrayFoto;
+//    }
+//
+//    //ACTUALIZAR FOTO
+//    public boolean actualizarFotoAdeful(Foto foto)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("TITULO", foto.getTITULO());
+//            cv.put("FOTO", foto.getFOTO());
+//            cv.put("USUARIO_ACTUALIZACION", foto.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", foto.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.update("FOTO_ADEFUL", cv, "ID_FOTO="
+//                    + foto.getID_FOTO(), null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //ELIMINAR FOTO
+//    public boolean eliminarFotoAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM FOTO_ADEFUL WHERE ID_FOTO = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//            try {
+//                database.execSQL(sql);
+//                res = true;
+//            } catch (Exception e) {
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
+//
+//    //PUBLICIDAD
+//    // INSERTAR PUBLICIDAD
+//    public boolean insertPublicidadAdeful(Publicidad publicidad) throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("TITULO", publicidad.getTITULO());
+//            cv.put("LOGO", publicidad.getLOGO());
+//            cv.put("OTROS", publicidad.getOTROS());
+//            cv.put("USUARIO_CREADOR", publicidad.getUSUARIO_CREACION());
+//            cv.put("FECHA_CREACION", publicidad.getFECHA_CREACION());
+//            cv.put("USUARIO_ACTUALIZACION", publicidad.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", publicidad.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.insert("PUBLICIDAD_ADEFUL", null, cv);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    // LISTA PUBLICIDAD
+//    public ArrayList<Publicidad> selectListaPublicidadAdeful() {
+//
+//        String sql = "SELECT * FROM PUBLICIDAD_ADEFUL";
+//        ArrayList<Publicidad> arrayPublicidad = new ArrayList<Publicidad>();
+//        String titulo = null, otros = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
+//        int id;
+//        byte[] logo_byte = null;
+//        Cursor cursor = null;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//
+//            try {
+//                cursor = database.rawQuery(sql, null);
+//                if (cursor != null && cursor.getCount() > 0) {
+//                    while (cursor.moveToNext()) {
+//
+//                        Publicidad publicidad = null;
+//
+//                        id = cursor.getInt(cursor.getColumnIndex("ID_PUBLICIDAD"));
+//                        titulo = cursor.getString(cursor
+//                                .getColumnIndex("TITULO"));
+//                        logo_byte = cursor.getBlob(cursor
+//                                .getColumnIndex("LOGO"));
+//                        otros = cursor.getString(cursor
+//                                .getColumnIndex("OTROS"));
+//                        creador = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_CREADOR"));
+//                        fechaCreacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_CREACION"));
+//                        usuario_act = cursor.getString(cursor
+//                                .getColumnIndex("USUARIO_ACTUALIZACION"));
+//                        fechaActualizacion = cursor.getString(cursor
+//                                .getColumnIndex("FECHA_ACTUALIZACION"));
+//                        publicidad = new Publicidad(id, titulo, logo_byte, otros, creador, fechaCreacion, usuario_act,
+//                                fechaActualizacion);
+//                        arrayPublicidad.add(publicidad);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                arrayPublicidad = null;
+//            }
+//        } else {
+//            arrayPublicidad = null;
+//        }
+//        cerrarBaseDeDatos();
+//        sql = null;
+//        cursor = null;
+//        database = null;
+//        titulo = null;
+//        logo_byte = null;
+//        otros = null;
+//        fechaCreacion = null;
+//        fechaActualizacion = null;
+//        usuario_act = null;
+//        creador = null;
+//        return arrayPublicidad;
+//    }
+//
+//    //ACTUALIZAR PUBLICIDAD
+//    public boolean actualizarPublicidadAdeful(Publicidad publicidad)
+//            throws SQLiteException {
+//
+//        ContentValues cv = new ContentValues();
+//        abrirBaseDeDatos();
+//        try {
+//            cv.put("TITULO", publicidad.getTITULO());
+//            cv.put("LOGO", publicidad.getLOGO());
+//            cv.put("OTROS", publicidad.getOTROS());
+//            cv.put("USUARIO_ACTUALIZACION", publicidad.getUSUARIO_ACTUALIZACION());
+//            cv.put("FECHA_ACTUALIZACION", publicidad.getFECHA_ACTUALIZACION());
+//
+//            long valor = database.update("PUBLICIDAD_ADEFUL", cv, "ID_PUBLICIDAD="
+//                    + publicidad.getID_PUBLICIDAD(), null);
+//            cerrarBaseDeDatos();
+//            if (valor > 0) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } catch (SQLiteException e) {
+//            cerrarBaseDeDatos();
+//            return false;
+//        }
+//    }
+//
+//    //ELIMINAR PUBLICIDAD
+//    public boolean eliminarPublicidadAdeful(int id) {
+//
+//        boolean res = false;
+//        String sql = "DELETE FROM PUBLICIDAD_ADEFUL WHERE ID_PUBLICIDAD = " + id;
+//        abrirBaseDeDatos();
+//        if (database != null && database.isOpen()) {
+//            try {
+//                database.execSQL(sql);
+//                res = true;
+//            } catch (Exception e) {
+//                res = false;
+//            }
+//        } else {
+//            res = false;
+//        }
+//        cerrarBaseDeDatos();
+//        database = null;
+//        sql = null;
+//        return res;
+//    }
 }

@@ -21,34 +21,36 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/buttonFechaEntrenamiento"
-                android:layout_width="100dp"
-                android:layout_height="70dp"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
+                android:layout_margin="5dp"
                 android:background="@drawable/button_estilo_fecha"
                 android:text="Día" />
 
             <Button
                 android:id="@+id/buttonHoraEntrenamiento"
-                android:layout_width="100dp"
-                android:layout_height="70dp"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
+                android:layout_margin="5dp"
                 android:background="@drawable/button_estilo_fecha"
                 android:text="Hora" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/textViewLugar"
-            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Lugar"
+            android:layout_marginTop="10dp"
+            android:text="Lugar Entrenamiento"
             android:textSize="25dp" />
 
         <Spinner
@@ -60,19 +62,19 @@
 
         <TextView
             android:id="@+id/textViewDivisionCitada"
-            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Divisiones"
+            android:layout_marginTop="10dp"
+            android:text="Divisiones Citadas"
             android:textSize="25dp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycleViewGeneral"
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

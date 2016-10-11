@@ -22,13 +22,14 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 import java.io.ByteArrayOutputStream;
 
 
 public class FragmentGenerarPublicidad extends Fragment {
 
-    private ControladorAdeful controladorAdeful;
+    private ControladorGeneral controladorGeneral;
     private ImageView imagePublicidad;
     private EditText tituloPublicidadEdit;
     private EditText otrosPublicidadEdit;
@@ -92,7 +93,7 @@ public class FragmentGenerarPublicidad extends Fragment {
     }
 
     private void init() {
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         communicator = (Communicator)getActivity();
         usuario = "Administrador";
 
@@ -227,7 +228,7 @@ public class FragmentGenerarPublicidad extends Fragment {
                             .toString(), imagePublicidadByte, otrosPublicidadEdit.getText()
                             .toString(), usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
-                    if (controladorAdeful.insertPublicidadAdeful(publicidad)) {
+                    if (controladorGeneral.insertPublicidad(publicidad)) {
                         setBotonGuardar(GUARDAR_TOAST);
                     } else {
                     auxiliarGeneral.errorDataBase(getActivity());
@@ -237,7 +238,7 @@ public class FragmentGenerarPublicidad extends Fragment {
                     publicidad = new Publicidad(idPublicidadExtra, tituloPublicidadEdit.getText()
                             .toString(), imagePublicidadByte,otrosPublicidadEdit.getText()
                             .toString(), null, null, usuario, auxiliarGeneral.getFechaOficial());
-                    if (controladorAdeful.actualizarPublicidadAdeful(publicidad)) {
+                    if (controladorGeneral.actualizarPublicidad(publicidad)) {
                         setBotonGuardar(ACTUALIZAR_TOAST);
                         actualizar = false;
                         insertar = true;

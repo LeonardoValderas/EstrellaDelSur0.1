@@ -57,6 +57,24 @@ public class SplashUsuario extends AppCompatActivity {
     private Cancha cancha;
     private Division division;
     private Fixture fixture;
+    public static final String ARTICULO = "articulo";
+    public static final String COMISION = "comision";
+    public static final String DIRECCION = "direccion";
+    public static final String EQUIPO_ADEFUL = "equipo_adeful";
+    public static final String DIVISION_ADEFUL = "division_adeful";
+    public static final String TORNEO_ADEFUL = "torneo_adeful";
+    public static final String CANCHA_ADEFUL = "cancha_adeful";
+    public static final String FIXTURE_ADEFUL = "fixture_adeful";
+    public static final String RESULTADO_ADEFUL = "resultado_adeful";
+    public static final String JUGADOR_ADEFUL = "jugador_adeful";
+    public static final String POSICION_ADEFUL = "posicion_adeful";
+    public static final String ENTRENAMIENTO_ADEFUL = "entrenamiento_adeful";
+    public static final String ENTRENAMIENTO_DIVISION_ADEFUL = "entrenamiento_division_adeful";
+    public static final String NOTIFICACION = "notificacion";
+    public static final String NOTICIAS = "noticias";
+    public static final String FOTOS = "fotos";
+    public static final String PUBLICIDAD = "publicidad";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,16 +124,20 @@ public class SplashUsuario extends AppCompatActivity {
         request.setMethod("POST");
         // request.setParametrosDatos("fecha_articulo", fecha_articulo);
         //INSTITUCION
-        request.setParametrosDatos("ARTICULO_ADEFUL", "2016-04-23--09-29-0");
-        request.setParametrosDatos("COMISION_ADEFUL", "2016-04-23--09-29-0");
-        request.setParametrosDatos("DIRECCION_ADEFUL", "2016-04-23--09-29-0");
+        request.setParametrosDatos(ARTICULO, "2016-04-23--09-29-0");
+        request.setParametrosDatos(COMISION, "2016-04-23--09-29-0");
+        request.setParametrosDatos(DIRECCION, "2016-04-23--09-29-0");
         //LIGA
-        request.setParametrosDatos("EQUIPO_ADEFUL", "2016-04-23--09-29-0");
-        request.setParametrosDatos("DIVISION_ADEFUL", "2016-04-23--09-29-0");
-        request.setParametrosDatos("TORNEO_ADEFUL", "2016-04-23--09-29-0");
-        request.setParametrosDatos("CANCHA_ADEFUL", "2016-04-23--09-29-0");
+        request.setParametrosDatos(EQUIPO_ADEFUL, "2016-04-23--09-29-0");
+        request.setParametrosDatos(DIVISION_ADEFUL, "2016-04-23--09-29-0");
+        request.setParametrosDatos(TORNEO_ADEFUL, "2016-04-23--09-29-0");
+        request.setParametrosDatos(CANCHA_ADEFUL, "2016-04-23--09-29-0");
         //MI EQUIPO
-        request.setParametrosDatos("FIXTURE_ADEFUL", "2016-04-23--09-29-0");
+        request.setParametrosDatos(FIXTURE_ADEFUL, "2016-04-23--09-29-0");
+        request.setParametrosDatos(JUGADOR_ADEFUL, "2016-04-23--09-29-0");
+     //   request.setParametrosDatos("POSICION_ADEFUL", "2016-04-23--09-29-0");
+        request.setParametrosDatos(ENTRENAMIENTO_ADEFUL, "2016-04-23--09-29-0");
+        request.setParametrosDatos(ENTRENAMIENTO_DIVISION_ADEFUL, "2016-04-23--09-29-0");
         requestUrl.setParametrosDatos("URL", auxiliarGeneral.getURL() + auxiliarGeneral.getURLSINCRONIZARUSUARIO());
 
 //
@@ -162,222 +184,116 @@ public class SplashUsuario extends AppCompatActivity {
                     mensaje = jsonArrayResponseAux.getString(TAG_MESSAGE);
 
                     if (success == 0) {
-                        jsonArray = json.optJSONArray("ARTICULO_ADEFUL");
+                        jsonArray = json.optJSONArray(ARTICULO);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (controladorUsuario.eliminarArticuloUsuario()) {
 
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        jsonAux = jsonArray.getJSONObject(i);
-                                        articulo = new Articulo(jsonAux.getInt("ID_ARTICULO"),
-                                                jsonAux.getString("TITULO"), jsonAux.getString("ARTICULO"));
-                                        if (!controladorUsuario.insertArticuloUsuario(articulo)) {
-                                            precessOK = false;
-                                            break;
-                                        }
-                                    }
-                                } else {
+                                if (!jsonParsing.processingJson(jsonArray, ARTICULO, SplashUsuario.this))
                                     precessOK = false;
-                                }
                             }
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray("COMISION_ADEFUL");
+                        jsonArray = json.optJSONArray(COMISION);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (controladorUsuario.eliminarComisionUsuario()) {
 
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        jsonAux = jsonArray.getJSONObject(i);
-
-                                        String imageString = jsonAux.getString("FOTO_COMISION");
-
-                                        Bitmap b = getBitmap(imageString);
-                                        byte[] byteArray = null;
-                                        if (b != null) {
-                                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                            b.compress(Bitmap.CompressFormat.PNG, 0, stream);
-                                            byteArray = stream.toByteArray();
-                                        }
-                                        comision = new Comision(jsonAux.getInt("ID_COMISION"),
-                                                jsonAux.getString("NOMBRE_COMISION"), byteArray, jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
-
-                                        if (!controladorUsuario.insertComisionUsuario(comision)) {
-                                            precessOK = false;
-                                            break;
-                                        }
-                                    }
-                                } else {
+                                if (!jsonParsing.processingJson(jsonArray, COMISION, SplashUsuario.this))
                                     precessOK = false;
-                                }
                             }
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray("DIRECCION_ADEFUL");
+                        jsonArray = json.optJSONArray(DIRECCION);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (controladorUsuario.eliminarDireccionUsuario()) {
 
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        jsonAux = jsonArray.getJSONObject(i);
-
-                                        String imageString = jsonAux.getString("FOTO_DIRECCION");
-
-                                        Bitmap b = getBitmap(imageString);
-                                        byte[] byteArray = null;
-                                        if (b != null) {
-                                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                            b.compress(Bitmap.CompressFormat.PNG, 0, stream);
-                                            byteArray = stream.toByteArray();
-                                        }
-                                        direccion = new Direccion(jsonAux.getInt("ID_DIRECCION"),
-                                                jsonAux.getString("NOMBRE_DIRECCION"), byteArray, jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
-
-                                        if (!controladorUsuario.insertDireccionUsuario(direccion)) {
-                                            precessOK = false;
-                                            break;
-                                        }
-                                    }
-                                } else {
+                                if (!jsonParsing.processingJson(jsonArray, DIRECCION, SplashUsuario.this))
                                     precessOK = false;
-                                }
-
-                                jsonArray = null;
-                                jsonAux = null;
                             }
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray("EQUIPO_ADEFUL");
+                        jsonArray = json.optJSONArray(EQUIPO_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (controladorUsuario.eliminarEquipoUsuario()) {
-
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        jsonAux = jsonArray.getJSONObject(i);
-
-                                        String imageString = jsonAux.getString("ESCUDO_EQUIPO");
-
-                                        Bitmap b = getBitmap(imageString);
-                                        byte[] byteArray = null;
-                                        if (b != null) {
-                                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                            b.compress(Bitmap.CompressFormat.PNG, 0, stream);
-                                            byteArray = stream.toByteArray();
-                                        }
-                                        equipo = new Equipo(jsonAux.getInt("ID_EQUIPO"),
-                                                jsonAux.getString("NOMBRE_EQUIPO"), byteArray);
-
-                                        if (!controladorUsuario.insertEquipoUsuario(equipo)) {
-                                            precessOK = false;
-                                            break;
-                                        }
-                                    }
-                                } else {
+                                if (!jsonParsing.processingJson(jsonArray, EQUIPO_ADEFUL, SplashUsuario.this))
                                     precessOK = false;
-                                }
                             }
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray("TORNEO_ADEFUL");
+                        jsonArray = json.optJSONArray(TORNEO_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (controladorUsuario.eliminarTorneoUsuario()) {
-
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        jsonAux = jsonArray.getJSONObject(i);
-
-                                        torneo = new Torneo(jsonAux.getInt("ID_TORNEO"),
-                                                jsonAux.getString("DESCRIPCION"));
-
-                                        if (!controladorUsuario.insertTorneoUsuario(torneo)) {
-                                            precessOK = false;
-                                            break;
-                                        }
-                                    }
-                                } else {
+                                if (!jsonParsing.processingJson(jsonArray, TORNEO_ADEFUL, SplashUsuario.this))
                                     precessOK = false;
-                                }
                             }
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray("CANCHA_ADEFUL");
+                        jsonArray = json.optJSONArray(CANCHA_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (controladorUsuario.eliminarCanchaUsuarioAdeful()) {
-
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        jsonAux = jsonArray.getJSONObject(i);
-
-                                        cancha = new Cancha(jsonAux.getInt("ID_CANCHA"), jsonAux.getString("NOMBRE"), jsonAux.getString("LONGITUD"),
-                                                jsonAux.getString("LATITUD"), jsonAux.getString("DIRECCION"));
-
-                                        if (!controladorUsuario.insertCanchaUsuarioAdeful(cancha)) {
-                                            precessOK = false;
-                                            break;
-                                        }
-                                    }
-                                } else {
+                                if (!jsonParsing.processingJson(jsonArray, CANCHA_ADEFUL, SplashUsuario.this))
                                     precessOK = false;
+                            }
+                            jsonArray = null;
+                            jsonAux = null;
+                            jsonArray = json.optJSONArray(DIVISION_ADEFUL);
+                            if (jsonArray != null) {
+                                if (jsonArray.length() > 0) {
+                                    if (!jsonParsing.processingJson(jsonArray, DIVISION_ADEFUL, SplashUsuario.this))
+                                        precessOK = false;
                                 }
                             }
                             jsonArray = null;
                             jsonAux = null;
-                            jsonArray = json.optJSONArray("DIVISION_ADEFUL");
+                            jsonArray = json.optJSONArray(FIXTURE_ADEFUL);
                             if (jsonArray != null) {
                                 if (jsonArray.length() > 0) {
-                                    if (controladorUsuario.eliminarDivisionUsuarioAdeful()) {
-
-                                        for (int i = 0; i < jsonArray.length(); i++) {
-                                            jsonAux = jsonArray.getJSONObject(i);
-
-                                            division = new Division(jsonAux.getInt("ID_DIVISION"),
-                                                    jsonAux.getString("DESCRIPCION"));
-
-                                            if (!controladorUsuario.insertDivisionUsuarioAdeful(division)) {
-                                                precessOK = false;
-                                                break;
-                                            }
-                                        }
-                                    } else {
+                                    if (!jsonParsing.processingJson(jsonArray, FIXTURE_ADEFUL, SplashUsuario.this))
                                         precessOK = false;
-                                    }
                                 }
                             }
                             jsonArray = null;
                             jsonAux = null;
-                            jsonArray = json.optJSONArray("FIXTURE_ADEFUL");
+                            jsonArray = json.optJSONArray(JUGADOR_ADEFUL);
                             if (jsonArray != null) {
                                 if (jsonArray.length() > 0) {
-                                    if (controladorUsuario.eliminarFixtureUsuarioAdeful()) {
-
-                                        for (int i = 0; i < jsonArray.length(); i++) {
-                                            jsonAux = jsonArray.getJSONObject(i);
-
-                                            fixture = new Fixture(jsonAux.getInt("ID_FIXTURE"),
-                                                    jsonAux.getInt("ID_EQUIPO_LOCAL"),
-                                                    jsonAux.getInt("ID_EQUIPO_VISITA"),
-                                                    jsonAux.getInt("ID_DIVISION"),
-                                                    jsonAux.getInt("ID_TORNEO"),
-                                                    jsonAux.getInt("ID_CANCHA"), jsonAux.getString("FECHA"),
-                                                    jsonAux.getString("ANIO"), jsonAux.getString("DIA"),
-                                                    jsonAux.getString("HORA"), jsonAux.getString("RESULTADO_LOCAL"),
-                                                    jsonAux.getString("RESULTADO_VISITA"));
-
-                                            if (!controladorUsuario.insertFixtureUsuarioAdeful(fixture)) {
-                                                precessOK = false;
-                                                break;
-                                            }
-                                        }
-                                    } else {
+                                    if (!jsonParsing.processingJson(jsonArray, JUGADOR_ADEFUL, SplashUsuario.this))
                                         precessOK = false;
-                                    }
                                 }
                             }
+                            jsonArray = null;
+//                            jsonAux = null;
+//                            jsonArray = json.optJSONArray(POSICION_ADEFUL);
+//                            if (jsonArray != null) {
+//                                if (jsonArray.length() > 0) {
+//                                    if (!jsonParsing.processingJson(jsonArray, POSICION_ADEFUL, SplashUsuario.this))
+//                                        precessOK = false;
+//                                }
+//                            }
+                            jsonArray = null;
+                            jsonAux = null;
+                            jsonArray = json.optJSONArray(ENTRENAMIENTO_ADEFUL);
+                            if (jsonArray != null) {
+                                if (jsonArray.length() > 0) {
+                                    if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_ADEFUL, SplashUsuario.this))
+                                        precessOK = false;
+                                }
+                            }
+                            jsonArray = null;
+                            jsonAux = null;
+                            jsonArray = json.optJSONArray(ENTRENAMIENTO_DIVISION_ADEFUL);
+                            if (jsonArray != null) {
+                                if (jsonArray.length() > 0) {
+                                    if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_DIVISION_ADEFUL, SplashUsuario.this))
+                                        precessOK = false;
+                                }
+                            }
+
+
                         }
                     } else if (success == 3) {
                         Intent i = new Intent(SplashUsuario.this, NavigationUsuario.class);
@@ -410,53 +326,53 @@ public class SplashUsuario extends AppCompatActivity {
         }
     }
 
-    public static Bitmap getBitmap(String url) {
+//    public static Bitmap getBitmap(String url) {
+//
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+//                .permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
+//        Bitmap bm = null;
+//        BitmapFactory.Options bmOptions;
+//        bmOptions = new BitmapFactory.Options();
+//        bmOptions.inSampleSize = 1;
+//
+//        if (bmOptions != null)
+//            bm = loadBitmap(url, bmOptions);
+//
+//        return bm;
+//    }
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                .permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        Bitmap bm = null;
-        BitmapFactory.Options bmOptions;
-        bmOptions = new BitmapFactory.Options();
-        bmOptions.inSampleSize = 1;
-
-        if (bmOptions != null)
-            bm = loadBitmap(url, bmOptions);
-
-        return bm;
-    }
-
-    public static Bitmap loadBitmap(String URL, BitmapFactory.Options options) {
-        Bitmap bitmap = null;
-        InputStream in = null;
-        try {
-            in = OpenHttpConnection(URL);
-            bitmap = BitmapFactory.decodeStream(in, null, options);
-            if (in != null)
-                in.close();
-        } catch (IOException e1) {
-        }
-        return bitmap;
-    }
-
-    private static InputStream OpenHttpConnection(String strURL)
-            throws IOException {
-        InputStream inputStream = null;
-        URL url = new URL(strURL);
-        URLConnection conn = url.openConnection();
-
-        try {
-            HttpURLConnection httpConn = (HttpURLConnection) conn;
-            httpConn.setRequestMethod("GET");
-            httpConn.connect();
-
-            if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                inputStream = httpConn.getInputStream();
-            }
-        } catch (Exception ex) {
-        }
-        return inputStream;
-    }
+//    public static Bitmap loadBitmap(String URL, BitmapFactory.Options options) {
+//        Bitmap bitmap = null;
+//        InputStream in = null;
+//        try {
+//            in = OpenHttpConnection(URL);
+//            bitmap = BitmapFactory.decodeStream(in, null, options);
+//            if (in != null)
+//                in.close();
+//        } catch (IOException e1) {
+//        }
+//        return bitmap;
+//    }
+//
+//    private static InputStream OpenHttpConnection(String strURL)
+//            throws IOException {
+//        InputStream inputStream = null;
+//        URL url = new URL(strURL);
+//        URLConnection conn = url.openConnection();
+//
+//        try {
+//            HttpURLConnection httpConn = (HttpURLConnection) conn;
+//            httpConn.setRequestMethod("GET");
+//            httpConn.connect();
+//
+//            if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+//                inputStream = httpConn.getInputStream();
+//            }
+//        } catch (Exception ex) {
+//        }
+//        return inputStream;
+//    }
 
 
 }

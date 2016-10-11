@@ -17,6 +17,12 @@ public class EntrenamientoRecycler {
         ID_CANCHA = id_cancha;
         NOMBRE = nombre;
     }
+    public EntrenamientoRecycler(int id, String dia, String hora, String nombre) {
+        ID_ENTRENAMIENTO = id;
+        DIA = dia;
+        HORA = hora;
+        NOMBRE = nombre;
+    }
 
     public int getID_ENTRENAMIENTO() {
         return ID_ENTRENAMIENTO;
