@@ -22,23 +22,28 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
 
 
-public class FragmentEditarUsuario extends Fragment {
+public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListener {
 
-    private int CheckedPositionFragment;
+    private int CheckedPositionFragment, posicion = 0;
+    ;
     private RecyclerView recyclerArticulo;
     private ControladorGeneral controladorGeneral;
     private ArrayList<Usuario> usuarioArray;
     private AdaptadorRecyclerUsuario adaptadorRecyclerUsuario;
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
+    private String URL = null;
+    private Request request = new Request();
 
     public static FragmentEditarUsuario newInstance() {
         FragmentEditarUsuario fragment = new FragmentEditarUsuario();
@@ -80,8 +85,6 @@ public class FragmentEditarUsuario extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
     }
-
-
 
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
@@ -125,16 +128,9 @@ public class FragmentEditarUsuario extends Fragment {
                             @Override
                             public void onClick(View v) {
 
-                                if (controladorGeneral.eliminarUsuario(usuarioArray.get(position)
-                                        .getID_USUARIO())) {
-                                    recyclerViewLoadUsuario();
-                                    Toast.makeText(
-                                            getActivity(),
-                                            "Usuario eliminado correctamente",
-                                            Toast.LENGTH_SHORT).show();
-                                    dialogoAlerta.alertDialog.dismiss();
-                                } else {
-                        auxiliarGeneral.errorDataBase(getActivity());                                }
+                                posicion = usuarioArray.get(position)
+                                        .getID_USUARIO();
+                                envioWebService();
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -155,19 +151,51 @@ public class FragmentEditarUsuario extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    public void envioWebService() {
+        request.setMethod("POST");
+        request.setParametrosDatos("id_usuario", String.valueOf(posicion));
+        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        URL = null;
+        URL = auxiliarGeneral.getURLUSUARIOALL();
+        URL = URL + auxiliarGeneral.getDeletePHP("Usuario");
+
+        new AsyncTaskGeneric(getActivity(), this, URL, request, "Usuario", true, posicion, "o");
+    }
+
+    public void inicializarControles(String mensaje) {
+        recyclerViewLoadUsuario();
+        posicion = 0;
+        dialogoAlerta.alertDialog.dismiss();
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
+
     public void recyclerViewLoadUsuario() {
 
         usuarioArray = controladorGeneral.selectListaUsuario();
-        if(usuarioArray != null) {
+        if (usuarioArray != null) {
+          if(usuarioArray.size() > 0){
+              usuarioArray.remove(usuarioArray.size()-1);
+          }
             adaptadorRecyclerUsuario = new AdaptadorRecyclerUsuario(usuarioArray);
             recyclerArticulo.setAdapter(adaptadorRecyclerUsuario);
-        }else{
-        auxiliarGeneral.errorDataBase(getActivity());
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
+    }
+
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            inicializarControles(mensaje);
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
         }
     }
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -176,6 +204,7 @@ public class FragmentEditarUsuario extends Fragment {
 
         private GestureDetector detector;
         private ClickListener clickListener;
+
         public RecyclerTouchListener(Context context,
                                      final RecyclerView recyclerView,
                                      final ClickListener clickListener) {
@@ -186,6 +215,7 @@ public class FragmentEditarUsuario extends Fragment {
                         public boolean onSingleTapUp(MotionEvent e) {
                             return true;
                         }
+
                         @Override
                         public void onLongPress(MotionEvent e) {
                             View child = recyclerView.findChildViewUnder(
@@ -213,6 +243,7 @@ public class FragmentEditarUsuario extends Fragment {
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
@@ -222,17 +253,10 @@ public class FragmentEditarUsuario extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
-        menu.getItem(3).setVisible(false);// adeful
-        menu.getItem(4).setVisible(false);// puesto
-        menu.getItem(5).setVisible(false);// posicion
-        menu.getItem(6).setVisible(false);// cargo
-        // menu.getItem(7).setVisible(false);//cerrar
-        menu.getItem(8).setVisible(false);// guardar
-        menu.getItem(9).setVisible(false);// Subir
-        menu.getItem(10).setVisible(false); // eliminar
-        menu.getItem(11).setVisible(false); // consultar
+        menu.getItem(1).setVisible(false);// posicion
+        menu.getItem(2).setVisible(false);// cargo
+        // menu.getItem(3).setVisible(false);//cerrar
+        menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -240,22 +264,15 @@ public class FragmentEditarUsuario extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
+
         if (id == R.id.action_usuario) {
-
-            /*Intent usuario = new Intent(getActivity(),
-                    NavigationDrawerUsuario.class);
-            startActivity(usuario);*/
-
+            auxiliarGeneral.goToUser(getActivity());
             return true;
         }
+        if (id == R.id.action_cerrar) {
+            auxiliarGeneral.close(getActivity());
+        }
 
-        if (id == R.id.action_permisos) {
-            return true;
-        }
-        if (id == R.id.action_lifuba) {
-            return true;
-        }
         if (id == android.R.id.home) {
 
             NavUtils.navigateUpFromSameTask(getActivity());

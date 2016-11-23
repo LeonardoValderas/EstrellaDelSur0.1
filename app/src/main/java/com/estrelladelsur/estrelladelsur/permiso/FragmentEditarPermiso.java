@@ -5,28 +5,42 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerEditarPermiso;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
+import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.navegador.administrador.Navigation;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 
-public class FragmentEditarPermiso extends Fragment {
+public class FragmentEditarPermiso extends Fragment implements MyAsyncTaskListener {
 
     private Spinner entrenamientoAnioSpinner;
     private Spinner entrenamientoMesSpinner;
@@ -39,6 +53,10 @@ public class FragmentEditarPermiso extends Fragment {
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
     private Communicator communicator;
+    private String usuarioCreador = null;
+    private Request request;
+    private String URL = null;
+    private Permiso permiso;
 
     public static FragmentEditarPermiso newInstance() {
         FragmentEditarPermiso fragment = new FragmentEditarPermiso();
@@ -94,6 +112,7 @@ public class FragmentEditarPermiso extends Fragment {
     private void init() {
 
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        usuarioCreador = auxiliarGeneral.getUsuarioPreferences(getActivity());
         // RECYCLER VIEW
         recycleViewGeneral.setLayoutManager(new LinearLayoutManager(
                 getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -123,41 +142,15 @@ public class FragmentEditarPermiso extends Fragment {
                                                     int id_permiso = permisoArray.get(position).getID_PERMISO();
                                                     ArrayList<Integer> idSubmodulo = controladorGeneral.selectListaIdModulosId(id_permiso);
 
-                                                    if(idSubmodulo == null){
+                                                    if (idSubmodulo == null) {
                                                         auxiliarGeneral.errorDataBase(getActivity());
-                                                    }else {
-                                                        for (int i = 0; i < idSubmodulo.size(); i++) {
-
-                                                            if (!controladorGeneral.actualizarSubModuloSelectedFalse(idSubmodulo.get(i))) {
-                                                                auxiliarGeneral.errorDataBase(getActivity());
-                                                                isSalving = false;
-                                                                break;
-                                                            }
-
-                                                        }
-                                                    }
-                                                    if(isSalving) {
-                                                    if (controladorGeneral.eliminarPermiso(id_permiso)) {
-                                                        recyclerViewLoadPermiso();
-                                                        communicator.refreshDelete();
-                                                        Toast.makeText(
-                                                                getActivity(),
-                                                                "Permiso eliminado Correctamente",
-                                                                Toast.LENGTH_SHORT).show();
-
-                                                        dialogoAlerta.alertDialog.dismiss();
-                                                        }else{
-                                                        for (int i = 0; i < idSubmodulo.size(); i++) {
-
-                                                            if (!controladorGeneral.actualizarSubModuloSelectedTrue(idSubmodulo.get(i))) {
-                                                                auxiliarGeneral.errorDataBase(getActivity());
-                                                                break;
-                                                            }
-                                                        }
-                                                        auxiliarGeneral.errorDataBase(getActivity());
-                                                    }
                                                     } else {
-                                                        auxiliarGeneral.errorDataBase(getActivity());
+
+                                                        try {
+                                                            cargarEntidad(id_permiso, idSubmodulo);
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
                                                     }
                                                 }
                                             }
@@ -166,7 +159,6 @@ public class FragmentEditarPermiso extends Fragment {
                         .setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    // TODO Auto-generated method stub
                                                     dialogoAlerta.alertDialog.dismiss();
                                                 }
                                             }
@@ -196,8 +188,54 @@ public class FragmentEditarPermiso extends Fragment {
             adaptadorPermiso = new AdaptadorRecyclerEditarPermiso(permisoArray, getActivity());
             recycleViewGeneral.setAdapter(adaptadorPermiso);
         } else {
-        auxiliarGeneral.errorDataBase(getActivity());
+            auxiliarGeneral.errorDataBase(getActivity());
         }
+    }
+
+    public void cargarEntidad(int id, ArrayList<Integer> subModulosDelte) throws JSONException {
+        URL = null;
+        URL = auxiliarGeneral.getURLPERMISOALL();
+
+        permiso = new Permiso(id, subModulosDelte, auxiliarGeneral.getFechaOficial());
+
+
+        envioWebService();
+    }
+
+    public void envioWebService() throws JSONException {
+
+        JSONArray subModuloArrayDelete = new JSONArray();
+        request = new Request();
+        request.setMethod("POST");
+
+        if (permiso.getSubModulosdelete() != null) {
+            for (int i = 0; i < permiso.getSubModulosdelete().size(); i++) {
+
+                JSONObject submoduloIds = new JSONObject();
+                submoduloIds.put("submoduloDelete", String.valueOf(permiso.getSubModulosdelete().get(i)));
+                subModuloArrayDelete.put(submoduloIds);
+            }
+        }
+        request.setParametrosDatos("submoduloDelete", subModuloArrayDelete.toString());
+        request.setParametrosDatos("id_permiso", String.valueOf(permiso.getID_PERMISO()));
+        request.setParametrosDatos("fecha_actualizacion", permiso.getFECHA_ACTUALIZACION());
+        URL = URL + auxiliarGeneral.getDeletePHP("Permiso");
+
+
+        new AsyncTaskGeneric(getContext(), this, URL, request, "Permiso", permiso, true, "o", true);
+    }
+
+    public void inicializarControles(String mensaje) {
+        recyclerViewLoadPermiso();
+        communicator.refreshDelete();
+        dialogoAlerta.alertDialog.dismiss();
+        Toast.makeText(
+                getActivity(),
+                mensaje,
+                Toast.LENGTH_SHORT).show();
+        Intent nav = new Intent(getActivity(), Navigation.class);
+        nav.putExtra("usuario", usuarioCreador);
+        startActivity(nav);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -205,8 +243,18 @@ public class FragmentEditarPermiso extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            inicializarControles(mensaje);
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
+        }
+    }
+
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -250,11 +298,45 @@ public class FragmentEditarPermiso extends Fragment {
             }
             return false;
         }
+
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_administrador_general, menu);
+        // menu.getItem(0).setVisible(false);//usuario
+        menu.getItem(1).setVisible(false);// posicion
+        menu.getItem(2).setVisible(false);// cargo
+        // menu.getItem(3).setVisible(false);//cerrar
+        menu.getItem(4).setVisible(false);// guardar
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_usuario) {
+            auxiliarGeneral.goToUser(getActivity());
+            return true;
+        }
+        if (id == R.id.action_cerrar) {
+            auxiliarGeneral.close(getActivity());
+        }
+
+        if (id == android.R.id.home) {
+
+            NavUtils.navigateUpFromSameTask(getActivity());
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

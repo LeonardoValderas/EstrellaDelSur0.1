@@ -61,12 +61,12 @@ public class FragmentEntrenamientoUsuario extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_usuario_general,
+        View v = inflater.inflate(R.layout.fragment_general_liga_usuario,
                 container, false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         // RECYCLER
         recycleViewUsuarioGeneral = (RecyclerView) v
-                .findViewById(R.id.recycleViewUsuarioGeneral);
+                .findViewById(R.id.recycleViewGeneral);
         // CANCHA
         mSwipeRefreshLayout = (SwipeRefreshLayout) v
                 .findViewById(R.id.swipeRefreshLayout);

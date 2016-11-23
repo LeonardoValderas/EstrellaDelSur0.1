@@ -1,13 +1,12 @@
 package com.estrelladelsur.estrelladelsur.navegador.administrador;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,35 +16,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
-import com.estrelladelsur.estrelladelsur.entidad.Modulo;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
-import com.estrelladelsur.estrelladelsur.institucion.tabs_adm.TabsArticulo;
-import com.estrelladelsur.estrelladelsur.institucion.tabs_adm.TabsComision;
-import com.estrelladelsur.estrelladelsur.institucion.tabs_adm.TabsDireccion;
-import com.estrelladelsur.estrelladelsur.liga.tabs_adm.TabsAdeful;
-import com.estrelladelsur.estrelladelsur.liga.tabs_adm.TabsLifuba;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_general.TabsEntrenamiento;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_adm.TabsFixture;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_general.TabsJugador;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_adm.TabsResultado;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_general.TabsSancion;
+import com.estrelladelsur.estrelladelsur.institucion.administrador.tabs_adm.TabsArticulo;
+import com.estrelladelsur.estrelladelsur.institucion.administrador.tabs_adm.TabsComision;
+import com.estrelladelsur.estrelladelsur.institucion.administrador.tabs_adm.TabsDireccion;
+import com.estrelladelsur.estrelladelsur.liga.administrador.tabs_adm.TabsAdeful;
+import com.estrelladelsur.estrelladelsur.liga.administrador.tabs_adm.TabsLifuba;
+import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_general.TabsEntrenamiento;
+import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsFixture;
+import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_general.TabsJugador;
+import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsResultado;
+import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsSancion;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
 import com.estrelladelsur.estrelladelsur.permiso.TabsPermiso;
 import com.estrelladelsur.estrelladelsur.permiso.TabsUsuario;
-import com.estrelladelsur.estrelladelsur.social.TabsFoto;
-import com.estrelladelsur.estrelladelsur.social.TabsNoticia;
-import com.estrelladelsur.estrelladelsur.social.TabsNotificacion;
-import com.estrelladelsur.estrelladelsur.social.TabsPublicidad;
+import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsFoto;
+import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsNoticia;
+import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsNotificacion;
+import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsPublicidad;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,7 +68,7 @@ public class Navigation extends AppCompatActivity {
     private List<String> permisoChild;
     private HashMap<String, List<String>> listDataChild;
     private List<String> institucionalChild;
-    private TextView txtAbSubTitulo, txtAbTitulo, textViewLiga;
+    private TextView txtAbTitulo;
     private ControladorGeneral controladorGeneral;
     private ControladorAdeful controladorAdeful;
     private Typeface titulos;
@@ -78,7 +77,7 @@ public class Navigation extends AppCompatActivity {
     private String usuarioAdministrador = null;
     private int idUsuarioAdministrador;
     private String clickGrup = null;
-    String clickChild = null;
+    private String clickChild = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,10 +89,6 @@ public class Navigation extends AppCompatActivity {
         auxiliarGeneral = new AuxiliarGeneral(Navigation.this);
         titulos = auxiliarGeneral.tituloFont(Navigation.this);
         adeful = auxiliarGeneral.ligaFont(Navigation.this);
-
-        //  new TaskNavigation().execute();
-
-        //usuario adminsitrador
         usuarioAdminitrador();
         init();
         drawerLayout.openDrawer(GravityCompat.START);
@@ -113,7 +108,6 @@ public class Navigation extends AppCompatActivity {
 
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
-        // preparing list data
         prepareListData();
         listAdapter = new ExpandableAdapter(this, listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);
@@ -127,63 +121,43 @@ public class Navigation extends AppCompatActivity {
                 clickGrup = parent.getExpandableListAdapter().getGroup(groupPosition).toString();
                 clickChild = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).toString();
 
-//                if (groupPosition == 0) {
                 if (clickGrup.equals("INSTITUCION")) {
-                    //switch (childPosition) {
                     switch (clickChild) {
                         case "Articulos":
                             Intent estrella = new Intent(Navigation.this, TabsArticulo.class);
                             startActivity(estrella);
-//                            tituloClickFragment = institucionalChild.get(
-//                                    childPosition).toString();
                             break;
                         case "Comisión Directiva":
                             Intent comision = new Intent(Navigation.this, TabsComision.class);
                             startActivity(comision);
-//                            tituloClickFragment = institucionalChild.get(
-//                                    childPosition).toString();
                             break;
 
                         case "Dirección Técnica":
                             Intent direccion = new Intent(Navigation.this, TabsDireccion.class);
                             startActivity(direccion);
-//                            tituloClickFragment = institucionalChild.get(
-//                                    childPosition).toString();
                             break;
                     }
-                    //  }
-                    //} else if (groupPosition == 1) {
                 } else if (clickGrup.equals("MI EQUIPO")) {
                     switch (clickChild) {
                         case "Fixture":
                             Intent fixture = new Intent(Navigation.this, TabsFixture.class);
                             startActivity(fixture);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
                             break;
                         case "Resultados":
                             Intent resultado = new Intent(Navigation.this, TabsResultado.class);
                             startActivity(resultado);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
                             break;
                         case "Jugadores":
                             Intent jugadores = new Intent(Navigation.this, TabsJugador.class);
                             startActivity(jugadores);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
                             break;
                         case "Entrenamientos":
                             Intent entrenamiento = new Intent(Navigation.this, TabsEntrenamiento.class);
                             startActivity(entrenamiento);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
                             break;
                         case "Sancionados":
                             Intent sanciones = new Intent(Navigation.this, TabsSancion.class);
                             startActivity(sanciones);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
                             break;
                     }
 
@@ -203,27 +177,19 @@ public class Navigation extends AppCompatActivity {
                         case "Notificación":
                             Intent notificacion = new Intent(Navigation.this, TabsNotificacion.class);
                             startActivity(notificacion);
-//                            tituloClickFragment = ligaChild.get(childPosition)
-//                                    .toString();
                             break;
                         case "Noticias":
                             Intent noticia = new Intent(Navigation.this, TabsNoticia.class);
                             startActivity(noticia);
-//                            tituloClickFragment = ligaChild.get(childPosition)
-//                                    .toString();
                             break;
                         case "Fotos":
                             Intent foto = new Intent(Navigation.this, TabsFoto.class);
                             startActivity(foto);
-                            //      tituloClickFragment = ligaChild.get(childPosition)
-                            //            .toString();
                             break;
 
                         case "Publicidad":
                             Intent publicidad = new Intent(Navigation.this, TabsPublicidad.class);
                             startActivity(publicidad);
-//                            tituloClickFragment = socialChild.get(childPosition)
-//                                    .toString();
                             break;
                     }
                 } else if (clickGrup.equals("PERMISO")) {
@@ -231,14 +197,10 @@ public class Navigation extends AppCompatActivity {
                         case "Usuarios":
                             Intent usuario = new Intent(Navigation.this, TabsUsuario.class);
                             startActivity(usuario);
-//                            tituloClickFragment = permisoChild.get(childPosition)
-//                                    .toString();
                             break;
                         case "Permisos":
                             Intent permiso = new Intent(Navigation.this, TabsPermiso.class);
                             startActivity(permiso);
-//                            tituloClickFragment = permisoChild.get(childPosition)
-//                                    .toString();
                             break;
                     }
                 }
@@ -307,58 +269,25 @@ public class Navigation extends AppCompatActivity {
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-
-    public class TaskNavigation extends AsyncTask<Void, Void, Boolean> {
-        private ProgressDialog dialog;
-
-        @Override
-        protected void onPreExecute() {
-            dialog = new ProgressDialog(Navigation.this);
-            dialog.setMessage("¨Procesando...");
-            dialog.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            usuarioAdminitrador();
-            init();
-            drawerLayout.openDrawer(GravityCompat.START);
-            inicializarDatosGenerales();
-            dialog.dismiss();
-        }
-    }
-
     private void prepareListData() {
-        ArrayList<SubModulo> subModuloArray = new ArrayList<SubModulo>();
-        ArrayList<Permiso> subModuloArrayPermiso = new ArrayList<Permiso>();
+        ArrayList<SubModulo> subModuloArray = new ArrayList<>();
+        ArrayList<Permiso> subModuloArrayPermiso = new ArrayList<>();
         String ADM = "ADM";
-        listDataHeader = new ArrayList<String>();
-        listDataHeaderAux = new ArrayList<String>();
+        listDataHeader = new ArrayList<>();
+        listDataHeaderAux = new ArrayList<>();
         listDataChild = new HashMap<String, List<String>>();
-        institucionalChild = new ArrayList<String>();
-        mi_equipoChild = new ArrayList<String>();
-        ligaChild = new ArrayList<String>();
-        socialChild = new ArrayList<String>();
-        permisoChild = new ArrayList<String>();
+        institucionalChild = new ArrayList<>();
+        mi_equipoChild = new ArrayList<>();
+        ligaChild = new ArrayList<>();
+        socialChild = new ArrayList<>();
+        permisoChild = new ArrayList<>();
 
         usuarioAdministrador = getUsuarioPreferences();
 
         if (usuarioAdministrador != null) {
 
             if (usuarioAdministrador.equals(ADM)) {
-
-                subModuloArray = controladorGeneral.selectListaModuloSubModuloFalse();
+                subModuloArray = controladorGeneral.selectListaModuloSubModuloADM();
                 if (subModuloArray != null) {
                     loadModuloView(subModuloArray, null, true);
                 } else {
@@ -372,14 +301,14 @@ public class Navigation extends AppCompatActivity {
                     if (subModuloArrayPermiso != null)
                         loadModuloView(null, subModuloArrayPermiso, false);
                 } else {
-                    auxiliarGeneral.errorDataBase(Navigation.this);
+                    Toast.makeText(Navigation.this, "Usuario sin permisos asignados.", Toast.LENGTH_SHORT).show();
                 }
             }
         } else {
             auxiliarGeneral.errorDataBase(Navigation.this);
         }
         // Modulo unicos
-        HashSet<String> uniqueModulo = new HashSet<String>(listDataHeaderAux);
+        HashSet<String> uniqueModulo = new HashSet<>(listDataHeaderAux);
         for (String value : uniqueModulo) {
             listDataHeader.add(value);
         }
@@ -463,7 +392,7 @@ public class Navigation extends AppCompatActivity {
     }
 
     public void inicializarDatosGenerales() {
-        iniciarModulos();
+        //  iniciarModulos();
         iniciarFecha();
         iniciarAnio();
         iniciarMes();
@@ -493,10 +422,6 @@ public class Navigation extends AppCompatActivity {
             auxiliarGeneral.errorDataBase(Navigation.this);
         }
     }
-
-
-
-
 
     public void iniciarAnio() {
         ArrayList<Anio> anioArray = new ArrayList<>();
@@ -548,58 +473,13 @@ public class Navigation extends AppCompatActivity {
         }
     }
 
-    public void iniciarModulos() {
-
-        ArrayList<Modulo> arrayModulo = new ArrayList<>();
-        ArrayList<SubModulo> arraySubModulo = new ArrayList<>();
-        arrayModulo = controladorGeneral.selectListaModulo();
-        arraySubModulo = controladorGeneral.selectListaSubModulo();
-
-        if (arrayModulo != null) {
-            if (arrayModulo.isEmpty()) {
-                for (int i = 0; i < getResources().getStringArray(R.array.moduloArray).length; i++) {
-                    Modulo modulo = new Modulo(0, getResources().getStringArray(R.array.moduloArray)[i]);
-                    controladorGeneral.insertModulo(modulo);
-                }
-            }
-        } else {
-            auxiliarGeneral.errorDataBase(Navigation.this);
-        }
-        if (arraySubModulo != null) {
-            if (arraySubModulo.isEmpty()) {
-
-                for (int i = 0; i < getResources().getStringArray(R.array.subModuloArray).length; i++) {
-                    int key = i + 1;
-                    if (key >= 1 && key <= 3) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 1);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    }
-                    if (key >= 4 && key <= 8) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 2);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    }
-                    if (key == 9) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 3);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    }
-                    if (key >= 10 && key <= 13) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    }
-                    if (key >= 14 && key <= 15) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 5);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    }
-                }
-            }
-        } else {
-            auxiliarGeneral.errorDataBase(Navigation.this);
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.getItem(0).setVisible(false);//adm
+       // menu.getItem(1).setVisible(false);// user
+       // menu.getItem(2).setVisible(false);// cerrar
+
         return true;
     }
 
@@ -609,11 +489,12 @@ public class Navigation extends AppCompatActivity {
             return true;
         }
         int id = item.getItemId();
-        if (id == R.id.action_administrador) {
-
-            Intent i = new Intent(this, NavigationUsuario.class);
-            startActivity(i);
+        if (id == R.id.action_usuario) {
+            auxiliarGeneral.goToUser(Navigation.this);
             return true;
+        }
+        if (id == R.id.action_cerrar) {
+            auxiliarGeneral.close(Navigation.this);
         }
         return super.onOptionsItemSelected(item);
     }

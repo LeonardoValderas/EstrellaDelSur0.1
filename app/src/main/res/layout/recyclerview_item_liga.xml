@@ -27,23 +27,29 @@
                 android:orientation="vertical">
 
                 <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/imageViewMapa"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:src="@mipmap/ic_mapa_icon"
-                    android:visibility="gone"
-                    app:civ_border_color="#FF000000" />
+                android:id="@+id/imageViewMapa"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:src="@mipmap/ic_mapa_icon"
+                android:visibility="gone"
+                app:civ_border_color="#FF000000" />
+
             </LinearLayout>
+            <!--<de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"-->
+                <!--android:id="@+id/imageViewEscudo"-->
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="80dp"-->
+                <!--android:layout_marginLeft="10dp"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--app:civ_border_color="#FF000000" />-->
 
-
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+           <ImageView
                 android:id="@+id/imageViewEscudo"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                app:civ_border_color="#FF000000" />
+                android:layout_marginRight="10dp"/>
 
             <ImageView
                 android:id="@+id/imageViewFoto"

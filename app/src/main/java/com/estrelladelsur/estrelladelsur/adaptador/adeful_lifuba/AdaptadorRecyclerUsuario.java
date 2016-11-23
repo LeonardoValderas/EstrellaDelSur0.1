@@ -56,10 +56,11 @@ public class AdaptadorRecyclerUsuario extends
 
     @Override
     public void onBindViewHolder(UsuarioViewHolder viewHolder, int pos) {
-        Usuario item = usuarioArray.get(pos);
 
+        Usuario item = usuarioArray.get(pos);
         viewHolder.bindTitular(item);
     }
+
 
     @Override
     public int getItemCount() {

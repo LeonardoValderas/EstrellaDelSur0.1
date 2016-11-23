@@ -22,6 +22,14 @@ public class Noticia {
         USUARIO_ACTUALIZACION = usuario_actualizacion;
         FECHA_ACTUALIZACION = fecha_actualizacion;
     }
+    public Noticia(int id, String titulo,String noticia,String link) {
+
+        ID_NOTICIA = id;
+        TITULO = titulo;
+        DESCRIPCION = noticia;
+        LINK = link;
+    }
+
 
     public String getDESCRIPCION() {
         return DESCRIPCION;

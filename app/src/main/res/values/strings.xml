@@ -178,7 +178,7 @@
         <item>Genere un torneo.</item>
     </string-array>
     <string name="ceroSpinnerTorneo">Genere un torneo.</string>
-    <string name="torneo_actual">Es torneo actual</string>
+    <string name="torneo_actual">Sin Torneo Asignado.</string>
     <!-- Array SPINNER FECHA  -->
     <string-array name="ceroSpinnerFecha">
         <item>Genere un fecha.</item>
@@ -249,7 +249,6 @@
 
     <!-- Array Anio  -->
     <string-array name="anioArray">
-        <item>2015</item>
         <item>2016</item>
         <item>2017</item>
         <item>2018</item>

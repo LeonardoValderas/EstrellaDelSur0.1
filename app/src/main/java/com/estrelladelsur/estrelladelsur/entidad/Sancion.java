@@ -20,13 +20,12 @@ public class Sancion {
     private byte[] FOTO_JUGADOR;
 
     // SANCION
-    public Sancion(int id, int id_jugador, int torneo, int anio, int amarilla, int roja, int fecha, String observaciones, String usuario,
+    public Sancion(int id, int id_jugador, int torneo, int amarilla, int roja, int fecha, String observaciones, String usuario,
                    String fechaCreacion, String usuario_act, String fechaActualizacion) {
 
         ID_SANCION = id;
         ID_JUGADOR = id_jugador;
         ID_TORNEO = torneo;
-        ID_ANIO = anio;
         AMARILLA = amarilla;
         ROJA = roja;
         FECHA_SUSPENSION = fecha;
@@ -36,6 +35,19 @@ public class Sancion {
         USUARIO_ACTUALIZACION = usuario_act;
         FECHA_ACTUALIZACION = fechaActualizacion;
     }
+
+    // SANCION
+    public Sancion(int id, int id_jugador, int torneo, int amarilla, int roja, int fecha, String observaciones) {
+
+        ID_SANCION = id;
+        ID_JUGADOR = id_jugador;
+        ID_TORNEO = torneo;
+        AMARILLA = amarilla;
+        ROJA = roja;
+        FECHA_SUSPENSION = fecha;
+        OBSERVACIONES = observaciones;
+    }
+
 
     // SANCION RECYCLER
     public Sancion(int id, int id_jugador, String nombre_jugador, byte[] foto,int id_division, String nombre_division,

@@ -72,8 +72,8 @@ public class AdaptadorEditarSancion extends
 			textRecyclerViewTarjetas.setTypeface(equipo);
 			textRecyclerViewFecha.setText("Fechas de Sanción: " + sancion.getFECHA_SUSPENSION());
 			textRecyclerViewFecha.setTypeface(texto, Typeface.BOLD);
-			textRecyclerViewObs.setText("*" + sancion.getOBSERVACIONES());
-			textRecyclerViewObs.setTypeface(texto);
+			textRecyclerViewObs.setText(sancion.getOBSERVACIONES());
+			//textRecyclerViewObs.setTypeface(texto);
 		}
 	}
 

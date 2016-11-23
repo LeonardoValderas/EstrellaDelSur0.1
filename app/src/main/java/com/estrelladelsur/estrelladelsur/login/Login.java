@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.navegador.administrador.Navigation;
 
@@ -24,6 +24,7 @@ public class Login extends AppCompatActivity {
     private Button aceptar, cancelar;
     private TextView errorText;
     private ControladorGeneral controladorGeneral;
+    private ControladorUsuarioGeneral controladorUsuarioGeneral;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Usuario> usuarioUsuario = new ArrayList<Usuario>();
     private String usuario = null, pass = null;
@@ -50,7 +51,18 @@ public class Login extends AppCompatActivity {
 
     private void init() {
         controladorGeneral = new ControladorGeneral(Login.this);
+        controladorUsuarioGeneral = new ControladorUsuarioGeneral(Login.this);
+
+        //ESTO LO TENGO QUE TRAER DESDE LA BASE CUANDO REALICE LA SINCONIZACION ADM
+        Usuario u = new Usuario(1,"ADM","123");
+
         usuarioUsuario = controladorGeneral.selectListaUsuario();
+        if(usuarioUsuario == null || usuarioUsuario.size() == 0 ) {
+            controladorGeneral.insertUsuario(u.getID_USUARIO(), u);
+            usuarioUsuario.add(u);
+        }
+            // usuarioUsuario = controladorUsuarioGeneral.selectListaUsuario();
+
         auxiliarGeneral = new AuxiliarGeneral(Login.this);
 
         aceptar.setOnClickListener(new View.OnClickListener() {
@@ -77,14 +89,14 @@ public class Login extends AppCompatActivity {
                             if (usuarioOK) {
                                 if (pass.equals(usuarioUsuario.get(posicion).getPASSWORD().toString())) {
                                     passOK = true;
-                                    liga = usuarioUsuario.get(posicion).isLIGA();
+                                  //  liga = usuarioUsuario.get(posicion).isLIGA();
                                     id_usuario = usuarioUsuario.get(posicion).getID_USUARIO();
                                 } else {
                                     showError();
                                 }
                             }
                             if (usuarioOK && passOK) {
-                            intentAdeful(liga);
+                            intentAdeful();
                             } else {
                                 showError();
                             }
@@ -114,16 +126,21 @@ public class Login extends AppCompatActivity {
         passOK = false;
     }
 
-    public void intentAdeful(boolean liga){
-      //  Intent ligaIntente = null;
-        if(liga) {
+    public void intentAdeful(){
         ligaIntente = new Intent(Login.this, Navigation.class);
-        }else{
-       // ligaIntente = new Intent(Login.this, NavigationLifuba.class);
-        }
         ligaIntente.putExtra("id_usuario",id_usuario);
         ligaIntente.putExtra("usuario", usuario);
-        ligaIntente.putExtra("pass", pass);
+//        ligaIntente.putExtra("pass", pass);
         startActivity(ligaIntente);
+      //  Intent ligaIntente = null;
+      //  if(liga) {
+
+        //}else{
+       // ligaIntente = new Intent(Login.this, NavigationLifuba.class);
+        //}
+//        ligaIntente.putExtra("id_usuario",id_usuario);
+//        ligaIntente.putExtra("usuario", usuario);
+//        ligaIntente.putExtra("pass", pass);
+//        startActivity(ligaIntente);
     }
 }

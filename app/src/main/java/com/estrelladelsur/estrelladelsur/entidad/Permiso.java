@@ -1,5 +1,7 @@
 package com.estrelladelsur.estrelladelsur.entidad;
 
+import java.util.ArrayList;
+
 public class Permiso {
     //PERMISO
     private int ID_PERMISO;
@@ -16,49 +18,9 @@ public class Permiso {
     private String FECHA_CREACION;
     private String USUARIO_ACTUALIZACION;
     private String FECHA_ACTUALIZACION;
-
-    //ENTRENAMIENTO
-//    public Permiso(int id, int id_usuario, String user, String pass, int id_modulo, int id_submodulo,
-//                    String modulo, String submodulo, boolean isSelected, String usuario, String fechaCreacion,
-//                   String usuario_act, String fechaActualizacion) {
-//        ID_PERMISO = id;
-//        ID_USUARIO = id_usuario;
-//        USUARIO = user;
-//        PASSWORD = pass;
-//        ID_MODULO = id_modulo;
-//        ID_SUBMODULO = id_submodulo;
-//        MODULO = modulo;
-//        SUBMODULO = submodulo;
-//        boolean ISSELECTED = isSelected;
-//        USUARIO_CREADOR = usuario;
-//        FECHA_CREACION = fechaCreacion;
-//        USUARIO_ACTUALIZACION = usuario_act;
-//        FECHA_ACTUALIZACION = fechaActualizacion;
-//    }
-    //ENTRENAMIENTO
-//    public Permiso(int id, int id_usuario, int id_modulo, int id_submodulo,
-//                   String modulo, String submodulo, boolean isSelected) {
-//        ID_PERMISO = id;
-//        ID_USUARIO = id_usuario;
-//        ID_MODULO = id_modulo;
-//        ID_SUBMODULO = id_submodulo;
-//        MODULO = modulo;
-//        SUBMODULO = submodulo;
-//        ISSELECTED = isSelected;
-//    }
-
-    //ENTRENAMIENTO
-//    public Permiso(int id, int id_usuario, int id_modulo, int id_submodulo,
-//                   String modulo, String submodulo, boolean isSelected) {
-//        ID_PERMISO = id;
-//        ID_USUARIO = id_usuario;
-//        ID_MODULO = id_modulo;
-//        ID_SUBMODULO = id_submodulo;
-//        MODULO = modulo;
-//        SUBMODULO = submodulo;
-//        ISSELECTED = isSelected;
-//    }
-
+    private ArrayList<SubModulo> submoduloArrayFalse;
+    private ArrayList<SubModulo> subModulosTrue;
+    private  ArrayList<Integer> subModulosdelete;
     //PERMISO X MODULO
     public Permiso(int id, int id_permiso, int id_modulo, int id_submodulo) {
         ID_PERMISO_MODULO = id;
@@ -73,6 +35,7 @@ public class Permiso {
         ID_USUARIO = id_usuario;
         USUARIO = nombre;
     }
+
     //PERMISO X MODULO
     public Permiso(int id_modulo, String modulo, int id_submodulo, String submodulo) {
         ID_MODULO = id_modulo;
@@ -91,29 +54,25 @@ public class Permiso {
         MODULO = modulo;
         SUBMODULO = submodulo;
     }
-
     //PERMISO
-    public Permiso(int id, int id_usuario, int id_modulo, int id_submodulo
-            , String modulo, String submodulo) {
-        ID_PERMISO = id;
-        ID_USUARIO = id_usuario;
-        ID_MODULO = id_modulo;
-        ID_SUBMODULO = id_submodulo;
-        MODULO = modulo;
-        SUBMODULO = submodulo;
-    }
-    //PERMISO
-    public Permiso(int id, int id_usuario, int id_modulo, int id_submodulo, String usuario, String fechaCreacion,
+    public Permiso(int id, int id_usuario, ArrayList<SubModulo> subModulosTrue, ArrayList<SubModulo> submoduloArrayFalse, String usuario, String fechaCreacion,
                    String usuario_act, String fechaActualizacion) {
         ID_PERMISO = id;
         ID_USUARIO = id_usuario;
-        ID_MODULO = id_modulo;
-        ID_SUBMODULO = id_submodulo;
+        this.subModulosTrue = subModulosTrue;
+        this.submoduloArrayFalse = submoduloArrayFalse;
         USUARIO_CREADOR = usuario;
         FECHA_CREACION = fechaCreacion;
         USUARIO_ACTUALIZACION = usuario_act;
         FECHA_ACTUALIZACION = fechaActualizacion;
     }
+
+    public Permiso(int id,  ArrayList<Integer> subModulosdelete, String fechaActualizacion) {
+        ID_PERMISO = id;
+        this.subModulosdelete = subModulosdelete;
+        FECHA_ACTUALIZACION = fechaActualizacion;
+    }
+
 
     //PERMISO
     public Permiso(int id, int id_usuario, String usuario, String fechaCreacion,
@@ -184,5 +143,29 @@ public class Permiso {
 
     public int getID_PERMISO_MODULO() {
         return ID_PERMISO_MODULO;
+    }
+
+    public ArrayList<SubModulo> getSubmoduloArrayFalse() {
+        return submoduloArrayFalse;
+    }
+
+    public void setSubmoduloArrayFalse(ArrayList<SubModulo> submoduloArrayFalse) {
+        this.submoduloArrayFalse = submoduloArrayFalse;
+    }
+
+    public ArrayList<SubModulo> getSubModulosTrue() {
+        return subModulosTrue;
+    }
+
+    public void setSubModulosTrue(ArrayList<SubModulo> subModulosTrue) {
+        this.subModulosTrue = subModulosTrue;
+    }
+
+    public ArrayList<Integer> getSubModulosdelete() {
+        return subModulosdelete;
+    }
+
+    public void setSubModulosdelete(ArrayList<Integer> subModulosdelete) {
+        this.subModulosdelete = subModulosdelete;
     }
 }

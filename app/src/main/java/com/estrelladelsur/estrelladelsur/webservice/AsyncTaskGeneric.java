@@ -4,8 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Cargo;
@@ -15,10 +15,17 @@ import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
+import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
+import com.estrelladelsur.estrelladelsur.entidad.Noticia;
+import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
+import com.estrelladelsur.estrelladelsur.entidad.Permiso;
 import com.estrelladelsur.estrelladelsur.entidad.Posicion;
+import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
+import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
+import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 
 import org.json.JSONException;
@@ -35,7 +42,7 @@ public class AsyncTaskGeneric {
     private JsonParsing jsonParsing;
     private Object object;
     private String entity;
-    private boolean insert, isActual, delete;
+    private boolean insert, isActual, delete, isPermiso;
     int id_delete;
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
@@ -89,6 +96,19 @@ public class AsyncTaskGeneric {
         this.genero = genero;
         new TaskGeneric().execute(request);
     }
+    //FOR DELETE whit objet
+    public AsyncTaskGeneric(Context context, MyAsyncTaskListener listener, String URL, Request request, String entity, Object object, boolean delete, String genero, boolean isPermiso) {
+        this.context = context;
+        mListener = listener;
+        this.URL = URL;
+        this.request = request;
+        this.entity = entity;
+        this.object = object;
+        this.delete = delete;
+        this.genero = genero;
+        this.isPermiso = isPermiso;
+        new TaskGeneric().execute(request);
+    }
 
 
     public class TaskGeneric extends AsyncTask<Request, Boolean, Boolean> {
@@ -133,9 +153,17 @@ public class AsyncTaskGeneric {
                                     precessOK = false;
                                 }
                             }
-                        } else {
+                        } else if(isPermiso){
 
-                            if (deleteEntity(entity, id_delete)) {
+                            if (deleteEntity(entity, ((Permiso) object).getID_PERMISO(), object)) {
+                                mensaje = entity + ELIMINAR + genero + CORRECTO;
+                                precessOK = true;
+                            } else {
+                                precessOK = false;
+                            }
+
+                        }else {
+                            if (deleteEntity(entity, id_delete, null)) {
                                 mensaje = entity + ELIMINAR + genero + CORRECTO;
                                 precessOK = true;
                             } else {
@@ -250,7 +278,7 @@ public class AsyncTaskGeneric {
                         }
                     }
                 }
-                if(insertOk){
+                if (insertOk) {
                     if (((Entrenamiento) object).getJugadorArrayDelete() != null) {
                         for (int i : ((Entrenamiento) object).getJugadorArrayDelete()) {
                             if (!controladorAdeful.eliminarAsistenciaEntrenamientoAdeful(((Entrenamiento) object).getID_ENTRENAMIENTO(), i)) {
@@ -260,7 +288,55 @@ public class AsyncTaskGeneric {
                         }
                     }
                 }
-               break;
+                break;
+            }
+            case "Sancion": {
+                if (!controladorAdeful.insertSancionAdeful(id, (Sancion) object))
+                    insertOk = false;
+                break;
+            }
+            case "Notificacion": {
+                if (!controladorGeneral.insertNotificacion(id, (Notificacion) object))
+                    insertOk = false;
+                break;
+            }
+            case "Noticia": {
+                if (!controladorGeneral.insertNoticia(id, (Noticia) object))
+                    insertOk = false;
+                break;
+            }
+            case "Foto": {
+                if (!controladorGeneral.insertFoto(id, (Foto) object))
+                    insertOk = false;
+                break;
+            }
+            case "Publicidad": {
+                if (!controladorGeneral.insertPublicidad(id, (Publicidad) object))
+                    insertOk = false;
+                break;
+            }
+            case "Usuario": {
+                if (!controladorGeneral.insertUsuario(id, (Usuario) object))
+                    insertOk = false;
+                break;
+            }
+            case "Permiso": {
+                if (controladorGeneral.insertPermisos(id, (Permiso) object)) {
+                    for (int i = 0; i < ((Permiso) object).getSubModulosTrue().size(); i++) {
+                        if (controladorGeneral.insertPermisoModulo(id, ((Permiso) object).getSubModulosTrue().get(i).getID_MODULO(), ((Permiso) object).getSubModulosTrue().get(i).getID_SUBMODULO())) {
+                            if (!controladorGeneral.actualizarSubModuloSelectedTrue(((Permiso) object).getSubModulosTrue().get(i).getID_SUBMODULO())) {
+                                insertOk = false;
+                                break;
+                            }
+                        } else {
+                            insertOk = false;
+                            break;
+                        }
+                    }
+                } else {
+                    insertOk = false;
+                }
+                break;
             }
         }
         return insertOk;
@@ -344,7 +420,7 @@ public class AsyncTaskGeneric {
                             }
                         }
                     }
-                    if(updateOk) {
+                    if (updateOk) {
                         if (((Entrenamiento) object).getDivisionArrayDelete() != null) {
                             for (int i : ((Entrenamiento) object).getDivisionArrayDelete()) {
                                 if (!controladorAdeful.eliminarDivisionEntrenamientoAdeful(((Entrenamiento) object).getID_ENTRENAMIENTO(), i)) {
@@ -359,11 +435,72 @@ public class AsyncTaskGeneric {
                 }
                 break;
             }
+            case "Sancion": {
+                if (!controladorAdeful.actualizarSancionAdeful((Sancion) object))
+                    updateOk = false;
+                break;
+            }
+            case "Notificacion": {
+                if (!controladorGeneral.actualizarNotificacion((Notificacion) object))
+                    updateOk = false;
+                break;
+            }
+            case "Noticia": {
+                if (!controladorGeneral.actualizarNoticia((Noticia) object))
+                    updateOk = false;
+                break;
+            }
+            case "Foto": {
+                if (!controladorGeneral.actualizarFoto((Foto) object))
+                    updateOk = false;
+                break;
+            }
+            case "Publicidad": {
+                if (!controladorGeneral.actualizarPublicidad((Publicidad) object))
+                    updateOk = false;
+                break;
+            }
+            case "Usuario": {
+                if (!controladorGeneral.actualizarUsuario((Usuario) object))
+                    updateOk = false;
+                break;
+            }
+            case "Permiso": {
+                if (controladorGeneral.actualizarPermisos((Permiso) object)) {
+                    for (int i = 0; i < ((Permiso) object).getSubModulosTrue().size(); i++) {
+                        if (controladorGeneral.insertPermisoModulo(((Permiso) object).getID_PERMISO(), ((Permiso) object).getSubModulosTrue().get(i).getID_MODULO(), ((Permiso) object).getSubModulosTrue().get(i).getID_SUBMODULO())) {
+                            if (!controladorGeneral.actualizarSubModuloSelectedTrue(((Permiso) object).getSubModulosTrue().get(i).getID_SUBMODULO())) {
+                                updateOk = false;
+                                break;
+                            }
+                        } else {
+                            updateOk = false;
+                            break;
+                        }
+                    }
+                    if (updateOk) {
+                        for (int i = 0; i < ((Permiso) object).getSubmoduloArrayFalse().size(); i++) {
+                            if (controladorGeneral.eliminarPermisoModulo(((Permiso) object).getSubmoduloArrayFalse().get(i).getID_SUBMODULO())) {
+                                if (!controladorGeneral.actualizarSubModuloSelectedFalse(((Permiso) object).getSubmoduloArrayFalse().get(i).getID_SUBMODULO())) {
+                                    updateOk = false;
+                                    break;
+                                }
+                            } else {
+                                updateOk = false;
+                                break;
+                            }
+                        }
+                    } else {
+                        updateOk = false;
+                    }
+                }
+                break;
+            }
         }
         return updateOk;
     }
 
-    public boolean deleteEntity(String entity, int id) {
+    public boolean deleteEntity(String entity, int id,  Object object) {
         ControladorAdeful controladorAdeful = new ControladorAdeful(context);
         ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean deleteOk = true;
@@ -417,10 +554,58 @@ public class AsyncTaskGeneric {
                 break;
             }
             case "Entrenamiento": {
-                if (controladorAdeful.eliminarEntrenamientoAdeful(id)){
-                    if(!controladorAdeful.eliminarDivisionEntrenamientoAdeful(id))
+                if (controladorAdeful.eliminarEntrenamientoAdeful(id)) {
+                    if (!controladorAdeful.eliminarDivisionEntrenamientoAdeful(id))
                         deleteOk = false;
-                }else{
+                } else {
+                    deleteOk = false;
+                }
+                break;
+            }
+            case "Sancion": {
+                if (!controladorAdeful.eliminarSancionAdeful(id))
+                    deleteOk = false;
+                break;
+            }
+            case "Notificacion": {
+                if (!controladorGeneral.eliminarNotificacion(id))
+                    deleteOk = false;
+                break;
+            }
+            case "Noticia": {
+                if (!controladorGeneral.eliminarNoticia(id))
+                    deleteOk = false;
+                break;
+            }
+            case "Foto": {
+                if (!controladorGeneral.eliminarFoto(id))
+                    deleteOk = false;
+                break;
+            }
+            case "Publicidad": {
+                if (!controladorGeneral.eliminarPublicidad(id))
+                    deleteOk = false;
+                break;
+            }
+            case "Usuario": {
+                if (!controladorGeneral.eliminarUsuario(id))
+                    deleteOk = false;
+                break;
+            }
+            case "Permiso": {
+                if (controladorGeneral.eliminarPermiso(id)) {
+                    if (controladorGeneral.eliminarPermisoModulo(id)) {
+                        for (int i = 0; i < ((Permiso) object).getSubModulosdelete().size(); i++) {
+                            if (!controladorGeneral.actualizarSubModuloSelectedFalse(((Permiso) object).getSubModulosdelete().get(i))) {
+                                deleteOk = false;
+                                break;
+                            }
+
+                        }
+                    } else {
+                        deleteOk = false;
+                    }
+                } else {
                     deleteOk = false;
                 }
                 break;

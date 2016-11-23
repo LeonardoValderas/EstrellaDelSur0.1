@@ -20,6 +20,13 @@ public class Notificacion {
         USUARIO_ACTUALIZACION = usuario_actualizacion;
         FECHA_ACTUALIZACION = fecha_actualizacion;
     }
+    public Notificacion(int id, String titulo, String notificacion) {
+
+        ID_NOTIFICACION = id;
+        TITULO = titulo;
+        NOTIFICACION = notificacion;
+    }
+
 
     public int getID_NOTIFICACION() {
         return ID_NOTIFICACION;

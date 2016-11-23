@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".miequipo.tabs_adm.TabsResultado">
+    tools:context=".miequipo.administrador.tabs_adm.TabsResultado">
 
 
 <!--<android.support.design.widget.CoordinatorLayout-->

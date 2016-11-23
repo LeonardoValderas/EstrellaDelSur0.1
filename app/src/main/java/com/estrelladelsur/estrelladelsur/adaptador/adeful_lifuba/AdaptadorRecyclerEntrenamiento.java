@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
 import java.util.ArrayList;

@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".institucion.tabs_adm.TabsArticulo">
+    tools:context=".institucion.administrador.tabs_adm.TabsArticulo">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,6 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:maxLength="180"
                     android:gravity="center"
                     android:hint="Link"
                     android:textSize="20dp"

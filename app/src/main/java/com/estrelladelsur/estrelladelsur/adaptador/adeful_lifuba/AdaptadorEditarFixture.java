@@ -29,9 +29,18 @@ public class AdaptadorEditarFixture extends
 		private TextView textRecyclerViewCancha;
 		private TextView textRecyclerViewResultadoV;
 		private TextView textRecyclerViewResultadoL;
+		private TextView textFecha;
+		private TextView textAnio;
 
 		public FixtureViewHolder(View itemView) {
 			super(itemView);
+
+			// EQUIPO LOCAL
+			textFecha = (TextView) itemView
+					.findViewById(R.id.textFecha);
+			// EQUIPO LOCAL
+			textAnio = (TextView) itemView
+					.findViewById(R.id.textAnio);
 
 			// ESCUDO LOCAL
 			imageViewEscudoL = (ImageView) itemView
@@ -94,6 +103,8 @@ public class AdaptadorEditarFixture extends
 			textRecyclerViewDia.setText(fixtureRecycler.getDIA());
 			textRecyclerViewHora.setText(fixtureRecycler.getHORA());
 			textRecyclerViewCancha.setText(fixtureRecycler.getCANCHA());
+			textAnio.setText(fixtureRecycler.getANIO());
+			textFecha.setText(fixtureRecycler.getFECHA());
 		}
 	}
 

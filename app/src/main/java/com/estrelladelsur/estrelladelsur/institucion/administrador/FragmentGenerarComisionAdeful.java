@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +31,7 @@ import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
-import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Cargo;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerCargoComision;
@@ -40,6 +41,7 @@ import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.SplashUsuario;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,6 +81,7 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
     private boolean isComision = true;
     private String encodedImage = null, url_nombre_foto = null, usuario = null,
             URL = null, fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_comision = null;
+    private ImageButton rotateButton;
 
     public static FragmentGenerarComisionAdeful newInstance() {
         FragmentGenerarComisionAdeful fragment = new FragmentGenerarComisionAdeful();
@@ -108,6 +111,7 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
         textViewFont = auxiliarGeneral.tituloFont(getActivity());
+        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
         //FOTO INTEGRANTE
         fotoImageComision = (CircleImageView) v
                 .findViewById(R.id.fotoImageComisionDireccion);
@@ -206,6 +210,19 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
                 // TODO Auto-generated method stub
                 botonFecha = false;
                 setDate();
+            }
+        });
+
+        rotateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (imageComision != null) {
+                    Bitmap theImage = auxiliarGeneral.setByteToBitmap(imageComision, 150,
+                            150);
+                    theImage = auxiliarGeneral.RotateBitmap(theImage);
+                    fotoImageComision.setImageBitmap(theImage);
+                    imageComision = auxiliarGeneral.pasarBitmapByte(theImage);
+                }
             }
         });
     }
@@ -456,6 +473,7 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
             isComision = true;
         }
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -465,17 +483,10 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        menu.getItem(1).setVisible(false);//permiso
-        menu.getItem(2).setVisible(false);//lifuba
-        menu.getItem(3).setVisible(false);// adeful
-        menu.getItem(4).setVisible(false);// puesto
-        menu.getItem(5).setVisible(false);// posicion
-        // menu.getItem(6).setVisible(false);// cargo
-        // menu.getItem(7).setVisible(false);//cerrar
-        // menu.getItem(8).setVisible(false);// guardar
-        menu.getItem(9).setVisible(false);// Subir
-        menu.getItem(10).setVisible(false); // eliminar
-        menu.getItem(11).setVisible(false); // consultar
+        menu.getItem(1).setVisible(false);// posicion
+        // menu.getItem(2).setVisible(false);// cargo
+        // menu.getItem(3).setVisible(false);//cerrar
+        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -484,16 +495,11 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
 
         int id = item.getItemId();
         if (id == R.id.action_usuario) {
-
-            Intent slash = new Intent(getActivity(),
-                    SplashUsuario.class);
-            startActivity(slash);
-
+            auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
-        if (id == R.id.action_permisos) {
-            return true;
+        if (id == R.id.action_cerrar) {
+            auxiliarGeneral.close(getActivity());
         }
 
         if (id == R.id.action_guardar) {
@@ -514,11 +520,6 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
                 cargoSpinner = (Cargo) puestoSpinnerComision.getSelectedItem();
                 cargarEntidad(idComisionExtra, 1);
             }
-            return true;
-        }
-
-        if (id == R.id.action_lifuba) {
-
             return true;
         }
 

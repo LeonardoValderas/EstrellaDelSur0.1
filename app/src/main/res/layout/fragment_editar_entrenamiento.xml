@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".miequipo.tabs_general.TabsEntrenamiento" >
+    tools:context=".miequipo.administrador.tabs_general.TabsEntrenamiento" >
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -37,14 +37,17 @@ public class AdaptadorRecyclerArticulo extends
                     .findViewById(R.id.textRecyclerViewFecha);
             textRecyclerViewFecha.setTypeface(type);
         }
-        public void bindTitular(Articulo articulo) {
+        public void bindTitular(Articulo articulo, AuxiliarGeneral auxiliarGeneral) {
             textRecyclerViewTitulo.setText(articulo.getTITULO());
-            String fecha = articulo.getFECHA_ACTUALIZACION().substring(0, 10);
-            textRecyclerViewFecha.setText("ult.act: "+fecha);
+            if(articulo.getFECHA_ACTUALIZACION() != null && !articulo.getFECHA_ACTUALIZACION().isEmpty()) {
+                String fecha = articulo.getFECHA_ACTUALIZACION().substring(0, 8);
+                fecha = auxiliarGeneral.dateFormate(fecha);
+                textRecyclerViewFecha.setText("ult.act: " + fecha);
+            }
         }
     }
 
-    public AdaptadorRecyclerArticulo(ArrayList<Articulo> articuloArray,Context context) {
+    public AdaptadorRecyclerArticulo(ArrayList<Articulo> articuloArray, Context context) {
         this.articuloArray = articuloArray;
         auxiliarGeneral = new AuxiliarGeneral(context);
         editTextFont = auxiliarGeneral.textFont(context);
@@ -66,7 +69,7 @@ public class AdaptadorRecyclerArticulo extends
     public void onBindViewHolder(ArticuloViewHolder viewHolder, int pos) {
         Articulo item = articuloArray.get(pos);
 
-        viewHolder.bindTitular(item);
+        viewHolder.bindTitular(item, auxiliarGeneral);
     }
 
     @Override

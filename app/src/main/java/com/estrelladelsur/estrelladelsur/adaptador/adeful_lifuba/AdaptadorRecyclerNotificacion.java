@@ -35,9 +35,13 @@ public class AdaptadorRecyclerNotificacion extends
                     .findViewById(R.id.textRecyclerViewFecha);
             textRecyclerViewFecha.setTypeface(type);
         }
-        public void bindTitular(Notificacion notificacion) {
+        public void bindTitular(Notificacion notificacion, AuxiliarGeneral auxiliarGeneral) {
             textRecyclerViewTitulo.setText(notificacion.getTITULO());
-            textRecyclerViewFecha.setText("ult.act: "+notificacion.getFECHA_ACTUALIZACION());
+            if(notificacion.getFECHA_ACTUALIZACION() != null && !notificacion.getFECHA_ACTUALIZACION().isEmpty()) {
+                String fecha = notificacion.getFECHA_ACTUALIZACION().substring(0, 8);
+                fecha = auxiliarGeneral.dateFormate(fecha);
+                textRecyclerViewFecha.setText("ult.act: " + fecha);
+            }
         }
     }
     public AdaptadorRecyclerNotificacion(ArrayList<Notificacion> notificacionArray, Context context) {
@@ -63,7 +67,7 @@ public class AdaptadorRecyclerNotificacion extends
     public void onBindViewHolder(NotificacionViewHolder viewHolder, int pos) {
         Notificacion item = notificacionArray.get(pos);
 
-        viewHolder.bindTitular(item);
+        viewHolder.bindTitular(item, auxiliarGeneral);
     }
 
     @Override

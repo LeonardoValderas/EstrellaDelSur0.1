@@ -20,11 +20,11 @@ import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerDireccion;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
-import com.estrelladelsur.estrelladelsur.institucion.tabs_adm.TabsDireccion;
+import com.estrelladelsur.estrelladelsur.institucion.administrador.tabs_adm.TabsDireccion;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
@@ -243,17 +243,10 @@ public class FragmentEditarDireccionAdeful extends Fragment implements MyAsyncTa
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        menu.getItem(1).setVisible(false);//permiso
-        menu.getItem(2).setVisible(false);//lifuba
-        menu.getItem(3).setVisible(false);// adeful
-        menu.getItem(4).setVisible(false);// puesto
-        menu.getItem(5).setVisible(false);// posicion
-        menu.getItem(6).setVisible(false);// cargo
-        // menu.getItem(7).setVisible(false);//cerrar
-        menu.getItem(8).setVisible(false);// guardar
-        menu.getItem(9).setVisible(false);// Subir
-        menu.getItem(10).setVisible(false); // eliminar
-        menu.getItem(11).setVisible(false); // consultar
+        menu.getItem(1).setVisible(false);// posicion
+        menu.getItem(2).setVisible(false);// cargo
+        // menu.getItem(3).setVisible(false);//cerrar
+        menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -261,26 +254,15 @@ public class FragmentEditarDireccionAdeful extends Fragment implements MyAsyncTa
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
+
         if (id == R.id.action_usuario) {
-
-            /*Intent usuario = new Intent(getActivity(),
-                    NavigationDrawerUsuario.class);
-            startActivity(usuario);*/
-
+            auxiliarGeneral.goToUser(getActivity());
             return true;
         }
 
-        if (id == R.id.action_permisos) {
-            return true;
+        if (id == R.id.action_cerrar) {
+            auxiliarGeneral.close(getActivity());
         }
-
-
-        if (id == R.id.action_lifuba) {
-
-            return true;
-        }
-
         if (id == android.R.id.home) {
 
             NavUtils.navigateUpFromSameTask(getActivity());

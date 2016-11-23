@@ -226,12 +226,7 @@ public class FragmentCanchaUsuario extends Fragment {
 
             return true;
         }
-
-        if (id == R.id.action_permisos) {
-            return true;
-        }
-
-        if (id == android.R.id.home) {
+   if (id == android.R.id.home) {
 
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;

@@ -2,13 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/border_dialogo"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/border_dialogo_title">
+        android:background="@color/color_primary">
 
         <TextView
             android:id="@+id/alertGenericoTitulo"
@@ -53,6 +52,7 @@
                     android:id="@+id/resultadoLocal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLength="2"
                     android:layout_weight="2"
                     android:gravity="center"
                     android:hint="Goles"
@@ -83,6 +83,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:maxLength="2"
                     android:gravity="center"
                     android:hint="Goles"
                     android:inputType="number"></EditText>

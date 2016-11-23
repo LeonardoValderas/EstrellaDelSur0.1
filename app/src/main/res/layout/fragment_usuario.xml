@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:ems="10"
+            android:maxLength="20"
             android:gravity="center"
             android:hint="Usuario"
             android:textSize="25dp">
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ems="10"
+            android:maxLength="10"
             android:gravity="center"
             android:hint="Contraseña"
             android:textSize="25dp" />

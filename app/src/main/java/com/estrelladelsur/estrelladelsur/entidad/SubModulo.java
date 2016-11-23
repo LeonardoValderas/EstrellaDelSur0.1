@@ -18,6 +18,13 @@ public class SubModulo {
         ISSELECTED = isSelected;
     }
     //SUBMODULO
+    public SubModulo(int id_submodulo, String submodulo, int id_modulo, boolean isSelected) {
+        ID_SUBMODULO = id_submodulo;
+        SUBMODULO = submodulo;
+        ID_MODULO = id_modulo;
+        ISSELECTED = isSelected;
+    }
+    //SUBMODULO
     public SubModulo(int id_submodulo, String submodulo, boolean isSelected) {
         ID_SUBMODULO = id_submodulo;
         SUBMODULO = submodulo;

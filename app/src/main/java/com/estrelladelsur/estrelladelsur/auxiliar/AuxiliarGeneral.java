@@ -1,18 +1,22 @@
 package com.estrelladelsur.estrelladelsur.auxiliar;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
@@ -22,9 +26,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.graphics.Bitmap.CompressFormat;
+
+import com.estrelladelsur.estrelladelsur.login.Login;
+import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
+import com.estrelladelsur.estrelladelsur.navegador.usuario.SplashUsuario;
 
 public class AuxiliarGeneral {
     private Context context;
@@ -137,63 +146,77 @@ public class AuxiliarGeneral {
         return bRect;
     }
 
-    //PASA A CIRCULAR UNA IMAGEN
-    public Bitmap getRoundedBitmap(Bitmap bitmap) {
-        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(output);
-
-        final int color = Color.BLACK;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(2, 2, bitmap.getWidth() - 2, bitmap.getHeight() - 1);
-        final RectF rectF = new RectF(rect);
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawOval(rectF, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        bitmap.recycle();
-
-        return output;
-    }
-
-    //    //PASA A rect UNA IMAGEN
-//    public static Bitmap getRoundedBitmapRect(Bitmap bitmap) {
-//        final Bitmap output = Bitmap.createBitmap(299, 299, Bitmap.Config.ARGB_8888);
-//        final Canvas canvas = new Canvas(output);
-//
-//        final int color = Color.BLACK;
-//        final Paint paint = new Paint();
-//        final Rect rect = new Rect(2, 2, 299, 299);
-//        final RectF rectF = new RectF(rect);
-//
-//        paint.setAntiAlias(true);
-//        canvas.drawARGB(0, 0, 0, 0);
-//        paint.setColor(color);
-//        canvas.drawRect(rectF, paint);
-//
-//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-//        canvas.drawBitmap(bitmap, rect, rect, paint);
-//
-//        bitmap.recycle();
-//
-//        return output;
-//    }
     //PASA BITMAP A BYTE
     public byte[] pasarBitmapByte(Bitmap b) {
         //Pasar bitmap a byte[]
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-
             b.compress(CompressFormat.PNG, 0, baos);
         } catch (Exception e) {
-
         }
         return baos.toByteArray();
     }
+
+    public Bitmap setByteToBitmap(byte[] imageFotoByte, int w, int h) {
+        Bitmap theImage = BitmapFactory.decodeByteArray(
+                imageFotoByte, 0,
+                imageFotoByte.length);
+        return Bitmap.createScaledBitmap(theImage, w, h, true);
+    }
+
+    public Bitmap getResizedBitmap(String path, int newWidth, int newHeight) {
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW / newWidth, photoH / newHeight);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(path, bmOptions);
+
+        return bitmap;
+    }
+
+    public String selectImageForData(Intent data, Context context) {
+
+        Cursor cursor = null;
+        String photoPath = null;
+        try {
+            Uri uri = data.getData();
+            if (uri != null) {
+                cursor = context.getContentResolver().query(
+                        uri, null, null, null, null);
+
+                cursor.moveToFirst();
+                String document_id = cursor.getString(0);
+                document_id = document_id.substring(document_id
+                        .lastIndexOf(":") + 1);
+
+                cursor = context
+                        .getContentResolver()
+                        .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                null, MediaStore.Images.Media._ID + " = ? ",
+                                new String[]{document_id}, null);
+                cursor.moveToFirst();
+                photoPath = cursor.getString(cursor
+                        .getColumnIndex(MediaStore.Images.Media.DATA));
+                cursor.close();
+            }
+        } catch (Exception e) {
+            photoPath = null;
+        }
+        return photoPath;
+    }
+
 
     //FECHAS
     public String getFechaOficial() {
@@ -234,7 +257,7 @@ public class AuxiliarGeneral {
 
     //SINCRONIZACION
     public String getURLSINCRONIZARUSUARIO() {
-        return "estrella_del_sur/testing/ADEFUL/sincronizar/usuario/sincronizarUsuario.php";
+        return "estrella_del_sur/testing/SINCRONIZAR/Usuario/sincronizarUsuario.php";
     }
 
     //ARTICULO
@@ -354,6 +377,7 @@ public class AuxiliarGeneral {
         return getURL() + getURLPOSICIONADEFUL();
     }
 
+    //ENTRENAMIENTO
     public String getURLENTRENAMIENTOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Entrenamiento/";
     }
@@ -368,6 +392,77 @@ public class AuxiliarGeneral {
 
     public String getURLENTRENAMIENTOASISTENCIAADEFULALL() {
         return getURL() + getURLENTRENAMIENTOASISTENCIAADEFUL();
+    }
+
+    //SANCION
+    public String getURLSANCIONADEFUL() {
+        return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Sancion/";
+    }
+
+    public String getURLSANCIONADEFULALL() {
+        return getURL() + getURLSANCIONADEFUL();
+    }
+
+    //NOTIFICACION
+    public String getURLNOTIFICACION() {
+        return "estrella_del_sur/testing/GENERAL/Notificacion/";
+    }
+
+    public String getURLNOTIFICACIONALL() {
+        return getURL() + getURLNOTIFICACION();
+    }
+
+    //NOTICIA
+    public String getURLNOTICIA() {
+        return "estrella_del_sur/testing/GENERAL/Noticia/";
+    }
+
+    public String getURLNOTICIAALL() {
+        return getURL() + getURLNOTICIA();
+    }
+
+    //FOTO
+    public String getURLFOTO() {
+        return "estrella_del_sur/testing/GENERAL/Foto/";
+    }
+
+    public String getURLFOTOFOLDER() {return getURL() + "estrella_del_sur/testing/GENERAL/Foto/foto/";
+    }
+
+    public String getURLFOTOALL() { return getURL() + getURLFOTO(); }
+
+    //PUBLICIDAD
+    public String getURLPUBLICIDAD() {
+        return "estrella_del_sur/testing/GENERAL/Publicidad/";
+    }
+    public String getURLPUBLICIDADFOLDER() { return getURL() + "estrella_del_sur/testing/GENERAL/Publicidad/publicidad/";
+    }
+    public String getURLPUBLICIDADALL() { return getURL() + getURLPUBLICIDAD(); }
+    //USUARIO
+    public String getURLUSUARIO() {
+        return "estrella_del_sur/testing/GENERAL/Usuario/";
+    }
+
+    public String getURLUSUARIOALL() {
+        return getURL() + getURLUSUARIO();
+    }
+    //PERMISO
+    public String getURLPERMISO() {
+        return "estrella_del_sur/testing/GENERAL/Permiso/";
+    }
+
+    public String getURLPERMISOALL() {
+        return getURL() + getURLPERMISO();
+    }
+
+
+
+    public String getURLGCM() {
+        return "estrella_del_sur/testing/GCM/insertPhoneID.php";
+    }
+
+    public String getURLGCMALL() {
+        return getURL() + getURLGCM();
     }
 
 
@@ -458,10 +553,6 @@ public class AuxiliarGeneral {
     }
 
     public String getMounthCurrent() {
-//        Calendar cal = Calendar.getInstance();
-//        SimpleDateFormat df = new SimpleDateFormat("MM");
-//        int year = cal.get(Calendar.YEAR);
-//        String firstWkDay = df.format(cal.get(Calendar.MONTH));
 
         Calendar c = Calendar.getInstance();
 
@@ -471,11 +562,59 @@ public class AuxiliarGeneral {
         if (monthStg.length() == 1)
             monthStg = "0" + monthStg;
 
+        return String.valueOf(monthStg + "-" + year);
+    }
 
-
-        return String.valueOf(monthStg  + "-" + year);
-
+    public void goToUser(Context context){
+        Intent usuario = new Intent(context, SplashUsuario.class);
+        context.startActivity(usuario);
+    }
+    public void goToAdm(Context context){
+        Intent login = new Intent(context, Login.class);
+        context.startActivity(login);
     }
 
 
+    public static void close(Context context) {
+        Intent intent = new Intent(context, SplashUsuario.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.putExtra("close", true);
+
+        context.startActivity(intent);
+
+//        Intent intent = new Intent(Intent.ACTION_MAIN);
+//        intent.addCategory(Intent.CATEGORY_HOME);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        context.startActivity(intent);
+
+    }
+
+    public String dateFormate(String date){
+        String dateFormat = "";
+        if(date != null && !date.isEmpty()){
+            date = date.substring(0,8);
+            for (int i = 0; i < date.length(); i++) {
+               dateFormat +=date.charAt(i);
+                if(i == 3){
+                    dateFormat +="/";
+                } else if(i == 5){
+                    dateFormat +="/";
+                }
+            }
+        }
+         return dateFormat;
+    }
+
+    public String getYearSpinner() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+
+        return String.valueOf(year);
+    }
+
+    public static Bitmap RotateBitmap(Bitmap bitmap) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
 }

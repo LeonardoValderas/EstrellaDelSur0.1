@@ -20,7 +20,8 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
-import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
@@ -30,20 +31,21 @@ import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ArticuloUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ComisionUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.DireccionUsuario;
-import com.estrelladelsur.estrelladelsur.liga.tabs_user.TabsAdefulUsuario;
+import com.estrelladelsur.estrelladelsur.liga.usuario.tabs_user.TabsAdefulUsuario;
 import com.estrelladelsur.estrelladelsur.login.Login;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_general.TabsEntrenamiento;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_general.TabsSancion;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_user.EntrenamientoUsuario;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_user.JugadorUsuario;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_user.TabsEntrenamientoUsuario;
-import com.estrelladelsur.estrelladelsur.miequipo.tabs_user.TabsFixtureUsuario;
+import com.estrelladelsur.estrelladelsur.miequipo.usuario.tabs_user.JugadorUsuario;
+import com.estrelladelsur.estrelladelsur.miequipo.usuario.tabs_user.TabsEntrenamientoUsuario;
+import com.estrelladelsur.estrelladelsur.miequipo.usuario.tabs_user.TabsFixtureUsuario;
+import com.estrelladelsur.estrelladelsur.miequipo.usuario.tabs_user.TabsSancionUsuario;
 import com.estrelladelsur.estrelladelsur.permiso.TabsPermiso;
 import com.estrelladelsur.estrelladelsur.permiso.TabsUsuario;
-import com.estrelladelsur.estrelladelsur.social.TabsFoto;
-import com.estrelladelsur.estrelladelsur.social.TabsNoticia;
-import com.estrelladelsur.estrelladelsur.social.TabsNotificacion;
-import com.estrelladelsur.estrelladelsur.social.TabsPublicidad;
+import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsFoto;
+import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsNoticia;
+import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsPublicidad;
+import com.estrelladelsur.estrelladelsur.social.usuario.FotoUsuario;
+import com.estrelladelsur.estrelladelsur.social.usuario.NoticiaUsuario;
+import com.estrelladelsur.estrelladelsur.social.usuario.NotificacionUsuario;
+import com.estrelladelsur.estrelladelsur.social.usuario.PublicidadUsuario;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +70,7 @@ public class NavigationUsuario extends AppCompatActivity {
     private List<String> institucionalChild;
     private TextView txtAbSubTitulo, txtAbTitulo, textViewLiga;
     private ControladorGeneral controladorGeneral;
+    private ControladorUsuarioGeneral controladorUsuarioGeneral;
     private Typeface titulos;
     private Typeface adeful;
     private AuxiliarGeneral auxiliarGeneral;
@@ -78,6 +81,7 @@ public class NavigationUsuario extends AppCompatActivity {
         setContentView(R.layout.navigation_drawer);
 
         controladorGeneral = new ControladorGeneral(this);
+        controladorUsuarioGeneral = new ControladorUsuarioGeneral(this);
         auxiliarGeneral = new AuxiliarGeneral(NavigationUsuario.this);
 
         titulos = auxiliarGeneral.tituloFont(NavigationUsuario.this);
@@ -85,9 +89,7 @@ public class NavigationUsuario extends AppCompatActivity {
         init();
         drawerLayout.openDrawer(GravityCompat.START);
         inicializarDatosGenerales();
-        insertUsuarioAdm();
-
-    }
+   }
 
 
     public void init() {
@@ -101,11 +103,6 @@ public class NavigationUsuario extends AppCompatActivity {
         txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
         txtAbTitulo.setTypeface(titulos);
 
-//        txtAbSubTitulo = (TextView) findViewById(R.id.txtAbSubTitulo);
-//        txtAbSubTitulo.setTypeface(titulos);
-
-      //  textViewLiga = (TextView) findViewById(R.id.textViewLiga);
-      //  textViewLiga.setTypeface(adeful, Typeface.BOLD);
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
         // preparing list data
         prepareListData();
@@ -166,7 +163,7 @@ public class NavigationUsuario extends AppCompatActivity {
 //                                    .toString();
                             break;
                         case 3:
-                            Intent sanciones = new Intent(NavigationUsuario.this, TabsSancion.class);
+                            Intent sanciones = new Intent(NavigationUsuario.this, TabsSancionUsuario.class);
                             startActivity(sanciones);
                             break;
 //                        case 4:
@@ -189,47 +186,50 @@ public class NavigationUsuario extends AppCompatActivity {
                 } else if (groupPosition == 3) {
                     switch (childPosition) {
                         case 0:
-                            Intent notificacion = new Intent(NavigationUsuario.this, TabsNotificacion.class);
+                            Intent notificacion = new Intent(NavigationUsuario.this, NotificacionUsuario.class);
                             startActivity(notificacion);
 //                            tituloClickFragment = ligaChild.get(childPosition)
 //                                    .toString();
                             break;
                         case 1:
-                            Intent noticia = new Intent(NavigationUsuario.this, TabsNoticia.class);
+                            Intent noticia = new Intent(NavigationUsuario.this, NoticiaUsuario.class);
                             startActivity(noticia);
 //                            tituloClickFragment = ligaChild.get(childPosition)
 //                                    .toString();
                             break;
                         case 2:
-                            Intent foto = new Intent(NavigationUsuario.this, TabsFoto.class);
+                            Intent foto = new Intent(NavigationUsuario.this, FotoUsuario.class);
                             startActivity(foto);
                             //      tituloClickFragment = ligaChild.get(childPosition)
                             //            .toString();
                             break;
 
                         case 3:
-                            Intent publicidad = new Intent(NavigationUsuario.this, TabsPublicidad.class);
+                            Intent publicidad = new Intent(NavigationUsuario.this, PublicidadUsuario.class);
                             startActivity(publicidad);
 //                            tituloClickFragment = socialChild.get(childPosition)
 //                                    .toString();
                             break;
                     }
-                } else if (groupPosition == 4) {
-                    switch (childPosition) {
-                        case 0:
-                            Intent usuario = new Intent(NavigationUsuario.this, TabsUsuario.class);
-                            startActivity(usuario);
-//                            tituloClickFragment = permisoChild.get(childPosition)
-//                                    .toString();
-                            break;
-                        case 1:
-                            Intent permiso = new Intent(NavigationUsuario.this, TabsPermiso.class);
-                            startActivity(permiso);
-//                            tituloClickFragment = permisoChild.get(childPosition)
-//                                    .toString();
-                            break;
-                    }
                 }
+
+
+//                else if (groupPosition == 4) {
+//                    switch (childPosition) {
+//                        case 0:
+//                            Intent usuario = new Intent(NavigationUsuario.this, TabsUsuario.class);
+//                            startActivity(usuario);
+////                            tituloClickFragment = permisoChild.get(childPosition)
+////                                    .toString();
+//                            break;
+//                        case 1:
+//                            Intent permiso = new Intent(NavigationUsuario.this, TabsPermiso.class);
+//                            startActivity(permiso);
+////                            tituloClickFragment = permisoChild.get(childPosition)
+////                                    .toString();
+//                            break;
+//                    }
+//                }
                 expListView.setItemChecked(childPosition, true);
                 drawerLayout.openDrawer(sifl);
 
@@ -275,103 +275,63 @@ public class NavigationUsuario extends AppCompatActivity {
     }
 
     private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
+        listDataHeader = new ArrayList<>();
         listDataChild = new HashMap<String, List<String>>();
 
-        for (int i = 0; i < getResources().getStringArray(R.array.moduloArrayUsuario).length; i++) {
-
-            listDataHeader.add(getResources().getStringArray(R.array.moduloArrayUsuario)[i]);
-
+        List<Modulo> modulos = new ArrayList<>();
+        List<SubModulo> submodulos = new ArrayList<>();
+        modulos = controladorUsuarioGeneral.selectListaModuloUsuario();
+        submodulos = controladorUsuarioGeneral.selectListaSubModulo();
+        if(modulos != null ) {
+            for (int i = 0; i < modulos.size()-1; i++) {
+             listDataHeader.add(modulos.get(i).getMODULO());
+            }
         }
 
         // Adding child data
-//            listDataHeader.add("INSTITUCION");
-//            listDataHeader.add("MI EQUIPO");
-//            listDataHeader.add("LIGA");
-//            listDataHeader.add("SOCIAL");
+        institucionalChild = new ArrayList<>();
+        mi_equipoChild = new ArrayList<>();
+        ligaChild = new ArrayList<>();
+        socialChild = new ArrayList<>();
+        if(submodulos != null) {
+            for (int i = 0; i < submodulos.size()-2; i++) {
 
-        // Adding child data
-        institucionalChild = new ArrayList<String>();
+                switch (submodulos.get(i).getID_MODULO()){
 
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationInstitucion).length; i++) {
+                    case 1:
+                        institucionalChild.add(submodulos.get(i).getSUBMODULO());
+                        break;
 
-            institucionalChild.add(getResources().getStringArray(
-                    R.array.NavigationInstitucion)[i]);
+                    case 2:
+                        if(submodulos.get(i).getID_SUBMODULO() != 5)
+                        mi_equipoChild.add(submodulos.get(i).getSUBMODULO());
+                        break;
+
+                    case 3:
+                        ligaChild.add(submodulos.get(i).getSUBMODULO());
+                        break;
+
+                    case 4:
+                        socialChild.add(submodulos.get(i).getSUBMODULO());
+                        break;
+                }
+            }
         }
-
-        mi_equipoChild = new ArrayList<String>();
-
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationCargaUsuario).length; i++) {
-
-            mi_equipoChild.add(getResources().getStringArray(
-                    R.array.NavigationCargaUsuario)[i]);
-        }
-
-        ligaChild = new ArrayList<String>();
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationLiga).length; i++) {
-
-            ligaChild.add(getResources().getStringArray(
-                    R.array.NavigationLiga)[i]);
-        }
-
-        socialChild = new ArrayList<String>();
-        for (int i = 0; i < getResources().getStringArray(
-                R.array.NavigationSocial).length; i++) {
-
-            socialChild.add(getResources().getStringArray(R.array.NavigationSocial)[i]);
-        }
-        permisoChild = new ArrayList<String>();
-
-//        for (int i = 0; i < getResources().getStringArray(
-//                R.array.NavigationPermiso).length; i++) {
-//
-//            permisoChild.add(getResources().getStringArray(R.array.NavigationPermiso)[i]);
-//        }
 
         listDataChild.put(listDataHeader.get(0), institucionalChild);
         listDataChild.put(listDataHeader.get(1), mi_equipoChild);
         listDataChild.put(listDataHeader.get(2), ligaChild);
         listDataChild.put(listDataHeader.get(3), socialChild);
-      //  listDataChild.put(listDataHeader.get(4), permisoChild);
     }
 
-    //	/**
-//	 * metodo que pasa icono y string al adapter Recycler 15/08/2015
-//	 *
-//	 */
-    public static List<InformationRecycler> getData(Context c) {
-
-        List<InformationRecycler> dato = new ArrayList<>();
-
-        // ver si voy a usar diferentes iconos
-        int[] icons = {R.drawable.ic_pelota_futbol,
-                R.drawable.ic_pelota_futbol, R.drawable.ic_pelota_futbol};
-        String[] stringArray = c.getResources().getStringArray(
-                R.array.NavigationCarga);
-
-        for (int i = 0; i < stringArray.length; i++) {
-
-            InformationRecycler current = new InformationRecycler();
-            // current.iconId = icons[i];
-            current.title = stringArray[i];
-            dato.add(current);
-        }
-        return dato;
-
-    }
-
-    public void inicializarDatosGenerales() {
-        iniciarModulos();
+     public void inicializarDatosGenerales() {
         iniciarFecha();
         iniciarAnio();
         iniciarMes();
     }
 
     public void iniciarFecha() {
-        ArrayList<Fecha> fechaArray = new ArrayList<Fecha>();
+        ArrayList<Fecha> fechaArray = new ArrayList<>();
         fechaArray = controladorGeneral.selectListaFecha();
         if (fechaArray != null) {
             if (fechaArray.isEmpty()) {
@@ -387,7 +347,7 @@ public class NavigationUsuario extends AppCompatActivity {
     }
 
     public void iniciarAnio() {
-        ArrayList<Anio> anioArray = new ArrayList<Anio>();
+        ArrayList<Anio> anioArray = new ArrayList<>();
         anioArray = controladorGeneral.selectListaAnio();
         if (anioArray != null) {
             if (anioArray.isEmpty()) {
@@ -404,7 +364,7 @@ public class NavigationUsuario extends AppCompatActivity {
     }
 
     public void iniciarMes() {
-        ArrayList<Mes> mesArray = new ArrayList<Mes>();
+        ArrayList<Mes> mesArray = new ArrayList<>();
         mesArray = controladorGeneral.selectListaMes();
         if (mesArray != null) {
             if (mesArray.isEmpty()) {
@@ -418,99 +378,14 @@ public class NavigationUsuario extends AppCompatActivity {
             auxiliarGeneral.errorDataBase(NavigationUsuario.this);
         }
     }
-public void insertUsuarioAdm(){
-
-    Usuario u = new Usuario(0,"ADM","123",true,"","","","");
-    controladorGeneral.insertUsuario(u);
-    }
-    public void iniciarModulos() {
-
-        ArrayList<Modulo> arrayModulo = new ArrayList<Modulo>();
-        ArrayList<SubModulo> arraySubModulo = new ArrayList<SubModulo>();
-        arrayModulo = controladorGeneral.selectListaModulo();
-        arraySubModulo = controladorGeneral.selectListaSubModulo();
-
-        if (arrayModulo != null) {
-            if (arrayModulo.isEmpty()) {
-                for (int i = 0; i < getResources().getStringArray(R.array.moduloArray).length; i++) {
-                    Modulo modulo = new Modulo(0, getResources().getStringArray(R.array.moduloArray)[i]);
-                    controladorGeneral.insertModulo(modulo);
-                }
-            }
-        } else {
-            auxiliarGeneral.errorDataBase(NavigationUsuario.this);
-        }
-        if (arraySubModulo != null) {
-            if (arraySubModulo.isEmpty()) {
-
-                for (int i = 0; i < getResources().getStringArray(R.array.subModuloArray).length; i++) {
-                    int key = i + 1;
-                    if (key >= 1 && key <= 3) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 1);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    }else if (key >= 4 && key <= 8) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 2);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    } else if (key == 9 || key == 10) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 3);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    } else if (key >= 11 && key <= 14) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 4);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    }
-                    if (key == 15 || key == 16) {
-                        SubModulo submodulo = new SubModulo(0, getResources().getStringArray(R.array.subModuloArray)[i], 5);
-                        controladorGeneral.insertSubModulo(submodulo);
-                    }
-
-                }
-            }
-        } else {
-            auxiliarGeneral.errorDataBase(NavigationUsuario.this);
-        }
-    }
-
-
-     /*   public void loadSpinner(){
-
-            // Fecha ver donde implementar
-            for (int i = 0; i < getResources().getStringArray(R.array.fechaArray).length; i++) {
-
-                Fecha fecha = new Fecha(i, getResources().getStringArray(
-                        R.array.fechaArray)[i]);
-                controladorGeneral.abrirBaseDeDatos();
-                controladorGeneral.insertFecha(fecha);
-                controladorGeneral.cerrarBaseDeDatos();
-                // BL.getBl().insertarFecha(fecha);
-            }
-            // Anio ver donde implementar
-            for (int i = 0; i < getResources().getStringArray(R.array.anioArray).length; i++) {
-
-                Anio anio = new Anio(i,
-                        getResources().getStringArray(R.array.anioArray)[i]);
-
-                controladorGeneral.abrirBaseDeDatos();
-                controladorGeneral.insertAnio(anio);
-                controladorGeneral.cerrarBaseDeDatos();
-                // BL.getBl().insertarAnio(anio);
-            }
-
-            for (int i = 0; i < getResources().getStringArray(R.array.mesArray).length; i++) {
-
-                Mes mes = new Mes(i,
-                        getResources().getStringArray(R.array.mesArray)[i]);
-
-                controladorGeneral.abrirBaseDeDatos();
-                controladorGeneral.insertMes(mes);
-                controladorGeneral.cerrarBaseDeDatos();
-
-            }
-        }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        //menu.getItem(0).setVisible(false);//adm
+        menu.getItem(1).setVisible(false);// user
+       // menu.getItem(2).setVisible(false);// cerrar
         return true;
     }
 
@@ -523,13 +398,13 @@ public void insertUsuarioAdm(){
 
         int id = item.getItemId();
 
-        // noinspection SimplifiableIfStatement
         if (id == R.id.action_administrador) {
-        Intent login = new Intent(NavigationUsuario.this, Login.class);
-        startActivity(login);
+            auxiliarGeneral.goToAdm(NavigationUsuario.this);
             return true;
         }
-
+        if (id == R.id.action_cerrar) {
+            auxiliarGeneral.close(NavigationUsuario.this);
+        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -12,16 +12,21 @@ public class Usuario {
     private String FECHA_ACTUALIZACION;
 
     //USUARIO
-    public Usuario(int id_usuario, String user, String pass,boolean liga,String usuario, String fechaCreacion,
+    public Usuario(int id_usuario, String user, String pass, String usuario, String fechaCreacion,
                    String usuario_act, String fechaActualizacion) {
         ID_USUARIO = id_usuario;
         USUARIO = user;
         PASSWORD = pass;
-        LIGA = liga;
         USUARIO_CREADOR = usuario;
         FECHA_CREACION = fechaCreacion;
         USUARIO_ACTUALIZACION = usuario_act;
         FECHA_ACTUALIZACION = fechaActualizacion;
+    }
+    //USUARIO
+    public Usuario(int id_usuario, String user, String pass) {
+        ID_USUARIO = id_usuario;
+        USUARIO = user;
+        PASSWORD = pass;
     }
     public int getID_USUARIO() { return ID_USUARIO;}
     public String getUSUARIO() {

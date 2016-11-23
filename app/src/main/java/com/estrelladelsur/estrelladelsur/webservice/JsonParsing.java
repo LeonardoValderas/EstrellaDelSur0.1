@@ -4,8 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.StrictMode;
+
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
@@ -14,13 +17,23 @@ import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
+import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
-import com.estrelladelsur.estrelladelsur.entidad.Posicion;
+import com.estrelladelsur.estrelladelsur.entidad.Modulo;
+import com.estrelladelsur.estrelladelsur.entidad.Noticia;
+import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
+import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
+import com.estrelladelsur.estrelladelsur.entidad.Sancion;
+import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
+import com.estrelladelsur.estrelladelsur.entidad.Tabla;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
+import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.SplashUsuario;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,6 +43,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by LEO on 17/4/2016.
@@ -114,32 +129,52 @@ public class JsonParsing {
 
         JSONObject jsonAux = null;
         boolean precessOK = true;
-        try {
-            if (deleteEntity(entity, context)) {
+        if(jsonArray != null) {
+            try {
+                if (deleteEntity(entity, context)) {
 
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    jsonAux = jsonArray.getJSONObject(i);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        jsonAux = jsonArray.getJSONObject(i);
 
-                    if (!populateEntity(entity, jsonAux, context)) {
-                        precessOK = false;
-                        break;
+                        if (!populateEntity(entity, jsonAux, context)) {
+                            precessOK = false;
+                            break;
+                        }
                     }
+                } else {
+                    precessOK = false;
                 }
-            } else {
+            } catch (JSONException e) {
                 precessOK = false;
-            }
-        } catch (JSONException e) {
-            precessOK = false;
 
+            }
+        }else if(entity.equals(SplashUsuario.ENTRENAMIENTO_CANTIDAD_ADEFUL)) {
+            populateCantidadEntrenamiento(entity, context);
+        }else{
+            precessOK = false;
         }
-        return true;
+        return precessOK;
     }
 
 
     public boolean deleteEntity(String entity, Context context) {
         ControladorUsuarioAdeful controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
+        ControladorUsuarioGeneral controladorUsuarioGeneral = new ControladorUsuarioGeneral(context);
+        ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean deleteOk = true;
         switch (entity) {
+            //TABLA ADEFUL
+            case SplashUsuario.TABLA_ADEFUL: {
+                if (!controladorUsuarioAdeful.eliminarTablaAdeful())
+                    deleteOk = false;
+                break;
+            }
+            //TABLA GENERAR
+            case SplashUsuario.TABLA_GENERAL: {
+                if (!controladorUsuarioGeneral.eliminarTablaAdeful())
+                    deleteOk = false;
+                break;
+            }
             //INSTITUCION
             case SplashUsuario.ARTICULO: {
                 if (!controladorUsuarioAdeful.eliminarArticuloUsuario())
@@ -203,14 +238,97 @@ public class JsonParsing {
                     deleteOk = false;
                 break;
             }
+            case SplashUsuario.ENTRENAMIENTO_CANTIDAD_ADEFUL: {
+                if (!controladorUsuarioAdeful.eliminarCantidadEntrenamientoUsuarioAdeful())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.ENTRENAMIENTO_ASISTENCIA_ADEFUL: {
+                if (!controladorUsuarioAdeful.eliminarAsistenciaEntrenamientoUsuarioAdeful())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.SANCION_ADEFUL: {
+                if (!controladorUsuarioAdeful.eliminarSancionUsuarioAdeful())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.NOTIFICACION: {
+                if (!controladorUsuarioGeneral.eliminarNotificacionUsuario())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.NOTICIA: {
+                if (!controladorUsuarioGeneral.eliminarNoticiaUsuario())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.FOTO: {
+                if (!controladorUsuarioGeneral.eliminarFotoUsuario())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.PUBLICIDAD: {
+                if (!controladorUsuarioGeneral.eliminarPublicidadUsuario())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.USUARIO: {
+                if (!controladorUsuarioGeneral.eliminarUsuario())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.MODULO: {
+                if (!controladorUsuarioGeneral.eliminarModuloUsuario())
+                    deleteOk = false;
+                if (!controladorGeneral.eliminarModulo())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.SUBMODULO: {
+                if (!controladorUsuarioGeneral.eliminarSubmoduloUsuario())
+                    deleteOk = false;
+                if (!controladorGeneral.eliminarSubModulo())
+                    deleteOk = false;
+                break;
+            }
         }
         return deleteOk;
     }
 
     public boolean populateEntity(String entity, JSONObject jsonAux, Context context) {
         ControladorUsuarioAdeful controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
+        ControladorUsuarioGeneral controladorUsuarioGeneral = new ControladorUsuarioGeneral(context);
+        ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean insertOk = true;
         switch (entity) {
+            //TABLA
+            case SplashUsuario.TABLA_ADEFUL: {
+                try {
+                    Tabla tabla = new Tabla(jsonAux.getInt("ID_TABLA"),
+                            jsonAux.getString("TABLA"), jsonAux.getString("FECHA"));
+
+                    if (!controladorUsuarioAdeful.insertTabla(tabla))
+                        insertOk = false;
+
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.TABLA_GENERAL: {
+                try {
+                    Tabla tabla = new Tabla(jsonAux.getInt("ID_TABLA"),
+                            jsonAux.getString("TABLA"), jsonAux.getString("FECHA"));
+
+                    if (!controladorUsuarioGeneral.insertTabla(tabla))
+                        insertOk = false;
+
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
             //INSTITUCION
             case SplashUsuario.ARTICULO: {
                 try {
@@ -408,6 +526,192 @@ public class JsonParsing {
                     insertOk = false;
                 }
                 break;
+            }
+            //MI EQUIPO
+            case SplashUsuario.ENTRENAMIENTO_CANTIDAD_ADEFUL: {
+
+                List<Division> divisions = new ArrayList<>();
+                int cantidad = 0;
+                divisions = controladorUsuarioAdeful.selectListaDivisionUsuarioAdeful();
+                if (divisions != null) {
+                    if (divisions.size() > 0) {
+                        for (int i = 0; i < divisions.size(); i++) {
+                            cantidad = controladorUsuarioAdeful.selectCountEntrenamientoCantidad(divisions.get(i).getID_DIVISION());
+                            if (!controladorUsuarioAdeful.insertEntrenamientoCantidadUsuarioAdeful(divisions.get(i).getID_DIVISION(), cantidad)) {
+                                insertOk = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+
+            //MI EQUIPO
+            case SplashUsuario.ENTRENAMIENTO_ASISTENCIA_ADEFUL: {
+                try {
+
+                    Entrenamiento entrenamiento = new Entrenamiento(jsonAux.getInt("ID_ENTRENAMIENTO_ASISTENCIA"),
+                            jsonAux.getInt("ID_ENTRENAMIENTO"),
+                            jsonAux.getInt("ID_JUGADOR"),"");
+
+                    if (!controladorUsuarioAdeful.insertAsistenciaEntrenamientoUsuarioAdeful(entrenamiento))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            //MI EQUIPO
+            case SplashUsuario.SANCION_ADEFUL: {
+                try {
+
+                    Sancion sancion = new Sancion(jsonAux.getInt("ID_SANCION"),
+                            jsonAux.getInt("ID_JUGADOR"),
+                            jsonAux.getInt("ID_TORNEO"), jsonAux.getInt("AMARILLA"), jsonAux.getInt("ROJA")
+                            , jsonAux.getInt("FECHA_SUSPENSION"), jsonAux.getString("OBSERVACIONES"));
+
+                    if (!controladorUsuarioAdeful.insertSancionUsuarioAdeful(sancion))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            //SOCIAL
+            case SplashUsuario.NOTIFICACION: {
+                try {
+
+                    Notificacion notificacion = new Notificacion(jsonAux.getInt("ID_NOTIFICACION"),
+                            jsonAux.getString("TITULO"),
+                            jsonAux.getString("NOTIFICACION"));
+
+                    if (!controladorUsuarioGeneral.insertNotificacionUsuario(notificacion))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.NOTICIA: {
+                try {
+
+                    Noticia noticia = new Noticia(jsonAux.getInt("ID_NOTICIA"),
+                            jsonAux.getString("TITULO"),
+                            jsonAux.getString("DESCRIPCION"),
+                            jsonAux.getString("LINK"));
+
+                    if (!controladorUsuarioGeneral.insertNoticiaUsuario(noticia))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.FOTO: {
+                try {
+                    String imageString = jsonAux.getString("FOTO");
+
+                    Bitmap b = getBitmap(imageString);
+                    byte[] byteArray = null;
+                    if (b != null)
+                        byteArray = parseBitmapToByte(b);
+                    Foto foto = new Foto(jsonAux.getInt("ID_FOTO"),
+                            jsonAux.getString("TITULO"),
+                            byteArray);
+
+                    if (!controladorUsuarioGeneral.insertFotoUsuario(foto))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.PUBLICIDAD: {
+                try {
+                    String imageString = jsonAux.getString("LOGO");
+
+                    Bitmap b = getBitmap(imageString);
+                    byte[] byteArray = null;
+                    if (b != null)
+                        byteArray = parseBitmapToByte(b);
+                    Publicidad publicidad = new Publicidad(jsonAux.getInt("ID_PUBLICIDAD"),
+                            jsonAux.getString("TITULO"),
+                            byteArray,jsonAux.getString("OTROS"));
+
+                    if (!controladorUsuarioGeneral.insertPublicidadUsuario(publicidad))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.USUARIO: {
+                try {
+
+                    Usuario usuario = new Usuario(jsonAux.getInt("ID_USUARIO"),
+                            jsonAux.getString("USUARIO"),
+                            jsonAux.getString("PASSWORD"));
+
+                    if (!controladorUsuarioGeneral.insertUsuario(usuario))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.MODULO: {
+                try {
+
+                    Modulo modulo = new Modulo(jsonAux.getInt("ID_MODULO"),
+                            jsonAux.getString("NOMBRE"));
+
+                    if (!controladorUsuarioGeneral.insertModuloUsuario(modulo))
+                        insertOk = false;
+                    if (!controladorGeneral.insertModulo(modulo))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.SUBMODULO: {
+                try {
+
+                    SubModulo subModulo = new SubModulo(jsonAux.getInt("ID_SUBMODULO"),
+                            jsonAux.getString("NOMBRE"),
+                            jsonAux.getInt("ID_MODULO"), jsonAux.getInt("ISSELECTED") > 0);
+
+                    if (!controladorUsuarioGeneral.insertSubModuloUsuario(subModulo))
+                        insertOk = false;
+                    if (!controladorGeneral.insertSubModulo(subModulo))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+        }
+        return insertOk;
+    }
+
+    public boolean populateCantidadEntrenamiento(String entity, Context context){
+        ControladorUsuarioAdeful controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
+        boolean insertOk = true;
+        if (deleteEntity(entity, context)) {
+            List<Division> divisions = new ArrayList<>();
+            int cantidad = 0;
+            divisions = controladorUsuarioAdeful.selectListaDivisionUsuarioAdeful();
+            if (divisions != null) {
+                if (divisions.size() > 0) {
+                    for (int i = 0; i < divisions.size(); i++) {
+                        cantidad = controladorUsuarioAdeful.selectCountEntrenamientoCantidad(divisions.get(i).getID_DIVISION());
+                        if (!controladorUsuarioAdeful.insertEntrenamientoCantidadUsuarioAdeful(divisions.get(i).getID_DIVISION(), cantidad)) {
+                            insertOk = false;
+                            break;
+                        }
+                    }
+                }
             }
         }
         return insertOk;

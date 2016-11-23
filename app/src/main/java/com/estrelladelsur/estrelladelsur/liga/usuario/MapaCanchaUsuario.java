@@ -15,9 +15,9 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
-import com.estrelladelsur.estrelladelsur.liga.tabs_user.TabsAdefulUsuario;
+import com.estrelladelsur.estrelladelsur.liga.usuario.tabs_user.TabsAdefulUsuario;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 import com.google.android.gms.maps.CameraUpdate;
@@ -143,18 +143,11 @@ public class MapaCanchaUsuario extends AppCompatActivity implements OnMapReadyCa
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
-        menu.getItem(0).setVisible(false);// usuario
-        menu.getItem(1).setVisible(false);// permiso
-        menu.getItem(2).setVisible(false);// lifuba
-        menu.getItem(3).setVisible(false);// adeful
-        menu.getItem(4).setVisible(false);// puesto
-        menu.getItem(5).setVisible(false);// id_extra
-        menu.getItem(6).setVisible(false);// cargo
-        menu.getItem(7).setVisible(false);// cerrar
-        menu.getItem(8).setVisible(false);//gudar
-        menu.getItem(9).setVisible(false);// Subir
-        menu.getItem(10).setVisible(false); // eliminar
-        menu.getItem(11).setVisible(false); // consultar
+        menu.getItem(0).setVisible(false);//usuario
+        menu.getItem(1).setVisible(false);// posicion
+        menu.getItem(2).setVisible(false);// cargo
+        menu.getItem(3).setVisible(false);//cerrar
+        menu.getItem(4).setVisible(false);// guardar
         return true;
     }
 

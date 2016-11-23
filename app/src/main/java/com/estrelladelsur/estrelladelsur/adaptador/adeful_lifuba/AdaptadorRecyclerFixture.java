@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
@@ -36,9 +37,18 @@ public class AdaptadorRecyclerFixture extends
 		private TextView textRecyclerViewCancha;
 		private TextView textRecyclerViewResultadoV;
 		private TextView textRecyclerViewResultadoL;
+        private TextView textFecha;
+		private TextView textAnio;
 
 		public FixtureViewHolder(View itemView) {
 			super(itemView);
+
+
+			textFecha = (TextView) itemView
+					.findViewById(R.id.textFecha);
+
+			textAnio = (TextView) itemView
+					.findViewById(R.id.textAnio);
 
 			// ESCUDO LOCAL
 			imageViewEscudoL = (ImageView) itemView
@@ -97,7 +107,8 @@ public class AdaptadorRecyclerFixture extends
 						escudoVisitaBitmap, 150, 150, true);
 				imageViewEscudoV.setImageBitmap(escudoVisitaBitmap);
 			}
-
+            textFecha.setText(fixtureRecycler.getFECHA());
+			textAnio.setText(fixtureRecycler.getANIO());
 			textRecyclerViewEquipoL.setText(fixtureRecycler.getEQUIPO_LOCAL());
 			textRecyclerViewEquipoL.setTypeface(equipo, Typeface.BOLD);
 			textRecyclerViewEquipoV.setText(fixtureRecycler.getEQUIPO_VISITA());

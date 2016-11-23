@@ -14,13 +14,16 @@ import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.database.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.institucion.administrador.CommunicatorAdeful;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
 
-public class FragmentGenerarUsuario extends Fragment {
+public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListener {
 
     private int CheckedPositionFragment;
     private EditText usuarioEditUser;
@@ -31,11 +34,11 @@ public class FragmentGenerarUsuario extends Fragment {
     private CommunicatorAdeful communicator;
     private boolean actualizar = false;
     private int idUsuarioExtra;
-    private String fechaCreacionExtra;
-    private String GUARDAR_USUARIO = "Usuario cargado correctamente";
-    private String ACTUALIZAR_USUARIO = "Usuario actualizado correctamente";
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Usuario> arrayUsuario;
+    private Request request = new Request();
+    private String usuarioCreador = null;
+    private String URL = null;
 
     public static FragmentGenerarUsuario newInstance() {
         FragmentGenerarUsuario fragment = new FragmentGenerarUsuario();
@@ -81,9 +84,9 @@ public class FragmentGenerarUsuario extends Fragment {
     }
 
     private void init() {
-        // VER DONDE EJECUCTAR ESTA LINEA
-        controladorGeneral = new ControladorGeneral(getActivity());
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        usuarioCreador = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         arrayUsuario = controladorGeneral.selectListaUsuario();
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
@@ -116,7 +119,7 @@ public class FragmentGenerarUsuario extends Fragment {
                 if (arrayUsuario.get(i).getUSUARIO().equals(usuario)) {
                     isUsuario = true;
                     break;
-                }else{
+                } else {
                     isUsuario = false;
                 }
             }
@@ -126,7 +129,45 @@ public class FragmentGenerarUsuario extends Fragment {
 
         return isUsuario;
     }
-     public void onCreate(Bundle savedInstanceState) {
+
+    public void cargarEntidad(int id) {
+
+        URL = null;
+        URL = auxiliarGeneral.getURLUSUARIOALL();
+
+        usuario = new Usuario(id, usuarioEditUser.getText().toString(),
+                usuarioEditPass.getText().toString(),
+                usuarioCreador, auxiliarGeneral.getFechaOficial(), usuarioCreador, auxiliarGeneral.getFechaOficial());
+
+        envioWebService();
+    }
+
+    public void envioWebService() {
+        request.setMethod("POST");
+        request.setParametrosDatos("usuario", usuario.getUSUARIO());
+        request.setParametrosDatos("pass", usuario.getPASSWORD());
+
+        if (insertar) {
+            request.setParametrosDatos("usuario_creador", usuario.getUSUARIO_CREADOR());
+            request.setParametrosDatos("fecha_creacion", usuario.getFECHA_CREACION());
+            URL = URL + auxiliarGeneral.getInsertPHP("Usuario");
+
+        } else {
+            request.setParametrosDatos("id_usuario", String.valueOf(usuario.getID_USUARIO()));
+            request.setParametrosDatos("usuario_actualizacion", usuario.getUSUARIO_ACTUALIZACION());
+            request.setParametrosDatos("fecha_actualizacion", usuario.getFECHA_ACTUALIZACION());
+            URL = URL + auxiliarGeneral.getUpdatePHP("Usuario");
+        }
+
+        new AsyncTaskGeneric(getActivity(), this, URL, request, "Usuario", usuario, insertar, "o");
+    }
+
+    public void showMesaje(String mensaje) {
+        Toast.makeText(getActivity(), mensaje,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -135,72 +176,34 @@ public class FragmentGenerarUsuario extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        // menu.getItem(1).setVisible(false);//permiso
-        // menu.getItem(2).setVisible(false);//lifuba
-        menu.getItem(3).setVisible(false);// adeful
-        menu.getItem(4).setVisible(false);// puesto
-        menu.getItem(5).setVisible(false);// posicion
-        menu.getItem(6).setVisible(false);// cargo
-        // menu.getItem(7).setVisible(false);//cerrar
-        // menu.getItem(8).setVisible(false);// guardar
-        menu.getItem(9).setVisible(false);// Subir
-        menu.getItem(10).setVisible(false); // eliminar
-        menu.getItem(11).setVisible(false); // consultar
+        menu.getItem(1).setVisible(false);// posicion
+        menu.getItem(2).setVisible(false);// cargo
+        // menu.getItem(3).setVisible(false);//cerrar
+        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
         if (id == R.id.action_usuario) {
-
-            /*Intent usuario = new Intent(getActivity(),
-                    NavigationDrawerUsuario.class);
-            startActivity(usuario);*/
-
+            auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
-        if (id == R.id.action_permisos) {
-            return true;
+        if (id == R.id.action_cerrar) {
+            auxiliarGeneral.close(getActivity());
         }
 
         if (id == R.id.action_guardar) {
-
-            String usuarios = "Administrador";
-           if (usuarioEditUser.getText().toString().equals("") || usuarioEditPass.getText().toString().equals("")) {
-
-                Toast.makeText(getActivity(), "Debe completar todos los campos.",
-                        Toast.LENGTH_SHORT).show();
-            } else if(validarUsuario(usuarioEditUser.getText().toString())){
-                Toast.makeText(getActivity(), "El usuario ya existe.",
-                        Toast.LENGTH_SHORT).show();
-            }else if (insertar) {
-                usuario = new Usuario(0, usuarioEditUser.getText().toString(),
-                        usuarioEditPass.getText().toString(),true,
-                        usuarios, auxiliarGeneral.getFechaOficial(), usuarios, auxiliarGeneral.getFechaOficial());
-                if (controladorGeneral.insertUsuario(usuario)) {
-                    inicializarControles(GUARDAR_USUARIO);
-                } else {
-                    auxiliarGeneral.errorDataBase(getActivity());
-                }
+            if (usuarioEditUser.getText().toString().equals("") || usuarioEditPass.getText().toString().equals("")) {
+                showMesaje("Debe completar todos los campos.");
+            } else if (validarUsuario(usuarioEditUser.getText().toString())) {
+                showMesaje("El usuario ya existe.");
+            } else if (insertar) {
+                cargarEntidad(0);
             } else { //USUARIO ACTUALIZAR
-                usuario = new Usuario(idUsuarioExtra, usuarioEditUser.getText().toString(),
-                        usuarioEditPass.getText().toString(),true,
-                        null, null, usuarios, auxiliarGeneral.getFechaOficial());
-                if (controladorGeneral.actualizarUsuario(usuario)) {
-                    actualizar = false;
-                    insertar = true;
-                    communicator.refreshAdeful();
-                    inicializarControles(ACTUALIZAR_USUARIO);
-                } else {
-                    auxiliarGeneral.errorDataBase(getActivity());
-                }
+                cargarEntidad(idUsuarioExtra);
             }
-            return true;
-        }
-        if (id == R.id.action_lifuba) {
             return true;
         }
         if (id == android.R.id.home) {
@@ -208,5 +211,18 @@ public class FragmentGenerarUsuario extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPostExecuteConcluded(boolean result, String mensaje) {
+        if (result) {
+            if (!insertar) {
+                actualizar = false;
+                insertar = true;
+            }
+            inicializarControles(mensaje);
+        } else {
+            auxiliarGeneral.errorWebService(getActivity(), mensaje);
+        }
     }
 }

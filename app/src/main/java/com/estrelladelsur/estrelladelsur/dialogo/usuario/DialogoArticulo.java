@@ -5,7 +5,9 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
@@ -14,7 +16,9 @@ public class DialogoArticulo {
 
     Context context;
     public ImageButton btnCerrar = null;
+    public Button btnLink = null;
     public AlertDialog alertDialog;
+    public LinearLayout linearLink;
     public TextView titulo;
     public TextView subTitulo;
     public TextView detalle;
@@ -45,6 +49,10 @@ public class DialogoArticulo {
         detalle.setTypeface(textFont);
         // BOTON CERRAE
         btnCerrar = (ImageButton) layout.findViewById(R.id.cerrarDialogo);
+
+        btnLink = (Button)layout.findViewById(R.id.linkDialogo);
+
+        linearLink = (LinearLayout) layout.findViewById(R.id.linearLink);
         builder.setView(layout);
         alertDialog = builder.create();
 

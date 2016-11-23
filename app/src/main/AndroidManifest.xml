@@ -9,6 +9,13 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission android:name="com.estrelladelsur.estrelladelsur.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.estrelladelsur.estrelladelsur.permission.C2D_MESSAGE" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -24,9 +31,21 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAilxuEgnsdPm7ByGZ6dTNzlem9TaQg1Bs" />
+
+        <receiver
+            android:name=".navegador.usuario.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.estrelladelsur.estrelladelsur" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".navegador.usuario.GCMIntentService" />
 
         <!--SERVICE CONEXION INTERNET-->
         <receiver
@@ -38,17 +57,16 @@
             </intent-filter>
         </receiver>
 
-        <!--USUARIO-->
+        <!--SPLASH USUARIO-->
         <activity android:name=".navegador.usuario.SplashUsuario">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <!--NAVIGATION USUARIO-->
         <activity android:name=".navegador.usuario.NavigationUsuario"></activity>
-
+        <!--ARTICULO USUARIO-->
         <activity
             android:name=".institucion.usuario.ArticuloUsuario"
             android:label="@string/institucion.articulo.usuario">
@@ -56,6 +74,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".navegador.usuario.NavigationUsuario" />
         </activity>
+        <!--COMISION USUARIO-->
         <activity
             android:name=".institucion.usuario.ComisionUsuario"
             android:label="@string/institucion.comision.usuario">
@@ -63,6 +82,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".navegador.usuario.NavigationUsuario" />
         </activity>
+        <!--DIRECCION USUARIO-->
         <activity
             android:name=".institucion.usuario.DireccionUsuario"
             android:label="@string/institucion.direccion.usuario">
@@ -70,148 +90,186 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".navegador.usuario.NavigationUsuario" />
         </activity>
-
-        <activity android:name=".liga.tabs_user.TabsAdefulUsuario">
+        <!--LIGA ADEFUL USUARIO-->
+        <activity android:name=".liga.usuario.tabs_user.TabsAdefulUsuario">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".navegador.usuario.NavigationUsuario" />
         </activity>
-
+        <!--MAPA ADEFUL USUARIO-->
         <activity android:name=".liga.usuario.MapaCanchaUsuario">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_user.TabsAdefulUsuario" />
+                android:value=".liga.usuario.tabs_user.TabsAdefulUsuario" />
         </activity>
-        <!--MI EQUIPO-->
-        <activity android:name=".miequipo.tabs_user.TabsFixtureUsuario">
+        <!--FIXTURE USUARIO-->
+        <activity android:name=".miequipo.usuario.tabs_user.TabsFixtureUsuario">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_user.TabsAdefulUsuario" />
+                android:value=".liga.usuario.tabs_user.TabsAdefulUsuario" />
         </activity>
-        <activity android:name=".miequipo.tabs_user.JugadorUsuario">
+        <!--JUGADOR USUARIO-->
+        <activity android:name=".miequipo.usuario.tabs_user.JugadorUsuario">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_user.TabsAdefulUsuario" />
+                android:value=".liga.usuario.tabs_user.TabsAdefulUsuario" />
         </activity>
-        <activity android:name=".miequipo.tabs_user.TabsEntrenamientoUsuario">
+        <!--ENTRENAMIENTO USUARIO-->
+        <activity android:name=".miequipo.usuario.tabs_user.TabsEntrenamientoUsuario">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_user.TabsAdefulUsuario" />
+                android:value=".liga.usuario.tabs_user.TabsAdefulUsuario" />
         </activity>
-        <!--ADEFUL-->
+        <!--SANCION USUARIO-->
+        <activity android:name=".miequipo.usuario.tabs_user.TabsSancionUsuario">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.usuario.tabs_user.TabsAdefulUsuario" />
+        </activity>
+        <!--NOTIFICACION USUARIO-->
+        <activity android:name=".social.usuario.NotificacionUsuario">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.usuario.tabs_user.TabsAdefulUsuario" />
+        </activity>
+        <!--NOTICIA USUARIO-->
+        <activity android:name=".social.usuario.NoticiaUsuario">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.usuario.tabs_user.TabsAdefulUsuario" />
+        </activity>
+        <!--FOTO USUARIO-->
+        <activity android:name=".social.usuario.FotoUsuario">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.usuario.tabs_user.TabsAdefulUsuario" />
+        </activity>
+        <!--PUBLICIDAD USUARIO-->
+        <activity android:name=".social.usuario.PublicidadUsuario">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".liga.usuario.tabs_user.TabsAdefulUsuario" />
+        </activity>
+        <!--ADEFUL ADMINISTRADOR-->
         <activity android:name=".navegador.administrador.Navigation"></activity>
-
+        <!--ARTICULO ADMINISTRADOR-->
         <activity
-            android:name=".institucion.tabs_adm.TabsArticulo"
+            android:name=".institucion.administrador.tabs_adm.TabsArticulo"
             android:label="@string/institucion.articulo.adeful">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".institucion.tabs_adm.TabsComision">
+        <!--COMISION ADMINISTRADOR-->
+        <activity android:name=".institucion.administrador.tabs_adm.TabsComision">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".institucion.tabs_adm.TabsDireccion">
+        <!--DIRECCION ADMINISTRADOR-->
+        <activity android:name=".institucion.administrador.tabs_adm.TabsDireccion">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".liga.tabs_adm.TabsAdeful">
+        <!--LIGA ADEFUL ADMINISTRADOR-->
+        <activity android:name=".liga.administrador.tabs_adm.TabsAdeful">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".liga.tabs_adm.TabsLifuba">
+        <!--LIGA LIFUBA ADMINISTRADOR-->
+        <activity android:name=".liga.administrador.tabs_adm.TabsLifuba">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".navegador.administrador.Navigation" />
         </activity>
-
-        <activity android:name=".liga.adeful.MapaCanchaAdeful">
+        <!--MAPA ADEFUL ADMINISTRADOR-->
+        <activity android:name=".liga.administrador.adeful.MapaCanchaAdeful">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".liga.administrador.tabs_adm.TabsAdeful" />
         </activity>
-        <activity android:name=".liga.lifuba.MapaCanchaLifuba">
+        <!--MAPA LIFUBA ADMINISTRADOR-->
+        <activity android:name=".liga.administrador.lifuba.MapaCanchaLifuba">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsLifuba" />
+                android:value=".liga.administrador.tabs_adm.TabsLifuba" />
         </activity>
-
-        <activity android:name=".miequipo.tabs_adm.TabsFixture">
+        <!--FIXTURE ADMINISTRADOR-->
+        <activity android:name=".miequipo.administrador.tabs_adm.TabsFixture">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".miequipo.tabs_adm.TabsResultado">
+        <!--RESULTADO ADMINISTRADOR-->
+        <activity android:name=".miequipo.administrador.tabs_adm.TabsResultado">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".miequipo.tabs_general.TabsJugador">
+        <!--JUGADOR ADMINISTRADOR-->
+        <activity android:name=".miequipo.administrador.tabs_general.TabsJugador">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".miequipo.tabs_general.TabsEntrenamiento">
-            <!--android:label="@string/app_name"-->
-            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
+        <!--ENTRENAMIENTO ADMINISTRADOR-->
+        <activity android:name=".miequipo.administrador.tabs_general.TabsEntrenamiento">
+             <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".navegador.administrador.Navigation" />
+        </activity>
+        <!--SANCION ADMINISTRADOR-->
+        <activity android:name=".miequipo.administrador.tabs_adm.TabsSancion">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".miequipo.tabs_general.TabsSancion">
-            <!--android:label="@string/app_name"-->
-            <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
+        <!--NOTIFICACION ADMINISTRADOR-->
+        <activity android:name=".social.administrador.tabs.TabsNotificacion">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
-        <!--MODULO SOCIAL-->
-        <activity android:name=".social.TabsNotificacion">
+        <!--NOTICIA ADMINISTRADOR-->
+        <activity android:name=".social.administrador.tabs.TabsNoticia">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
-
-        <activity android:name=".social.TabsNoticia">
+        <!--FOTO ADMINISTRADOR-->
+        <activity android:name=".social.administrador.tabs.TabsFoto">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".social.TabsFoto">
+        <!--PUBLICIDAD ADMINISTRADOR-->
+        <activity android:name=".social.administrador.tabs.TabsPublicidad">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
-        <activity android:name=".social.TabsPublicidad">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
-        </activity>
+        <!--USUARIO ADMINISTRADOR-->
         <activity android:name=".permiso.TabsUsuario">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
+        <!--PERMISO ADMINISTRADOR-->
         <activity android:name=".permiso.TabsPermiso">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
 
         <!--LOGIN-->
         <activity
             android:name=".login.Login"
             android:theme="@style/Theme.AppCompat.Dialog">
-
-            <meta-data
+          <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".liga.tabs_adm.TabsAdeful" />
+                android:value=".navegador.administrador.Navigation" />
         </activity>
-
-    </application>
-
+   </application>
 </manifest>

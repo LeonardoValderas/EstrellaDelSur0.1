@@ -19,6 +19,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <ImageButton
+                    android:id="@+id/rotateButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="50dp"
+                    android:src="@android:drawable/stat_notify_sync" />
+
                 <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/fotoImageComisionDireccion"
                     android:layout_width="110dp"

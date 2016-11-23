@@ -46,7 +46,7 @@ public class DireccionUsuario extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
-        txtToolBarTitulo.setText("COMISIÓN DIRECTIVA");
+        txtToolBarTitulo.setText("DIRECCION TECNICA");
         init();
     }
     public void init() {

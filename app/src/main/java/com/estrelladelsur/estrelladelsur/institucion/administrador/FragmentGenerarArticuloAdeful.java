@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
-import com.estrelladelsur.estrelladelsur.database.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
@@ -39,14 +39,12 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
     private String usuario = null;
     private String URL = null;
 
-
     public static FragmentGenerarArticuloAdeful newInstance() {
         FragmentGenerarArticuloAdeful fragment = new FragmentGenerarArticuloAdeful();
         return fragment;
     }
 
     public FragmentGenerarArticuloAdeful() {
-        // Required empty public constructor
     }
 
     @Override
@@ -134,24 +132,20 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
             request.setParametrosDatos("fecha_actualizacion", articulo.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Articulo");
         }
-
         new AsyncTaskGeneric(getActivity(), this, URL, request, "Articulo", articulo, insertar, "o");
     }
 
     @Override
     public void onPostExecuteConcluded(boolean result, String mensaje) {
         if (result) {
-            if (insertar) {
-                inicializarControles(mensaje);
-            } else {
+            if (!insertar) {
                 actualizar = false;
                 insertar = true;
-                inicializarControles(mensaje);
             }
+            inicializarControles(mensaje);
         } else {
             auxiliarGeneral.errorWebService(getActivity(), mensaje);
         }
-
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -163,17 +157,11 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
         // menu.getItem(0).setVisible(false);//usuario
-        menu.getItem(1).setVisible(false);//permiso
-        menu.getItem(2).setVisible(false);//lifuba
-        menu.getItem(3).setVisible(false);// adeful
-        menu.getItem(4).setVisible(false);// puesto
-        menu.getItem(5).setVisible(false);// posicion
-        menu.getItem(6).setVisible(false);// cargo
-        // menu.getItem(7).setVisible(false);//cerrar
-        // menu.getItem(8).setVisible(false);// guardar
-        menu.getItem(9).setVisible(false);// Subir
-        menu.getItem(10).setVisible(false); // eliminar
-        menu.getItem(11).setVisible(false); // consultar
+        menu.getItem(1).setVisible(false);// posicion
+        menu.getItem(2).setVisible(false);// cargo
+        // menu.getItem(3).setVisible(false);//cerrar
+        // menu.getItem(4).setVisible(false);// guardar
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -181,20 +169,13 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        // noinspection SimplifiableIfStatement
         if (id == R.id.action_usuario) {
-
-            /*Intent usuario = new Intent(getActivity(),
-                    NavigationDrawerUsuario.class);
-            startActivity(usuario);*/
-
+            auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
-        if (id == R.id.action_permisos) {
-            return true;
+        if (id == R.id.action_cerrar) {
+            auxiliarGeneral.close(getActivity());
         }
-
         if (id == R.id.action_guardar) {
 
             if (articuloEditTituto.getText().toString().equals("") || articuloEditArticulo.getText().toString().equals("")) {
@@ -208,10 +189,7 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
             return true;
         }
 
-        if (id == R.id.action_lifuba) {
 
-            return true;
-        }
 
         if (id == android.R.id.home) {
 

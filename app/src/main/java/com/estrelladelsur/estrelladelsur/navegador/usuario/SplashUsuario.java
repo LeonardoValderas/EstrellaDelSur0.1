@@ -1,62 +1,60 @@
 package com.estrelladelsur.estrelladelsur.navegador.usuario;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
-import com.estrelladelsur.estrelladelsur.entidad.Articulo;
-import com.estrelladelsur.estrelladelsur.entidad.Cancha;
-import com.estrelladelsur.estrelladelsur.entidad.Comision;
-import com.estrelladelsur.estrelladelsur.entidad.Direccion;
-import com.estrelladelsur.estrelladelsur.entidad.Division;
-import com.estrelladelsur.estrelladelsur.entidad.Equipo;
-import com.estrelladelsur.estrelladelsur.entidad.Fixture;
-import com.estrelladelsur.estrelladelsur.entidad.Torneo;
+import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
+import com.estrelladelsur.estrelladelsur.entidad.Tabla;
+import com.estrelladelsur.estrelladelsur.social.usuario.NotificacionUsuario;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
-
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class SplashUsuario extends AppCompatActivity {
 
-    private ControladorUsuarioAdeful controladorUsuario;
+    private ControladorUsuarioAdeful controladorUsuarioAdeful;
+    private ControladorUsuarioGeneral controladorUsuarioGeneral;
     private AuxiliarGeneral auxiliarGeneral;
     private ProgressBar progressSplash;
     private Request request = new Request();
     private Request requestUrl = new Request();
     private JsonParsing jsonParsing = new JsonParsing(SplashUsuario.this);
     private static final String TAG_SUCCESS = "success";
-    private static final String SINDATOS = "SIN DATOS";
     private static final String TAG_MESSAGE = "message";
+    private Context context;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    public static final long EXPIRATION_TIME_MS = 1000 * 3600 * 24 * 7;
+    private String SENDER_ID = "686300125964";
+    private String regid;
+    private GoogleCloudMessaging gcm;
+    private static final String TAG_ID = "id";
+    private static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_APP_VERSION = "appVersion";
+    private static final String PROPERTY_EXPIRATION_TIME = "onServerExpirationTimeMs";
+    private static final String PROPERTY_USER = "id";
     private String mensaje = null;
-    private String sinDatos = null;
-    private Articulo articulo;
-    private Comision comision;
-    private Direccion direccion;
-    private Equipo equipo;
-    private Torneo torneo;
-    private Cancha cancha;
-    private Division division;
-    private Fixture fixture;
     public static final String ARTICULO = "articulo";
     public static final String COMISION = "comision";
     public static final String DIRECCION = "direccion";
@@ -70,10 +68,55 @@ public class SplashUsuario extends AppCompatActivity {
     public static final String POSICION_ADEFUL = "posicion_adeful";
     public static final String ENTRENAMIENTO_ADEFUL = "entrenamiento_adeful";
     public static final String ENTRENAMIENTO_DIVISION_ADEFUL = "entrenamiento_division_adeful";
+    public static final String ENTRENAMIENTO_CANTIDAD_ADEFUL = "entrenamiento_cantidad_adeful";
+    public static final String ENTRENAMIENTO_ASISTENCIA_ADEFUL = "entrenamiento_asistencia_adeful";
+    public static final String SANCION_ADEFUL = "sancion_adeful";
     public static final String NOTIFICACION = "notificacion";
-    public static final String NOTICIAS = "noticias";
-    public static final String FOTOS = "fotos";
+    public static final String NOTICIA = "noticia";
+    public static final String FOTO = "foto";
     public static final String PUBLICIDAD = "publicidad";
+    public static final String USUARIO = "usuario";
+    public static final String MODULO = "modulo";
+    public static final String SUBMODULO = "submodulo";
+    public static final String PERMISO = "permiso";
+    public static final String ANIO = "anio";
+    public static final String FECHA = "fecha";
+    public static final String TABLA_ADEFUL = "tabla_fecha_adeful";
+    public static final String TABLA_LIFUBA = "tabla_fecha_lifuba";
+    public static final String TABLA_GENERAL = "tabla_fecha_general";
+
+    public static final String TABLA_ARTICULO = "ARTICULO_ADEFUL";
+    public static final String TABLA_CANCHA_ADEFUL = "CANCHA_ADEFUL";
+    public static final String TABLA_CARGO_ADEFUL = "CARGO_ADEFUL";
+    public static final String TABLA_COMISION= "COMISION_ADEFUL";
+    public static final String TABLA_DIRECCION = "DIRECCION_ADEFUL";
+    public static final String TABLA_DIVISION_ADEFUL = "DIVISION_ADEFUL";
+    public static final String TABLA_ENTRENAMIENTO = "ENTRENAMIENTO_ADEFUL";
+    public static final String TABLA_ENTRENAMIENTO_DIVISION = "ENTRENAMIENTO_DIVISION_ADEFUL";
+    public static final String TABLA_EQUIPO_ADEFUL = "EQUIPO_ADEFUL";
+    public static final String TABLA_FIXTURE_ADEFUL = "FIXTURE_ADEFUL";
+    public static final String TABLA_JUGADOR = "JUGADOR_ADEFUL";
+    public static final String TABLA_POSICION = "POSICION_ADEFUL";
+    public static final String TABLA_SANCION = "SANCION_ADEFUL";
+    public static final String TABLA_TORNEO_ADEFUL = "TORNEO_ADEFUL";
+    public static final String TABLA_ASISTENCIA = "ENTRENAMIENTO_ASISTENCIA_ADEFUL";
+    public static final String TABLA_TABLA_ADEFUL = "FECHA_TABLA";
+    public static final String TABLA_TABLA_GENERAL = "FECHA_TABLA";
+    public static final String TABLA_NOTIFICACION = "NOTIFICACION";
+    public static final String TABLA_NOTICIA = "NOTICIA";
+    public static final String TABLA_FOTO = "FOTO";
+    public static final String TABLA_PUBLICIDAD = "PUBLICIDAD";
+    public static final String TABLA_USUARIO = "USUARIO";
+    public static final String TABLA_MODULO = "MODULO";
+    public static final String TABLA_SUBMODULO = "SUBMODULO";
+    public static final String TABLA_PERMISO = "PERMISO";
+    public static final String TABLA_ANIO = "ANIO";
+    public static final String TABLA_FECHA = "FECHA";
+
+    public static String TAG = "GCM";
+    private int id = 0;
+    private boolean isNotificacion = false;
+    private boolean close = false;
 
 
     @Override
@@ -81,75 +124,135 @@ public class SplashUsuario extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
-        controladorUsuario = new ControladorUsuarioAdeful(this);
+        controladorUsuarioAdeful = new ControladorUsuarioAdeful(this);
+        controladorUsuarioGeneral = new ControladorUsuarioGeneral(this);
         auxiliarGeneral = new AuxiliarGeneral(SplashUsuario.this);
-//
-//        titulos = auxiliarGeneral.tituloFont(NavigationUsuario.this);
-//        adeful = auxiliarGeneral.ligaFont(NavigationUsuario.this);
+
+        close = SplashUsuario.this.getIntent().getBooleanExtra("close",
+                false);
+        if(close)
+            closeApp();
+
+        if(checkGCM())
         init();
-//        inicializarDatosGenerales();
-//        insertUsuarioAdm();
 
     }
 
+    public void closeApp(){
+         finish();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     public void init() {
+        isNotificacion = getIntent().getBooleanExtra("Notificacion", false);
         progressSplash = (ProgressBar) findViewById(R.id.progressSplash);
         envioWebService();
-//        fecha_articulo = controladorUsuario.selectFechaWebService();
-//        if (fecha_articulo != null) {
-//            auxiliarGeneral.errorDataBase(SplashUsuario.this);
-//        }}
-
-
-//        Articulo a = new Articulo(0,"HISTORIA DEL CLUB","Lorem ipsum es el texto que se usa habitualmente en diseño gráfico en demostraciones de tipografías o de borradores de diseño para probar el diseño visual antes de insertar el texto final.\n" +
-//                "\n" +
-//                "Aunque no posee actualmente fuentes para justificar sus hipótesis, el profesor de filología clásica Richard McClintock asegura que su uso se remonta a los impresores de comienzos del siglo XVI.1 Su uso en algunos editores de texto muy conocidos en la actualidad ha dado al texto lorem ipsum nueva popularidad.\n" +
-//                "\n" +
-//                "El texto en sí no tiene sentido, aunque no es completamente aleatorio, sino que deriva de un texto de Cicerón en lengua latina, a cuyas palabras se les han eliminado sílabas o letras. El significado del texto no tiene importancia, ya que solo es una demostración o prueba, pero se inspira en la obra de Cicerón De finibus bonorum et malorum (Sobre los límites del bien y del mal) que comienza con");
-//
-//        Comision c = new Comision(1, "Juan Perez",null,"Presidente","01/12/2016","22/12/2016");
-//
-//        if(controladorUsuario.insertArticuloUsuario(1,a) && controladorUsuario.insertComisionUsuario(c)){
-//            Intent i =  new Intent(SplashUsuario.this,NavigationUsuario.class);
-//            startActivity(i);
-//        }else{
-//            auxiliarGeneral.errorDataBase(SplashUsuario.this);
-//        }
-
-
     }
 
     public void envioWebService() {
         request.setMethod("POST");
-        // request.setParametrosDatos("fecha_articulo", fecha_articulo);
-        //INSTITUCION
-        request.setParametrosDatos(ARTICULO, "2016-04-23--09-29-0");
-        request.setParametrosDatos(COMISION, "2016-04-23--09-29-0");
-        request.setParametrosDatos(DIRECCION, "2016-04-23--09-29-0");
-        //LIGA
-        request.setParametrosDatos(EQUIPO_ADEFUL, "2016-04-23--09-29-0");
-        request.setParametrosDatos(DIVISION_ADEFUL, "2016-04-23--09-29-0");
-        request.setParametrosDatos(TORNEO_ADEFUL, "2016-04-23--09-29-0");
-        request.setParametrosDatos(CANCHA_ADEFUL, "2016-04-23--09-29-0");
-        //MI EQUIPO
-        request.setParametrosDatos(FIXTURE_ADEFUL, "2016-04-23--09-29-0");
-        request.setParametrosDatos(JUGADOR_ADEFUL, "2016-04-23--09-29-0");
-     //   request.setParametrosDatos("POSICION_ADEFUL", "2016-04-23--09-29-0");
-        request.setParametrosDatos(ENTRENAMIENTO_ADEFUL, "2016-04-23--09-29-0");
-        request.setParametrosDatos(ENTRENAMIENTO_DIVISION_ADEFUL, "2016-04-23--09-29-0");
+
+
+        List<Tabla> listTablaAdeful = new ArrayList<>();
+        List<Tabla> listTablaGeneral = new ArrayList<>();
+
+        listTablaAdeful = controladorUsuarioAdeful.selectListaTablaAdeful();
+        listTablaGeneral = controladorUsuarioGeneral.selectListaTablaGeneral();
+
+
+       //ADEFUL
+        for (int i = 0; i < listTablaAdeful.size(); i++) {
+            switch (listTablaAdeful.get(i).getTABLA()){
+                case TABLA_TABLA_ADEFUL:
+                    request.setParametrosDatos(TABLA_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                break;
+                case TABLA_ARTICULO:
+                    request.setParametrosDatos(ARTICULO, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_COMISION:
+                    request.setParametrosDatos(COMISION, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_DIRECCION:
+                    request.setParametrosDatos(DIRECCION,  listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_EQUIPO_ADEFUL:
+                    request.setParametrosDatos(EQUIPO_ADEFUL,  listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_DIVISION_ADEFUL:
+                    request.setParametrosDatos(DIVISION_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_TORNEO_ADEFUL:
+                    request.setParametrosDatos(TORNEO_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_CANCHA_ADEFUL:
+                    request.setParametrosDatos(CANCHA_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_FIXTURE_ADEFUL:
+                    request.setParametrosDatos(FIXTURE_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_JUGADOR:
+                    request.setParametrosDatos(JUGADOR_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_ENTRENAMIENTO:
+                    request.setParametrosDatos(ENTRENAMIENTO_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_ENTRENAMIENTO_DIVISION:
+                    request.setParametrosDatos(ENTRENAMIENTO_DIVISION_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_ASISTENCIA:
+                    request.setParametrosDatos(ENTRENAMIENTO_ASISTENCIA_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                    break;
+                case TABLA_SANCION:
+                    request.setParametrosDatos(SANCION_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                    break;
+            }
+        }
+        //GENERAL
+        for (int i = 0; i < listTablaGeneral.size(); i++) {
+            switch (listTablaGeneral.get(i).getTABLA()){
+                case TABLA_TABLA_GENERAL:
+                    request.setParametrosDatos(TABLA_GENERAL, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_NOTIFICACION:
+                    request.setParametrosDatos(NOTIFICACION, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_NOTICIA:
+                    request.setParametrosDatos(NOTICIA, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_FOTO:
+                    request.setParametrosDatos(FOTO, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_PUBLICIDAD:
+                    request.setParametrosDatos(PUBLICIDAD, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_USUARIO:
+                    request.setParametrosDatos(USUARIO, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_MODULO:
+                    request.setParametrosDatos(MODULO, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_SUBMODULO:
+                    request.setParametrosDatos(SUBMODULO, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_PERMISO:
+                    request.setParametrosDatos(PERMISO, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_ANIO:
+                    request.setParametrosDatos(ANIO, listTablaGeneral.get(i).getFECHA());
+                    break;
+                case TABLA_FECHA:
+                    request.setParametrosDatos(FECHA, listTablaGeneral.get(i).getFECHA());
+                    break;
+            }
+        }
+
         requestUrl.setParametrosDatos("URL", auxiliarGeneral.getURL() + auxiliarGeneral.getURLSINCRONIZARUSUARIO());
 
-//
-//        if (tipo == 0) {
-//            request.setQuery("SUBIR");
-//            request.setParametrosDatos("usuario_creador", articulo.getUSUARIO_CREADOR());
-//            request.setParametrosDatos("fecha_creacion", articulo.getFECHA_CREACION());
-//        } else {
-//            request.setQuery("EDITAR");
-//            request.setParametrosDatos("id_articulo", String.valueOf(articulo.getID_ARTICULO()));
-//            request.setParametrosDatos("usuario_actualizacion", articulo.getUSUARIO_ACTUALIZACION());
-//        }
         new TaskSincronizar().execute(request, requestUrl);
     }
 
@@ -169,6 +272,7 @@ public class SplashUsuario extends AppCompatActivity {
             JSONArray jsonArrayResponse = null;
             JSONObject jsonArrayResponseAux = null;
             boolean precessOK = true;
+            boolean isAsistencia = false;
             String URL = null;
             try {
 
@@ -184,12 +288,38 @@ public class SplashUsuario extends AppCompatActivity {
                     mensaje = jsonArrayResponseAux.getString(TAG_MESSAGE);
 
                     if (success == 0) {
+                        jsonArray = json.optJSONArray(TABLA_ADEFUL);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+
+                                if (!jsonParsing.processingJson(jsonArray, TABLA_ADEFUL, SplashUsuario.this)) {
+                                    precessOK = false;
+                                    mensaje = addMessage("tabla_adeful");
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(TABLA_GENERAL);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+
+                                if (!jsonParsing.processingJson(jsonArray, TABLA_GENERAL, SplashUsuario.this)) {
+                                    precessOK = false;
+                                    mensaje = addMessage("tabla_general");
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
                         jsonArray = json.optJSONArray(ARTICULO);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, ARTICULO, SplashUsuario.this))
+                                if (!jsonParsing.processingJson(jsonArray, ARTICULO, SplashUsuario.this)) {
                                     precessOK = false;
+                                    mensaje = addMessage("articulo");
+                                }
                             }
                         }
                         jsonArray = null;
@@ -198,8 +328,10 @@ public class SplashUsuario extends AppCompatActivity {
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, COMISION, SplashUsuario.this))
+                                if (!jsonParsing.processingJson(jsonArray, COMISION, SplashUsuario.this)) {
                                     precessOK = false;
+                                    mensaje = addMessage("comision");
+                                }
                             }
                         }
                         jsonArray = null;
@@ -208,8 +340,10 @@ public class SplashUsuario extends AppCompatActivity {
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, DIRECCION, SplashUsuario.this))
+                                if (!jsonParsing.processingJson(jsonArray, DIRECCION, SplashUsuario.this)) {
+                                    mensaje = addMessage("direccion");
                                     precessOK = false;
+                                }
                             }
                         }
                         jsonArray = null;
@@ -217,8 +351,10 @@ public class SplashUsuario extends AppCompatActivity {
                         jsonArray = json.optJSONArray(EQUIPO_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, EQUIPO_ADEFUL, SplashUsuario.this))
+                                if (!jsonParsing.processingJson(jsonArray, EQUIPO_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("equipo");
                                     precessOK = false;
+                                }
                             }
                         }
                         jsonArray = null;
@@ -226,8 +362,10 @@ public class SplashUsuario extends AppCompatActivity {
                         jsonArray = json.optJSONArray(TORNEO_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, TORNEO_ADEFUL, SplashUsuario.this))
+                                if (!jsonParsing.processingJson(jsonArray, TORNEO_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("torneo");
                                     precessOK = false;
+                                }
                             }
                         }
                         jsonArray = null;
@@ -235,37 +373,47 @@ public class SplashUsuario extends AppCompatActivity {
                         jsonArray = json.optJSONArray(CANCHA_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, CANCHA_ADEFUL, SplashUsuario.this))
+                                if (!jsonParsing.processingJson(jsonArray, CANCHA_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("cancha");
                                     precessOK = false;
-                            }
-                            jsonArray = null;
-                            jsonAux = null;
-                            jsonArray = json.optJSONArray(DIVISION_ADEFUL);
-                            if (jsonArray != null) {
-                                if (jsonArray.length() > 0) {
-                                    if (!jsonParsing.processingJson(jsonArray, DIVISION_ADEFUL, SplashUsuario.this))
-                                        precessOK = false;
                                 }
                             }
-                            jsonArray = null;
-                            jsonAux = null;
-                            jsonArray = json.optJSONArray(FIXTURE_ADEFUL);
-                            if (jsonArray != null) {
-                                if (jsonArray.length() > 0) {
-                                    if (!jsonParsing.processingJson(jsonArray, FIXTURE_ADEFUL, SplashUsuario.this))
-                                        precessOK = false;
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(DIVISION_ADEFUL);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                isAsistencia = true;
+                                if (!jsonParsing.processingJson(jsonArray, DIVISION_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("division");
+                                    precessOK = false;
                                 }
                             }
-                            jsonArray = null;
-                            jsonAux = null;
-                            jsonArray = json.optJSONArray(JUGADOR_ADEFUL);
-                            if (jsonArray != null) {
-                                if (jsonArray.length() > 0) {
-                                    if (!jsonParsing.processingJson(jsonArray, JUGADOR_ADEFUL, SplashUsuario.this))
-                                        precessOK = false;
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(FIXTURE_ADEFUL);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, FIXTURE_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("fixture");
+                                    precessOK = false;
                                 }
                             }
-                            jsonArray = null;
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(JUGADOR_ADEFUL);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, JUGADOR_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("jugador");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        //                           jsonArray = null;
 //                            jsonAux = null;
 //                            jsonArray = json.optJSONArray(POSICION_ADEFUL);
 //                            if (jsonArray != null) {
@@ -274,27 +422,157 @@ public class SplashUsuario extends AppCompatActivity {
 //                                        precessOK = false;
 //                                }
 //                            }
-                            jsonArray = null;
-                            jsonAux = null;
-                            jsonArray = json.optJSONArray(ENTRENAMIENTO_ADEFUL);
-                            if (jsonArray != null) {
-                                if (jsonArray.length() > 0) {
-                                    if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_ADEFUL, SplashUsuario.this))
-                                        precessOK = false;
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(ENTRENAMIENTO_ADEFUL);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                isAsistencia = true;
+                                if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("entrenamiento");
+                                    precessOK = false;
                                 }
                             }
-                            jsonArray = null;
-                            jsonAux = null;
-                            jsonArray = json.optJSONArray(ENTRENAMIENTO_DIVISION_ADEFUL);
-                            if (jsonArray != null) {
-                                if (jsonArray.length() > 0) {
-                                    if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_DIVISION_ADEFUL, SplashUsuario.this))
-                                        precessOK = false;
-                                }
-                            }
-
-
                         }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(ENTRENAMIENTO_DIVISION_ADEFUL);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                isAsistencia = true;
+                                if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_DIVISION_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("entrenamiento_division");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        if (isAsistencia) {
+                            if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_CANTIDAD_ADEFUL, SplashUsuario.this)) {
+                                mensaje = addMessage("cantidad");
+                                precessOK = false;
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(ENTRENAMIENTO_ASISTENCIA_ADEFUL);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_ASISTENCIA_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("asistencia");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(SANCION_ADEFUL);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, SANCION_ADEFUL, SplashUsuario.this)) {
+                                    mensaje = addMessage("sancion");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(NOTIFICACION);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, NOTIFICACION, SplashUsuario.this)) {
+                                    mensaje = addMessage("notificacion");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(NOTICIA);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, NOTICIA, SplashUsuario.this)) {
+                                    mensaje = addMessage("noticia");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(FOTO);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, FOTO, SplashUsuario.this)) {
+                                    mensaje = addMessage("foto ");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(PUBLICIDAD);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, PUBLICIDAD, SplashUsuario.this)) {
+                                    mensaje = addMessage("publicidad");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(USUARIO);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, USUARIO, SplashUsuario.this)) {
+                                    mensaje = addMessage("usuario");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(MODULO);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, MODULO, SplashUsuario.this)) {
+                                    mensaje = addMessage("modulo");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+                        jsonArray = null;
+                        jsonAux = null;
+                        jsonArray = json.optJSONArray(SUBMODULO);
+                        if (jsonArray != null) {
+                            if (jsonArray.length() > 0) {
+                                if (!jsonParsing.processingJson(jsonArray, SUBMODULO, SplashUsuario.this)) {
+                                    mensaje = addMessage("submodulo");
+                                    precessOK = false;
+                                }
+                            }
+                        }
+//                        jsonArray = null;
+//                        jsonAux = null;
+//                        jsonArray = json.optJSONArray(ANIO);
+//                        if (jsonArray != null) {
+//                            if (jsonArray.length() > 0) {
+//                                if (!jsonParsing.processingJson(jsonArray, ANIO, SplashUsuario.this)) {
+//                                    mensaje = addMessage("anio");
+//                                    precessOK = false;
+//                                }
+//                            }
+//                        }
+//                        jsonArray = null;
+//                        jsonAux = null;
+//                        jsonArray = json.optJSONArray(FECHA);
+//                        if (jsonArray != null) {
+//                            if (jsonArray.length() > 0) {
+//                                if (!jsonParsing.processingJson(jsonArray, FECHA, SplashUsuario.this)) {
+//                                    mensaje = addMessage("fecha");
+//                                    precessOK = false;
+//                                }
+//                            }
+//                        }
                     } else if (success == 3) {
                         Intent i = new Intent(SplashUsuario.this, NavigationUsuario.class);
                         startActivity(i);
@@ -317,62 +595,202 @@ public class SplashUsuario extends AppCompatActivity {
             progressSplash.setVisibility(View.GONE);
 
             if (result) {
-
-                Intent i = new Intent(SplashUsuario.this, NavigationUsuario.class);
-                startActivity(i);
+                if(isNotificacion){
+                    Intent i = new Intent(SplashUsuario.this, NotificacionUsuario.class);
+                    startActivity(i);
+                } else {
+                    Intent i = new Intent(SplashUsuario.this, NavigationUsuario.class);
+                    startActivity(i);
+                }
             } else {
                 auxiliarGeneral.errorWebService(SplashUsuario.this, mensaje);
             }
         }
     }
 
-//    public static Bitmap getBitmap(String url) {
-//
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-//                .permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
-//        Bitmap bm = null;
-//        BitmapFactory.Options bmOptions;
-//        bmOptions = new BitmapFactory.Options();
-//        bmOptions.inSampleSize = 1;
-//
-//        if (bmOptions != null)
-//            bm = loadBitmap(url, bmOptions);
-//
-//        return bm;
-//    }
-
-//    public static Bitmap loadBitmap(String URL, BitmapFactory.Options options) {
-//        Bitmap bitmap = null;
-//        InputStream in = null;
-//        try {
-//            in = OpenHttpConnection(URL);
-//            bitmap = BitmapFactory.decodeStream(in, null, options);
-//            if (in != null)
-//                in.close();
-//        } catch (IOException e1) {
-//        }
-//        return bitmap;
-//    }
-//
-//    private static InputStream OpenHttpConnection(String strURL)
-//            throws IOException {
-//        InputStream inputStream = null;
-//        URL url = new URL(strURL);
-//        URLConnection conn = url.openConnection();
-//
-//        try {
-//            HttpURLConnection httpConn = (HttpURLConnection) conn;
-//            httpConn.setRequestMethod("GET");
-//            httpConn.connect();
-//
-//            if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-//                inputStream = httpConn.getInputStream();
-//            }
-//        } catch (Exception ex) {
-//        }
-//        return inputStream;
-//    }
+    public String addMessage(String entity) {
+        return "Error(" + entity + "). Por favor comuniquese con soporte.";
+    }
 
 
+    public boolean checkGCM() {
+
+        context = getApplicationContext();
+        //Chequemos si está instalado Google Play Services
+        if (checkPlayServices()) {
+            gcm = GoogleCloudMessaging.getInstance(SplashUsuario.this);
+            regid = getRegistrationId(context);
+            if (regid.equals("")) {
+                TareaRegistroGCM tarea = new TareaRegistroGCM();
+                tarea.execute("");
+                return true;
+            }else{
+                return true;
+            }
+        } else {
+            auxiliarGeneral.errorWebService(SplashUsuario.this, "No se ha encontrado Google Play Services.");
+            return false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPlayServices();
+    }
+
+    //llevar a la clase auxiliar
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private String getRegistrationId(Context context) {
+        SharedPreferences prefs = getSharedPreferences(
+                SplashUsuario.class.getSimpleName(),
+                Context.MODE_PRIVATE);
+
+        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+
+        if (registrationId.length() == 0) {
+            Log.d(TAG, "Registro GCM no encontrado.");
+            return "";
+        }
+
+//        String registeredUser =
+//                prefs.getString(PROPERTY_USER, "user");
+
+        int registeredVersion =
+                prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+
+        long expirationTime =
+                prefs.getLong(PROPERTY_EXPIRATION_TIME, -1);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        String expirationDate = sdf.format(new Date(expirationTime));
+
+        Log.d(TAG, "Registro GCM encontrado (version=" + registeredVersion +
+                ", expira=" + expirationDate + ")");
+
+        int currentVersion = getAppVersion(context);
+
+        if (registeredVersion != currentVersion) {
+            Log.d(TAG, "Nueva versión de la aplicación.");
+            return "";
+        } else if (System.currentTimeMillis() > expirationTime) {
+            Log.d(TAG, "Registro GCM expirado.");
+            return "";
+        }
+        return registrationId;
+    }
+
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException("Error al obtener versión: " + e);
+        }
+    }
+
+    private class TareaRegistroGCM extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String msg = "";
+
+            try {
+                if (gcm == null) {
+                    gcm = GoogleCloudMessaging.getInstance(context);
+                }
+                regid = gcm.register(SENDER_ID);
+
+                //Nos registramos en nuestro servidor
+                boolean registrado = registroServidor(regid, String.valueOf(System.currentTimeMillis() + EXPIRATION_TIME_MS));
+
+                //Guardamos los datos del registro
+                if (registrado) {
+                    setRegistrationId(context, regid);
+                }else{
+                    msg = mensaje;
+                }
+            } catch (IOException ex) {
+                msg = ex.getMessage();
+            }
+
+            return msg;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+        if(!s.isEmpty())
+            auxiliarGeneral.errorWebService(SplashUsuario.this, s);
+        }
+    }
+
+    private boolean registroServidor(String regId, String fecha) {
+
+        final String URL = auxiliarGeneral.getURLGCMALL();
+        Request request = new Request();
+        request.setMethod("POST");
+        request.setParametrosDatos("id", regId);
+        request.setParametrosDatos("fecha", fecha);
+
+        int success;
+        JSONObject json = null;
+        boolean precessOK = true;
+        try {
+            json = jsonParsing.parsingJsonObject(request, URL);
+            if (json != null) {
+                success = json.getInt(TAG_SUCCESS);
+                mensaje = json.getString(TAG_MESSAGE);
+                if (success == 0) {
+                    id = json.getInt(TAG_ID);
+                    if (id > 0) {
+                        return precessOK;
+                    } else {
+                        mensaje = "Error id GCM";
+                        precessOK = false;
+                    }
+                }else{
+                    mensaje = "Error GCM";
+                    precessOK = false;
+                }
+            }else{
+                mensaje = "Error null GCM";
+                precessOK = false;
+            }
+        } catch (JSONException e) {
+            precessOK = false;
+            mensaje = "Error(5). Por favor comuniquese con el administrador.";
+        }
+        return precessOK;
+    }
+
+    private void setRegistrationId(Context context, String regId) {
+        SharedPreferences prefs = getSharedPreferences(
+                SplashUsuario.class.getSimpleName(),
+                Context.MODE_PRIVATE);
+
+        int appVersion = getAppVersion(context);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(PROPERTY_USER, id);
+        editor.putString(PROPERTY_REG_ID, regId);
+        editor.putInt(PROPERTY_APP_VERSION, appVersion);
+        editor.putLong(PROPERTY_EXPIRATION_TIME,
+                System.currentTimeMillis() + EXPIRATION_TIME_MS);
+
+        editor.commit();
+    }
 }

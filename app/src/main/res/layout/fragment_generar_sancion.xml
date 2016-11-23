@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".miequipo.tabs_general.TabsSancion">
+    tools:context=".miequipo.administrador.tabs_adm.TabsSancion">
 
     <ScrollView
         android:id="@+id/scrollView1"
@@ -19,6 +19,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/linearTorneo"
                 android:orientation="horizontal">
 
                 <Spinner
