@@ -17,7 +17,8 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerDireccionUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Direccion;
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ public class DireccionUsuario extends AppCompatActivity {
     private Toolbar toolbar;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Direccion> direccionArray;
-    private ControladorUsuarioAdeful controladorUsuario;
+    private ControladorUsuarioGeneral controladorUsuario;
     private AdaptadorRecyclerDireccionUsuario adaptadorRecyclerDireccion;
     private RecyclerView recycleViewUsuarioGeneral;
     private TextView txtToolBarTitulo;
@@ -37,7 +38,7 @@ public class DireccionUsuario extends AppCompatActivity {
         setContentView(R.layout.activity_usuario_general);
 
         auxiliarGeneral = new AuxiliarGeneral(DireccionUsuario.this);
-        controladorUsuario = new ControladorUsuarioAdeful(DireccionUsuario.this);
+        controladorUsuario = new ControladorUsuarioGeneral(DireccionUsuario.this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
@@ -49,6 +50,15 @@ public class DireccionUsuario extends AppCompatActivity {
         txtToolBarTitulo.setText("DIRECCION TECNICA");
         init();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(DireccionUsuario.this);
+        controladorUsuario = new ControladorUsuarioGeneral(DireccionUsuario.this);
+        init();
+    }
+
     public void init() {
         recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);

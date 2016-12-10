@@ -43,7 +43,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerF
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTaskListener {
@@ -101,14 +101,12 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
     }
 
     public FragmentGenerarFixtureAdeful() {
-        // Required empty public constructor
     }
 
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
         controladorAdeful = new ControladorAdeful(getActivity());
-
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
 
@@ -157,6 +155,13 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
     }
 
     private void init() {
@@ -416,18 +421,10 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
                     }
                 }
                 break;
-//            // VISITA 6
-//            case 6:
-//                for (int i = 0; i < anioArray.size(); i++) {
-//                    if (anioArray.get(i).getID_ANIO() == (idSpinner)) {
-//                        index = i;
-//                    }
-//                }
-//                break;
         }
-
         return index;
     }
+
     private int getPositionYearSpinner(List<Anio> anios) {
         String anio = auxiliarGeneral.getYearSpinner();
         int index = 0;
@@ -436,7 +433,6 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
                         index = i;
                     }
                 }
-
         return index;
     }
 
@@ -461,7 +457,7 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
                 equipov.getID_EQUIPO(), division.getID_DIVISION(),
                 torneo.getID_TORNEO(), cancha.getID_CANCHA(),
                 fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText().toString()
-                , btn_hora.getText().toString(),
+                , btn_hora.getText().toString(), "-", "-",
                 usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
         envioWebService();
@@ -479,8 +475,6 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
         request.setParametrosDatos("anio", String.valueOf(fixture.getID_ANIO()));
         request.setParametrosDatos("dia", fixture.getDIA());
         request.setParametrosDatos("hora", fixture.getHORA());
-        //request.setParametrosDatos("dia", fixture.getDIA().replace("-",""));
-        //request.setParametrosDatos("hora", fixture.getHORA().replace(":",""));
         if (insertar) {
             request.setParametrosDatos("usuario_creador", fixture.getUSUARIO_CREACION());
             request.setParametrosDatos("fecha_creacion", fixture.getFECHA_CREACION());
@@ -491,8 +485,7 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
             request.setParametrosDatos("fecha_actualizacion", fixture.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Fixture");
         }
-
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Fixture", fixture, insertar, "o");
+        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Fixture", fixture, insertar, "o");
     }
 
     @Override
@@ -514,13 +507,9 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-       // menu.getItem(4).setVisible(false);// guardar
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -529,19 +518,14 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-
         if (id == R.id.action_usuario) {
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == R.id.action_guardar) {
-
-
             if (fixtureDivisionSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerDivision))) {
                 showToast("Debe agregar un division (Liga).");
@@ -586,9 +570,7 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
         }
 
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
-
             return true;
         }
         return super.onOptionsItemSelected(item);

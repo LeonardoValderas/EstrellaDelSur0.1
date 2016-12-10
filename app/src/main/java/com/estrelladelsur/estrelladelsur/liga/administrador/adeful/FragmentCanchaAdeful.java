@@ -31,7 +31,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListener {
@@ -56,7 +56,6 @@ public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListene
     }
 
     public FragmentCanchaAdeful() {
-        // Required empty public constructor
     }
 
     @Override
@@ -92,6 +91,14 @@ public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListene
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadCancha();
     }
 
     private void init() {
@@ -183,16 +190,17 @@ public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListene
     }
 
     public void envioWebService(int id) {
+        String fecha = auxiliarGeneral.getFechaOficial();
         URL = null;
         URL = auxiliarGeneral.getURLCANCHAADEFULALL();
         id_cancha = id;
         request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("id_cancha", String.valueOf(id_cancha));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = URL + auxiliarGeneral.getDeletePHP("Cancha");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Cancha", true, id_cancha, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Cancha", true, id_cancha, "a", fecha);
 
     }
 
@@ -207,7 +215,6 @@ public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListene
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -257,7 +264,6 @@ public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListene
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
         }
     }
 
@@ -267,13 +273,10 @@ public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListene
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-         menu.getItem(4).setVisible(false);// guardar
+        menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -286,14 +289,10 @@ public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListene
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

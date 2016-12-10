@@ -1,6 +1,5 @@
 package com.estrelladelsur.estrelladelsur.liga.administrador.lifuba;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -21,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -32,13 +32,13 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
-import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -46,12 +46,6 @@ import java.util.ArrayList;
 public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListener {
 
     private DialogoAlerta dialogoAlerta;
-    private ProgressDialog dialog;
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private JsonParsing jsonParsing = new JsonParsing(getActivity());
-    private static final String TAG_ID = "id";
-    //  private boolean insertar = true;
     private int posicion;
     private RecyclerView recycleViewTorneo;
     private ArrayList<Torneo> torneoArray;
@@ -60,7 +54,8 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     private EditText editTextTorneo;
     private CheckBox checkboxTorneoActual;
     private Spinner spinnerAnioTorneoActual;
-    private ControladorAdeful controladorAdeful;
+    private ControladorLifuba controladorLifuba;
+    private ControladorGeneral controladorGeneral;
     private int CheckedPositionFragment;
     private ImageView imageButtonActual;
     private Torneo torneoActual;
@@ -71,18 +66,15 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     private ArrayAdapter<String> adaptadorInicial;
     private Anio anio;
     private int gestion = 0;//0-insert //1-update//2-delete
-    private String usuario = null, URL = null, torneoText = null, mensaje = null;
+    private String usuario = null, URL = null, torneoText = null;
     private boolean checkedAnterior = false;
-    // boolean isActual;
-    private String GUARDAR = "Torneo cargado correctamente";
-    private String ACTUALIZAR = "Torneo actualizado correctamente";
-    private String ELIMINAR = "Torneo eliminado correctamente";
     private Typeface editTextFont;
     private AuxiliarGeneral auxiliarGeneral;
     private TextView torneoActualtext;
     private TextInputLayout editTextInputDescripcion;
     private Request request;
     private boolean isInsert = true, isDelete = false;
+    private ImageButton rotateButton;
 
     public static FragmentTorneoLifuba newInstance() {
         FragmentTorneoLifuba fragment = new FragmentTorneoLifuba();
@@ -90,13 +82,13 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     }
 
     public FragmentTorneoLifuba() {
-        // Required empty public constructor
     }
 
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorLifuba = new ControladorLifuba(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -111,6 +103,8 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
                 false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
+        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
+        rotateButton.setVisibility(View.GONE);
         editTextTorneo = (EditText) v.findViewById(
                 R.id.editTextDescripcion);
         editTextTorneo.setTypeface(editTextFont);
@@ -128,6 +122,7 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
         torneoActualtext = (TextView) v.findViewById(
                 R.id.torneoActual);
         torneoActualtext.setTypeface(editTextFont);
+        torneoActualtext.setText("Es torneo actual.");
         recycleViewTorneo = (RecyclerView) v.findViewById(
                 R.id.recycleViewGeneral);
 
@@ -138,6 +133,16 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorLifuba = new ControladorLifuba(getActivity());
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        getIsActual();
+        loadSpinnerAnio();
+        recyclerViewLoadTorneo();
     }
 
     private void init() {
@@ -223,7 +228,7 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recycleViewTorneo.setItemAnimator(new DefaultItemAnimator());
 
-        torneoArray = controladorAdeful.selectListaTorneoAdeful();
+        torneoArray = controladorLifuba.selectListaTorneoLifuba();
         if (torneoArray != null) {
             adaptadorTorneo = new AdaptadorRecyclerTorneo(torneoArray, getActivity());
             recycleViewTorneo.setAdapter(adaptadorTorneo);
@@ -233,9 +238,9 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     }
 
     public void loadSpinnerAnio() {
-        anioArray = controladorAdeful.selectListaAnio();
+        anioArray = controladorGeneral.selectListaAnio();
         if (anioArray != null) {
-            controladorAdeful.cerrarBaseDeDatos();
+            controladorGeneral.cerrarBaseDeDatos();
             if (anioArray.size() != 0) {
                 // ANIO SPINNER
                 adapterSpinnerAnio = new AdapterSpinnerAnio(getActivity(),
@@ -253,14 +258,12 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     }
 
     private int getPositionSpinner(int anio) {
-
         int index = 0;
         for (int i = 0; i < anioArray.size(); i++) {
             if (anioArray.get(i).getID_ANIO() == anio) {
                 index = i;
             }
         }
-
         return index;
     }
 
@@ -283,7 +286,7 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     }
 
     public void getIsActual() {
-        torneoActual = controladorAdeful.selectActualTorneoAdeful();
+        torneoActual = controladorLifuba.selectActualTorneoLifuba();
         if (torneoActual != null) {
             // SI ES TRUE OCULTAMOS
             if (torneoActual.getISACTUAL()) {
@@ -293,10 +296,6 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
-    }
-
-    public void setVisibilityActual() {
-        linearTorneoActual.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -357,7 +356,6 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {
@@ -372,13 +370,12 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
         }
     }
 
     public void cargarEntidad(int id, int ws) {
         URL = null;
-        URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLTORNEOADEFUL();
+        URL = auxiliarGeneral.getURLTORNEOLIFUBAALL();
         if (ws != 2) {
             torneoText = null;
             torneoText = editTextTorneo.getText()
@@ -387,7 +384,6 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
             torneo = new Torneo(id, editTextTorneo.getText()
                     .toString(), isChecked, checkedAnterior, anio.getID_ANIO(), usuario, auxiliarGeneral.getFechaOficial(), usuario,
                     auxiliarGeneral.getFechaOficial());
-
         } else {
             torneo = new Torneo(id, isChecked);
         }
@@ -395,6 +391,7 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     }
 
     public void envioWebService(int tipo) {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request = new Request();
         request.setMethod("POST");
 
@@ -420,10 +417,13 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
         } else {
             isDelete = true;
             request.setParametrosDatos("id_torneo", String.valueOf(torneo.getID_TORNEO()));
-            request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+            request.setParametrosDatos("fecha_actualizacion", fecha);
             URL = URL + auxiliarGeneral.getDeletePHP("Torneo");
         }
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false);
+        if (isDelete)
+            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false, fecha);
+        else
+            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -432,16 +432,11 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -455,9 +450,7 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == R.id.action_guardar) {
-
             if (editTextTorneo.getText().toString().equals("")) {
                 Toast.makeText(getActivity(),
                         "Ingrese el nombre del torneo.", Toast.LENGTH_SHORT)
@@ -477,7 +470,6 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
                     }
                 }
             } else {
-
                 if (gestion == 0) {
                     cargarEntidad(0, 0);
                 } else if (gestion == 1) {
@@ -485,7 +477,6 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
                             posicion).getID_TORNEO(), 1);
                 }
             }
-
             return true;
         }
         if (id == android.R.id.home) {

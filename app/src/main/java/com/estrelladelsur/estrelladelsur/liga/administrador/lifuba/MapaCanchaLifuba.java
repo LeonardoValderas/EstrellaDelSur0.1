@@ -19,9 +19,9 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.liga.LocationAddress;
-import com.estrelladelsur.estrelladelsur.liga.administrador.tabs_adm.TabsAdeful;
+import com.estrelladelsur.estrelladelsur.liga.administrador.tabs_adm.TabsLifuba;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,7 +36,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapaCanchaLifuba extends AppCompatActivity implements OnMapReadyCallback, MyAsyncTaskListener {
-
 
     private TextView tvAddress;
     private GoogleMap mapa;
@@ -56,7 +55,6 @@ public class MapaCanchaLifuba extends AppCompatActivity implements OnMapReadyCal
     private String nombre = null, URL = null, usuario = null;
     private boolean insertar = true;
     private SupportMapFragment mapFragment;
-    private Typeface titulos;
     private Typeface editTextFont;
     private Handler touchScreem;
     private AuxiliarGeneral auxiliarGeneral;
@@ -78,7 +76,6 @@ public class MapaCanchaLifuba extends AppCompatActivity implements OnMapReadyCal
 
         txtTitulo = (TextView) toolbar.findViewById(R.id.txtToolBarTitulo);
         txtTitulo.setText("MAPA");
-        txtTitulo.setTypeface(titulos);
 
         actualizar = getIntent().getBooleanExtra("actualizar", false);
         init();
@@ -145,6 +142,13 @@ public class MapaCanchaLifuba extends AppCompatActivity implements OnMapReadyCal
             tvAddress.setText(locationAddress);
             insertar = false;
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(MapaCanchaLifuba.this);
+        init();
     }
 
     public void init() {
@@ -216,7 +220,7 @@ public class MapaCanchaLifuba extends AppCompatActivity implements OnMapReadyCal
 
     public void cargarEntidad(int id) {
         URL = null;
-        URL = auxiliarGeneral.getURLCANCHAADEFULALL();
+        URL = auxiliarGeneral.getURLCANCHALIFUBAALL();
 
         cancha = new Cancha(id, editTextNombre.getText().toString(),
                 longitud, latitud, tvAddress.getText().toString(),
@@ -244,7 +248,7 @@ public class MapaCanchaLifuba extends AppCompatActivity implements OnMapReadyCal
             request.setParametrosDatos("fecha_actualizacion", cancha.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Cancha");
         }
-        new AsyncTaskGeneric(MapaCanchaLifuba.this, this, URL, request, "Cancha", cancha, insertar, "a");
+        new AsyncTaskGenericLifuba(MapaCanchaLifuba.this, this, URL, request, "Cancha", cancha, insertar, "a");
     }
 
     @Override
@@ -299,9 +303,8 @@ public class MapaCanchaLifuba extends AppCompatActivity implements OnMapReadyCal
     }
 
     public void volver() {
-        Intent i = new Intent(MapaCanchaLifuba.this, TabsAdeful.class);
+        Intent i = new Intent(MapaCanchaLifuba.this, TabsLifuba.class);
         i.putExtra("restart", 1);
         startActivity(i);
     }
-
 }

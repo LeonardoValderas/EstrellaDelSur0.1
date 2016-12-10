@@ -18,6 +18,8 @@ public class Resultado {
     private String FECHA_CREACION;
     private String USUARIO_ACTUALIZACION;
     private String FECHA_ACTUALIZACION;
+    private String ANIO;
+    private String FECHA;
     //RESULTADO RECYCLER
     private String EQUIPO_LOCAL;
     private String EQUIPO_VISITA;
@@ -132,6 +134,20 @@ public class Resultado {
         RESULTADO_VISITA = resultado_visita;
     }
 
+    public Resultado(int id, int id_equipo_local, String equipo_local, byte[] escudoLocal, String resultado_local, int id_equipo_visita, String equipo_visita, byte[] escudovisita, String resultado_visita, String fecha, String anio) {
+        ID_FIXTURE = id;
+        ID_EQUIPO_LOCAL = id_equipo_local;
+        EQUIPO_LOCAL = equipo_local;
+        ESCUDOLOCAL = escudoLocal;
+        RESULTADO_LOCAL = resultado_local;
+        ID_EQUIPO_VISITA = id_equipo_visita;
+        EQUIPO_VISITA = equipo_visita;
+        ESCUDOVISITA = escudovisita;
+        RESULTADO_VISITA = resultado_visita;
+        FECHA = fecha;
+        ANIO = anio;
+    }
+
     public String getEQUIPO_LOCAL() {
         return EQUIPO_LOCAL;
     }
@@ -146,5 +162,21 @@ public class Resultado {
 
     public byte[] getESCUDOVISITA() {
         return ESCUDOVISITA;
+    }
+
+    public String getANIO() {
+        return ANIO;
+    }
+
+    public void setANIO(String ANIO) {
+        this.ANIO = ANIO;
+    }
+
+    public String getFECHA() {
+        return FECHA;
+    }
+
+    public void setFECHA(String FECHA) {
+        this.FECHA = FECHA;
     }
 }

@@ -38,8 +38,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerC
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.navegador.usuario.SplashUsuario;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.io.ByteArrayOutputStream;
@@ -77,7 +76,7 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
     private ArrayAdapter<String> adaptadorInicial;
     private Typeface editTextFont, textViewFont;
     private AuxiliarGeneral auxiliarGeneral;
-    private Request request = new Request();
+    private Request request;
     private boolean isComision = true;
     private String encodedImage = null, url_nombre_foto = null, usuario = null,
             URL = null, fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_comision = null;
@@ -89,7 +88,6 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
     }
 
     public FragmentGenerarComisionAdeful() {
-        // Required empty public constructor
     }
 
     @Override
@@ -147,6 +145,13 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        communicator = (CommunicatorAdeful) getActivity();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        loadSpinnerCargo();
     }
 
     private void init() {
@@ -369,7 +374,7 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
             url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
             fechaFoto = auxiliarGeneral.getFechaImagen();
             nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
-            url_foto_comision = auxiliarGeneral.getURLFOTOCOMISIONADEFUL() + nombre_foto;
+            url_foto_comision = auxiliarGeneral.getURLFOTOCOMISION() + nombre_foto;
         }
         URL = auxiliarGeneral.getURLCOMISIONADEFULALL();
 
@@ -383,13 +388,14 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
 
     public void cargarEntidadCargo(int id, int ws, String cargoEntidad) {
         URL = null;
-        URL = auxiliarGeneral.getURLCARGOADEFULALL();
+        URL = auxiliarGeneral.getURLCARGOALL();
 
         cargo = new Cargo(id, cargoEntidad, usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
         envioWebServiceCargo(ws);
     }
 
     public void envioWebServiceCargo(int tipo) {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("cargo", cargo.getCARGO());
         if (tipo == 0) {
@@ -405,10 +411,11 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
             insertarCargo = false;
         }
         isComision = false;
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Cargo", cargo, insertarCargo, "o");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Cargo", cargo, insertarCargo, "o");
     }
 
     public void envioWebService(int tipo) {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("nombre", comision.getNOMBRE_COMISION());
         request.setParametrosDatos("id_cargo", String.valueOf(comision.getID_CARGO()));
@@ -442,7 +449,7 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
             URL = URL + auxiliarGeneral.getUpdatePHP("Comision");
         }
         isComision = true;
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Comisión", comision, insertar, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Comisión", comision, insertar, "a");
     }
 
     @Override
@@ -480,13 +487,8 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
-        // menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 

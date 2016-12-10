@@ -31,16 +31,12 @@ public class TabsNoticia extends AppCompatActivity implements Communicator {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
 
-        auxiliarGeneral = new AuxiliarGeneral(TabsNoticia.this);
-        titulos = auxiliarGeneral.tituloFont(TabsNoticia.this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -77,6 +73,12 @@ public class TabsNoticia extends AppCompatActivity implements Communicator {
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setupWithViewPager(viewPager);
 
+        init();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         init();
     }
 

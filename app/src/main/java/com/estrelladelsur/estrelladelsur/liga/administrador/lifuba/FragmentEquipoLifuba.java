@@ -24,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,16 +33,17 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
-import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
 
 public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListener {
+
     private byte[] imagenEscudo = null;
     private RecyclerView recycleViewEquipo;
     private EditText editTextNombre;
@@ -53,7 +55,7 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
     private DialogoAlerta dialogoAlerta;
     private int gestion = 0;//0-insert //1-update//2-delete
     private int posicion, CheckedPositionFragment;
-    private ControladorAdeful controladorAdeful;
+    private ControladorLifuba controladorLifuba;
     private Typeface editTextFont;
     private AuxiliarGeneral auxiliarGeneral;
     private String nombreEscudoAnterior = null, usuario = null,
@@ -63,6 +65,7 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
     private String nombreEquipo;
     private boolean isDelete = false;
     private boolean isInsert = true;
+    private ImageButton rotateButton;
 
     public static FragmentEquipoLifuba newInstance() {
         FragmentEquipoLifuba fragment = new FragmentEquipoLifuba();
@@ -75,7 +78,7 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorLifuba = new ControladorLifuba(getActivity());
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -90,6 +93,7 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
                 false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
+        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
         imageEquipo = (ImageView) v
                 .findViewById(R.id.imageButtonEquipo_Cancha);
         editTextNombre = (EditText) v.findViewById(R.id.editTextDescripcion);
@@ -104,6 +108,14 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorLifuba = new ControladorLifuba(getActivity());
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        recyclerViewLoadEquipo();
     }
 
     private void init() {
@@ -178,6 +190,19 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
             }
         }));
         recyclerViewLoadEquipo();
+
+        rotateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (imagenEscudo != null) {
+                    Bitmap theImage = auxiliarGeneral.setByteToBitmap(imagenEscudo, 150,
+                            150);
+                    theImage = auxiliarGeneral.RotateBitmap(theImage);
+                    imageEquipo.setImageBitmap(theImage);
+                    imagenEscudo = auxiliarGeneral.pasarBitmapByte(theImage);
+                }
+            }
+        });
     }
 
     public void recyclerViewLoadEquipo() {
@@ -188,7 +213,7 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recycleViewEquipo.setItemAnimator(new DefaultItemAnimator());
 
-        equipoAdefulArray = controladorAdeful.selectListaEquipoAdeful();
+        equipoAdefulArray = controladorLifuba.selectListaEquipoLifuba();
         if (equipoAdefulArray != null) {
             adaptador = new AdaptadorRecyclerEquipo(equipoAdefulArray, getActivity());
             recycleViewEquipo.setAdapter(adaptador);
@@ -308,6 +333,8 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
 
         recyclerViewLoadEquipo();
         editTextNombre.setText("");
+        url_nombre_escudo = null;
+        url_escudo_equipo = null;
         if (imagenEscudo != null) {
             imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
         }
@@ -319,14 +346,14 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
 
     public void cargarEntidad(int id, int ws) {
         URL = null;
-        URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLEQUIPOADEFUL();
+        URL = auxiliarGeneral.getURLEQUIPOLIFUBAALL();
         if (ws != 2) {
             nombreEquipo = null;
             nombreEquipo = editTextNombre.getText()
                     .toString();
             if (imagenEscudo != null) {
                 url_nombre_escudo = auxiliarGeneral.getFechaImagen() + auxiliarGeneral.removeAccents(nombreEquipo.replace(" ", "").trim()) + ".PNG";
-                url_escudo_equipo = URL + auxiliarGeneral.getURLESCUDOEQUIPOADEFUL() +
+                url_escudo_equipo = URL + auxiliarGeneral.getURLESCUDOEQUIPO() +
                         url_nombre_escudo;
             }
         }
@@ -337,6 +364,7 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
     }
 
     public void envioWebService(int tipo) {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request = new Request();
         request.setMethod("POST");
 
@@ -363,20 +391,24 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
             request.setParametrosDatos("usuario_actualizacion", equipoAdeful.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", equipoAdeful.getFECHA_ACTUALIZACION());
-            if(nombreEscudoAnterior != null)
-            request.setParametrosDatos("nombre_escudo_anterior", nombreEscudoAnterior);
+            if (nombreEscudoAnterior != null)
+                request.setParametrosDatos("nombre_escudo_anterior", nombreEscudoAnterior);
             URL = URL + auxiliarGeneral.getUpdatePHP("Equipo");
         } else {
             isDelete = true;
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
             if (url_nombre_escudo != null)
                 request.setParametrosDatos("nombre_escudo", url_nombre_escudo);
-            request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+            request.setParametrosDatos("fecha_actualizacion", fecha);
             URL = URL + auxiliarGeneral.getDeletePHP("Equipo");
         }
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false);
+        if (isDelete)
+            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false, fecha);
+        else
+            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false);
 
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -384,13 +416,9 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -406,9 +434,7 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == R.id.action_guardar) {
-
             if (editTextNombre.getText().toString().equals("")) {
                 Toast.makeText(getActivity(),
                         "Ingrese el nombre del equipo.", Toast.LENGTH_SHORT)

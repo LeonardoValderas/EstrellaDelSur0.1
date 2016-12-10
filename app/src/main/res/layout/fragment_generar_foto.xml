@@ -15,15 +15,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:maxLength="40"
+            android:maxLength="150"
             android:gravity="center"
             android:hint="TITULO"
             android:textSize="25dp">
 
             <requestFocus />
         </EditText>
-
-
 
         <ImageButton
             android:id="@+id/rotateButton"
@@ -49,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:maxLength="35"
+            android:maxLength="150"
             android:layout_marginTop="5dp"
             android:hint="Otros..."
             android:textSize="25dp"

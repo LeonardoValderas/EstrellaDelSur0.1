@@ -19,19 +19,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerDivision;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerJugador;
-import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -43,19 +40,12 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
     private Spinner sancionAmarillaSpinner;
     private Spinner sancionRojaSpinner;
     private Torneo torneoActual;
-    //private Spinner sancionTorneoSpinner;
-    //  private Spinner sancionAnioSpinner;
     private Spinner cantidadFechasSpinner;
     private EditText observacionesSancion;
     private AdapterSpinnerJugador adapterSpinnerJugador;
     private AdapterSpinnerDivision adapterFixtureDivision;
-    private AdapterSpinnerTorneo adapterFixtureTorneo;
-    private AdapterSpinnerAnio adapterFixtureAnio;
     private ArrayList<Division> divisionArray;
-    private ArrayList<Torneo> torneoArray;
-    private ArrayList<Anio> anioArray;
     private ArrayList<Jugador> jugadorArray;
-    //    private Anio anio;
     private Jugador jugadorRecycler;
     private Division division;
     private int CheckedPositionFragment;
@@ -70,7 +60,7 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
     private AuxiliarGeneral auxiliarGeneral;
     private Typeface editTextFont;
     private TextView textAmarilla, textRoja, cantidadFecha;
-    private Request request = new Request();
+    private Request request;
     private String URL = null, usuario = null;
     private LinearLayout linearTorneo;
 
@@ -105,12 +95,6 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
 
         linearTorneo = (LinearLayout) v.findViewById(R.id.linearTorneo);
         linearTorneo.setVisibility(View.GONE);
-//        // DIVISION
-//        sancionTorneoSpinner = (Spinner) v
-//                .findViewById(R.id.sancionTorneoSpinner);
-//        // JUGADOR
-//        sancionAnioSpinner = (Spinner) v
-//                .findViewById(R.id.sancionAnioSpinner);
         // DIVISION
         sancionDivisionSpinner = (Spinner) v
                 .findViewById(R.id.sancionDivisionSpinner);
@@ -147,42 +131,15 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
+    }
+
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
-        // TORNEO
-//        torneoArray = controladorAdeful.selectListaTorneoAdeful();
-//        if (torneoArray != null) {
-//            if (!torneoArray.isEmpty()) {
-//                // TORNEO SPINNER
-//                adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
-//                        R.layout.simple_spinner_dropdown_item, torneoArray);
-//                sancionTorneoSpinner.setAdapter(adapterFixtureTorneo);
-//            } else {
-//                //SPINNER HINT
-//                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-//                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
-//                sancionTorneoSpinner.setAdapter(adaptadorInicial);
-//            }
-//        } else {
-//            auxiliarGeneral.errorDataBase(getActivity());
-//        }
-        // ANIO
-//        anioArray = controladorAdeful.selectListaAnio();
-//        if (anioArray != null) {
-//            if (!anioArray.isEmpty()) {
-//                // ANIO SPINNER
-//                adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
-//                        R.layout.simple_spinner_dropdown_item, anioArray);
-//                sancionAnioSpinner.setAdapter(adapterFixtureAnio);
-//            } else {
-//                //SPINNER HINT
-//                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-//                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerAnio));
-//                sancionAnioSpinner.setAdapter(adaptadorInicial);
-//            }
-//        } else {
-//            auxiliarGeneral.errorDataBase(getActivity());
-//        }
         // DIVISION
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
@@ -250,14 +207,6 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
             sancionRojaSpinner.setSelection(getActivity().getIntent().getIntExtra("rojaSpinner", 0));
             // FECHAS 4
             cantidadFechasSpinner.setSelection(getActivity().getIntent().getIntExtra("fechaSpinner", 0));
-            // TORNEO 5
-            //  sancionTorneoSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("torneoSpinner", 0), 3));
-//            // ROJA 3
-//            sancionRojaSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("rojaSpinner", 0), 3));
-//            // FECHAS 4
-//            cantidadFechasSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("fechaSpinner", 0), 4));
-            //AÑO 2
-            // sancionAnioSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("anioSpinner", 0), 2));
             //OBSERVACIONES
             observacionesSancion.setText(getActivity().getIntent()
                     .getStringExtra("observaciones"));
@@ -285,10 +234,7 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
         }
     }
 
-
-
     private int getPositionSpinner(int idSpinner, int spinner) {
-
         int index = 0;
         switch (spinner) {
             //DIVISION 0
@@ -308,7 +254,6 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
                 }
                 break;
         }
-
         return index;
     }
 
@@ -321,15 +266,14 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
                 sancionRojaSpinner.getSelectedItemPosition(), cantidadFechasSpinner.getSelectedItemPosition(), observacionesSancion.getText().toString(), usuario, auxiliarGeneral.getFechaOficial(),
                 usuario, auxiliarGeneral.getFechaOficial());
 
-
         envioWebService(ws);
     }
 
     public void envioWebService(int tipo) {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("id_jugador", String.valueOf(sancion.getID_JUGADOR()));
         request.setParametrosDatos("id_torneo", String.valueOf(sancion.getID_TORNEO()));
-        //    request.setParametrosDatos("id_anio", String.valueOf(sancion.getID_ANIO()));
         request.setParametrosDatos("amarilla", String.valueOf(sancion.getAMARILLA()));
         request.setParametrosDatos("roja", String.valueOf(sancion.getROJA()));
         request.setParametrosDatos("fecha", String.valueOf(sancion.getFECHA_SUSPENSION()));
@@ -349,7 +293,7 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
 
             URL = URL + auxiliarGeneral.getUpdatePHP("Sancion");
         }
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Sancion", sancion, insertar, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Sancion", sancion, insertar, "a");
     }
 
     public void inicializarControles(String mensaje) {
@@ -367,30 +311,22 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
         setHasOptionsMenu(true);
     }
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
-
         if (id == R.id.action_usuario) {
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == R.id.action_guardar) {
 
             if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
@@ -423,9 +359,7 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
         }
 
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
-
             return true;
         }
         return super.onOptionsItemSelected(item);

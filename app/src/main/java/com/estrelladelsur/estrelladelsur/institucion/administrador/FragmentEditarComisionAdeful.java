@@ -1,6 +1,5 @@
 package com.estrelladelsur.estrelladelsur.institucion.administrador;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,10 +26,8 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.institucion.administrador.tabs_adm.TabsComision;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
-import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
-
 import java.util.ArrayList;
 
 
@@ -43,11 +40,6 @@ public class FragmentEditarComisionAdeful extends Fragment implements MyAsyncTas
     private AdaptadorRecyclerComision adaptadorRecyclerComision;
     private DialogoAlerta dialogoAlerta;
     private AuxiliarGeneral auxiliarGeneral;
-    private ProgressDialog dialog;
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private String ELIMINAR_COMISION = "Integrante eliminado correctamente";
-    private JsonParsing jsonParsing = new JsonParsing(getActivity());
     private String nombre_foto = null, URL = null, mensaje = null;
     private Request request = new Request();
 
@@ -56,8 +48,8 @@ public class FragmentEditarComisionAdeful extends Fragment implements MyAsyncTas
         return fragment;
     }
     public FragmentEditarComisionAdeful() {
-        // Required empty public constructor
     }
+
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
@@ -85,6 +77,15 @@ public class FragmentEditarComisionAdeful extends Fragment implements MyAsyncTas
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadComision();
+    }
+
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         recyclerComision.setLayoutManager(new LinearLayoutManager(
@@ -146,15 +147,16 @@ public class FragmentEditarComisionAdeful extends Fragment implements MyAsyncTas
         }));
     }
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_comision", String.valueOf(posicion));
         if(nombre_foto != null)
         request.setParametrosDatos("nombre_foto", nombre_foto);
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLCOMISIONADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Comision");
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Comisión", true, posicion, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Comisión", true, posicion, "a",fecha);
     }
     public void inicializarControles(String mensaje) {
         recyclerViewLoadComision();
@@ -236,12 +238,9 @@ public static interface ClickListener {
         }
     }
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "686300125964",
+    "firebase_url": "https://estrelladelsur-147218.firebaseio.com",
+    "project_id": "estrelladelsur-147218",
+    "storage_bucket": "estrelladelsur-147218.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:686300125964:android:b48dd6c0dcbfe58e",
+        "android_client_info": {
+          "package_name": "com.estrelladelsur.estrelladelsur"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "686300125964-tn4p9rhcq2l8u8t6e5ufn1897pikg7jp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdtseBK0ZaYORFfzgvKF8pw8RcWAESgiI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

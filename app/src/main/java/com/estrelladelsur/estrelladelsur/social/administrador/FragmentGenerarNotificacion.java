@@ -18,7 +18,7 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 
@@ -27,7 +27,6 @@ public class FragmentGenerarNotificacion extends Fragment implements MyAsyncTask
     private int CheckedPositionFragment;
     private EditText notificacionEditTituto;
     private EditText notificacionEditArticulo;
-    private ControladorGeneral controladorGeneral;
     private boolean insertar = true;
     private Notificacion notificacion;
     private Communicator communicator;
@@ -36,7 +35,7 @@ public class FragmentGenerarNotificacion extends Fragment implements MyAsyncTask
     private AuxiliarGeneral auxiliarGeneral;
     private Typeface editTextFont;
     private String URL = null, usuario = null;
-    private Request request = new Request();
+    private Request request;
 
     public static FragmentGenerarNotificacion newInstance() {
         FragmentGenerarNotificacion fragment = new FragmentGenerarNotificacion();
@@ -82,9 +81,14 @@ public class FragmentGenerarNotificacion extends Fragment implements MyAsyncTask
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+    }
+
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
-        controladorGeneral = new ControladorGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
@@ -128,6 +132,7 @@ public class FragmentGenerarNotificacion extends Fragment implements MyAsyncTask
     }
 
     public void envioWebService() {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("titulo", notificacion.getTITULO());
         request.setParametrosDatos("notificacion", notificacion.getNOTIFICACION());
@@ -144,7 +149,7 @@ public class FragmentGenerarNotificacion extends Fragment implements MyAsyncTask
             URL = URL + auxiliarGeneral.getUpdatePHP("Notificacion");
         }
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Notificacion", notificacion, insertar, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Notificacion", notificacion, insertar, "a");
     }
 
     @Override

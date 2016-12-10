@@ -30,16 +30,11 @@ public class TabsResultado extends AppCompatActivity {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
-        auxiliarGeneral = new AuxiliarGeneral(TabsResultado.this);
-        titulos = auxiliarGeneral.tituloFont(TabsResultado.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -82,7 +77,12 @@ public class TabsResultado extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         init();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
     }
 
     public void init() {
@@ -134,7 +134,6 @@ public class TabsResultado extends AppCompatActivity {
                 case 1:
                     fragmentTab = FragmentGenerarResultadoLifuba.newInstance();
                     break;
-
             }
             return fragmentTab;
         }
@@ -168,7 +167,6 @@ public class TabsResultado extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            // Generate title based on item position
             return tabTitles[position];
         }
     }

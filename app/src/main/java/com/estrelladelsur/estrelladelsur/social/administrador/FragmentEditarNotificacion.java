@@ -26,7 +26,7 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsNotificacion;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -78,6 +78,14 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadNotificacion();
     }
 
     private void init() {
@@ -139,14 +147,15 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_notificacion", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLNOTIFICACIONALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Notificacion");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Notificacion", true, posicion, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Notificacion", true, posicion, "a", fecha);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -232,12 +241,9 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -249,13 +255,10 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

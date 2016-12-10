@@ -26,7 +26,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.institucion.administrador.tabs_adm.TabsDireccion;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 import java.util.ArrayList;
 
@@ -50,7 +50,6 @@ public class FragmentEditarDireccionAdeful extends Fragment implements MyAsyncTa
     }
 
     public FragmentEditarDireccionAdeful() {
-        // Required empty public constructor
     }
 
     @Override
@@ -81,6 +80,13 @@ public class FragmentEditarDireccionAdeful extends Fragment implements MyAsyncTa
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadDireccion();
+    }
 
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
@@ -156,16 +162,17 @@ public class FragmentEditarDireccionAdeful extends Fragment implements MyAsyncTa
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_direccion", String.valueOf(posicion));
         if(nombre_foto != null)
         request.setParametrosDatos("nombre_foto", nombre_foto);
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
 
         URL = null;
         URL = auxiliarGeneral.getURLDIRECCIONADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Direccion");
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Dirección", true, posicion, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Dirección", true, posicion, "a", fecha);
     }
 
     public void inicializarControles(String mensaje) {
@@ -240,12 +247,9 @@ public class FragmentEditarDireccionAdeful extends Fragment implements MyAsyncTa
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }

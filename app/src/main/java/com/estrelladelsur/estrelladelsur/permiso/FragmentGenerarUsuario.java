@@ -18,7 +18,7 @@ import com.estrelladelsur.estrelladelsur.database.administrador.general.Controla
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.institucion.administrador.CommunicatorAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListe
     private int idUsuarioExtra;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Usuario> arrayUsuario;
-    private Request request = new Request();
+    private Request request;
     private String usuarioCreador = null;
     private String URL = null;
 
@@ -46,7 +46,6 @@ public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListe
     }
 
     public FragmentGenerarUsuario() {
-        // Required empty public constructor
     }
 
     @Override
@@ -83,6 +82,13 @@ public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListe
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        init();
+    }
+
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         usuarioCreador = auxiliarGeneral.getUsuarioPreferences(getActivity());
@@ -103,13 +109,11 @@ public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListe
     }
 
     public void inicializarControles(String mensaje) {
-
         usuarioEditUser.setText("");
         usuarioEditPass.setText("");
         communicator.refreshAdeful();
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
-
     }
 
     public boolean validarUsuario(String usuario) {
@@ -126,7 +130,6 @@ public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListe
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
-
         return isUsuario;
     }
 
@@ -143,6 +146,7 @@ public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListe
     }
 
     public void envioWebService() {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("usuario", usuario.getUSUARIO());
         request.setParametrosDatos("pass", usuario.getPASSWORD());
@@ -159,7 +163,7 @@ public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListe
             URL = URL + auxiliarGeneral.getUpdatePHP("Usuario");
         }
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Usuario", usuario, insertar, "o");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Usuario", usuario, insertar, "o");
     }
 
     public void showMesaje(String mensaje) {
@@ -173,13 +177,9 @@ public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListe
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 

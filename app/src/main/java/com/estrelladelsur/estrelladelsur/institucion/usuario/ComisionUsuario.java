@@ -17,7 +17,8 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerComisionUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ public class ComisionUsuario extends AppCompatActivity {
     private Toolbar toolbar;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Comision> comisionArray;
-    private ControladorUsuarioAdeful controladorUsuario;
+    private ControladorUsuarioGeneral controladorUsuario;
     private AdaptadorRecyclerComisionUsuario adaptadorRecyclerComisionDireccion;
     private RecyclerView recycleViewUsuarioGeneral;
     private TextView txtToolBarTitulo;
@@ -37,7 +38,7 @@ public class ComisionUsuario extends AppCompatActivity {
         setContentView(R.layout.activity_usuario_general);
 
         auxiliarGeneral = new AuxiliarGeneral(ComisionUsuario.this);
-        controladorUsuario = new ControladorUsuarioAdeful(ComisionUsuario.this);
+        controladorUsuario = new ControladorUsuarioGeneral(ComisionUsuario.this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
@@ -48,6 +49,14 @@ public class ComisionUsuario extends AppCompatActivity {
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("COMISIÓN DIRECTIVA");
+        init();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(ComisionUsuario.this);
+        controladorUsuario = new ControladorUsuarioGeneral(ComisionUsuario.this);
         init();
     }
 
@@ -70,8 +79,6 @@ public class ComisionUsuario extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //Refreshing data on server
-                // new DownloadFilesTask().execute(feedUrl);
                 recyclerViewLoadComision();
             }
         });

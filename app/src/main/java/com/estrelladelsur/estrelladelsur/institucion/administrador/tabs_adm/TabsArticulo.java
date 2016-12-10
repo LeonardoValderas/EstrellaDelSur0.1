@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.institucion.administrador.CommunicatorAdeful;
 import com.estrelladelsur.estrelladelsur.institucion.administrador.FragmentEditarArticuloAdeful;
 import com.estrelladelsur.estrelladelsur.institucion.administrador.FragmentGenerarArticuloAdeful;
@@ -31,15 +32,11 @@ public class TabsArticulo extends AppCompatActivity implements CommunicatorAdefu
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-        auxiliarGeneral = new AuxiliarGeneral(TabsArticulo.this);
-//        titulos = auxiliarGeneral.tituloFont(TabsArticulo.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -51,7 +48,6 @@ public class TabsArticulo extends AppCompatActivity implements CommunicatorAdefu
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("ARTICULO");
-      //  txtToolBarTitulo.setTypeface(titulos);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -80,6 +76,12 @@ public class TabsArticulo extends AppCompatActivity implements CommunicatorAdefu
         init();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
+
     public void init() {
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -91,12 +93,10 @@ public class TabsArticulo extends AppCompatActivity implements CommunicatorAdefu
 
             @Override
             public void onPageSelected(int position) {
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
 

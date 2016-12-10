@@ -32,19 +32,13 @@ public class TabsSancion extends AppCompatActivity {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
 
-
-        auxiliarGeneral = new AuxiliarGeneral(TabsSancion.this);
-        titulos = auxiliarGeneral.tituloFont(TabsSancion.this);
-
-        // Toolbar
+       // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -82,8 +76,13 @@ public class TabsSancion extends AppCompatActivity {
         init();
     }
 
-    public void init() {
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
 
+    public void init() {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset,
@@ -94,12 +93,10 @@ public class TabsSancion extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
         });
-
     }
 
     public class TabsFixtureAdapter extends FragmentPagerAdapter {
@@ -128,7 +125,6 @@ public class TabsSancion extends AppCompatActivity {
             if (fragmentTab != null) {
                 return fragmentTab;
             }
-
             switch (position) {
                 case 0:
                     fragmentTab = FragmentGenerarSancionAdeful.newInstance();
@@ -152,8 +148,6 @@ public class TabsSancion extends AppCompatActivity {
             if (fm == null) {
                 mCurTransaction = fm.beginTransaction();
             }
-
-            // Do we already have this fragment?
             String name = makeFragmentName(container.getId(), position);
             Fragment fragment = fm.findFragmentByTag(name);
             if (fragment != null) {
@@ -168,17 +162,13 @@ public class TabsSancion extends AppCompatActivity {
                 mCurTransaction.add(container.getId(), fragment,
                         makeFragmentName(container.getId(), position));
             }
-
             return fragment;
         }
-
         private String makeFragmentName(int viewId, int index) {
             return "android:switcher:" + viewId + ":" + index;
         }
-
         @Override
         public CharSequence getPageTitle(int position) {
-            // Generate title based on item position
             return tabTitles[position];
         }
     }

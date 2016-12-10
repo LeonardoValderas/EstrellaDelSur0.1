@@ -27,7 +27,7 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsPublicidad;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -83,6 +83,14 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadPublicidad();
     }
 
     private void init() {
@@ -175,15 +183,16 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_publicidad", String.valueOf(posicion));
         request.setParametrosDatos("nombre_foto", nombre_foto);
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLPUBLICIDADALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Publicidad");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Publicidad", true, posicion, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Publicidad", true, posicion, "a", fecha);
     }
 
     public void recyclerViewLoadPublicidad() {
@@ -208,7 +217,6 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -262,12 +270,9 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
         }
     }
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -278,11 +283,9 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
 
             NavUtils.navigateUpFromSameTask(getActivity());

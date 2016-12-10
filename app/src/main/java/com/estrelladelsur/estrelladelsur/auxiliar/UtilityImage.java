@@ -119,7 +119,7 @@ public class UtilityImage {
 		try {
 			// Get SD Card path & your folder name
 			MY_IMG_DIR = new File(Environment.getExternalStorageDirectory(),
-					"/Mi_Image_Estrella/");
+					"/Estrella_Del_Sur/");
 
 			// check if exist
 			if (!MY_IMG_DIR.exists()) {

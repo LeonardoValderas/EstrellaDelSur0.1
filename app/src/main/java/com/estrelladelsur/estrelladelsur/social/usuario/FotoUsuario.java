@@ -2,7 +2,6 @@ package com.estrelladelsur.estrelladelsur.social.usuario;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,11 +18,9 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerFotoUsuario;
-import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerNoticiaUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
-import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
+import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
 
@@ -32,13 +29,11 @@ import java.util.ArrayList;
 public class FotoUsuario extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Foto> fotoArray;
     private ControladorUsuarioGeneral controladorUsuario;
     private AdaptadorRecyclerFotoUsuario adaptadorRecyclerFoto;
     private RecyclerView recycleViewUsuarioGeneral;
-    private DialogoArticulo dialogoNoticia;
     private TextView txtToolBarTitulo;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -47,10 +42,7 @@ public class FotoUsuario extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario_general);
 
-        auxiliarGeneral = new AuxiliarGeneral(FotoUsuario.this);
-        controladorUsuario = new ControladorUsuarioGeneral(FotoUsuario.this);
-
-        // Toolbar
+      // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
 
@@ -60,13 +52,14 @@ public class FotoUsuario extends AppCompatActivity {
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("FOTO");
+        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         init();
     }
 
     public void init() {
-        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        controladorUsuario = new ControladorUsuarioGeneral(FotoUsuario.this);
         initRecycler();
         recyclerViewLoadFoto();
 
@@ -76,28 +69,6 @@ public class FotoUsuario extends AppCompatActivity {
 
             @Override
             public void onClick(View view, final int position) {
-//                dialogoNoticia = new DialogoArticulo(FotoUsuario.this, fotoArray.get(position).getTITULO(),
-//                        fotoArray.get(position).getDESCRIPCION());
-//
-//                final String link = fotoArray.get(position).getLINK();
-//
-//                if (link != null) {
-//                    if (URLUtil.isValidUrl(link)) {
-//                        dialogoNoticia.linearLink.setVisibility(View.VISIBLE);
-//                        dialogoNoticia.btnLink.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                openWebURL(link);
-//                            }
-//                        });
-//                    }
-//                }
-//                dialogoNoticia.btnCerrar.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialogoNoticia.alertDialog.dismiss();
-//                    }
-//                });
             }
 
             @Override
@@ -138,7 +109,6 @@ public class FotoUsuario extends AppCompatActivity {
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -194,7 +164,6 @@ public class FotoUsuario extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
         menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion

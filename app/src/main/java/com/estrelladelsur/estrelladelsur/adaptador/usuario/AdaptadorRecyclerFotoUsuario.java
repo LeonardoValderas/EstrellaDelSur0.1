@@ -48,7 +48,7 @@ public class AdaptadorRecyclerFotoUsuario extends
 				imageFoto.setImageResource(R.mipmap.ic_foto);
 			} else {
 
-				fotoBitmap = auxiliarGeneral.setByteToBitmap(fotoByte, 150, 150);
+				fotoBitmap = auxiliarGeneral.setByteToBitmap(fotoByte, 300, 300);
 				imageFoto.setImageBitmap(fotoBitmap);
 			}
 			tituloFoto.setText(foto.getTITULO());

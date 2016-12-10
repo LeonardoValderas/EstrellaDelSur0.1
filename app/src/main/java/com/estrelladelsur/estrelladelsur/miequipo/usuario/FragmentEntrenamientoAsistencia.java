@@ -17,17 +17,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerAsistencia;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerDivision;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerAsistenciaUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
-import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
+import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
-import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
 
@@ -53,7 +49,6 @@ public class FragmentEntrenamientoAsistencia extends Fragment {
     }
 
     public FragmentEntrenamientoAsistencia() {
-        // Required empty public constructor
     }
 
     @Override
@@ -91,6 +86,13 @@ public class FragmentEntrenamientoAsistencia extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorUsuarioAdeful(getActivity());
+        init();
     }
 
     private void init() {
@@ -140,80 +142,14 @@ public class FragmentEntrenamientoAsistencia extends Fragment {
 
             @Override
             public void onClick(View view, int position) {
-                // TODO Auto-generated method stub
-
-//                Intent editarJugador = new Intent(getActivity(),
-//                        TabsJugador.class);
-//                editarJugador.putExtra("actualizar", true);
-//                editarJugador.putExtra("id_jugador",
-//                        jugadorArray.get(position).getID_JUGADOR());
-//                editarJugador.putExtra("divisionSpinner", divisionSpinner);
-//                editarJugador.putExtra("posicionSpinner",
-//                        jugadorArray.get(position).getID_POSICION());
-//                editarJugador.putExtra("nombre",
-//                        jugadorArray.get(position).getNOMBRE_JUGADOR());
-//                editarJugador.putExtra("nombre_foto",
-//                        jugadorArray.get(position).getNOMBRE_FOTO());
-//                editarJugador.putExtra("foto",
-//                        jugadorArray.get(position).getFOTO_JUGADOR());
-//
-//                startActivity(editarJugador);
 
             }
 
             @Override
             public void onLongClick(View view, final int position) {
-//                // TODO Auto-generated method stub
-//
-//
-//                dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
-//                        "Desea eliminar el jugador?", null, null);
-//                dialogoAlerta.btnAceptar.setText("Aceptar");
-//                dialogoAlerta.btnCancelar.setText("Cancelar");
-//
-//                dialogoAlerta.btnAceptar
-//                        .setOnClickListener(new View.OnClickListener() {
-//
-//                            @Override
-//                            public void onClick(View v) {
-//                                posicion = jugadorArray.get(position)
-//                                        .getID_JUGADOR();
-//                                envioWebService();
-//                            }
-//                        });
-//                dialogoAlerta.btnCancelar
-//                        .setOnClickListener(new View.OnClickListener() {
-//
-//                            @Override
-//                            public void onClick(View v) {
-//                                // TODO Auto-generated method stub
-//                                dialogoAlerta.alertDialog.dismiss();
-//                            }
-//                        });
             }
         }));
     }
-
-//    public void envioWebService() {
-//        request.setMethod("POST");
-//        request.setParametrosDatos("id_jugador", String.valueOf(posicion));
-//        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
-//        URL = null;
-//        URL = auxiliarGeneral.getURLJUGADORADEFULAll();
-//        URL = URL + auxiliarGeneral.getDeletePHP("Jugador");
-//
-//        new AsyncTaskGeneric(getActivity(), this, URL, request, "Jugador", true, posicion, "o");
-//    }
-//
-//    public void inicializarControles(String mensaje) {
-//
-//        recyclerViewLoadSancion(divisionSpinner);
-//        posicion = 0;
-//        dialogoAlerta.alertDialog.dismiss();
-//        Toast.makeText(getActivity(), mensaje,
-//                Toast.LENGTH_SHORT).show();
-//    }
-//
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -236,18 +172,8 @@ public class FragmentEntrenamientoAsistencia extends Fragment {
         }
     }
 
-//    @Override
-//    public void onPostExecuteConcluded(boolean result, String mensaje) {
-//        if (result) {
-//            inicializarControles(mensaje);
-//        } else {
-//            auxiliarGeneral.errorWebService(getActivity(), mensaje);
-//        }
-//    }
-
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -263,7 +189,6 @@ public class FragmentEntrenamientoAsistencia extends Fragment {
             this.clickListener = clickListener;
             detector = new GestureDetector(context,
                     new GestureDetector.SimpleOnGestureListener() {
-
                         @Override
                         public boolean onSingleTapUp(MotionEvent e) {
                             return true;
@@ -283,7 +208,6 @@ public class FragmentEntrenamientoAsistencia extends Fragment {
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {
@@ -294,12 +218,10 @@ public class FragmentEntrenamientoAsistencia extends Fragment {
 
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
         }
     }
 }

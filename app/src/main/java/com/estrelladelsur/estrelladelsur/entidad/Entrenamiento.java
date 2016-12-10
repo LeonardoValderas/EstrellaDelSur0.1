@@ -44,6 +44,17 @@ public class Entrenamiento {
         USUARIO_ACTUALIZACION = usuario_act;
         FECHA_ACTUALIZACION = fechaActualizacion;
     }
+    public Entrenamiento(int id, String dia, String hora, int id_cancha, String usuario,
+                         String fechaCreacion, String usuario_act, String fechaActualizacion) {
+        ID_ENTRENAMIENTO = id;
+        DIA = dia;
+        HORA = hora;
+        ID_CANCHA = id_cancha;
+        USUARIO_CREADOR = usuario;
+        FECHA_CREACION = fechaCreacion;
+        USUARIO_ACTUALIZACION = usuario_act;
+        FECHA_ACTUALIZACION = fechaActualizacion;
+    }
 
     //ENTRENAMIENTO
     public Entrenamiento(int id, String dia, String hora, String cancha) {

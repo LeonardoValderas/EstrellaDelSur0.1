@@ -27,7 +27,7 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Noticia;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsNoticia;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -52,7 +52,6 @@ public class FragmentEditarNoticia extends Fragment implements MyAsyncTaskListen
     }
 
     public FragmentEditarNoticia() {
-        // Required empty public constructor
     }
 
     @Override
@@ -84,6 +83,13 @@ public class FragmentEditarNoticia extends Fragment implements MyAsyncTaskListen
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadNoticia();
+    }
 
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
@@ -149,14 +155,15 @@ public class FragmentEditarNoticia extends Fragment implements MyAsyncTaskListen
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_noticia", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLNOTICIAALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Noticia");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Noticia", true, posicion, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Noticia", true, posicion, "a", fecha);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -195,7 +202,6 @@ public class FragmentEditarNoticia extends Fragment implements MyAsyncTaskListen
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -268,13 +274,10 @@ public class FragmentEditarNoticia extends Fragment implements MyAsyncTaskListen
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

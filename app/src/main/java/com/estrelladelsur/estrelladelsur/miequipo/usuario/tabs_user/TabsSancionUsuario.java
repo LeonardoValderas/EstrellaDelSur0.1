@@ -16,7 +16,8 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.miequipo.usuario.FragmentSancionUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.miequipo.usuario.adeful.FragmentSancionUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.miequipo.usuario.lifuba.FragmentSancionUsuarioLifuba;
 
 public class TabsSancionUsuario extends AppCompatActivity {
 
@@ -77,22 +78,25 @@ public class TabsSancionUsuario extends AppCompatActivity {
         init();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(TabsSancionUsuario.this);
+        titulos = auxiliarGeneral.tituloFont(TabsSancionUsuario.this);
+        init();
+    }
+
     public void init() {
 
-//        if (restarMap == 1) {
-//            viewPager.setCurrentItem(3);
-//        }
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
                 invalidateOptionsMenu();
             }
-
             @Override
             public void onPageSelected(int position) {
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -123,13 +127,12 @@ public class TabsSancionUsuario extends AppCompatActivity {
             if (fragmentTab != null) {
                 return fragmentTab;
             }
-
             switch (position) {
                 case 0:
                     fragmentTab = FragmentSancionUsuarioAdeful.newInstance();
                     break;
                 case 1:
-                    fragmentTab = FragmentSancionUsuarioAdeful.newInstance();
+                    fragmentTab = FragmentSancionUsuarioLifuba.newInstance();
                     break;
             }
             return fragmentTab;
@@ -160,7 +163,6 @@ public class TabsSancionUsuario extends AppCompatActivity {
         private String makeFragmentName(int viewId, int index) {
             return "android:switcher:" + viewId + ":" + index;
         }
-
         @Override
         public CharSequence getPageTitle(int position) {
             return tabTitles[position];

@@ -13,8 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.social.administrador.Communicator;
 import com.estrelladelsur.estrelladelsur.social.administrador.FragmentEditarFoto;
 import com.estrelladelsur.estrelladelsur.social.administrador.FragmentGenerarFoto;
@@ -30,17 +30,11 @@ public class TabsFoto extends AppCompatActivity implements Communicator {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
-
-        auxiliarGeneral = new AuxiliarGeneral(TabsFoto.this);
-        titulos = auxiliarGeneral.tituloFont(TabsFoto.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -81,8 +75,13 @@ public class TabsFoto extends AppCompatActivity implements Communicator {
         init();
     }
 
-    public void init() {
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
 
+    public void init() {
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -93,12 +92,9 @@ public class TabsFoto extends AppCompatActivity implements Communicator {
 
             @Override
             public void onPageSelected(int position) {
-
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
     }
@@ -129,7 +125,6 @@ public class TabsFoto extends AppCompatActivity implements Communicator {
             if (fragmentTab != null) {
                 return fragmentTab;
             }
-
             switch (position) {
                 case 0:
                     fragmentTab = FragmentGenerarFoto.newInstance();
@@ -147,8 +142,6 @@ public class TabsFoto extends AppCompatActivity implements Communicator {
             if (fm == null) {
                 mCurTransaction = fm.beginTransaction();
             }
-
-            // Do we already have this fragment?
             String name = makeFragmentName(container.getId(), position);
             Fragment fragment = fm.findFragmentByTag(name);
             if (fragment != null) {
@@ -172,17 +165,16 @@ public class TabsFoto extends AppCompatActivity implements Communicator {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            // Generate title based on item position
             return tabTitles[position];
         }
     }
+
     public void refresh() {
-         FragmentManager manager = getSupportFragmentManager();
+        FragmentManager manager = getSupportFragmentManager();
         FragmentEditarFoto fragment = (FragmentEditarFoto) manager
                 .findFragmentByTag("android:switcher:" + viewPager.getId()
                         + ":" + 1);
 
         fragment.recyclerViewLoadFoto();
-
     }
 }

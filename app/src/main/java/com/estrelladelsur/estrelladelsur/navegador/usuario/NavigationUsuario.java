@@ -1,8 +1,10 @@
 package com.estrelladelsur.estrelladelsur.navegador.usuario;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,37 +13,33 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
 import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
+import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Modulo;
 import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
-import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ArticuloUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.ComisionUsuario;
 import com.estrelladelsur.estrelladelsur.institucion.usuario.DireccionUsuario;
 import com.estrelladelsur.estrelladelsur.liga.usuario.tabs_user.TabsAdefulUsuario;
-import com.estrelladelsur.estrelladelsur.login.Login;
+import com.estrelladelsur.estrelladelsur.liga.usuario.tabs_user.TabsLifubaUsuario;
 import com.estrelladelsur.estrelladelsur.miequipo.usuario.tabs_user.JugadorUsuario;
 import com.estrelladelsur.estrelladelsur.miequipo.usuario.tabs_user.TabsEntrenamientoUsuario;
 import com.estrelladelsur.estrelladelsur.miequipo.usuario.tabs_user.TabsFixtureUsuario;
 import com.estrelladelsur.estrelladelsur.miequipo.usuario.tabs_user.TabsSancionUsuario;
-import com.estrelladelsur.estrelladelsur.permiso.TabsPermiso;
-import com.estrelladelsur.estrelladelsur.permiso.TabsUsuario;
-import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsFoto;
-import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsNoticia;
-import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsPublicidad;
 import com.estrelladelsur.estrelladelsur.social.usuario.FotoUsuario;
 import com.estrelladelsur.estrelladelsur.social.usuario.NoticiaUsuario;
 import com.estrelladelsur.estrelladelsur.social.usuario.NotificacionUsuario;
@@ -58,17 +56,15 @@ public class NavigationUsuario extends AppCompatActivity {
     private ScrimInsetsFrameLayout sifl;
     private Toolbar toolbar;
     private ActionBarDrawerToggle drawerToggle;
-    private String tituloClickFragment;
     private ExpandableAdapter listAdapter;
     private ExpandableListView expListView;
     private List<String> listDataHeader;
     private List<String> mi_equipoChild;
     private List<String> ligaChild;
     private List<String> socialChild;
-    private List<String> permisoChild;
     private HashMap<String, List<String>> listDataChild;
     private List<String> institucionalChild;
-    private TextView txtAbSubTitulo, txtAbTitulo, textViewLiga;
+    private TextView  txtAbTitulo;
     private ControladorGeneral controladorGeneral;
     private ControladorUsuarioGeneral controladorUsuarioGeneral;
     private Typeface titulos;
@@ -80,18 +76,60 @@ public class NavigationUsuario extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
+//        ImageView imageFull = (ImageView)findViewById(R.id.imageFull);
+//        imageFull.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.escudo_fragment, 150, 100));
+        initAll();
+   }
+
+    public void initAll(){
         controladorGeneral = new ControladorGeneral(this);
         controladorUsuarioGeneral = new ControladorUsuarioGeneral(this);
         auxiliarGeneral = new AuxiliarGeneral(NavigationUsuario.this);
-
         titulos = auxiliarGeneral.tituloFont(NavigationUsuario.this);
         adeful = auxiliarGeneral.ligaFont(NavigationUsuario.this);
         init();
         drawerLayout.openDrawer(GravityCompat.START);
         inicializarDatosGenerales();
-   }
+    }
 
-
+//    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+//                                                         int reqWidth, int reqHeight) {
+//
+//        // First decode with inJustDecodeBounds=true to check dimensions
+//        final BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inJustDecodeBounds = true;
+//        BitmapFactory.decodeResource(res, resId, options);
+//
+//        // Calculate inSampleSize
+//        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+//
+//        // Decode bitmap with inSampleSize set
+//        options.inJustDecodeBounds = false;
+//        return BitmapFactory.decodeResource(res, resId, options);
+//    }
+//
+//    public static int calculateInSampleSize(
+//            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+//        // Raw height and width of image
+//        final int height = options.outHeight;
+//        final int width = options.outWidth;
+//        int inSampleSize = 1;
+//
+//        if (height > reqHeight || width > reqWidth) {
+//
+//            final int halfHeight = height / 2;
+//            final int halfWidth = width / 2;
+//
+//            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+//            // height and width larger than the requested height and width.
+//            while ((halfHeight / inSampleSize) > reqHeight
+//                    && (halfWidth / inSampleSize) > reqWidth) {
+//                inSampleSize *= 2;
+//            }
+//        }
+//
+//        return inSampleSize;
+//    }
     public void init() {
 
         // Referencia al ScrimInsetsFrameLayout
@@ -124,21 +162,15 @@ public class NavigationUsuario extends AppCompatActivity {
                         case 0:
                             Intent estrella = new Intent(NavigationUsuario.this, ArticuloUsuario.class);
                             startActivity(estrella);
-//                            tituloClickFragment = institucionalChild.get(
-//                                    childPosition).toString();
                             break;
                         case 1:
                             Intent comision = new Intent(NavigationUsuario.this, ComisionUsuario.class);
                             startActivity(comision);
-//                            tituloClickFragment = institucionalChild.get(
-//                                    childPosition).toString();
                             break;
 
                         case 2:
                             Intent direccion = new Intent(NavigationUsuario.this, DireccionUsuario.class);
                             startActivity(direccion);
-//                            tituloClickFragment = institucionalChild.get(
-//                                    childPosition).toString();
                             break;
                     }
                 } else if (groupPosition == 1) {
@@ -146,41 +178,29 @@ public class NavigationUsuario extends AppCompatActivity {
                         case 0:
                             Intent fixture = new Intent(NavigationUsuario.this, TabsFixtureUsuario.class);
                             startActivity(fixture);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
                             break;
                         case 1:
                             Intent jugadores = new Intent(NavigationUsuario.this, JugadorUsuario.class);
                             startActivity(jugadores);
-
-//                            Intent resultado = new Intent(NavigationUsuario.this, ActivityResultadoAdeful.class);
-//                            startActivity(resultado);
                             break;
                         case 2:
                             Intent entrenamiento = new Intent(NavigationUsuario.this, TabsEntrenamientoUsuario.class);
                             startActivity(entrenamiento);
-//                            tituloClickFragment = mi_equipoChild.get(childPosition)
-//                                    .toString();
                             break;
                         case 3:
                             Intent sanciones = new Intent(NavigationUsuario.this, TabsSancionUsuario.class);
                             startActivity(sanciones);
                             break;
-//                        case 4:
-//                            Intent sanciones = new Intent(NavigationUsuario.this, TabsSancion.class);
-//                            startActivity(sanciones);
-////                            tituloClickFragment = mi_equipoChild.get(childPosition)
-////                                    .toString();
-//                            break;
                     }
-
                 } else if (groupPosition == 2) {
                     switch (childPosition) {
                         case 0:
                             Intent liga = new Intent(NavigationUsuario.this, TabsAdefulUsuario.class);
                             startActivity(liga);
-//                            tituloClickFragment = ligaChild.get(childPosition)
-//                                    .toString();
+                            break;
+                        case 1:
+                            Intent ligaL = new Intent(NavigationUsuario.this, TabsLifubaUsuario.class);
+                            startActivity(ligaL);
                             break;
                     }
                 } else if (groupPosition == 3) {
@@ -188,55 +208,27 @@ public class NavigationUsuario extends AppCompatActivity {
                         case 0:
                             Intent notificacion = new Intent(NavigationUsuario.this, NotificacionUsuario.class);
                             startActivity(notificacion);
-//                            tituloClickFragment = ligaChild.get(childPosition)
-//                                    .toString();
                             break;
                         case 1:
                             Intent noticia = new Intent(NavigationUsuario.this, NoticiaUsuario.class);
                             startActivity(noticia);
-//                            tituloClickFragment = ligaChild.get(childPosition)
-//                                    .toString();
                             break;
                         case 2:
                             Intent foto = new Intent(NavigationUsuario.this, FotoUsuario.class);
                             startActivity(foto);
-                            //      tituloClickFragment = ligaChild.get(childPosition)
-                            //            .toString();
                             break;
-
                         case 3:
                             Intent publicidad = new Intent(NavigationUsuario.this, PublicidadUsuario.class);
                             startActivity(publicidad);
-//                            tituloClickFragment = socialChild.get(childPosition)
-//                                    .toString();
                             break;
                     }
                 }
-
-
-//                else if (groupPosition == 4) {
-//                    switch (childPosition) {
-//                        case 0:
-//                            Intent usuario = new Intent(NavigationUsuario.this, TabsUsuario.class);
-//                            startActivity(usuario);
-////                            tituloClickFragment = permisoChild.get(childPosition)
-////                                    .toString();
-//                            break;
-//                        case 1:
-//                            Intent permiso = new Intent(NavigationUsuario.this, TabsPermiso.class);
-//                            startActivity(permiso);
-////                            tituloClickFragment = permisoChild.get(childPosition)
-////                                    .toString();
-//                            break;
-//                    }
-//                }
                 expListView.setItemChecked(childPosition, true);
                 drawerLayout.openDrawer(sifl);
 
                 return false;
             }
         });
-
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -357,7 +349,6 @@ public class NavigationUsuario extends AppCompatActivity {
                     controladorGeneral.insertAnio(anio);
                 }
             }
-
         } else {
             auxiliarGeneral.errorDataBase(NavigationUsuario.this);
         }
@@ -380,12 +371,19 @@ public class NavigationUsuario extends AppCompatActivity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            return false;
+        }
+        return false;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        //menu.getItem(0).setVisible(false);//adm
         menu.getItem(1).setVisible(false);// user
-       // menu.getItem(2).setVisible(false);// cerrar
         return true;
     }
 
@@ -395,7 +393,6 @@ public class NavigationUsuario extends AppCompatActivity {
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
         int id = item.getItemId();
 
         if (id == R.id.action_administrador) {
@@ -407,5 +404,4 @@ public class NavigationUsuario extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

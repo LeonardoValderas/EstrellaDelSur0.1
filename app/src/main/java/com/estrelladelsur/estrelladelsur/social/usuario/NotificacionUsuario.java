@@ -21,11 +21,9 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerNotificacionUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
+import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
-import com.estrelladelsur.estrelladelsur.liga.usuario.tabs_user.TabsAdefulUsuario;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
 
 import java.util.ArrayList;
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 public class NotificacionUsuario extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Notificacion> notificacionArray;
     private ControladorUsuarioGeneral controladorUsuario;
@@ -42,6 +39,7 @@ public class NotificacionUsuario extends AppCompatActivity {
     private DialogoArticulo dialogoArticulo;
     private TextView txtToolBarTitulo;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,15 +55,25 @@ public class NotificacionUsuario extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("NOTIFICACION");
 
         init();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(NotificacionUsuario.this);
+        controladorUsuario = new ControladorUsuarioGeneral(NotificacionUsuario.this);
+        initRecycler();
+        recyclerViewLoadNotificacion();
+    }
+
     public void init() {
-        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         initRecycler();
         recyclerViewLoadNotificacion();
 

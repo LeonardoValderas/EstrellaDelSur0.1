@@ -16,9 +16,9 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.liga.usuario.FragmentCanchaUsuario;
-import com.estrelladelsur.estrelladelsur.liga.usuario.FragmentEquipoUsuario;
-import com.estrelladelsur.estrelladelsur.liga.usuario.FragmentTorneoUsuario;
+import com.estrelladelsur.estrelladelsur.liga.usuario.adeful.FragmentCanchaUsuario;
+import com.estrelladelsur.estrelladelsur.liga.usuario.adeful.FragmentEquipoUsuario;
+import com.estrelladelsur.estrelladelsur.liga.usuario.adeful.FragmentTorneoUsuario;
 
 public class TabsAdefulUsuario extends AppCompatActivity {
 
@@ -32,31 +32,22 @@ public class TabsAdefulUsuario extends AppCompatActivity {
 	private static final String TAG = "FragmentPagerAdapter";
 	private static final boolean DEBUG = false;
 	private TextView txtToolBarTitulo;
-	private Typeface titulos;
-	private AuxiliarGeneral auxiliarGeneral;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs_general);
 
-
-		auxiliarGeneral = new AuxiliarGeneral(TabsAdefulUsuario.this);
-		titulos = auxiliarGeneral.tituloFont(TabsAdefulUsuario.this);
-		// Toolbar
+    	// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//
-//		txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-//		txtAbTitulo.setVisibility(View.GONE);
 
 		txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
 		txtToolBarTitulo.setText("ADEFUL");
-	//	txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
 		if (savedInstanceState != null) {
 			viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -81,6 +72,12 @@ public class TabsAdefulUsuario extends AppCompatActivity {
 		tabLayout.setupWithViewPager(viewPager);
 
 		restarMap = getIntent().getIntExtra("restart", 0);
+		init();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
 		init();
 	}
 

@@ -33,7 +33,7 @@ import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_general.TabsEntrenamiento;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -64,7 +64,6 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
     }
 
     public FragmentEditarEntrenamiento() {
-        // Required empty public constructor
     }
 
     @Override
@@ -106,6 +105,13 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
+    }
+
     private void init() {
 
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
@@ -126,6 +132,7 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
             adapterSpinnerMes = new AdapterSpinnerMes(getActivity(),
                     R.layout.simple_spinner_dropdown_item, mesArray);
             entrenamientoMesSpinner.setAdapter(adapterSpinnerMes);
+            entrenamientoMesSpinner.setSelection(auxiliarGeneral.getMounthCurrent());
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
@@ -210,14 +217,15 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_entrenamiento", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLENTRENAMIENTOADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Entrenamiento");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Entrenamiento", true, posicion, "o");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Entrenamiento", true, posicion, "o", fecha);
     }
 
     public void recyclerViewLoadEntrenamiento(String fecha) {
@@ -252,7 +260,6 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -307,12 +314,9 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -326,11 +330,9 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;

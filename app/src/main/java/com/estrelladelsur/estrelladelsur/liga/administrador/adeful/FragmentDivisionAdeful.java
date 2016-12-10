@@ -1,6 +1,7 @@
 package com.estrelladelsur.estrelladelsur.liga.administrador.adeful;
 
 import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 public class FragmentDivisionAdeful extends Fragment implements MyAsyncTaskListener {
@@ -61,7 +62,6 @@ public class FragmentDivisionAdeful extends Fragment implements MyAsyncTaskListe
     }
 
     public FragmentDivisionAdeful() {
-        // Required empty public constructor
     }
 
     @Override
@@ -104,6 +104,12 @@ public class FragmentDivisionAdeful extends Fragment implements MyAsyncTaskListe
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        recyclerViewLoadDivision();
+    }
 
     private void init() {
 
@@ -254,7 +260,7 @@ public class FragmentDivisionAdeful extends Fragment implements MyAsyncTaskListe
 
     public void cargarEntidad(int id, int ws) {
         URL = null;
-        URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLDIVISIONADEFUL();
+        URL = auxiliarGeneral.getURLDIVISIONADEFULALL();
         if (ws != 3) {
             division = null;
             divisionText = editTextDivision.getText()
@@ -266,6 +272,7 @@ public class FragmentDivisionAdeful extends Fragment implements MyAsyncTaskListe
     }
 
     public void envioWebService(int tipo) {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request = new Request();
         request.setMethod("POST");
 
@@ -286,11 +293,13 @@ public class FragmentDivisionAdeful extends Fragment implements MyAsyncTaskListe
         } else {
             isDelete = true;
             request.setParametrosDatos("id_division", String.valueOf(division.getID_DIVISION()));
-            request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+            request.setParametrosDatos("fecha_actualizacion", fecha);
             URL = URL + auxiliarGeneral.getDeletePHP("Division");
         }
-
-        new AsyncTaskGeneric(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false);
+        if (isDelete)
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false, fecha);
+        else
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -299,13 +308,9 @@ public class FragmentDivisionAdeful extends Fragment implements MyAsyncTaskListe
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -313,8 +318,6 @@ public class FragmentDivisionAdeful extends Fragment implements MyAsyncTaskListe
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-
-
         if (id == R.id.action_usuario) {
             auxiliarGeneral.goToUser(getActivity());
             return true;
@@ -322,13 +325,11 @@ public class FragmentDivisionAdeful extends Fragment implements MyAsyncTaskListe
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == R.id.action_guardar) {
             if (editTextDivision.getText().toString().equals("")) {
                 Toast.makeText(getActivity(), "Ingrese una división.",
                         Toast.LENGTH_SHORT).show();
             } else {
-
                 if (gestion == 0) {
                     cargarEntidad(0, 0);
                 } else if (gestion == 1) {

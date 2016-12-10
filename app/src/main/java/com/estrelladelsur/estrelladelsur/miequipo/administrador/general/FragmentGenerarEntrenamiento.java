@@ -37,7 +37,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerC
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import org.json.JSONArray;
@@ -85,7 +85,6 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
     }
 
     public FragmentGenerarEntrenamiento() {
-        // Required empty public constructor
     }
 
     @Override
@@ -137,6 +136,13 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
     }
 
     private void init() {
@@ -199,7 +205,6 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
         buttonHoraEntrenamiento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                // TODO Auto-generated method stub
                 setTime();
             }
         });
@@ -353,7 +358,7 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
             URL = URL + auxiliarGeneral.getUpdatePHP("Entrenamiento");
         }
 
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Entrenamiento", entrenamiento, insertar, "o");
+        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Entrenamiento", entrenamiento, insertar, "o");
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -362,13 +367,9 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -376,21 +377,16 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-
         if (id == R.id.action_usuario) {
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == R.id.action_guardar) {
-
             ArrayList<Entrenamiento> listaDivisiones = adaptadorRecyclerDivisionEntrenamiento
                     .getEntrenamientoList();
-
             if (spinnerLugarEntrenamiento.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerCancha))) {
                 Toast.makeText(getActivity(),
@@ -406,10 +402,7 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
                 Toast.makeText(getActivity(), "Debe Seleccionar una Hora.",
                         Toast.LENGTH_SHORT).show();
             } else {
-
                 id_divisin_array = new ArrayList<>();
-
-
                 for (int i = 0; i < listaDivisiones.size(); i++) {
                     Entrenamiento entrenamientoDivision = listaDivisiones
                             .get(i);
@@ -432,7 +425,6 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
                             e.printStackTrace();
                         }
                     } else {
-
                         id_division_delete_array = new ArrayList<>();
                         id_division_add_array = new ArrayList<>();
                         boolean isAdd = false;
@@ -450,7 +442,6 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
                             if (isAdd)
                                 id_division_add_array.add(id_divisin_array.get(i));
                         }
-
                         for (int i = 0; i < divisionArrayExtra.size(); i++) {
                             for (int d = 0; d < id_divisin_array.size(); d++) {
                                 if (divisionArrayExtra.get(i).getID_DIVISION() == id_divisin_array.get(d)) {
@@ -464,7 +455,6 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
                                 id_division_delete_array.add(divisionArrayExtra.get(i).getID_DIVISION());
 
                         }
-
                         try {
                             cargarEntidad(idEntrenamientoExtra, id_division_add_array, id_division_delete_array);
                         } catch (JSONException e) {

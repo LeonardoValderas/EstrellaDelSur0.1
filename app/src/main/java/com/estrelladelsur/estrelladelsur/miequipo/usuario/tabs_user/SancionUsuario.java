@@ -22,7 +22,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerD
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorSancionUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 
@@ -62,6 +62,14 @@ public class SancionUsuario extends AppCompatActivity {
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("SANCION");
+        init();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(SancionUsuario.this);
+        controladorUsuarioAdeful = new ControladorUsuarioAdeful(SancionUsuario.this);
         init();
     }
 
@@ -109,7 +117,6 @@ public class SancionUsuario extends AppCompatActivity {
                 }
             }
         });
-
 
         recyclerViewSancion.addOnItemTouchListener(new
                 RecyclerTouchListener(SancionUsuario.this,

@@ -1,0 +1,42 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="100dp"
+    card_view:cardCornerRadius="10dp"
+    card_view:cardElevation="5dp" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:src="@drawable/abc_btn_radio_to_on_mtrl_015" />
+
+        <TextView
+            android:id="@+id/textViewGeneral"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cargo"
+            android:textSize="30dp"
+            android:layout_weight="1">
+        </TextView>
+        
+    <ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="52dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/action_eliminar"
+        android:visibility="gone"/>
+
+    </LinearLayout>
+
+  
+
+</android.support.v7.widget.CardView>

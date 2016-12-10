@@ -1,16 +1,13 @@
 package com.estrelladelsur.estrelladelsur.miequipo.administrador.adeful;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
@@ -41,7 +37,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Resultado;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -50,8 +46,6 @@ import java.util.List;
 public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncTaskListener {
 
     private int CheckedPositionFragment;
-    private Toolbar toolbar;
-    private ActionBarDrawerToggle drawerToggle;
     private int divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner;
     private Spinner resultadoDivisionSpinner;
     private Spinner resultadoTorneoSpinner;
@@ -60,7 +54,6 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
     private RecyclerView recyclerViewResultado;
     private FloatingActionButton botonFloating;
     private ControladorAdeful controladorAdeful;
-    private TextView txtTitulo;
     private DialogoResultado dialogoResultado;
     private Division division;
     private Torneo torneo;
@@ -80,7 +73,6 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
     private DialogoAlerta dialogoAlerta;
     private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
-    private Typeface titulos;
     private String URL = null, usuario = null;
     private Resultado resultado;
     private Request request;
@@ -92,7 +84,6 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
     }
 
     public FragmentGenerarResultadoAdeful() {
-        // Required empty public constructor
     }
 
     @Override
@@ -119,7 +110,7 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
         // SPINNER TORNEO
         resultadoTorneoSpinner = (Spinner) v.findViewById(R.id.resultadoTorneoSpinner);
         // SPINNER FECHA
-        resultadoFechaSpinner = (Spinner)v.findViewById(R.id.resultadoFechaSpinner);
+        resultadoFechaSpinner = (Spinner) v.findViewById(R.id.resultadoFechaSpinner);
         // SPINNER ANIO
         resultadoAnioSpinner = (Spinner) v.findViewById(R.id.resultadoAnioSpinner);
         // RECLYCLER
@@ -133,6 +124,18 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        torneoArray = controladorAdeful.selectListaTorneoAdeful();
+        fechaArray = controladorAdeful.selectListaFecha();
+        anioArray = controladorAdeful.selectListaAnio();
     }
 
     private void init() {
@@ -238,12 +241,11 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
 
                     @Override
                     public void onClick(View view, int position) {
-                        // TODO Auto-generated method stub
                         posicionRecycler = position;
                         if (arrayResultado.get(position).getRESULTADO_LOCAL() != null && arrayResultado.get(position)
                                 .getRESULTADO_VISITA() != null) {
 
-                             if(arrayResultado.get(position).getRESULTADO_LOCAL().equals("-") && arrayResultado.get(position)
+                            if (arrayResultado.get(position).getRESULTADO_LOCAL().equals("-") && arrayResultado.get(position)
                                     .getRESULTADO_VISITA().equals("-")) {
                                 dialogoResultado = new DialogoResultado(
                                         getActivity(), "RESULTADO",
@@ -251,114 +253,99 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
                                                 .getEQUIPO_LOCAL(), arrayResultado
                                         .get(position).getEQUIPO_VISITA(),
                                         "", "");
+                            } else {
+                                dialogoResultado = new DialogoResultado(
+                                        getActivity(), "RESULTADO",
+                                        arrayResultado.get(position)
+                                                .getEQUIPO_LOCAL(), arrayResultado
+                                        .get(position).getEQUIPO_VISITA(),
+                                        arrayResultado.get(position)
+                                                .getRESULTADO_LOCAL(),
+                                        arrayResultado.get(position)
+                                                .getRESULTADO_VISITA());
                             }
-                            dialogoResultado = new DialogoResultado(
-                                    getActivity(), "RESULTADO",
-                                    arrayResultado.get(position)
-                                            .getEQUIPO_LOCAL(), arrayResultado
-                                    .get(position).getEQUIPO_VISITA(),
-                                    arrayResultado.get(position)
-                                            .getRESULTADO_LOCAL(),
-                                    arrayResultado.get(position)
-                                            .getRESULTADO_VISITA());
+                            dialogoResultado.btnAceptar
+                                    .setOnClickListener(new View.OnClickListener() {
 
-                        } else {
-                            dialogoResultado = new DialogoResultado(
-                                    getActivity(), "RESULTADO",
-                                    arrayResultado.get(position)
-                                            .getEQUIPO_LOCAL(), arrayResultado
-                                    .get(position).getEQUIPO_VISITA(),
-                                    "", "");
-                        }
+                                                            @Override
+                                                            public void onClick(View v) {
 
+                                                                if (!dialogoResultado.resultadoLocal
+                                                                        .getText().toString()
+                                                                        .equals("")
+                                                                        && !dialogoResultado.resultadoVisita
+                                                                        .getText().toString()
+                                                                        .equals("")) {
 
-                        dialogoResultado.imageButtonGoleadores
-                                .setOnClickListener(new View.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(View v) {
-
-                                    }
-                                });
-
-                        dialogoResultado.btnAceptar
-                                .setOnClickListener(new View.OnClickListener() {
-
-                                                        @Override
-                                                        public void onClick(View v) {
-
-                                                            if (!dialogoResultado.resultadoLocal
-                                                                    .getText().toString()
-                                                                    .equals("")
-                                                                    && !dialogoResultado.resultadoVisita
-                                                                    .getText().toString()
-                                                                    .equals("")) {
-
-                                                                cargarEntidad(arrayResultado
-                                                                                .get(posicionRecycler)
-                                                                                .getID_FIXTURE(), dialogoResultado.resultadoLocal
-                                                                                .getText()
-                                                                                .toString(),
-                                                                        dialogoResultado.resultadoVisita
-                                                                                .getText()
-                                                                                .toString());
-                                                            } else {
-
-                                                                dialogoResultado.resultadoTextErrorVacio
-                                                                        .setVisibility(View.VISIBLE);
-                                                                dialogoResultado.resultadoTextErrorVacio
-                                                                        .setText("Ingrese ambos resultados.");
+                                                                    isReset = false;
+                                                                    cargarEntidad(arrayResultado
+                                                                                    .get(posicionRecycler)
+                                                                                    .getID_FIXTURE(), dialogoResultado.resultadoLocal
+                                                                                    .getText()
+                                                                                    .toString(),
+                                                                            dialogoResultado.resultadoVisita
+                                                                                    .getText()
+                                                                                    .toString());
+                                                                } else {
+                                                                    dialogoResultado.resultadoTextErrorVacio
+                                                                            .setVisibility(View.VISIBLE);
+                                                                    dialogoResultado.resultadoTextErrorVacio
+                                                                            .setText("Ingrese ambos resultados.");
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                );
+                                    );
 
-                        dialogoResultado.btnCancelar
-                                .setOnClickListener(new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View v) {
-                                                            dialogoResultado.alertDialog.dismiss();
+                            dialogoResultado.btnCancelar
+                                    .setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                dialogoResultado.alertDialog.dismiss();
+                                                            }
                                                         }
-                                                    }
-                                );
+                                    );
+                        } else {
+                           auxiliarGeneral.errorDataBase(getActivity());
+                        }
                     }
 
-                    @Override
-                    public void onLongClick(View view, final int position) {
+                        @Override
+                        public void onLongClick (View view,final int position){
 
-                        dialogoAlerta = new DialogoAlerta(getActivity(),
-                                "ALERTA", "Desea resetear el resultado?", null,
-                                null);
-                        dialogoAlerta.btnAceptar.setText("Aceptar");
-                        dialogoAlerta.btnCancelar.setText("Cancelar");
+                            dialogoAlerta = new DialogoAlerta(getActivity(),
+                                    "ALERTA", "Desea resetear el resultado?", null,
+                                    null);
+                            dialogoAlerta.btnAceptar.setText("Aceptar");
+                            dialogoAlerta.btnCancelar.setText("Cancelar");
 
-                        dialogoAlerta.btnAceptar
-                                .setOnClickListener(new View.OnClickListener() {
+                            dialogoAlerta.btnAceptar
+                                    .setOnClickListener(new View.OnClickListener() {
 
-                                    // @SuppressLint("NewApi")
-                                    @Override
-                                    public void onClick(View v) {
-                                        isReset = true;
-                                        cargarEntidad(arrayResultado
-                                                        .get(posicionRecycler)
-                                                        .getID_FIXTURE(), "-",
-                                                "-");
-                                    }
-                                });
+                                        @Override
+                                        public void onClick(View v) {
+                                            isReset = true;
+                                            cargarEntidad(arrayResultado
+                                                            .get(posicionRecycler)
+                                                            .getID_FIXTURE(), "-",
+                                                    "-");
+                                        }
+                                    });
 
-                        dialogoAlerta.btnCancelar
-                                .setOnClickListener(new View.OnClickListener() {
+                            dialogoAlerta.btnCancelar
+                                    .setOnClickListener(new View.OnClickListener() {
 
-                                    @Override
-                                    public void onClick(View v) {
-                                        dialogoAlerta.alertDialog.dismiss();
-                                    }
-                                });
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialogoAlerta.alertDialog.dismiss();
+                                        }
+                                    });
+                        }
                     }
-                }
 
-        ));
-    }
+));
+
+ }
+
 
     private int getPositionYearSpinner(List<Anio> anios) {
         String anio = auxiliarGeneral.getYearSpinner();
@@ -368,7 +355,6 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
                 index = i;
             }
         }
-
         return index;
     }
 
@@ -396,7 +382,7 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
                 divisionSpinner,
                 torneoSpinner,
                 fechaSpinner, anioSpiner);
-        if(isReset)
+        if (isReset)
             dialogoAlerta.alertDialog.dismiss();
         else
             dialogoResultado.alertDialog
@@ -424,7 +410,7 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
         request.setParametrosDatos("fecha_actualizacion", resultado.getFECHA_ACTUALIZACION());
         URL = URL + auxiliarGeneral.getUpdatePHP("Resultado");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Resultado", resultado, false, "o");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Resultado", resultado, false, "o");
     }
 
     @Override
@@ -489,10 +475,10 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
         }
 
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -501,10 +487,8 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_administrador_general, menu);
 
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -518,18 +502,13 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
-
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

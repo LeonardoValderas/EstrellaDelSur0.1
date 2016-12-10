@@ -27,10 +27,9 @@ import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Permiso;
-import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.navegador.administrador.Navigation;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import org.json.JSONArray;
@@ -107,6 +106,16 @@ public class FragmentEditarPermiso extends Fragment implements MyAsyncTaskListen
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        communicator = (Communicator) getActivity();
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        usuarioCreador = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        recyclerViewLoadPermiso();
     }
 
     private void init() {
@@ -205,6 +214,7 @@ public class FragmentEditarPermiso extends Fragment implements MyAsyncTaskListen
     public void envioWebService() throws JSONException {
 
         JSONArray subModuloArrayDelete = new JSONArray();
+        String fecha = permiso.getFECHA_ACTUALIZACION();
         request = new Request();
         request.setMethod("POST");
 
@@ -218,11 +228,11 @@ public class FragmentEditarPermiso extends Fragment implements MyAsyncTaskListen
         }
         request.setParametrosDatos("submoduloDelete", subModuloArrayDelete.toString());
         request.setParametrosDatos("id_permiso", String.valueOf(permiso.getID_PERMISO()));
-        request.setParametrosDatos("fecha_actualizacion", permiso.getFECHA_ACTUALIZACION());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = URL + auxiliarGeneral.getDeletePHP("Permiso");
 
 
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Permiso", permiso, true, "o", true);
+        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Permiso", permiso, true, "o", true);
     }
 
     public void inicializarControles(String mensaje) {
@@ -254,7 +264,6 @@ public class FragmentEditarPermiso extends Fragment implements MyAsyncTaskListen
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -309,12 +318,9 @@ public class FragmentEditarPermiso extends Fragment implements MyAsyncTaskListen
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -331,9 +337,7 @@ public class FragmentEditarPermiso extends Fragment implements MyAsyncTaskListen
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

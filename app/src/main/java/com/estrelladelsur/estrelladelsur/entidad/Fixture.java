@@ -46,6 +46,26 @@ public class Fixture {
         USUARIO_ACTUALIZACION = usuario_act;
         FECHA_ACTUALIZACION = fechaActualizacion;
     }
+    public Fixture(int id, int id_equipo_local, int id_equipo_visita, int id_division, int id_torneo, int id_cancha, int id_fecha, int id_anio, String dia, String hora, String rl, String rv, String usuario,
+                   String fechaCreacion, String usuario_act, String fechaActualizacion) {
+
+        ID_FIXTURE = id;
+        ID_EQUIPO_LOCAL = id_equipo_local;
+        ID_EQUIPO_VISITA = id_equipo_visita;
+        ID_DIVISION = id_division;
+        ID_TORNEO = id_torneo;
+        ID_CANCHA = id_cancha;
+        ID_FECHA = id_fecha;
+        ID_ANIO = id_anio;
+        DIA = dia;
+        HORA = hora;
+        RESULTADO_LOCAL = rl;
+        RESULTADO_VISITA = rv;
+        USUARIO_CREACION = usuario;
+        FECHA_CREACION = fechaCreacion;
+        USUARIO_ACTUALIZACION = usuario_act;
+        FECHA_ACTUALIZACION = fechaActualizacion;
+    }
 
     public String getUSUARIO_CREACION() {
         return USUARIO_CREACION;
@@ -120,7 +140,7 @@ public class Fixture {
     }
 
     // ENTRENAMIENTO RECYCLER
-    public Fixture(int id, int id_equipo_local, String equipo_local, byte[] escudoLocal, String r_local, int id_equipo_visita, String equipo_visita, byte[] escudovisita, String r_visita, int id_cancha, String cancha, String dia, String hora) {
+    public Fixture(int id, int id_equipo_local, String equipo_local, byte[] escudoLocal, String r_local, int id_equipo_visita, String equipo_visita, byte[] escudovisita, String r_visita, int id_cancha, String cancha, String dia, String hora, String fecha, String anio) {
 
         ID_FIXTURE = id;
         ID_EQUIPO_LOCAL = id_equipo_local;
@@ -135,6 +155,8 @@ public class Fixture {
         CANCHA = cancha;
         DIA = dia;
         HORA = hora;
+        FECHA = fecha;
+        ANIO = anio;
     }
 
     // ENTRENAMIENTO RECYCLER

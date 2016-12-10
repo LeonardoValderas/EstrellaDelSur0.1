@@ -30,15 +30,11 @@ public class TabsPublicidad extends AppCompatActivity implements Communicator {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
-        auxiliarGeneral = new AuxiliarGeneral(TabsPublicidad.this);
-        titulos = auxiliarGeneral.tituloFont(TabsPublicidad.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -50,7 +46,6 @@ public class TabsPublicidad extends AppCompatActivity implements Communicator {
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("PUBLICIDAD");
-
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -80,10 +75,15 @@ public class TabsPublicidad extends AppCompatActivity implements Communicator {
         init();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
+
     public void init() {
 
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+      viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
@@ -101,7 +101,6 @@ public class TabsPublicidad extends AppCompatActivity implements Communicator {
             }
         });
     }
-
 
     public class TabsPublicidadAdapter extends FragmentPagerAdapter {
 
@@ -182,6 +181,5 @@ public class TabsPublicidad extends AppCompatActivity implements Communicator {
                         + ":" + 1);
 
         fragment.recyclerViewLoadPublicidad();
-
     }
 }

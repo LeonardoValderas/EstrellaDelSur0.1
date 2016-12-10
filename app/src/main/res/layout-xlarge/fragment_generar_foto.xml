@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/tituloFotoEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:maxLength="40"
+            android:gravity="center"
+            android:hint="TITULO"
+            android:textSize="25dp">
+
+            <requestFocus />
+        </EditText>
+
+
+
+        <ImageButton
+            android:id="@+id/rotateButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:src="@android:drawable/stat_notify_sync"/>
+
+
+        <ImageView
+            android:id="@+id/imageFoto"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/border_rect"
+            android:clickable="true"
+            android:src="@mipmap/ic_foto" />
+
+        <EditText
+            android:id="@+id/otrosPublicidadEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLength="35"
+            android:layout_marginTop="5dp"
+            android:hint="Otros..."
+            android:textSize="25dp"
+            android:visibility="gone">
+
+        </EditText>
+
+    </LinearLayout>
+
+
+</LinearLayout>

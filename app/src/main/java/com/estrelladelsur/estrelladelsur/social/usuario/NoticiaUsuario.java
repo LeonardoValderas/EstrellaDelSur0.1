@@ -2,7 +2,6 @@ package com.estrelladelsur.estrelladelsur.social.usuario;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -23,7 +22,7 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerNoticiaUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
+import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
 import com.estrelladelsur.estrelladelsur.entidad.Noticia;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
@@ -33,9 +32,8 @@ import java.util.ArrayList;
 public class NoticiaUsuario extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
-    private ArrayList<Noticia> noticiaArray;
+    private ArrayList<Noticia> noticiaArray = new ArrayList<>();
     private ControladorUsuarioGeneral controladorUsuario;
     private AdaptadorRecyclerNoticiaUsuario adaptadorRecyclerNoticia;
     private RecyclerView recycleViewUsuarioGeneral;
@@ -48,9 +46,6 @@ public class NoticiaUsuario extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario_general);
 
-        auxiliarGeneral = new AuxiliarGeneral(NoticiaUsuario.this);
-        controladorUsuario = new ControladorUsuarioGeneral(NoticiaUsuario.this);
-
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
@@ -58,6 +53,8 @@ public class NoticiaUsuario extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("NOTICIA");
@@ -65,9 +62,16 @@ public class NoticiaUsuario extends AppCompatActivity {
         init();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorUsuario = new ControladorUsuarioGeneral(NoticiaUsuario.this);
+        initRecycler();
+        recyclerViewLoadNoticia();
+    }
+
     public void init() {
-        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        controladorUsuario = new ControladorUsuarioGeneral(NoticiaUsuario.this);
         initRecycler();
         recyclerViewLoadNoticia();
 

@@ -19,7 +19,7 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Noticia;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 public class FragmentGenerarNoticia extends Fragment implements MyAsyncTaskListener {
@@ -28,7 +28,6 @@ public class FragmentGenerarNoticia extends Fragment implements MyAsyncTaskListe
     private EditText noticiaEditTituto;
     private EditText noticiaEditArticulo;
     private EditText noticiaEditLink;
-    private ControladorGeneral controladorGeneral;
     private boolean insertar = true;
     private Noticia noticia;
     private Communicator communicator;
@@ -37,7 +36,7 @@ public class FragmentGenerarNoticia extends Fragment implements MyAsyncTaskListe
     private AuxiliarGeneral auxiliarGeneral;
     private Typeface editTextFont;
     private String URL = null, usuario = null;
-    private Request request = new Request();
+    private Request request;
 
     public static FragmentGenerarNoticia newInstance() {
         FragmentGenerarNoticia fragment = new FragmentGenerarNoticia();
@@ -90,9 +89,14 @@ public class FragmentGenerarNoticia extends Fragment implements MyAsyncTaskListe
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+    }
+
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
-        controladorGeneral = new ControladorGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
@@ -110,7 +114,6 @@ public class FragmentGenerarNoticia extends Fragment implements MyAsyncTaskListe
     }
 
     public void inicializarControles(String mensaje) {
-
         noticiaEditTituto.setText("");
         noticiaEditArticulo.setText("");
         noticiaEditLink.setText("");
@@ -131,6 +134,7 @@ public class FragmentGenerarNoticia extends Fragment implements MyAsyncTaskListe
     }
 
     public void envioWebService() {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("titulo", noticia.getTITULO());
         request.setParametrosDatos("descripcion", noticia.getDESCRIPCION());
@@ -147,7 +151,7 @@ public class FragmentGenerarNoticia extends Fragment implements MyAsyncTaskListe
             URL = URL + auxiliarGeneral.getUpdatePHP("Noticia");
         }
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Noticia", noticia, insertar, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Noticia", noticia, insertar, "a");
     }
 
     public void onCreate(Bundle savedInstanceState) {

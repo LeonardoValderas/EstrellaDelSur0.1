@@ -21,7 +21,7 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerPublicidadUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
+import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
@@ -31,13 +31,11 @@ import java.util.ArrayList;
 public class PublicidadUsuario extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Publicidad> publicidadArray;
     private ControladorUsuarioGeneral controladorUsuario;
     private AdaptadorRecyclerPublicidadUsuario adaptadorRecyclerPublicidad;
     private RecyclerView recycleViewUsuarioGeneral;
-    private DialogoArticulo dialogoNoticia;
     private TextView txtToolBarTitulo;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -46,8 +44,6 @@ public class PublicidadUsuario extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario_general);
 
-        auxiliarGeneral = new AuxiliarGeneral(PublicidadUsuario.this);
-        controladorUsuario = new ControladorUsuarioGeneral(PublicidadUsuario.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
@@ -56,6 +52,8 @@ public class PublicidadUsuario extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("PUBLICIDAD");
@@ -63,9 +61,15 @@ public class PublicidadUsuario extends AppCompatActivity {
         init();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
+
     public void init() {
-        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        auxiliarGeneral = new AuxiliarGeneral(PublicidadUsuario.this);
+        controladorUsuario = new ControladorUsuarioGeneral(PublicidadUsuario.this);
         initRecycler();
         recyclerViewLoadFoto();
 
@@ -171,7 +175,6 @@ public class PublicidadUsuario extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
         menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion

@@ -3,7 +3,6 @@ package com.estrelladelsur.estrelladelsur.social.administrador;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,15 +26,15 @@ import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 
 public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskListener {
 
-    private ControladorGeneral controladorGeneral;
     private ImageView imagePublicidad;
     private EditText tituloPublicidadEdit;
     private EditText otrosPublicidadEdit;
@@ -49,11 +48,10 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
     private Communicator communicator;
     private Typeface editTextFont;
     private String URL = null, usuario = null, encodedImage = null, nombre_foto_anterior = null;
-    private Request request = new Request();
+    private Request request;
     private ImageButton rotateButton;
-    int width = 150;
-    int height = 150;
-
+    int width = 300;
+    int height = 300;
     public static FragmentGenerarPublicidad newInstance() {
         FragmentGenerarPublicidad fragment = new FragmentGenerarPublicidad();
         return fragment;
@@ -102,11 +100,16 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        communicator = (Communicator) getActivity();
+    }
+
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
-        controladorGeneral = new ControladorGeneral(getActivity());
         communicator = (Communicator) getActivity();
-        usuario = "Administrador";
 
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
@@ -181,9 +184,16 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
             String path = auxiliarGeneral.selectImageForData(data, getActivity());
+            File file = new File(path);
+            try {
+                imagePublicidadByte = auxiliarGeneral.fileToBytes(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             Bitmap b = setResizaInage(path, width, height);
             if (b != null) {
-                imagePublicidadByte = auxiliarGeneral.pasarBitmapByte(b);
+               // imagePublicidadByte = auxiliarGeneral.pasarBitmapByte(b);
                 b = auxiliarGeneral.setByteToBitmap(imagePublicidadByte, width, height);
                 imagePublicidad.setImageBitmap(b);
             }
@@ -216,6 +226,7 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
     }
 
     public void envioWebService() {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("titulo", publicidad.getTITULO());
         if(publicidad.getOTROS() != null)
@@ -244,7 +255,7 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
             URL = URL + auxiliarGeneral.getUpdatePHP("Publicidad");
         }
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Publicidad", publicidad, insertar, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Publicidad", publicidad, insertar, "a");
     }
 
     public void inicializarControles(String mensaje) {

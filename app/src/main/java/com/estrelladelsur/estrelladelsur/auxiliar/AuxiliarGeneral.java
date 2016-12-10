@@ -1,20 +1,12 @@
 package com.estrelladelsur.estrelladelsur.auxiliar;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -22,17 +14,17 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import android.graphics.Bitmap.CompressFormat;
 
 import com.estrelladelsur.estrelladelsur.login.Login;
-import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.SplashUsuario;
 
 public class AuxiliarGeneral {
@@ -87,7 +79,7 @@ public class AuxiliarGeneral {
 
     public void errorDataBase(Context context) {
         Toast.makeText(context, "Error en la base de datos interna, vuelva a intentar." +
-                        "\n Si el error persiste comuniquese con soporte.",
+                        "\nSi el error persiste comuniquese con soporte.",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -217,6 +209,29 @@ public class AuxiliarGeneral {
         return photoPath;
     }
 
+    public byte[] fileToBytes(File f) throws IOException {
+        int size = (int) f.length();
+        byte bytes[] = new byte[size];
+        byte tmpBuff[] = new byte[size];
+        FileInputStream fis= new FileInputStream(f);;
+        try {
+
+            int read = fis.read(bytes, 0, size);
+            if (read < size) {
+                int remain = size - read;
+                while (remain > 0) {
+                    read = fis.read(tmpBuff, 0, remain);
+                    System.arraycopy(tmpBuff, 0, bytes, size - remain, read);
+                    remain -= read;
+                }
+            }
+        }  catch (IOException e){
+            throw e;
+        } finally {
+            fis.close();
+        }
+        return bytes;
+    }
 
     //FECHAS
     public String getFechaOficial() {
@@ -249,7 +264,7 @@ public class AuxiliarGeneral {
         return getUser.getString("usuario", null);
     }
 
-    //URLS
+    //////////////////////URLS/////////////////////////////
     //Http
     public String getURL() {
         return "http://valdroide.com/";
@@ -259,105 +274,141 @@ public class AuxiliarGeneral {
     public String getURLSINCRONIZARUSUARIO() {
         return "estrella_del_sur/testing/SINCRONIZAR/Usuario/sincronizarUsuario.php";
     }
-
-    //ARTICULO
-    public String getURLARTICULOADEFUL() {
-        return "estrella_del_sur/testing/ADEFUL/Institucion/Articulo/";
+    public String getURLSINCRONIZARADM() {
+        return "estrella_del_sur/testing/SINCRONIZAR/Administrador/sincronizarAdm.php";
     }
-
+    //ARTICULO
+    public String getURLARTICULO() {
+        return "estrella_del_sur/testing/GENERAL/Articulo/";
+    }
     public String getURLARTICULOADEFULALL() {
-        return getURL() + getURLARTICULOADEFUL();
+        return getURL() + getURLARTICULO();
     }
 
     //COMISION
-    public String getURLCOMISIONADEFUL() {
-        return "estrella_del_sur/testing/ADEFUL/Institucion/Comision/";
+    public String getURLCOMISION() {
+        return "estrella_del_sur/testing/GENERAL/Comision/";
     }
-
     public String getURLCOMISIONADEFULALL() {
-        return getURL() + getURLCOMISIONADEFUL();
+        return getURL() + getURLCOMISION();
     }
 
-    public String getURLFOTOCOMISIONADEFUL() {
-        return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Comision/foto_comision/";
+    public String getURLFOTOCOMISION() {
+        return getURL() + "estrella_del_sur/testing/GENERAL/Comision/foto_comision/";
     }
-
     //DIRECCION
-    public String getURLDIRECCIONADEFUL() {
-        return "estrella_del_sur/testing/ADEFUL/Institucion/Direccion/";
+    public String getURLDIRECCION() {
+        return "estrella_del_sur/testing/GENERAL/Direccion/";
     }
-
     public String getURLDIRECCIONADEFULALL() {
-        return getURL() + getURLDIRECCIONADEFUL();
+        return getURL() + getURLDIRECCION();
     }
-
-    public String getURLFOTODIRECCIONADEFUL() {
-        return getURL() + "estrella_del_sur/testing/ADEFUL/Institucion/Direccion/foto_direccion/";
+    public String getURLFOTODIRECCION() {
+        return getURL() + "estrella_del_sur/testing/GENERAL/Direccion/foto_direccion/";
     }
-
     //CARGO
-    public String getURLCARGOADEFUL() {
-        return "estrella_del_sur/testing/ADEFUL/Institucion/Cargo/";
+    public String getURLCARGO() {
+        return "estrella_del_sur/testing/GENERAL/Cargo/";
     }
 
-    public String getURLCARGOADEFULALL() {
-        return getURL() + getURLCARGOADEFUL();
+    public String getURLCARGOALL() {
+        return getURL() + getURLCARGO();
     }
 
     //EQUIPO
-    public String getURLESCUDOEQUIPOADEFUL() {
+    public String getURLESCUDOEQUIPO() {
         return "escudo_equipo/";
     }
 
     public String getURLEQUIPOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/equipo/";
     }
-
+    public String getURLEQUIPOLIFUBA() {
+        return "estrella_del_sur/testing/LIFUBA/Liga/equipo/";
+    }
+    public String getURLEQUIPOADEFULALL() {
+        return getURL() + getURLEQUIPOADEFUL();
+    }
+    public String getURLEQUIPOLIFUBAALL() {
+        return getURL() + getURLEQUIPOLIFUBA();
+    }
     //DIVISION
     public String getURLDIVISIONADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/division/";
     }
-
+    public String getURLDIVISIONADEFULALL() {
+        return getURL() + getURLDIVISIONADEFUL();
+    }
+    public String getURLDIVISIONLIFUBA() {
+        return "estrella_del_sur/testing/LIFUBA/Liga/division/";
+    }
+    public String getURLDIVISIONLIFUBAALL() {
+        return getURL() + getURLDIVISIONLIFUBA();
+    }
     //TORNEO
     public String getURLTORNEOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/torneo/";
+    }
+    public String getURLTORNEOLIFUBA() {
+        return "estrella_del_sur/testing/LIFUBA/Liga/torneo/";
     }
 
     public String getURLTORNEOADEFULALL() {
         return getURL() + getURLTORNEOADEFUL();
     }
-
+    public String getURLTORNEOLIFUBAALL() {
+        return getURL() + getURLTORNEOLIFUBA();
+    }
     //MAPA
     public String getURLCANCHAADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Liga/cancha/";
+    }
+    public String getURLCANCHALIFUBA() {
+        return "estrella_del_sur/testing/LIFUBA/Liga/cancha/";
     }
 
     public String getURLCANCHAADEFULALL() {
         return getURL() + getURLCANCHAADEFUL();
     }
-
+    public String getURLCANCHALIFUBAALL() {
+        return getURL() + getURLCANCHALIFUBA();
+    }
     //MI EQUIPO
     //FIXTURE
     public String getURLFIXTUREADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Fixture/";
     }
-
+    public String getURLFIXTURELIFUBA() {
+        return "estrella_del_sur/testing/LIFUBA/Mi_Equipo/Fixture/";
+    }
     public String getURLFIXTUREADEFULAll() {
         return getURL() + getURLFIXTUREADEFUL();
+    }
+    public String getURLFIXTURELIFUBAAll() {
+        return getURL() + getURLFIXTURELIFUBA();
     }
 
     //RESULTADO
     public String getURLRESULTADOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Resultado/";
     }
+    public String getURLRESULTADOLIFUBA() {
+        return "estrella_del_sur/testing/LIFUBA/Mi_Equipo/Resultado/";
+    }
 
     public String getURLRESULTADOADEFULAll() {
         return getURL() + getURLRESULTADOADEFUL();
+    }
+    public String getURLRESULTADOLIFUBAAll() {
+        return getURL() + getURLRESULTADOLIFUBA();
     }
 
     //JUGADOR
     public String getURLJUGADORADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Jugador/";
+    }
+    public String getURLJUGADORLIFUBA() {
+        return "estrella_del_sur/testing/LIFUBA/Mi_Equipo/Jugador/";
     }
 
     public String getURLJUGADORADEFULAll() {
@@ -367,21 +418,19 @@ public class AuxiliarGeneral {
     public String getURLFOTOJUGADORADEFUL() {
         return getURL() + "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Jugador/foto_jugador/";
     }
-
     //POSICION
-    public String getURLPOSICIONADEFUL() {
+    public String getURLPOSICION() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Posicion/";
     }
 
-    public String getURLPOSICIONADEFULALL() {
-        return getURL() + getURLPOSICIONADEFUL();
+    public String getURLPOSICIONALL() {
+        return getURL() + getURLPOSICION();
     }
 
     //ENTRENAMIENTO
     public String getURLENTRENAMIENTOADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Entrenamiento/";
     }
-
     public String getURLENTRENAMIENTOADEFULALL() {
         return getURL() + getURLENTRENAMIENTOADEFUL();
     }
@@ -389,20 +438,26 @@ public class AuxiliarGeneral {
     public String getURLENTRENAMIENTOASISTENCIAADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/EntrenamientoAsistencia/";
     }
-
+    public String getURLENTRENAMIENTOASISTENCIALIFUBA() {
+        return "estrella_del_sur/testing/LIFUBA/Mi_Equipo/EntrenamientoAsistencia/";
+    }
     public String getURLENTRENAMIENTOASISTENCIAADEFULALL() {
         return getURL() + getURLENTRENAMIENTOASISTENCIAADEFUL();
     }
-
     //SANCION
     public String getURLSANCIONADEFUL() {
         return "estrella_del_sur/testing/ADEFUL/Mi_Equipo/Sancion/";
     }
-
+    public String getURLSANCIONLIFUBA() {
+        return "estrella_del_sur/testing/LIFUBA/Mi_Equipo/Sancion/";
+    }
     public String getURLSANCIONADEFULALL() {
         return getURL() + getURLSANCIONADEFUL();
     }
-
+    public String getURLSANCIONLIFUBAALL() {
+        return getURL() + getURLSANCIONLIFUBA();
+    }
+    ///////////SOCIAL/////////////
     //NOTIFICACION
     public String getURLNOTIFICACION() {
         return "estrella_del_sur/testing/GENERAL/Notificacion/";
@@ -455,12 +510,10 @@ public class AuxiliarGeneral {
         return getURL() + getURLPERMISO();
     }
 
-
-
+    /////////////////////////////GCM//////////////////
     public String getURLGCM() {
         return "estrella_del_sur/testing/GCM/insertPhoneID.php";
     }
-
     public String getURLGCMALL() {
         return getURL() + getURLGCM();
     }
@@ -552,7 +605,7 @@ public class AuxiliarGeneral {
         return sb.toString();
     }
 
-    public String getMounthCurrent() {
+    public String getMounthYearCurrent() {
 
         Calendar c = Calendar.getInstance();
 
@@ -563,6 +616,19 @@ public class AuxiliarGeneral {
             monthStg = "0" + monthStg;
 
         return String.valueOf(monthStg + "-" + year);
+    }
+
+    public int getMounthCurrent() {
+
+        Calendar c = Calendar.getInstance();
+
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        String monthStg = String.valueOf(month);
+        if (monthStg.length() == 1)
+            monthStg = "0" + monthStg;
+
+        return Integer.valueOf(monthStg);
     }
 
     public void goToUser(Context context){

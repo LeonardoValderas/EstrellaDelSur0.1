@@ -27,7 +27,7 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsFoto;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -52,7 +52,6 @@ public class FragmentEditarFoto extends Fragment implements MyAsyncTaskListener 
     }
 
     public FragmentEditarFoto() {
-        // Required empty public constructor
     }
 
     @Override
@@ -60,7 +59,6 @@ public class FragmentEditarFoto extends Fragment implements MyAsyncTaskListener 
         super.onActivityCreated(state);
 
         controladorGeneral = new ControladorGeneral(getActivity());
-
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -83,6 +81,14 @@ public class FragmentEditarFoto extends Fragment implements MyAsyncTaskListener 
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadFoto();
     }
 
     private void init() {
@@ -121,8 +127,6 @@ public class FragmentEditarFoto extends Fragment implements MyAsyncTaskListener 
 
             @Override
             public void onLongClick(View view, final int position) {
-                // TODO Auto-generated method stub
-
 
                 dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
                         "Desea eliminar la foto?", null, null);
@@ -161,15 +165,16 @@ public class FragmentEditarFoto extends Fragment implements MyAsyncTaskListener 
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_foto", String.valueOf(posicion));
         request.setParametrosDatos("nombre_foto", nombre_foto);
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLFOTOALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Foto");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Foto", true, posicion, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Foto", true, posicion, "a", fecha);
     }
 
     public void inicializarControles(String mensaje) {

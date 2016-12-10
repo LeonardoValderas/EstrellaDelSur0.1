@@ -16,7 +16,8 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
-import com.estrelladelsur.estrelladelsur.miequipo.usuario.FragmentFixtureUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.miequipo.usuario.adeful.FragmentFixtureUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.miequipo.usuario.lifuba.FragmentFixtureUsuarioLifuba;
 
 public class TabsFixtureUsuario extends AppCompatActivity {
 
@@ -37,7 +38,6 @@ public class TabsFixtureUsuario extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
 
         auxiliarGeneral = new AuxiliarGeneral(TabsFixtureUsuario.this);
         titulos = auxiliarGeneral.tituloFont(TabsFixtureUsuario.this);
@@ -77,22 +77,25 @@ public class TabsFixtureUsuario extends AppCompatActivity {
         init();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(TabsFixtureUsuario.this);
+        titulos = auxiliarGeneral.tituloFont(TabsFixtureUsuario.this);
+        init();
+    }
+
     public void init() {
 
-//        if (restarMap == 1) {
-//            viewPager.setCurrentItem(3);
-//        }
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
                 invalidateOptionsMenu();
             }
-
             @Override
             public void onPageSelected(int position) {
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -109,12 +112,10 @@ public class TabsFixtureUsuario extends AppCompatActivity {
             super(fm);
             this.fm = fm;
         }
-
         @Override
         public int getCount() {
             return PAGE_COUNT;
         }
-
         @Override
         public Fragment getItem(int position) {
             Fragment fragmentTab = fm.findFragmentByTag("android:switcher:"
@@ -123,13 +124,12 @@ public class TabsFixtureUsuario extends AppCompatActivity {
             if (fragmentTab != null) {
                 return fragmentTab;
             }
-
             switch (position) {
                 case 0:
                     fragmentTab = FragmentFixtureUsuarioAdeful.newInstance();
                     break;
                 case 1:
-                    fragmentTab = FragmentFixtureUsuarioAdeful.newInstance();
+                    fragmentTab = FragmentFixtureUsuarioLifuba.newInstance();
                     break;
             }
             return fragmentTab;
@@ -160,7 +160,6 @@ public class TabsFixtureUsuario extends AppCompatActivity {
         private String makeFragmentName(int viewId, int index) {
             return "android:switcher:" + viewId + ":" + index;
         }
-
         @Override
         public CharSequence getPageTitle(int position) {
             return tabTitles[position];

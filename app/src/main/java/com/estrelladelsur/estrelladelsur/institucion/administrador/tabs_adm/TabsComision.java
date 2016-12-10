@@ -33,15 +33,11 @@ public class TabsComision extends AppCompatActivity implements CommunicatorAdefu
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
-        auxiliarGeneral = new AuxiliarGeneral(TabsComision.this);
-      //  titulos = auxiliarGeneral.tituloFont(TabsComision.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -51,12 +47,8 @@ public class TabsComision extends AppCompatActivity implements CommunicatorAdefu
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        txtAbTitulo = (TextView) toolbar.findViewById(R.id.txtAbTitulo);
-//        txtAbTitulo.setVisibility(View.GONE);
-
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("COMISION");
-        //txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -85,6 +77,13 @@ public class TabsComision extends AppCompatActivity implements CommunicatorAdefu
 
         init();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
+
     public void init() {
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -96,12 +95,10 @@ public class TabsComision extends AppCompatActivity implements CommunicatorAdefu
 
             @Override
             public void onPageSelected(int position) {
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
 
@@ -152,7 +149,6 @@ public class TabsComision extends AppCompatActivity implements CommunicatorAdefu
             if (fm == null) {
                 mCurTransaction = fm.beginTransaction();
             }
-            // Do we already have this fragment?
             String name = makeFragmentName(container.getId(), position);
             Fragment fragment = fm.findFragmentByTag(name);
             if (fragment != null) {
@@ -176,13 +172,11 @@ public class TabsComision extends AppCompatActivity implements CommunicatorAdefu
 
         @Override
         public CharSequence getPageTitle(int position) {
-            // Generate title based on item position
             return tabTitles[position];
         }
     }
 
     public void refreshAdeful() {
-        // TODO Auto-generated method stub
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentEditarComisionAdeful fragment = (FragmentEditarComisionAdeful) manager

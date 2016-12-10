@@ -35,7 +35,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Entrenamiento;
 import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import org.json.JSONArray;
@@ -137,6 +137,13 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
+    }
+
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
         // ANIO SPINNER
@@ -156,6 +163,7 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
             adapterSpinnerMes = new AdapterSpinnerMes(getActivity(),
                     R.layout.simple_spinner_dropdown_item, mesArray);
             entrenamientoMesSpinner.setAdapter(adapterSpinnerMes);
+            entrenamientoMesSpinner.setSelection(auxiliarGeneral.getMounthCurrent());
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
@@ -275,7 +283,7 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
         request.setParametrosDatos("fecha_creacion", entrenamiento.getFECHA_CREACION());
         URL = URL + auxiliarGeneral.getInsertPHP("Asistencia");
 
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Asistencia", entrenamiento, true, "a");
+        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Asistencia", entrenamiento, true, "a");
     }
 
     public void showMessage(String msg) {
@@ -302,7 +310,6 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -337,7 +344,6 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {
@@ -352,18 +358,13 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
         }
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -374,14 +375,10 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == R.id.action_guardar) {
-
-
             if (entrenamientoFechahsSpinner.getSelectedItem().toString().equals("")) {
                 Toast.makeText(getActivity(), "No seleccionó un entrenamiento.",
                         Toast.LENGTH_SHORT).show();
@@ -449,9 +446,7 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
         }
 
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
-
             return true;
         }
         return super.onOptionsItemSelected(item);

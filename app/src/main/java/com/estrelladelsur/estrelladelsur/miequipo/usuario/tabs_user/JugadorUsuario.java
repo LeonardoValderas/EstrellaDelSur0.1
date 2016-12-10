@@ -22,7 +22,8 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerD
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerJugadorUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.lifuba.ControladorUsuarioLifuba;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 
@@ -62,6 +63,14 @@ public class JugadorUsuario extends AppCompatActivity {
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("JUGADOR");
+        init();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(JugadorUsuario.this);
+        controladorUsuarioAdeful = new ControladorUsuarioAdeful(JugadorUsuario.this);
         init();
     }
 
@@ -109,7 +118,6 @@ public class JugadorUsuario extends AppCompatActivity {
                 }
             }
         });
-
 
         recyclerViewJugador.addOnItemTouchListener(new
                 RecyclerTouchListener(JugadorUsuario.this,
@@ -192,7 +200,6 @@ public class JugadorUsuario extends AppCompatActivity {
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {

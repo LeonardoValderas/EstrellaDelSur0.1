@@ -31,16 +31,11 @@ public class TabsEntrenamiento extends AppCompatActivity {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
-        auxiliarGeneral = new AuxiliarGeneral(TabsEntrenamiento.this);
-        titulos = auxiliarGeneral.tituloFont(TabsEntrenamiento.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -82,7 +77,12 @@ public class TabsEntrenamiento extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         init();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
     }
 
     public void init() {
@@ -92,11 +92,9 @@ public class TabsEntrenamiento extends AppCompatActivity {
                                        int positionOffsetPixels) {
                 invalidateOptionsMenu();
             }
-
             @Override
             public void onPageSelected(int position) {
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -170,7 +168,6 @@ public class TabsEntrenamiento extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            // Generate title based on item position
             return tabTitles[position];
         }
     }

@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -24,12 +25,11 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerCancha;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
-import com.estrelladelsur.estrelladelsur.liga.administrador.adeful.MapaCanchaAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -42,12 +42,13 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
     private ImageView imageButtonCancha;
     private ArrayList<Cancha> canchaAdefulArray;
     private AdaptadorRecyclerCancha adaptadorCancha;
-    private ControladorAdeful controladorAdeful;
+    private ControladorLifuba controladorLifuba;
     private int CheckedPositionFragment;
     private AuxiliarGeneral auxiliarGeneral;
     private String URL = null;
     private Request request;
     private int id_cancha;
+    private ImageButton rotateButton;
 
     public static FragmentCanchaLifuba newInstance() {
         FragmentCanchaLifuba fragment = new FragmentCanchaLifuba();
@@ -55,13 +56,12 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
     }
 
     public FragmentCanchaLifuba() {
-        // Required empty public constructor
     }
 
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorLifuba = new ControladorLifuba(getActivity());
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -74,6 +74,8 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_general_liga, container,
                 false);
+        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
+        rotateButton.setVisibility(View.GONE);
         imageButtonCancha = (ImageView) v.findViewById(
                 R.id.imageButtonEquipo_Cancha);
         editTextNombre = (EditText) v.findViewById(
@@ -91,6 +93,14 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorLifuba = new ControladorLifuba(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadCancha();
+    }
+
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         imageButtonCancha.setImageResource(R.mipmap.ic_mapa_icon);
@@ -98,7 +108,7 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
 
             @Override
             public void onClick(View v) {
-                Intent mapa = new Intent(getActivity(), MapaCanchaAdeful.class);
+                Intent mapa = new Intent(getActivity(), MapaCanchaLifuba.class);
                 startActivity(mapa);
             }
         });
@@ -137,7 +147,7 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
             @Override
             public void onClick(View view, int position) {
                 Intent mapa = new Intent(getActivity(),
-                        MapaCanchaAdeful.class);
+                        MapaCanchaLifuba.class);
                 mapa.putExtra("actualizar", true);
                 mapa.putExtra("id", canchaAdefulArray.get(position)
                         .getID_CANCHA());
@@ -170,7 +180,7 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recycleViewCancha.setItemAnimator(new DefaultItemAnimator());
 
-        canchaAdefulArray = controladorAdeful.selectListaCanchaAdeful();
+        canchaAdefulArray = controladorLifuba.selectListaCanchaLifuba();
         if (canchaAdefulArray != null) {
             adaptadorCancha = new AdaptadorRecyclerCancha(canchaAdefulArray, getActivity());
             recycleViewCancha.setAdapter(adaptadorCancha);
@@ -181,16 +191,16 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
 
     public void envioWebService(int id) {
         URL = null;
-        URL = auxiliarGeneral.getURLCANCHAADEFULALL();
+        URL = auxiliarGeneral.getURLCANCHALIFUBAALL();
+        String fecha = auxiliarGeneral.getFechaOficial();
         id_cancha = id;
         request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("id_cancha", String.valueOf(id_cancha));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = URL + auxiliarGeneral.getDeletePHP("Cancha");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Cancha", true, id_cancha, "a");
-
+        new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Cancha", true, id_cancha, "a", fecha);
     }
 
     @Override
@@ -239,7 +249,6 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {
@@ -254,7 +263,6 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
         }
     }
 
@@ -270,7 +278,7 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
         // menu.getItem(3).setVisible(false);//cerrar
-         menu.getItem(4).setVisible(false);// guardar
+        menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -283,16 +291,14 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

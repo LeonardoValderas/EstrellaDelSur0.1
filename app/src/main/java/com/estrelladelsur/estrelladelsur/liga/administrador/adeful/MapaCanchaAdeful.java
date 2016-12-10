@@ -9,11 +9,12 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.liga.LocationAddress;
 import com.estrelladelsur.estrelladelsur.liga.administrador.tabs_adm.TabsAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,7 +39,6 @@ import android.widget.Toast;
 
 public class MapaCanchaAdeful extends AppCompatActivity implements OnMapReadyCallback, MyAsyncTaskListener {
 
-
     private TextView tvAddress;
     private GoogleMap mapa;
     public static double latBache = -41.139755445793554;
@@ -57,7 +57,6 @@ public class MapaCanchaAdeful extends AppCompatActivity implements OnMapReadyCal
     private String nombre = null, URL = null, usuario = null;
     private boolean insertar = true;
     private SupportMapFragment mapFragment;
-    private Typeface titulos;
     private Typeface editTextFont;
     private Handler touchScreem;
     private AuxiliarGeneral auxiliarGeneral;
@@ -147,6 +146,13 @@ public class MapaCanchaAdeful extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(MapaCanchaAdeful.this);
+        init();
+    }
+
     public void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(MapaCanchaAdeful.this);
 
@@ -203,7 +209,6 @@ public class MapaCanchaAdeful extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-
     public void inicializarControles(String mensaje) {
         mapa.clear();
         editTextNombre.setText("");
@@ -244,7 +249,7 @@ public class MapaCanchaAdeful extends AppCompatActivity implements OnMapReadyCal
             request.setParametrosDatos("fecha_actualizacion", cancha.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Cancha");
         }
-        new AsyncTaskGeneric(MapaCanchaAdeful.this, this, URL, request, "Cancha", cancha, insertar, "a");
+        new AsyncTaskGenericAdeful(MapaCanchaAdeful.this, this, URL, request, "Cancha", cancha, insertar, "a");
     }
 
     @Override
@@ -255,13 +260,10 @@ public class MapaCanchaAdeful extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_administrador_general, menu);
         menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         return true;
     }
 
@@ -303,5 +305,4 @@ public class MapaCanchaAdeful extends AppCompatActivity implements OnMapReadyCal
         i.putExtra("restart", 1);
         startActivity(i);
     }
-
 }

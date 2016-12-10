@@ -3,10 +3,13 @@ package com.estrelladelsur.estrelladelsur.navegador.administrador;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
-import android.view.MenuInflater;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +27,7 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Fecha;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
@@ -38,7 +43,6 @@ import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsFix
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_general.TabsJugador;
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsResultado;
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsSancion;
-import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
 import com.estrelladelsur.estrelladelsur.permiso.TabsPermiso;
 import com.estrelladelsur.estrelladelsur.permiso.TabsUsuario;
 import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsFoto;
@@ -71,6 +75,7 @@ public class Navigation extends AppCompatActivity {
     private TextView txtAbTitulo;
     private ControladorGeneral controladorGeneral;
     private ControladorAdeful controladorAdeful;
+    private ControladorLifuba controladorLifuba;
     private Typeface titulos;
     private Typeface adeful;
     private AuxiliarGeneral auxiliarGeneral;
@@ -84,8 +89,16 @@ public class Navigation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
+//        ImageView imageFull = (ImageView)findViewById(R.id.imageFull);
+//        imageFull.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.escudo_fragment, 150, 100));
+
+        initAll();
+
+    }
+    public void initAll(){
         controladorGeneral = new ControladorGeneral(this);
         controladorAdeful = new ControladorAdeful(this);
+        controladorLifuba = new ControladorLifuba(this);
         auxiliarGeneral = new AuxiliarGeneral(Navigation.this);
         titulos = auxiliarGeneral.tituloFont(Navigation.this);
         adeful = auxiliarGeneral.ligaFont(Navigation.this);
@@ -93,9 +106,51 @@ public class Navigation extends AppCompatActivity {
         init();
         drawerLayout.openDrawer(GravityCompat.START);
         inicializarDatosGenerales();
-
     }
 
+//    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+//                                                         int reqWidth, int reqHeight) {
+//
+//        // First decode with inJustDecodeBounds=true to check dimensions
+//        final BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inJustDecodeBounds = true;
+//        BitmapFactory.decodeResource(res, resId, options);
+//
+//        // Calculate inSampleSize
+//        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+//
+//        // Decode bitmap with inSampleSize set
+//        options.inJustDecodeBounds = false;
+//        return BitmapFactory.decodeResource(res, resId, options);
+//    }
+//
+//    public static int calculateInSampleSize(
+//            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+//        // Raw height and width of image
+//        final int height = options.outHeight;
+//        final int width = options.outWidth;
+//        int inSampleSize = 1;
+//
+//        if (height > reqHeight || width > reqWidth) {
+//
+//            final int halfHeight = height / 2;
+//            final int halfWidth = width / 2;
+//
+//            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+//            // height and width larger than the requested height and width.
+//            while ((halfHeight / inSampleSize) > reqHeight
+//                    && (halfWidth / inSampleSize) > reqWidth) {
+//                inSampleSize *= 2;
+//            }
+//        }
+//
+//        return inSampleSize;
+//    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//    //    initAll();
+//    }
 
     public void init() {
         // Referencia al ScrimInsetsFrameLayout
@@ -392,7 +447,6 @@ public class Navigation extends AppCompatActivity {
     }
 
     public void inicializarDatosGenerales() {
-        //  iniciarModulos();
         iniciarFecha();
         iniciarAnio();
         iniciarMes();
@@ -401,8 +455,10 @@ public class Navigation extends AppCompatActivity {
     public void iniciarFecha() {
         ArrayList<Fecha> fechaArray = new ArrayList<>();
         ArrayList<Fecha> fechaArrayAdeful = new ArrayList<>();
+        ArrayList<Fecha> fechaArrayLifuba = new ArrayList<>();
         fechaArray = controladorGeneral.selectListaFecha();
         fechaArrayAdeful = controladorAdeful.selectListaFecha();
+        fechaArrayLifuba = controladorLifuba.selectListaFecha();
         if (fechaArray != null || fechaArrayAdeful != null) {
             if (fechaArray.isEmpty()) {
                 for (int i = 0; i < getResources().getStringArray(R.array.fechaArray).length; i++) {
@@ -418,6 +474,13 @@ public class Navigation extends AppCompatActivity {
                     controladorAdeful.insertFecha(fecha);
                 }
             }
+            if (fechaArrayLifuba.isEmpty()) {
+                for (int i = 0; i < getResources().getStringArray(R.array.fechaArray).length; i++) {
+                    Fecha fecha = new Fecha(i, getResources().getStringArray(
+                            R.array.fechaArray)[i]);
+                    controladorLifuba.insertFecha(fecha);
+                }
+            }
         } else {
             auxiliarGeneral.errorDataBase(Navigation.this);
         }
@@ -426,8 +489,10 @@ public class Navigation extends AppCompatActivity {
     public void iniciarAnio() {
         ArrayList<Anio> anioArray = new ArrayList<>();
         ArrayList<Anio> anioArrayAdeful = new ArrayList<>();
+        ArrayList<Anio> anioArrayLifuba = new ArrayList<>();
         anioArray = controladorGeneral.selectListaAnio();
         anioArrayAdeful = controladorAdeful.selectListaAnio();
+        anioArrayLifuba = controladorLifuba.selectListaAnio();
         if (anioArray != null || anioArrayAdeful != null) {
             if (anioArray.isEmpty()) {
                 for (int i = 0; i < getResources().getStringArray(R.array.anioArray).length; i++) {
@@ -441,6 +506,13 @@ public class Navigation extends AppCompatActivity {
                     Anio anio = new Anio(i,
                             getResources().getStringArray(R.array.anioArray)[i]);
                     controladorAdeful.insertAnio(anio);
+                }
+            }
+            if (anioArrayLifuba.isEmpty()) {
+                for (int i = 0; i < getResources().getStringArray(R.array.anioArray).length; i++) {
+                    Anio anio = new Anio(i,
+                            getResources().getStringArray(R.array.anioArray)[i]);
+                    controladorLifuba.insertAnio(anio);
                 }
             }
         } else {
@@ -474,11 +546,17 @@ public class Navigation extends AppCompatActivity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            return false;
+        }
+        return false;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menu.getItem(0).setVisible(false);//adm
-       // menu.getItem(1).setVisible(false);// user
-       // menu.getItem(2).setVisible(false);// cerrar
 
         return true;
     }

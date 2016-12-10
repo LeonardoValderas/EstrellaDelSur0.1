@@ -30,15 +30,11 @@ public class TabsJugador extends AppCompatActivity {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
-        auxiliarGeneral = new AuxiliarGeneral(TabsJugador.this);
-        titulos = auxiliarGeneral.tituloFont(TabsJugador.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -50,7 +46,6 @@ public class TabsJugador extends AppCompatActivity {
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("JUGADOR");
-        //txtAbSubTitulo.setTypeface(titulos, Typeface.BOLD);
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -80,6 +75,12 @@ public class TabsJugador extends AppCompatActivity {
         init();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
+
     public void init() {
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -88,15 +89,11 @@ public class TabsJugador extends AppCompatActivity {
                                        int positionOffsetPixels) {
                 invalidateOptionsMenu();
             }
-
             @Override
             public void onPageSelected(int position) {
-
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
     }
@@ -121,14 +118,12 @@ public class TabsJugador extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
 
-
             Fragment fragmentTab = fm.findFragmentByTag("android:switcher:"
                     + viewPager.getId() + ":" + getItemId(position));
 
             if (fragmentTab != null) {
                 return fragmentTab;
             }
-
             switch (position) {
                 case 0:
                     fragmentTab = FragmentGenerarJugador.newInstance();
@@ -146,8 +141,6 @@ public class TabsJugador extends AppCompatActivity {
             if (fm == null) {
                 mCurTransaction = fm.beginTransaction();
             }
-
-            // Do we already have this fragment?
             String name = makeFragmentName(container.getId(), position);
             Fragment fragment = fm.findFragmentByTag(name);
             if (fragment != null) {

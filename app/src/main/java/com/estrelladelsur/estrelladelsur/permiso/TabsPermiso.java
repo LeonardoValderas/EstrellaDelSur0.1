@@ -28,23 +28,19 @@ public class TabsPermiso extends AppCompatActivity implements Communicator{
 	private FragmentTransaction mCurTransaction;
 	private static final String TAG = "FragmentPagerAdapter";
 	private static final boolean DEBUG = false;
-	private AuxiliarGeneral auxiliarGeneral;
 	private TextView txtToolBarTitulo;
-	private Typeface titulos;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs_general);
 
-		auxiliarGeneral = new AuxiliarGeneral(TabsPermiso.this);
-		titulos = auxiliarGeneral.tituloFont(TabsPermiso.this);
 		// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
 		txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
 		txtToolBarTitulo.setText("PERMISO");
@@ -76,6 +72,12 @@ public class TabsPermiso extends AppCompatActivity implements Communicator{
 
 		init();
 
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		init();
 	}
 
 	public void init() {
@@ -178,7 +180,6 @@ public class TabsPermiso extends AppCompatActivity implements Communicator{
 						+ ":" + 1);
 
 		fragment.recyclerViewLoadPermiso();
-
 	}
 
 	public void refreshDelete() {
@@ -189,5 +190,4 @@ public class TabsPermiso extends AppCompatActivity implements Communicator{
 						+ ":" + 0);
 		fragment.recyclerViewLoadModulos();
 	}
-
 }

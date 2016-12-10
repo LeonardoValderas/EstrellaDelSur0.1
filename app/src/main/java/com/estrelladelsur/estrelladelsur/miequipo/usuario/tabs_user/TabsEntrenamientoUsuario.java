@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
+import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.usuario.FragmentEntrenamientoAsistencia;
 import com.estrelladelsur.estrelladelsur.miequipo.usuario.FragmentEntrenamientoUsuario;
 
@@ -81,7 +82,14 @@ public class TabsEntrenamientoUsuario extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         init();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        auxiliarGeneral = new AuxiliarGeneral(TabsEntrenamientoUsuario.this);
+        titulos = auxiliarGeneral.tituloFont(TabsEntrenamientoUsuario.this);
+        init();
     }
 
     public void init() {
@@ -91,11 +99,9 @@ public class TabsEntrenamientoUsuario extends AppCompatActivity {
                                        int positionOffsetPixels) {
                 invalidateOptionsMenu();
             }
-
             @Override
             public void onPageSelected(int position) {
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -159,14 +165,11 @@ public class TabsEntrenamientoUsuario extends AppCompatActivity {
             }
             return fragment;
         }
-
         private String makeFragmentName(int viewId, int index) {
             return "android:switcher:" + viewId + ":" + index;
         }
-
         @Override
         public CharSequence getPageTitle(int position) {
-            // Generate title based on item position
             return tabTitles[position];
         }
     }

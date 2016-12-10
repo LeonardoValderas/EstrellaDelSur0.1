@@ -34,7 +34,7 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_general.TabsJugador;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListener {
@@ -63,7 +63,6 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
     }
 
     public FragmentEditarJugador() {
-        // Required empty public constructor
     }
 
     @Override
@@ -71,7 +70,6 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
         super.onActivityCreated(state);
 
         controladorAdeful = new ControladorAdeful(getActivity());
-
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -101,6 +99,13 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
     }
 
     private void init() {
@@ -173,9 +178,6 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
 
             @Override
             public void onLongClick(View view, final int position) {
-                // TODO Auto-generated method stub
-
-
                 dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
                         "Desea eliminar el jugador?", null, null);
                 dialogoAlerta.btnAceptar.setText("Aceptar");
@@ -205,18 +207,18 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_jugador", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLJUGADORADEFULAll();
         URL = URL + auxiliarGeneral.getDeletePHP("Jugador");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Jugador", true, posicion, "o");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Jugador", true, posicion, "o", fecha);
     }
 
     public void inicializarControles(String mensaje) {
-
         recyclerViewLoadJugador(divisionSpinner);
         posicion = 0;
         dialogoAlerta.alertDialog.dismiss();
@@ -256,7 +258,6 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -308,16 +309,12 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
         }
     }
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -331,11 +328,9 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;

@@ -27,17 +27,13 @@ public class TabsUsuario extends AppCompatActivity implements CommunicatorAdeful
     private FragmentTransaction mCurTransaction;
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
-    private AuxiliarGeneral auxiliarGeneral;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
 
-        auxiliarGeneral = new AuxiliarGeneral(TabsUsuario.this);
-        titulos = auxiliarGeneral.tituloFont(TabsUsuario.this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,9 +70,15 @@ public class TabsUsuario extends AppCompatActivity implements CommunicatorAdeful
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setupWithViewPager(viewPager);
 
-
         init();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
+
     public void init() {
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -85,18 +87,13 @@ public class TabsUsuario extends AppCompatActivity implements CommunicatorAdeful
                                        int positionOffsetPixels) {
                 invalidateOptionsMenu();
             }
-
             @Override
             public void onPageSelected(int position) {
-
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
-
     }
 
     public class TabsArticuloAdapter extends FragmentPagerAdapter {
@@ -135,7 +132,6 @@ public class TabsUsuario extends AppCompatActivity implements CommunicatorAdeful
 
                     break;
             }
-
             return fragmentTab;
         }
 
@@ -145,8 +141,6 @@ public class TabsUsuario extends AppCompatActivity implements CommunicatorAdeful
             if (fm == null) {
                 mCurTransaction = fm.beginTransaction();
             }
-
-            // Do we already have this fragment?
             String name = makeFragmentName(container.getId(), position);
             Fragment fragment = fm.findFragmentByTag(name);
             if (fragment != null) {
@@ -161,31 +155,25 @@ public class TabsUsuario extends AppCompatActivity implements CommunicatorAdeful
                 mCurTransaction.add(container.getId(), fragment,
                         makeFragmentName(container.getId(), position));
             }
-
             return fragment;
         }
 
         private String makeFragmentName(int viewId, int index) {
             return "android:switcher:" + viewId + ":" + index;
         }
-
         @Override
         public CharSequence getPageTitle(int position) {
-            // Generate title based on item position
             return tabTitles[position];
         }
     }
 
 
     public void refreshAdeful() {
-        // TODO Auto-generated method stub
-
         FragmentManager manager = getSupportFragmentManager();
         FragmentEditarUsuario fragment = (FragmentEditarUsuario) manager
                 .findFragmentByTag("android:switcher:" + viewPager.getId()
                         + ":" + 1);
 
         fragment.recyclerViewLoadUsuario();
-
     }
 }

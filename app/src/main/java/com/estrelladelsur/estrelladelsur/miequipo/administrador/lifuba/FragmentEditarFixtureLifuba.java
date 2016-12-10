@@ -30,6 +30,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerT
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
@@ -38,10 +39,10 @@ import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsFixture;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
-
 import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTaskListener{
 
@@ -65,6 +66,7 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
     private AdaptadorRecyclerFixture adaptadorFixtureEdit;
     private RecyclerView recyclerViewFixture;
     private FloatingActionButton botonFloating;
+    private ControladorLifuba controladorLifuba;
     private ControladorAdeful controladorAdeful;
     private int CheckedPositionFragment;
     private int divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner;
@@ -81,14 +83,15 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
     }
 
     public FragmentEditarFixtureLifuba() {
-        // Required empty public constructor
     }
 
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
 
+        controladorLifuba = new ControladorLifuba(getActivity());
         controladorAdeful = new ControladorAdeful(getActivity());
+
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -128,6 +131,13 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorLifuba = new ControladorLifuba(getActivity());
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
+    }
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         // DIVISION
@@ -148,7 +158,7 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
             auxiliarGeneral.errorDataBase(getActivity());
         }
         // TORNEO
-        torneoArray = controladorAdeful.selectListaTorneoAdeful();
+        torneoArray = controladorLifuba.selectListaTorneoLifuba();
         if (torneoArray != null) {
             // TORNEO SPINNER
             if (!torneoArray.isEmpty()) {
@@ -158,15 +168,16 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
                 fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
                 fixtureTorneoSpinner.setAdapter(adaptadorInicial);
             }
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
+
         // FECHA
-        fechaArray = controladorAdeful.selectListaFecha();
+        fechaArray = controladorLifuba.selectListaFecha();
         if (fechaArray != null) {
             // FECHA SPINNER
             adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
@@ -175,13 +186,15 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
+
         // ANIO
-        anioArray = controladorAdeful.selectListaAnio();
+        anioArray = controladorLifuba.selectListaAnio();
         if (anioArray != null) {
             // ANIO SPINNER
             adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
                     R.layout.simple_spinner_dropdown_item, anioArray);
             fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
+            fixtureAnioSpinner.setSelection(getPositionYearSpinner(anioArray));
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
@@ -217,7 +230,7 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
                     fechaSpinner = fecha.getID_FECHA();
                     anioSpiner = anio.getID_ANIO();
 
-                    recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+                    recyclerViewLoadFixture(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
                 }
             }
         });
@@ -249,13 +262,12 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
                         fixtureArray.get(position).getDIA());
                 editarFixture.putExtra("hora",
                         fixtureArray.get(position).getHORA());
+                editarFixture.putExtra("restart", 1);
                 startActivity(editarFixture);
             }
 
             @Override
             public void onLongClick(View view, final int position) {
-                // TODO Auto-generated method stub
-
                 dialogoAlerta = new DialogoAlerta(getActivity(), "ALERTA",
                         "Desea eliminar el partido?", null, null);
                 dialogoAlerta.btnAceptar.setText("Aceptar");
@@ -284,10 +296,20 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         }));
     }
 
+    private int getPositionYearSpinner(List<Anio> anios) {
+        String anio = auxiliarGeneral.getYearSpinner();
+        int index = 0;
+        for (int i = 0; i < anios.size(); i++) {
+            if (anios.get(i).getANIO().equals(anio)) {
+                index = i;
+            }
+        }
+        return index;
+    }
     //LOAD RECYCLER
-    public void recyclerViewLoadDivision(int division, int torneo, int fecha,
-                                         int anio) {
-        fixtureArray = controladorAdeful.selectListaFixtureAdeful(division,
+    public void recyclerViewLoadFixture(int division, int torneo, int fecha,
+                                        int anio) {
+        fixtureArray = controladorLifuba.selectListaFixtureLifuba(division,
                 torneo, fecha, anio);
         if (fixtureArray != null) {
             adaptadorFixtureEdit = new AdaptadorRecyclerFixture(fixtureArray, getActivity());
@@ -304,18 +326,19 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_fixture", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
-        URL = auxiliarGeneral.getURLFIXTUREADEFULAll();
+        URL = auxiliarGeneral.getURLFIXTURELIFUBAAll();
         URL = URL + auxiliarGeneral.getDeletePHP("Fixture");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Fixture", true, posicion, "o");
+        new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Fixture", true, posicion, "o", fecha);
     }
 
     public void inicializarControles(String mensaje) {
-        recyclerViewLoadDivision(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
+        recyclerViewLoadFixture(divisionSpinner, torneoSpinner, fechaSpinner, anioSpiner);
         posicion = 0;
         dialogoAlerta.alertDialog.dismiss();
         Toast.makeText(getActivity(), mensaje,
@@ -333,7 +356,6 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -367,7 +389,6 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {
@@ -379,23 +400,20 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -409,16 +427,13 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

@@ -31,15 +31,11 @@ public class TabsDireccion extends AppCompatActivity implements CommunicatorAdef
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
-
-        auxiliarGeneral = new AuxiliarGeneral(TabsDireccion.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,6 +75,11 @@ public class TabsDireccion extends AppCompatActivity implements CommunicatorAdef
         init();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
     public void init() {
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.liga.administrador.adeful.FragmentCanchaAdeful;
 import com.estrelladelsur.estrelladelsur.liga.administrador.adeful.FragmentDivisionAdeful;
 import com.estrelladelsur.estrelladelsur.liga.administrador.adeful.FragmentEquipoAdeful;
@@ -32,18 +33,13 @@ public class TabsAdeful extends AppCompatActivity {
 	private static final String TAG = "FragmentPagerAdapter";
 	private static final boolean DEBUG = false;
 	private TextView txtToolBarTitulo;
-	private Typeface titulos;
-	private AuxiliarGeneral auxiliarGeneral;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs_general);
 
-
-		auxiliarGeneral = new AuxiliarGeneral(TabsAdeful.this);
-		titulos = auxiliarGeneral.tituloFont(TabsAdeful.this);
-		// Toolbar
+    	// Toolbar
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
@@ -81,8 +77,13 @@ public class TabsAdeful extends AppCompatActivity {
 		init();
 	}
 
-	public void init() {
+	@Override
+	public void onResume() {
+		super.onResume();
+		init();
+	}
 
+	public void init() {
 		if (restarMap == 1) {
 			viewPager.setCurrentItem(3);
 		}

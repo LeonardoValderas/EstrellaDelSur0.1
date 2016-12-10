@@ -27,7 +27,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.institucion.administrador.tabs_adm.TabsArticulo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -51,7 +51,6 @@ public class FragmentEditarArticuloAdeful extends Fragment implements MyAsyncTas
     }
 
     public FragmentEditarArticuloAdeful() {
-        // Required empty public constructor
     }
 
     @Override
@@ -86,6 +85,13 @@ public class FragmentEditarArticuloAdeful extends Fragment implements MyAsyncTas
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadArticulo();
+    }
 
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
@@ -173,14 +179,15 @@ public class FragmentEditarArticuloAdeful extends Fragment implements MyAsyncTas
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_articulo", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLARTICULOADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Articulo");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Articulo", true, posicion, "o");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Articulo", true, posicion, "o", fecha);
     }
 
     @Override
@@ -241,26 +248,20 @@ public class FragmentEditarArticuloAdeful extends Fragment implements MyAsyncTas
 
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
         }
 
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
-            // TODO Auto-generated method stub
-
         }
 
     }
 
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-         menu.getItem(4).setVisible(false);// guardar
+        menu.getItem(4).setVisible(false);// guardar
 
         super.onCreateOptionsMenu(menu, inflater);
     }

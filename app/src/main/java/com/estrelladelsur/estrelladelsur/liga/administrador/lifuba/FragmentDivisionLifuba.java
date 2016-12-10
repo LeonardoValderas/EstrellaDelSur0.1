@@ -1,6 +1,5 @@
 package com.estrelladelsur.estrelladelsur.liga.administrador.lifuba;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -26,12 +26,12 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerDivision;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
-import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -44,26 +44,18 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
     private Division division;
     private AdaptadorRecyclerDivision adaptadorDivision;
     private EditText editTextDivision;
-    private boolean insertar = true;
     private int gestion = 0;//0-insert //1-update//2-delete
     private int posicion;
-    private String URL = null, divisionText = null, usuario = null, mensaje = null;
-    private ControladorAdeful controladorAdeful;
+    private String URL = null, divisionText = null, usuario = null;
+    private ControladorLifuba controladorLifuba;
     private int CheckedPositionFragment;
     private ImageView imageButtonEquipo;
     private TextInputLayout editTextInputDescripcion;
-    private String GUARDAR = "División cargada correctamente";
-    private String ACTUALIZAR = "División actualizada correctamente";
-    private String ELIMINAR = "División eliminada correctamente";
     private Typeface editTextFont;
     private AuxiliarGeneral auxiliarGeneral;
     private Request request;
-    private JsonParsing jsonParsing = new JsonParsing(getActivity());
-    private ProgressDialog dialog;
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private static final String TAG_ID = "id";
     private boolean isInsert = true, isDelete = false;
+    private ImageButton rotateButton;
 
     public static FragmentDivisionLifuba newInstance() {
         FragmentDivisionLifuba fragment = new FragmentDivisionLifuba();
@@ -71,13 +63,12 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
     }
 
     public FragmentDivisionLifuba() {
-        // Required empty public constructor
     }
 
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
-        controladorAdeful = new ControladorAdeful(getActivity());
+        controladorLifuba = new ControladorLifuba(getActivity());
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -92,6 +83,8 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
                 false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
+        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
+        rotateButton.setVisibility(View.GONE);
         editTextDivision = (EditText) v.findViewById(
                 R.id.editTextDescripcion);
         editTextDivision.setTypeface(editTextFont);
@@ -112,6 +105,13 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorLifuba = new ControladorLifuba(getActivity());
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        recyclerViewLoadDivision();
+    }
 
     private void init() {
 
@@ -169,7 +169,7 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recycleViewDivision.setItemAnimator(new DefaultItemAnimator());
 
-        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        divisionArray = controladorLifuba.selectListaDivisionLifuba();
         if (divisionArray != null) {
             adaptadorDivision = new AdaptadorRecyclerDivision(divisionArray, getActivity());
             recycleViewDivision.setAdapter(adaptadorDivision);
@@ -201,7 +201,6 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -262,7 +261,7 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
 
     public void cargarEntidad(int id, int ws) {
         URL = null;
-        URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLDIVISIONADEFUL();
+        URL = auxiliarGeneral.getURLDIVISIONLIFUBAALL();
         if (ws != 3) {
             division = null;
             divisionText = editTextDivision.getText()
@@ -274,17 +273,20 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
     }
 
     public void envioWebService(int tipo) {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request = new Request();
         request.setMethod("POST");
-        request.setParametrosDatos("division", division.getDESCRIPCION());
+
         //0 = insert // 1 = update // 2 = delete
         if (tipo == 0) {
             isInsert = true;
+            request.setParametrosDatos("division", division.getDESCRIPCION());
             request.setParametrosDatos("usuario_creador", division.getUSUARIO_CREADOR());
             request.setParametrosDatos("fecha_creacion", division.getFECHA_CREACION());
             URL = URL + auxiliarGeneral.getInsertPHP("Division");
         } else if (tipo == 1) {
             isInsert = false;
+            request.setParametrosDatos("division", division.getDESCRIPCION());
             request.setParametrosDatos("id_division", String.valueOf(division.getID_DIVISION()));
             request.setParametrosDatos("usuario_actualizacion", division.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", division.getFECHA_ACTUALIZACION());
@@ -292,11 +294,13 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
         } else {
             isDelete = true;
             request.setParametrosDatos("id_division", String.valueOf(division.getID_DIVISION()));
-            request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+            request.setParametrosDatos("fecha_actualizacion", fecha);
             URL = URL + auxiliarGeneral.getDeletePHP("Division");
         }
-
-        new AsyncTaskGeneric(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false);
+        if (isDelete)
+            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false, fecha);
+        else
+            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -305,13 +309,9 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -332,7 +332,6 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
                 Toast.makeText(getActivity(), "Ingrese una división.",
                         Toast.LENGTH_SHORT).show();
             } else {
-
                 if (gestion == 0) {
                     cargarEntidad(0, 0);
                 } else if (gestion == 1) {
@@ -343,7 +342,6 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
             return true;
         }
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

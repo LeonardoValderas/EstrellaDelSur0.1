@@ -1,6 +1,6 @@
 package com.estrelladelsur.estrelladelsur.miequipo.usuario;
+
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,17 +12,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerEntrenamientoUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
 import com.estrelladelsur.estrelladelsur.entidad.EntrenamientoRecycler;
-import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
+
 import java.util.ArrayList;
 
 public class FragmentEntrenamientoUsuario extends Fragment {
@@ -44,7 +42,6 @@ public class FragmentEntrenamientoUsuario extends Fragment {
     }
 
     public FragmentEntrenamientoUsuario() {
-        // Required empty public constructor
     }
 
     @Override
@@ -80,6 +77,13 @@ public class FragmentEntrenamientoUsuario extends Fragment {
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorUsuario = new ControladorUsuarioAdeful(getActivity());
+        init();
+    }
+
     private void init() {
         initRecycler();
         recyclerViewLoadEntrenamiento();
@@ -91,12 +95,10 @@ public class FragmentEntrenamientoUsuario extends Fragment {
             @Override
             public void onClick(View view, int position) {
             }
-
             @Override
             public void onLongClick(View view, final int position) {
             }
         }));
-
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -115,7 +117,7 @@ public class FragmentEntrenamientoUsuario extends Fragment {
     }
 
     public void recyclerViewLoadEntrenamiento() {
-        String fecha = auxiliarGeneral.getMounthCurrent();
+        String fecha = auxiliarGeneral.getMounthYearCurrent();
         entrenamientoArray = controladorUsuario.selectListaEntrenamientoUsuario(fecha);
         if (entrenamientoArray != null) {
             adaptadorRecyclerEntrenamientoUsuario = new AdaptadorRecyclerEntrenamientoUsuario(entrenamientoArray, getActivity());
@@ -123,7 +125,6 @@ public class FragmentEntrenamientoUsuario extends Fragment {
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
-
         if (mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -131,7 +132,6 @@ public class FragmentEntrenamientoUsuario extends Fragment {
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -167,7 +167,6 @@ public class FragmentEntrenamientoUsuario extends Fragment {
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {
@@ -175,11 +174,9 @@ public class FragmentEntrenamientoUsuario extends Fragment {
             }
             return false;
         }
-
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }

@@ -28,6 +28,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerF
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
@@ -37,13 +38,14 @@ import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 import com.estrelladelsur.estrelladelsur.entidad.Mes;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTaskListener {
 
@@ -84,6 +86,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
     private Torneo torneoActual;
     private Cancha cancha;
     private int CheckedPositionFragment;
+    private ControladorLifuba controladorLifuba;
     private ControladorAdeful controladorAdeful;
     private boolean actualizar = false;
     private boolean insertar = true;
@@ -100,17 +103,16 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
     }
 
     public FragmentGenerarFixtureLifuba() {
-        // Required empty public constructor
     }
 
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
+        controladorLifuba = new ControladorLifuba(getActivity());
         controladorAdeful = new ControladorAdeful(getActivity());
 
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
-
         } else {
             init();
         }
@@ -158,6 +160,14 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorLifuba = new ControladorLifuba(getActivity());
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
+    }
+
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
         // DIVISION
@@ -170,7 +180,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
                 fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
                 fixtureDivisionSpinner.setAdapter(adaptadorInicial);
             }
@@ -178,7 +188,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
             auxiliarGeneral.errorDataBase(getActivity());
         }
         // TORNEO
-        torneoArray = controladorAdeful.selectListaTorneoAdeful();
+        torneoArray = controladorLifuba.selectListaTorneoLifuba();
         if (torneoArray != null) {
             if (torneoArray.size() != 0) {
                 // TORNEO SPINNER
@@ -187,15 +197,16 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
                 fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
                 fixtureTorneoSpinner.setAdapter(adaptadorInicial);
             }
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
+
         // FECHA
-        fechaArray = controladorAdeful.selectListaFecha();
+        fechaArray = controladorLifuba.selectListaFecha();
         if (fechaArray != null) {
             if (!fechaArray.isEmpty()) {
                 // FECHA SPINNER
@@ -204,24 +215,26 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
                 fixtureFechaSpinner.setAdapter(adapterFixtureFecha);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerFecha));
                 fixtureFechaSpinner.setAdapter(adaptadorInicial);
             }
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
+
         // ANIO
-        anioArray = controladorAdeful.selectListaAnio();
+        anioArray = controladorLifuba.selectListaAnio();
         if (anioArray != null) {
             if (!anioArray.isEmpty()) {
                 // ANIO SPINNER
                 adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
                         R.layout.simple_spinner_dropdown_item, anioArray);
                 fixtureAnioSpinner.setAdapter(adapterFixtureAnio);
+                fixtureAnioSpinner.setSelection(getPositionYearSpinner(anioArray));
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerAnio));
                 fixtureAnioSpinner.setAdapter(adaptadorInicial);
             }
@@ -229,7 +242,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
             auxiliarGeneral.errorDataBase(getActivity());
         }
         // CANCHA
-        canchaArray = controladorAdeful.selectListaCanchaAdeful();
+        canchaArray = controladorLifuba.selectListaCanchaLifuba();
         if (canchaArray != null) {
             if (!canchaArray.isEmpty()) {
                 // CANCHA SPINNER
@@ -238,7 +251,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
                 fixtureCanchaSpinner.setAdapter(adapterFixtureCancha);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerCancha));
                 fixtureCanchaSpinner.setAdapter(adaptadorInicial);
             }
@@ -246,7 +259,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
             auxiliarGeneral.errorDataBase(getActivity());
         }
         // EQUIPO
-        equipoArray = controladorAdeful.selectListaEquipoAdeful();
+        equipoArray = controladorLifuba.selectListaEquipoLifuba();
         if (equipoArray != null) {
             if (!equipoArray.isEmpty()) {
                 // LOCAL SPINNER
@@ -415,7 +428,16 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
                 }
                 break;
         }
-
+        return index;
+    }
+    private int getPositionYearSpinner(List<Anio> anios) {
+        String anio = auxiliarGeneral.getYearSpinner();
+        int index = 0;
+        for (int i = 0; i < anios.size(); i++) {
+            if (anios.get(i).getANIO().equals(anio)) {
+                index = i;
+            }
+        }
         return index;
     }
 
@@ -426,7 +448,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
 
     public void cargarEntidad(int id) {
         URL = null;
-        URL = auxiliarGeneral.getURLFIXTUREADEFULAll();
+        URL = auxiliarGeneral.getURLFIXTURELIFUBAAll();
 
         division = (Division) fixtureDivisionSpinner.getSelectedItem();
         equipol = (Equipo) fixtureLocalSpinner.getSelectedItem();
@@ -440,7 +462,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
                 equipov.getID_EQUIPO(), division.getID_DIVISION(),
                 torneo.getID_TORNEO(), cancha.getID_CANCHA(),
                 fecha.getID_FECHA(), anio.getID_ANIO(), btn_dia.getText().toString()
-                , btn_hora.getText().toString(),
+                , btn_hora.getText().toString(), "-", "-",
                 usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
         envioWebService();
@@ -458,8 +480,6 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
         request.setParametrosDatos("anio", String.valueOf(fixture.getID_ANIO()));
         request.setParametrosDatos("dia", fixture.getDIA());
         request.setParametrosDatos("hora", fixture.getHORA());
-        //request.setParametrosDatos("dia", fixture.getDIA().replace("-",""));
-        //request.setParametrosDatos("hora", fixture.getHORA().replace(":",""));
         if (insertar) {
             request.setParametrosDatos("usuario_creador", fixture.getUSUARIO_CREACION());
             request.setParametrosDatos("fecha_creacion", fixture.getFECHA_CREACION());
@@ -471,7 +491,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
             URL = URL + auxiliarGeneral.getUpdatePHP("Fixture");
         }
 
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Fixture", fixture, insertar, "o");
+        new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Fixture", fixture, insertar, "o");
     }
 
     @Override
@@ -493,13 +513,9 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -508,18 +524,14 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-
         if (id == R.id.action_usuario) {
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
-         if (id == R.id.action_guardar) {
-
+        if (id == R.id.action_guardar) {
 
             if (fixtureDivisionSpinner.getSelectedItem().toString().equals(getResources().
                     getString(R.string.ceroSpinnerDivision))) {
@@ -548,7 +560,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
                 showToast("Debe ingresar la hora.");
             } else {
 
-                torneoActual = controladorAdeful.selectActualTorneoAdeful();
+                torneoActual = controladorLifuba.selectActualTorneoLifuba();
 
                 if (torneoActual.getISACTUAL()) {
                     //FIXTURE NVO
@@ -564,11 +576,8 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
             return true;
         }
 
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
-
             return true;
         }
         return super.onOptionsItemSelected(item);

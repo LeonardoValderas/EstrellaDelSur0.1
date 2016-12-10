@@ -19,19 +19,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.estrelladelsur.estrelladelsur.R;
-import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerAnio;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerDivision;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerJugador;
-import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerTorneo;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
-import com.estrelladelsur.estrelladelsur.entidad.Anio;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -43,22 +41,16 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
     private Spinner sancionAmarillaSpinner;
     private Spinner sancionRojaSpinner;
     private Torneo torneoActual;
-    //private Spinner sancionTorneoSpinner;
-    //  private Spinner sancionAnioSpinner;
     private Spinner cantidadFechasSpinner;
     private EditText observacionesSancion;
     private AdapterSpinnerJugador adapterSpinnerJugador;
     private AdapterSpinnerDivision adapterFixtureDivision;
-    private AdapterSpinnerTorneo adapterFixtureTorneo;
-    private AdapterSpinnerAnio adapterFixtureAnio;
     private ArrayList<Division> divisionArray;
-    private ArrayList<Torneo> torneoArray;
-    private ArrayList<Anio> anioArray;
     private ArrayList<Jugador> jugadorArray;
-    //    private Anio anio;
     private Jugador jugadorRecycler;
     private Division division;
     private int CheckedPositionFragment;
+    private ControladorLifuba controladorLifuba;
     private ControladorAdeful controladorAdeful;
     private boolean actualizar = false;
     private boolean insertar = true;
@@ -70,10 +62,9 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
     private AuxiliarGeneral auxiliarGeneral;
     private Typeface editTextFont;
     private TextView textAmarilla, textRoja, cantidadFecha;
-    private Request request = new Request();
+    private Request request;
     private String URL = null, usuario = null;
     private LinearLayout linearTorneo;
-
 
     public static FragmentGenerarSancionLifuba newInstance() {
         FragmentGenerarSancionLifuba fragment = new FragmentGenerarSancionLifuba();
@@ -86,8 +77,8 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
     @Override
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
+        controladorLifuba = new ControladorLifuba(getActivity());
         controladorAdeful = new ControladorAdeful(getActivity());
-
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -105,12 +96,6 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
 
         linearTorneo = (LinearLayout) v.findViewById(R.id.linearTorneo);
         linearTorneo.setVisibility(View.GONE);
-//        // DIVISION
-//        sancionTorneoSpinner = (Spinner) v
-//                .findViewById(R.id.sancionTorneoSpinner);
-//        // JUGADOR
-//        sancionAnioSpinner = (Spinner) v
-//                .findViewById(R.id.sancionAnioSpinner);
         // DIVISION
         sancionDivisionSpinner = (Spinner) v
                 .findViewById(R.id.sancionDivisionSpinner);
@@ -147,42 +132,16 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorLifuba = new ControladorLifuba(getActivity());
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
+    }
+
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
-        // TORNEO
-//        torneoArray = controladorAdeful.selectListaTorneoAdeful();
-//        if (torneoArray != null) {
-//            if (!torneoArray.isEmpty()) {
-//                // TORNEO SPINNER
-//                adapterFixtureTorneo = new AdapterSpinnerTorneo(getActivity(),
-//                        R.layout.simple_spinner_dropdown_item, torneoArray);
-//                sancionTorneoSpinner.setAdapter(adapterFixtureTorneo);
-//            } else {
-//                //SPINNER HINT
-//                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-//                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
-//                sancionTorneoSpinner.setAdapter(adaptadorInicial);
-//            }
-//        } else {
-//            auxiliarGeneral.errorDataBase(getActivity());
-//        }
-        // ANIO
-//        anioArray = controladorAdeful.selectListaAnio();
-//        if (anioArray != null) {
-//            if (!anioArray.isEmpty()) {
-//                // ANIO SPINNER
-//                adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
-//                        R.layout.simple_spinner_dropdown_item, anioArray);
-//                sancionAnioSpinner.setAdapter(adapterFixtureAnio);
-//            } else {
-//                //SPINNER HINT
-//                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-//                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerAnio));
-//                sancionAnioSpinner.setAdapter(adaptadorInicial);
-//            }
-//        } else {
-//            auxiliarGeneral.errorDataBase(getActivity());
-//        }
         // DIVISION
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
         if (divisionArray != null) {
@@ -250,14 +209,6 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
             sancionRojaSpinner.setSelection(getActivity().getIntent().getIntExtra("rojaSpinner", 0));
             // FECHAS 4
             cantidadFechasSpinner.setSelection(getActivity().getIntent().getIntExtra("fechaSpinner", 0));
-            // TORNEO 5
-            //  sancionTorneoSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("torneoSpinner", 0), 3));
-//            // ROJA 3
-//            sancionRojaSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("rojaSpinner", 0), 3));
-//            // FECHAS 4
-//            cantidadFechasSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("fechaSpinner", 0), 4));
-            //AÑO 2
-            // sancionAnioSpinner.setSelection(getPositionSpinner(getActivity().getIntent().getIntExtra("anioSpinner", 0), 2));
             //OBSERVACIONES
             observacionesSancion.setText(getActivity().getIntent()
                     .getStringExtra("observaciones"));
@@ -268,7 +219,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
 
     public void populationSpinnerJugador(int id_division) {
 
-        jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
+        jugadorArray = controladorLifuba.selectListaJugadorLifuba(id_division);
         if (jugadorArray != null) {
             if (!jugadorArray.isEmpty()) {
                 adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
@@ -285,10 +236,6 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
         }
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
 
     private int getPositionSpinner(int idSpinner, int spinner) {
 
@@ -310,45 +257,26 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
                     }
                 }
                 break;
-            //Anio
-//            case 2:
-//                for (int i = 0; i < anioArray.size(); i++) {
-//                    if (anioArray.get(i).getID_ANIO() == (idSpinner)) {
-//                        index = i;
-//                    }
-//                }
-//                break;
-//            // TORNEO 3
-//            case 3:
-//                for (int i = 0; i < torneoArray.size(); i++) {
-//                    if (torneoArray.get(i).getID_TORNEO() == (idSpinner)) {
-//                        index = i;
-//                    }
-//                }
-//                break;
         }
-
         return index;
     }
 
     public void cargarEntidad(int id, int ws) {
-
         URL = null;
-        URL = auxiliarGeneral.getURLSANCIONADEFULALL();
+        URL = auxiliarGeneral.getURLSANCIONLIFUBAALL();
 
         sancion = new Sancion(id, jugadorRecycler.getID_JUGADOR(), torneoActual.getID_TORNEO(), sancionAmarillaSpinner.getSelectedItemPosition(),
                 sancionRojaSpinner.getSelectedItemPosition(), cantidadFechasSpinner.getSelectedItemPosition(), observacionesSancion.getText().toString(), usuario, auxiliarGeneral.getFechaOficial(),
                 usuario, auxiliarGeneral.getFechaOficial());
 
-
         envioWebService(ws);
     }
 
     public void envioWebService(int tipo) {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("id_jugador", String.valueOf(sancion.getID_JUGADOR()));
         request.setParametrosDatos("id_torneo", String.valueOf(sancion.getID_TORNEO()));
-        //    request.setParametrosDatos("id_anio", String.valueOf(sancion.getID_ANIO()));
         request.setParametrosDatos("amarilla", String.valueOf(sancion.getAMARILLA()));
         request.setParametrosDatos("roja", String.valueOf(sancion.getROJA()));
         request.setParametrosDatos("fecha", String.valueOf(sancion.getFECHA_SUSPENSION()));
@@ -368,7 +296,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
 
             URL = URL + auxiliarGeneral.getUpdatePHP("Sancion");
         }
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Sancion", sancion, insertar, "a");
+        new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Sancion", sancion, insertar, "a");
     }
 
     public void inicializarControles(String mensaje) {
@@ -382,14 +310,16 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
                 Toast.LENGTH_SHORT).show();
     }
 
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -402,12 +332,9 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
-
         if (id == R.id.action_guardar) {
 
             if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
@@ -423,11 +350,9 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
             } else {
                 division = (Division) sancionDivisionSpinner.getSelectedItem();
                 jugadorRecycler = (Jugador) sancionJugadorSpinner.getSelectedItem();
-
-                torneoActual = controladorAdeful.selectActualTorneoAdeful();
+                torneoActual = controladorLifuba.selectActualTorneoLifuba();
 
                 if (torneoActual.getISACTUAL()) {
-
                     //SANCION NVO
                     if (insertar) {
                         cargarEntidad(0, 0);
@@ -440,12 +365,8 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
             }
             return true;
         }
-
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
-
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -31,7 +31,7 @@ import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.navegador.administrador.Navigation;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import org.json.JSONArray;
@@ -75,7 +75,6 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
     }
 
     public FragmentGenerarPermiso() {
-        // Required empty public constructor
     }
 
     @Override
@@ -125,6 +124,14 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        communicator = (Communicator) getActivity();
+        init();
     }
 
     private void init() {
@@ -227,7 +234,6 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
         Toast.makeText(getActivity(),
                 msg,
                 Toast.LENGTH_SHORT).show();
-
     }
 
     public void cargarEntidad(int id, ArrayList<SubModulo> subModulosTrue, ArrayList<SubModulo> submoduloArrayFalse) throws JSONException {
@@ -279,7 +285,7 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
             URL = URL + auxiliarGeneral.getUpdatePHP("Permiso");
         }
 
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Permiso", permiso, insertar, "o");
+        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Permiso", permiso, insertar, "o");
     }
 
     public void inicializarControles(String mensaje) {
@@ -299,13 +305,9 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -321,7 +323,6 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == R.id.action_guardar) {
 
             if (spinnerUsuario.getSelectedItem().toString().equals(getResources().
@@ -333,7 +334,6 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
                 if (subModulosTrue.isEmpty()) {
                     showMessage("Seleccione un modulo.");
                 } else {
-                //    boolean salving = true;
                     usuario = (Usuario) spinnerUsuario.getSelectedItem();
                     if (insertar) {
 
@@ -367,7 +367,6 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
                             if (isAdd)
                                 id_sub_add_array.add(subModulosTrue.get(i));
                         }
-
                         for (int i = 0; i < submoduloArrayExtraTrue.size(); i++) {
                             for (int d = 0; d < subModulosTrue.size(); d++) {
                                 if (submoduloArrayExtraTrue.get(i).getID_SUBMODULO() == subModulosTrue.get(d).getID_SUBMODULO()) {
@@ -405,6 +404,7 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
             if (!insertar) {
                 actualizar = false;
                 insertar = true;
+                spinnerUsuario.setEnabled(true);
             }
             inicializarControles(mensaje);
         } else {

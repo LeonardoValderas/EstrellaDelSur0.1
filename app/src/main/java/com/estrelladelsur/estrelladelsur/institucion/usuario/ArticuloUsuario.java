@@ -18,7 +18,8 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerTituloUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 
@@ -27,10 +28,9 @@ import java.util.ArrayList;
 public class ArticuloUsuario extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private Typeface titulos;
     private AuxiliarGeneral auxiliarGeneral;
     private ArrayList<Articulo> articuloArray;
-    private ControladorUsuarioAdeful controladorUsuario;
+    private ControladorUsuarioGeneral controladorUsuario;
     private AdaptadorRecyclerTituloUsuario adaptadorRecyclerTitulo;
     private RecyclerView recycleViewUsuarioGeneral;
     private DialogoArticulo dialogoArticulo;
@@ -42,8 +42,7 @@ public class ArticuloUsuario extends AppCompatActivity {
         setContentView(R.layout.activity_usuario_general);
 
         auxiliarGeneral = new AuxiliarGeneral(ArticuloUsuario.this);
-        controladorUsuario = new ControladorUsuarioAdeful(ArticuloUsuario.this);
-        //titulos = auxiliarGeneral.tituloFont(ArticuloUsuario.this);
+        controladorUsuario = new ControladorUsuarioGeneral(ArticuloUsuario.this);
 
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
@@ -56,12 +55,23 @@ public class ArticuloUsuario extends AppCompatActivity {
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("ARTICULO");
+        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         init();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorUsuario = new ControladorUsuarioGeneral(ArticuloUsuario.this);
+        initRecycler();
+        recyclerViewLoadArticulo();
+
+    }
+
     public void init() {
-        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
         initRecycler();
         recyclerViewLoadArticulo();
 
@@ -73,6 +83,7 @@ public class ArticuloUsuario extends AppCompatActivity {
             public void onClick(View view, int position) {
                 dialogoArticulo = new DialogoArticulo(ArticuloUsuario.this,articuloArray.get(position).getTITULO(),
                         articuloArray.get(position).getARTICULO());
+
                 dialogoArticulo.btnCerrar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -89,12 +100,11 @@ public class ArticuloUsuario extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //Refreshing data on server
-               // new DownloadFilesTask().execute(feedUrl);
                 recyclerViewLoadArticulo();
             }
         });
     }
+
     public void initRecycler(){
         recycleViewUsuarioGeneral.setLayoutManager(new LinearLayoutManager(
                 ArticuloUsuario.this, LinearLayoutManager.VERTICAL, false));
@@ -102,6 +112,7 @@ public class ArticuloUsuario extends AppCompatActivity {
                 ArticuloUsuario.this, DividerItemDecoration.VERTICAL_LIST));
         recycleViewUsuarioGeneral.setItemAnimator(new DefaultItemAnimator());
     }
+
     public void recyclerViewLoadArticulo() {
         articuloArray = controladorUsuario.selectListaArticuloAdeful();
         if(articuloArray!= null) {
@@ -110,7 +121,6 @@ public class ArticuloUsuario extends AppCompatActivity {
         }else{
             auxiliarGeneral.errorDataBase(ArticuloUsuario.this);
         }
-
         if (mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -151,7 +161,6 @@ public class ArticuloUsuario extends AppCompatActivity {
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {

@@ -5,10 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.StrictMode;
 
-import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioAdeful;
-import com.estrelladelsur.estrelladelsur.database.usuario.ControladorUsuarioGeneral;
+import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
+import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
+import com.estrelladelsur.estrelladelsur.database.usuario.lifuba.ControladorUsuarioLifuba;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
@@ -53,21 +53,8 @@ public class JsonParsing {
 
     static JSONObject jObj = null;
     static JSONArray jArray = null;
-    static String json = "";
-    private Context context;
-    private AuxiliarGeneral auxiliarGeneral;
-    public static String URL;
-    public static String URLARTICULO;
-    public static String URLCOMISION;
-    public static String URLSINCRONIZAR;
 
-    public JsonParsing(Context c) {
-        context = c;
-        auxiliarGeneral = new AuxiliarGeneral(context);
-        URL = auxiliarGeneral.getURL();
-        URLARTICULO = auxiliarGeneral.getURLARTICULOADEFUL();
-        URLSINCRONIZAR = auxiliarGeneral.getURLSINCRONIZARUSUARIO();
-        URLCOMISION = auxiliarGeneral.getURLCOMISIONADEFUL();
+    public JsonParsing() {
     }
 
     public JSONObject parsingJsonObject(Request request, String url_parsing) {
@@ -129,7 +116,7 @@ public class JsonParsing {
 
         JSONObject jsonAux = null;
         boolean precessOK = true;
-        if(jsonArray != null) {
+        if (jsonArray != null) {
             try {
                 if (deleteEntity(entity, context)) {
 
@@ -148,17 +135,25 @@ public class JsonParsing {
                 precessOK = false;
 
             }
-        }else if(entity.equals(SplashUsuario.ENTRENAMIENTO_CANTIDAD_ADEFUL)) {
+        } else if (entity.equals(SplashUsuario.ENTRENAMIENTO_CANTIDAD_ADEFUL)) {
             populateCantidadEntrenamiento(entity, context);
-        }else{
+        } else {
             precessOK = false;
         }
+        return precessOK;
+    }
+
+    public boolean processingJson(String entity, Context context) {
+        boolean precessOK = true;
+        if (!deleteEntity(entity, context))
+            precessOK = false;
         return precessOK;
     }
 
 
     public boolean deleteEntity(String entity, Context context) {
         ControladorUsuarioAdeful controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
+        ControladorUsuarioLifuba controladorUsuarioLifuba = new ControladorUsuarioLifuba(context);
         ControladorUsuarioGeneral controladorUsuarioGeneral = new ControladorUsuarioGeneral(context);
         ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean deleteOk = true;
@@ -166,6 +161,11 @@ public class JsonParsing {
             //TABLA ADEFUL
             case SplashUsuario.TABLA_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarTablaAdeful())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.TABLA_LIFUBA: {
+                if (!controladorUsuarioLifuba.eliminarTablaLifuba())
                     deleteOk = false;
                 break;
             }
@@ -177,28 +177,38 @@ public class JsonParsing {
             }
             //INSTITUCION
             case SplashUsuario.ARTICULO: {
-                if (!controladorUsuarioAdeful.eliminarArticuloUsuario())
+                if (!controladorUsuarioGeneral.eliminarArticuloUsuario())
                     deleteOk = false;
                 break;
             }
             case SplashUsuario.COMISION: {
-                if (!controladorUsuarioAdeful.eliminarComisionUsuario())
+                if (!controladorUsuarioGeneral.eliminarComisionUsuario())
                     deleteOk = false;
                 break;
             }
             case SplashUsuario.DIRECCION: {
-                if (!controladorUsuarioAdeful.eliminarDireccionUsuario())
+                if (!controladorUsuarioGeneral.eliminarDireccionUsuario())
                     deleteOk = false;
                 break;
             }
             //LIGA
             case SplashUsuario.EQUIPO_ADEFUL: {
-                if (!controladorUsuarioAdeful.eliminarEquipoUsuario())
+                if (!controladorUsuarioAdeful.eliminarEquipoUsuarioAdeful())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.EQUIPO_LIFUBA: {
+                if (!controladorUsuarioLifuba.eliminarEquipoUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
             case SplashUsuario.TORNEO_ADEFUL: {
-                if (!controladorUsuarioAdeful.eliminarTorneoUsuario())
+                if (!controladorUsuarioAdeful.eliminarTorneoUsuarioAdeful())
+                    deleteOk = false;
+                break;
+            }
+            case SplashUsuario.TORNEO_LIFUBA: {
+                if (!controladorUsuarioLifuba.eliminarTorneoUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
@@ -207,8 +217,15 @@ public class JsonParsing {
                     deleteOk = false;
                 break;
             }
+            case SplashUsuario.CANCHA_LIFUBA: {
+                if (!controladorUsuarioLifuba.eliminarCanchaUsuarioLifuba())
+                    deleteOk = false;
+                break;
+            }
             case SplashUsuario.DIVISION_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarDivisionUsuarioAdeful())
+                    deleteOk = false;
+                if (!controladorUsuarioLifuba.eliminarDivisionUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
@@ -218,16 +235,18 @@ public class JsonParsing {
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.JUGADOR_ADEFUL: {
-                if (!controladorUsuarioAdeful.eliminarJugadorUsuarioAdeful())
+            case SplashUsuario.FIXTURE_LIFUBA: {
+                if (!controladorUsuarioLifuba.eliminarFixtureUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
-//            case SplashUsuario.POSICION_ADEFUL: {
-//                if (!controladorUsuarioAdeful.eliminarPosicionUsuarioAdeful())
-//                    deleteOk = false;
-//                break;
-//            }
+            case SplashUsuario.JUGADOR_ADEFUL: {
+                if (!controladorUsuarioAdeful.eliminarJugadorUsuarioAdeful())
+                    deleteOk = false;
+                if (!controladorUsuarioLifuba.eliminarJugadorUsuarioLifuba())
+                    deleteOk = false;
+                break;
+            }
             case SplashUsuario.ENTRENAMIENTO_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarEntrenamientoUsuarioAdeful())
                     deleteOk = false;
@@ -253,6 +272,11 @@ public class JsonParsing {
                     deleteOk = false;
                 break;
             }
+            case SplashUsuario.SANCION_LIFUBA: {
+                if (!controladorUsuarioLifuba.eliminarSancionUsuarioLifuba())
+                    deleteOk = false;
+                break;
+            }
             case SplashUsuario.NOTIFICACION: {
                 if (!controladorUsuarioGeneral.eliminarNotificacionUsuario())
                     deleteOk = false;
@@ -274,7 +298,7 @@ public class JsonParsing {
                 break;
             }
             case SplashUsuario.USUARIO: {
-                if (!controladorUsuarioGeneral.eliminarUsuario())
+                if (!controladorGeneral.eliminarUsuario())
                     deleteOk = false;
                 break;
             }
@@ -299,6 +323,7 @@ public class JsonParsing {
     public boolean populateEntity(String entity, JSONObject jsonAux, Context context) {
         ControladorUsuarioAdeful controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
         ControladorUsuarioGeneral controladorUsuarioGeneral = new ControladorUsuarioGeneral(context);
+        ControladorUsuarioLifuba controladorUsuarioLifuba = new ControladorUsuarioLifuba(context);
         ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean insertOk = true;
         switch (entity) {
@@ -309,6 +334,19 @@ public class JsonParsing {
                             jsonAux.getString("TABLA"), jsonAux.getString("FECHA"));
 
                     if (!controladorUsuarioAdeful.insertTabla(tabla))
+                        insertOk = false;
+
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.TABLA_LIFUBA: {
+                try {
+                    Tabla tabla = new Tabla(jsonAux.getInt("ID_TABLA"),
+                            jsonAux.getString("TABLA"), jsonAux.getString("FECHA"));
+
+                    if (!controladorUsuarioLifuba.insertTabla(tabla))
                         insertOk = false;
 
                 } catch (JSONException e) {
@@ -335,7 +373,7 @@ public class JsonParsing {
                     Articulo articulo = new Articulo(jsonAux.getInt("ID_ARTICULO"),
                             jsonAux.getString("TITULO"), jsonAux.getString("ARTICULO"));
 
-                    if (!controladorUsuarioAdeful.insertArticuloUsuario(articulo))
+                    if (!controladorUsuarioGeneral.insertArticuloUsuario(articulo))
                         insertOk = false;
 
                 } catch (JSONException e) {
@@ -355,7 +393,7 @@ public class JsonParsing {
                     Comision comision = new Comision(jsonAux.getInt("ID_COMISION"),
                             jsonAux.getString("NOMBRE_COMISION"), byteArray, jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
 
-                    if (!controladorUsuarioAdeful.insertComisionUsuario(comision))
+                    if (!controladorUsuarioGeneral.insertComisionUsuario(comision))
                         insertOk = false;
 
                 } catch (JSONException e) {
@@ -374,7 +412,7 @@ public class JsonParsing {
                     Direccion direccion = new Direccion(jsonAux.getInt("ID_DIRECCION"),
                             jsonAux.getString("NOMBRE_DIRECCION"), byteArray, jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
 
-                    if (!controladorUsuarioAdeful.insertDireccionUsuario(direccion))
+                    if (!controladorUsuarioGeneral.insertDireccionUsuario(direccion))
                         insertOk = false;
 
                 } catch (JSONException e) {
@@ -395,7 +433,27 @@ public class JsonParsing {
                     Equipo equipo = new Equipo(jsonAux.getInt("ID_EQUIPO"),
                             jsonAux.getString("NOMBRE_EQUIPO"), byteArray);
 
-                    if (!controladorUsuarioAdeful.insertEquipoUsuario(equipo))
+                    if (!controladorUsuarioAdeful.insertEquipoUsuarioAdeful(equipo))
+                        insertOk = false;
+
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.EQUIPO_LIFUBA: {
+                try {
+                    String imageString = jsonAux.getString("ESCUDO_EQUIPO");
+
+                    Bitmap b = getBitmap(imageString);
+                    byte[] byteArray = null;
+                    if (b != null)
+                        byteArray = parseBitmapToByte(b);
+
+                    Equipo equipo = new Equipo(jsonAux.getInt("ID_EQUIPO"),
+                            jsonAux.getString("NOMBRE_EQUIPO"), byteArray);
+
+                    if (!controladorUsuarioLifuba.insertEquipoUsuarioLifuba(equipo))
                         insertOk = false;
 
                 } catch (JSONException e) {
@@ -409,7 +467,21 @@ public class JsonParsing {
                     Torneo torneo = new Torneo(jsonAux.getInt("ID_TORNEO"),
                             jsonAux.getString("DESCRIPCION"));
 
-                    if (!controladorUsuarioAdeful.insertTorneoUsuario(torneo))
+                    if (!controladorUsuarioAdeful.insertTorneoUsuarioAdeful(torneo))
+                        insertOk = false;
+
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.TORNEO_LIFUBA: {
+                try {
+
+                    Torneo torneo = new Torneo(jsonAux.getInt("ID_TORNEO"),
+                            jsonAux.getString("DESCRIPCION"));
+
+                    if (!controladorUsuarioLifuba.insertTorneoUsuarioLifuba(torneo))
                         insertOk = false;
 
                 } catch (JSONException e) {
@@ -430,12 +502,27 @@ public class JsonParsing {
                 }
                 break;
             }
+            case SplashUsuario.CANCHA_LIFUBA: {
+                try {
+                    Cancha cancha = new Cancha(jsonAux.getInt("ID_CANCHA"), jsonAux.getString("NOMBRE"), jsonAux.getString("LONGITUD"),
+                            jsonAux.getString("LATITUD"), jsonAux.getString("DIRECCION"));
+
+                    if (!controladorUsuarioLifuba.insertCanchaUsuarioLifuba(cancha))
+                        insertOk = false;
+
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
             case SplashUsuario.DIVISION_ADEFUL: {
                 try {
                     Division division = new Division(jsonAux.getInt("ID_DIVISION"),
                             jsonAux.getString("DESCRIPCION"));
 
                     if (!controladorUsuarioAdeful.insertDivisionUsuarioAdeful(division))
+                        insertOk = false;
+                    if (!controladorUsuarioLifuba.insertDivisionUsuarioLifuba(division))
                         insertOk = false;
 
                 } catch (JSONException e) {
@@ -464,6 +551,26 @@ public class JsonParsing {
                 }
                 break;
             }
+            case SplashUsuario.FIXTURE_LIFUBA: {
+                try {
+
+                    Fixture fixture = new Fixture(jsonAux.getInt("ID_FIXTURE"),
+                            jsonAux.getInt("ID_EQUIPO_LOCAL"),
+                            jsonAux.getInt("ID_EQUIPO_VISITA"),
+                            jsonAux.getInt("ID_DIVISION"),
+                            jsonAux.getInt("ID_TORNEO"),
+                            jsonAux.getInt("ID_CANCHA"), jsonAux.getString("FECHA"),
+                            jsonAux.getString("ANIO"), jsonAux.getString("DIA"),
+                            jsonAux.getString("HORA"), jsonAux.getString("RESULTADO_LOCAL"),
+                            jsonAux.getString("RESULTADO_VISITA"));
+
+                    if (!controladorUsuarioLifuba.insertFixtureUsuarioLifuba(fixture))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
             case SplashUsuario.JUGADOR_ADEFUL: {
                 try {
                     String imageString = jsonAux.getString("FOTO_JUGADOR");
@@ -479,25 +586,14 @@ public class JsonParsing {
 
                     if (!controladorUsuarioAdeful.insertJugadorUsuarioAdeful(jugador))
                         insertOk = false;
+                    if (!controladorUsuarioLifuba.insertJugadorUsuarioLifuba(jugador))
+                        insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-//            case SplashUsuario.POSICION_ADEFUL: {
-//                try {
-//                    Posicion posicion = new Posicion(jsonAux.getInt("ID_POSICION"),
-//                            jsonAux.getString("DESCRIPCION"));
-//
-//                    if (!controladorUsuarioAdeful.insertPosicionUsuarioAdeful(posicion))
-//                        insertOk = false;
-//
-//                } catch (JSONException e) {
-//                    insertOk = false;
-//                }
-//                break;
-//            }
-            //MI EQUIPO
+            //ENTRENAMIENTO
             case SplashUsuario.ENTRENAMIENTO_ADEFUL: {
                 try {
 
@@ -527,7 +623,7 @@ public class JsonParsing {
                 }
                 break;
             }
-            //MI EQUIPO
+            //ENTRNEMIENTO
             case SplashUsuario.ENTRENAMIENTO_CANTIDAD_ADEFUL: {
 
                 List<Division> divisions = new ArrayList<>();
@@ -546,14 +642,13 @@ public class JsonParsing {
                 }
                 break;
             }
-
-            //MI EQUIPO
+            //ASISTENCIA
             case SplashUsuario.ENTRENAMIENTO_ASISTENCIA_ADEFUL: {
                 try {
 
                     Entrenamiento entrenamiento = new Entrenamiento(jsonAux.getInt("ID_ENTRENAMIENTO_ASISTENCIA"),
                             jsonAux.getInt("ID_ENTRENAMIENTO"),
-                            jsonAux.getInt("ID_JUGADOR"),"");
+                            jsonAux.getInt("ID_JUGADOR"), "");
 
                     if (!controladorUsuarioAdeful.insertAsistenciaEntrenamientoUsuarioAdeful(entrenamiento))
                         insertOk = false;
@@ -562,7 +657,7 @@ public class JsonParsing {
                 }
                 break;
             }
-            //MI EQUIPO
+            //SANCION
             case SplashUsuario.SANCION_ADEFUL: {
                 try {
 
@@ -572,6 +667,21 @@ public class JsonParsing {
                             , jsonAux.getInt("FECHA_SUSPENSION"), jsonAux.getString("OBSERVACIONES"));
 
                     if (!controladorUsuarioAdeful.insertSancionUsuarioAdeful(sancion))
+                        insertOk = false;
+                } catch (JSONException e) {
+                    insertOk = false;
+                }
+                break;
+            }
+            case SplashUsuario.SANCION_LIFUBA: {
+                try {
+
+                    Sancion sancion = new Sancion(jsonAux.getInt("ID_SANCION"),
+                            jsonAux.getInt("ID_JUGADOR"),
+                            jsonAux.getInt("ID_TORNEO"), jsonAux.getInt("AMARILLA"), jsonAux.getInt("ROJA")
+                            , jsonAux.getInt("FECHA_SUSPENSION"), jsonAux.getString("OBSERVACIONES"));
+
+                    if (!controladorUsuarioLifuba.insertSancionUsuarioLifuba(sancion))
                         insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
@@ -637,7 +747,7 @@ public class JsonParsing {
                         byteArray = parseBitmapToByte(b);
                     Publicidad publicidad = new Publicidad(jsonAux.getInt("ID_PUBLICIDAD"),
                             jsonAux.getString("TITULO"),
-                            byteArray,jsonAux.getString("OTROS"));
+                            byteArray, jsonAux.getString("OTROS"));
 
                     if (!controladorUsuarioGeneral.insertPublicidadUsuario(publicidad))
                         insertOk = false;
@@ -653,7 +763,7 @@ public class JsonParsing {
                             jsonAux.getString("USUARIO"),
                             jsonAux.getString("PASSWORD"));
 
-                    if (!controladorUsuarioGeneral.insertUsuario(usuario))
+                    if (!controladorGeneral.insertUsuario(usuario))
                         insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
@@ -695,7 +805,7 @@ public class JsonParsing {
         return insertOk;
     }
 
-    public boolean populateCantidadEntrenamiento(String entity, Context context){
+    public boolean populateCantidadEntrenamiento(String entity, Context context) {
         ControladorUsuarioAdeful controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
         boolean insertOk = true;
         if (deleteEntity(entity, context)) {

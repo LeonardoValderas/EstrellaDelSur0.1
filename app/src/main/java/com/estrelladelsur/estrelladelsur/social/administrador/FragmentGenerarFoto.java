@@ -3,7 +3,6 @@ package com.estrelladelsur.estrelladelsur.social.administrador;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,15 +26,15 @@ import com.estrelladelsur.estrelladelsur.auxiliar.UtilityImage;
 import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 
 public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener {
 
-    private ControladorGeneral controladorGeneral;
     private ImageView imageFoto;
     private EditText tituloFotoEdit;
     private int CheckedPositionFragment;
@@ -48,10 +47,10 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
     private Communicator communicator;
     private Typeface editTextFont;
     private String URL = null, usuario = null, encodedImage = null, nombre_foto_anterior = null;
-    private Request request = new Request();
+    private Request request;
     private ImageButton rotateButton;
-    int width = 150;
-    int height = 150;
+    int width = 300;
+    int height = 300;
 
     public static FragmentGenerarFoto newInstance() {
         FragmentGenerarFoto fragment = new FragmentGenerarFoto();
@@ -95,9 +94,15 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        communicator = (Communicator) getActivity();
+    }
+
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
-        controladorGeneral = new ControladorGeneral(getActivity());
         communicator = (Communicator) getActivity();
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
@@ -169,9 +174,16 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
 
 
             String path = auxiliarGeneral.selectImageForData(data, getActivity());
+            File file = new File(path);
+            try {
+                imageFotoByte = auxiliarGeneral.fileToBytes(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             Bitmap b = setResizaInage(path, width, height);
             if (b != null) {
-                imageFotoByte = auxiliarGeneral.pasarBitmapByte(b);
+               // imageFotoByte = auxiliarGeneral.pasarBitmapByte(b);
                 b = auxiliarGeneral.setByteToBitmap(imageFotoByte, width, height);
                 imageFoto.setImageBitmap(b);
             }
@@ -218,6 +230,7 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
     }
 
     public void envioWebService() {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("titulo", foto.getTITULO());
 
@@ -245,7 +258,7 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
             URL = URL + auxiliarGeneral.getUpdatePHP("Foto");
         }
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Foto", foto, insertar, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Foto", foto, insertar, "a");
     }
 
     public void showMessage(String msg) {

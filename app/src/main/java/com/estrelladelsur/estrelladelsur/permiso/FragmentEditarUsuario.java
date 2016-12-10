@@ -26,7 +26,7 @@ import com.estrelladelsur.estrelladelsur.database.administrador.general.Controla
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Usuario;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -35,7 +35,6 @@ import java.util.ArrayList;
 public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListener {
 
     private int CheckedPositionFragment, posicion = 0;
-    ;
     private RecyclerView recyclerArticulo;
     private ControladorGeneral controladorGeneral;
     private ArrayList<Usuario> usuarioArray;
@@ -51,7 +50,6 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
     }
 
     public FragmentEditarUsuario() {
-        // Required empty public constructor
     }
 
     @Override
@@ -86,6 +84,14 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        recyclerViewLoadUsuario();
+    }
+
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         recyclerArticulo.setLayoutManager(new LinearLayoutManager(
@@ -102,8 +108,6 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
 
             @Override
             public void onClick(View view, int position) {
-                // TODO Auto-generated method stub
-
                 Intent editarUsuario = new Intent(getActivity(),
                         TabsUsuario.class);
                 editarUsuario.putExtra("actualizar", true);
@@ -130,6 +134,10 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
 
                                 posicion = usuarioArray.get(position)
                                         .getID_USUARIO();
+                                if(controladorGeneral.isUsuarioWithPermiso(posicion)) {
+                                    Toast.makeText(getActivity(), "Usuario con permisos asigando. Elimine dichos permisos para elimine el usuario.", Toast.LENGTH_SHORT).show();
+                                  dialogoAlerta.alertDialog.dismiss();
+                                }else
                                 envioWebService();
                             }
                         });
@@ -152,14 +160,15 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_usuario", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLUSUARIOALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Usuario");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Usuario", true, posicion, "o");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Usuario", true, posicion, "o", fecha);
     }
 
     public void inicializarControles(String mensaje) {
@@ -195,7 +204,6 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -250,12 +258,9 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -272,9 +277,7 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

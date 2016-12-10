@@ -37,7 +37,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsSancion;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -45,7 +45,6 @@ import java.util.ArrayList;
 public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTaskListener {
 
     private Division division;
-
     private Jugador jugadorRecycler;
     private ArrayList<Division> divisionArray;
     private ArrayList<Jugador> jugadorArray;
@@ -83,7 +82,6 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
         super.onActivityCreated(state);
 
         controladorAdeful = new ControladorAdeful(getActivity());
-
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -120,10 +118,16 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
+    }
+
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         torneoActual = controladorAdeful.selectActualTorneoAdeful();
-
 
         // DIVISION
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
@@ -250,14 +254,15 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_sancion", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLSANCIONADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Sancion");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Sancion", true, posicion, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Sancion", true, posicion, "a", fecha);
     }
 
     public void populationSpinnerJugador(int id_division) {
@@ -316,7 +321,6 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -351,7 +355,6 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {
@@ -363,7 +366,6 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
-
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
@@ -374,12 +376,9 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -393,7 +392,6 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }

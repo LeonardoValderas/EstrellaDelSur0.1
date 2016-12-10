@@ -2,7 +2,6 @@ package com.estrelladelsur.estrelladelsur.liga.administrador.adeful;
 
 import java.util.ArrayList;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -34,14 +33,14 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerA
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.R;
+import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Anio;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerTorneo;
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
-import com.estrelladelsur.estrelladelsur.webservice.JsonParsing;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 public class FragmentTorneoAdeful extends Fragment implements MyAsyncTaskListener {
@@ -82,7 +81,6 @@ public class FragmentTorneoAdeful extends Fragment implements MyAsyncTaskListene
     }
 
     public FragmentTorneoAdeful() {
-        // Required empty public constructor
     }
 
     @Override
@@ -122,6 +120,7 @@ public class FragmentTorneoAdeful extends Fragment implements MyAsyncTaskListene
         torneoActualtext = (TextView) v.findViewById(
                 R.id.torneoActual);
         torneoActualtext.setTypeface(editTextFont);
+        torneoActualtext.setText("Es torneo actual.");
         recycleViewTorneo = (RecyclerView) v.findViewById(
                 R.id.recycleViewGeneral);
 
@@ -132,6 +131,16 @@ public class FragmentTorneoAdeful extends Fragment implements MyAsyncTaskListene
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        getIsActual();
+        loadSpinnerAnio();
+        recyclerViewLoadTorneo();
     }
 
     private void init() {
@@ -289,10 +298,6 @@ public class FragmentTorneoAdeful extends Fragment implements MyAsyncTaskListene
         }
     }
 
-    public void setVisibilityActual() {
-        linearTorneoActual.setVisibility(View.VISIBLE);
-    }
-
     @Override
     public void onPostExecuteConcluded(boolean result, String mensaje) {
         if (result) {
@@ -372,7 +377,7 @@ public class FragmentTorneoAdeful extends Fragment implements MyAsyncTaskListene
 
     public void cargarEntidad(int id, int ws) {
         URL = null;
-        URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLTORNEOADEFUL();
+        URL = auxiliarGeneral.getURLTORNEOADEFULALL();
         if (ws != 2) {
             torneoText = null;
             torneoText = editTextTorneo.getText()
@@ -389,6 +394,7 @@ public class FragmentTorneoAdeful extends Fragment implements MyAsyncTaskListene
     }
 
     public void envioWebService(int tipo) {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request = new Request();
         request.setMethod("POST");
 
@@ -414,10 +420,13 @@ public class FragmentTorneoAdeful extends Fragment implements MyAsyncTaskListene
         } else {
             isDelete = true;
             request.setParametrosDatos("id_torneo", String.valueOf(torneo.getID_TORNEO()));
-            request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+            request.setParametrosDatos("fecha_actualizacion", fecha);
             URL = URL + auxiliarGeneral.getDeletePHP("Torneo");
         }
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false);
+        if (isDelete)
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false, fecha);
+        else
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -426,13 +435,9 @@ public class FragmentTorneoAdeful extends Fragment implements MyAsyncTaskListene
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 

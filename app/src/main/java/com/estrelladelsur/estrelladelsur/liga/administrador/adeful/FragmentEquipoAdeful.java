@@ -39,10 +39,11 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecycl
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListener {
+
     private byte[] imagenEscudo = null;
     private RecyclerView recycleViewEquipo;
     private EditText editTextNombre;
@@ -107,6 +108,14 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorAdeful = new ControladorAdeful(getActivity());
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        recyclerViewLoadEquipo();
     }
 
     private void init() {
@@ -185,7 +194,7 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
         rotateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imagenEscudo != null){
+                if (imagenEscudo != null) {
                     Bitmap theImage = auxiliarGeneral.setByteToBitmap(imagenEscudo, 150,
                             150);
                     theImage = auxiliarGeneral.RotateBitmap(theImage);
@@ -302,7 +311,6 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
 
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-            // TODO Auto-generated method stub
             View child = rv.findChildViewUnder(e.getX(), e.getY());
             if (child != null && clickListener != null
                     && detector.onTouchEvent(e)) {
@@ -324,6 +332,8 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
 
         recyclerViewLoadEquipo();
         editTextNombre.setText("");
+        url_nombre_escudo = null;
+        url_escudo_equipo = null;
         if (imagenEscudo != null) {
             imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
         }
@@ -335,14 +345,14 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
 
     public void cargarEntidad(int id, int ws) {
         URL = null;
-        URL = auxiliarGeneral.getURL() + auxiliarGeneral.getURLEQUIPOADEFUL();
+        URL = auxiliarGeneral.getURLEQUIPOADEFULALL();
         if (ws != 2) {
             nombreEquipo = null;
             nombreEquipo = editTextNombre.getText()
                     .toString();
             if (imagenEscudo != null) {
                 url_nombre_escudo = auxiliarGeneral.getFechaImagen() + auxiliarGeneral.removeAccents(nombreEquipo.replace(" ", "").trim()) + ".PNG";
-                url_escudo_equipo = URL + auxiliarGeneral.getURLESCUDOEQUIPOADEFUL() +
+                url_escudo_equipo = URL + auxiliarGeneral.getURLESCUDOEQUIPO() +
                         url_nombre_escudo;
             }
         }
@@ -353,6 +363,7 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
     }
 
     public void envioWebService(int tipo) {
+       String fecha = auxiliarGeneral.getFechaOficial();
         request = new Request();
         request.setMethod("POST");
 
@@ -379,20 +390,24 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
             request.setParametrosDatos("usuario_actualizacion", equipoAdeful.getUSUARIO_ACTUALIZACION());
             request.setParametrosDatos("fecha_actualizacion", equipoAdeful.getFECHA_ACTUALIZACION());
-            if(nombreEscudoAnterior != null)
-            request.setParametrosDatos("nombre_escudo_anterior", nombreEscudoAnterior);
+            if (nombreEscudoAnterior != null)
+                request.setParametrosDatos("nombre_escudo_anterior", nombreEscudoAnterior);
             URL = URL + auxiliarGeneral.getUpdatePHP("Equipo");
         } else {
             isDelete = true;
             request.setParametrosDatos("id_equipo", String.valueOf(equipoAdeful.getID_EQUIPO()));
             if (url_nombre_escudo != null)
                 request.setParametrosDatos("nombre_escudo", url_nombre_escudo);
-            request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+            request.setParametrosDatos("fecha_actualizacion", fecha);
             URL = URL + auxiliarGeneral.getDeletePHP("Equipo");
         }
-        new AsyncTaskGeneric(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false);
+        if (isDelete)
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false, fecha);
+        else
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false);
 
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -400,13 +415,9 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -414,8 +425,6 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-
-
         if (id == R.id.action_usuario) {
             auxiliarGeneral.goToUser(getActivity());
             return true;
@@ -440,7 +449,6 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
             return true;
         }
         if (id == android.R.id.home) {
-
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

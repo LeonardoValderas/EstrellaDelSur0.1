@@ -30,6 +30,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerJ
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
+import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
@@ -37,7 +38,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsSancion;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
@@ -45,7 +46,6 @@ import java.util.ArrayList;
 public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTaskListener {
 
     private Division division;
-
     private Jugador jugadorRecycler;
     private ArrayList<Division> divisionArray;
     private ArrayList<Jugador> jugadorArray;
@@ -57,6 +57,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
     private AdaptadorEditarSancion adaptadorEditarSancion;
     private RecyclerView recyclerViewSancion;
     private FloatingActionButton botonFloating;
+    private ControladorLifuba controladorLifuba;
     private ControladorAdeful controladorAdeful;
     private int CheckedPositionFragment;
     private int divisionSpinner, jugadorSpinner;
@@ -82,8 +83,8 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
     public void onActivityCreated(Bundle state) {
         super.onActivityCreated(state);
 
+        controladorLifuba = new ControladorLifuba(getActivity());
         controladorAdeful = new ControladorAdeful(getActivity());
-
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
         } else {
@@ -120,9 +121,17 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
         outState.putInt("curChoice", CheckedPositionFragment);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        controladorLifuba = new ControladorLifuba(getActivity());
+        controladorAdeful = new ControladorAdeful(getActivity());
+        init();
+    }
+
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
-        torneoActual = controladorAdeful.selectActualTorneoAdeful();
+        torneoActual = controladorLifuba.selectActualTorneoLifuba();
 
 
         // DIVISION
@@ -135,7 +144,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
                 sancionDivisionSpinner.setAdapter(adapterFixtureDivision);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
                 sancionDivisionSpinner.setAdapter(adaptadorInicial);
             }
@@ -153,7 +162,6 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
                     populationSpinnerJugador(id_division);
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
@@ -168,34 +176,31 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
 
         botonFloating.setOnClickListener(new View.OnClickListener() {
 
-                                             @Override
-                                             public void onClick(View v) {
+             @Override
+             public void onClick(View v) {
+                 if (torneoActual.getISACTUAL()) {
 
+                     if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
+                             getString(R.string.ceroSpinnerDivision))) {
+                         showToast("Debe agregar un division (Liga).");
+                     } else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
+                             getString(R.string.ceroSpinnerJugador))) {
+                         showToast("Debe agregar un jugador.");
+                     } else {
+                         division = (Division) sancionDivisionSpinner.getSelectedItem();
+                         jugadorRecycler = (Jugador) sancionJugadorSpinner.getSelectedItem();
 
-                                                 if (torneoActual.getISACTUAL()) {
+                         divisionSpinner = division.getID_DIVISION();
+                         jugadorSpinner = jugadorRecycler.getID_JUGADOR();
 
-                                                     if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
-                                                             getString(R.string.ceroSpinnerDivision))) {
-                                                         showToast("Debe agregar un division (Liga).");
-                                                     } else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
-                                                             getString(R.string.ceroSpinnerJugador))) {
-                                                         showToast("Debe agregar un jugador.");
-                                                     } else {
-                                                         division = (Division) sancionDivisionSpinner.getSelectedItem();
-                                                         jugadorRecycler = (Jugador) sancionJugadorSpinner.getSelectedItem();
+                         recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, torneoActual.getID_TORNEO());
+                     }
+                 } else {
+                     showToast("Debe seleccionar un torneo actual.");
 
-                                                         divisionSpinner = division.getID_DIVISION();
-                                                         jugadorSpinner = jugadorRecycler.getID_JUGADOR();
-
-                                                         recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, torneoActual.getID_TORNEO());
-                                                     }
-                                                 } else {
-                                                     showToast("Debe seleccionar un torneo actual.");
-
-                                                 }
-
-                                             }
-                                         }
+                 }
+             }
+         }
         );
         recyclerViewSancion.addOnItemTouchListener(new
                 RecyclerTouchListener(getActivity(),
@@ -252,19 +257,20 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
     }
 
     public void envioWebService() {
+        String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_sancion", String.valueOf(posicion));
-        request.setParametrosDatos("fecha_actualizacion", auxiliarGeneral.getFechaOficial());
+        request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
-        URL = auxiliarGeneral.getURLSANCIONADEFULALL();
+        URL = auxiliarGeneral.getURLSANCIONLIFUBAALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Sancion");
 
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Sancion", true, posicion, "a");
+        new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Sancion", true, posicion, "a", fecha);
     }
 
     public void populationSpinnerJugador(int id_division) {
 
-        jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
+        jugadorArray = controladorLifuba.selectListaJugadorLifuba(id_division);
         if (jugadorArray != null) {
             if (!jugadorArray.isEmpty()) {
                 adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
@@ -288,7 +294,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
 
     //LOAD RECYCLER
     public void recyclerViewLoadSancion(int division, int jugador, int torneo) {
-        sancionArray = controladorAdeful.selectListaSancionAdeful(division,
+        sancionArray = controladorLifuba.selectListaSancionLifuba(division,
                 jugador, torneo);
         if (sancionArray != null) {
             adaptadorEditarSancion = new AdaptadorEditarSancion(sancionArray, getActivity());
@@ -318,7 +324,6 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
 
     public static interface ClickListener {
         public void onClick(View view, int position);
-
         public void onLongClick(View view, int position);
     }
 
@@ -376,12 +381,9 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
         menu.getItem(4).setVisible(false);// guardar
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -395,11 +397,9 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
             auxiliarGeneral.goToUser(getActivity());
             return true;
         }
-
         if (id == R.id.action_cerrar) {
             auxiliarGeneral.close(getActivity());
         }
-
         if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;

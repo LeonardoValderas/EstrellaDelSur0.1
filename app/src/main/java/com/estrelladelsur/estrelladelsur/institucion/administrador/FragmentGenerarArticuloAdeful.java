@@ -18,7 +18,7 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 
@@ -35,7 +35,7 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
     private int idArticuloExtra;
     private AuxiliarGeneral auxiliarGeneral;
     private Typeface editTextFont;
-    private Request request = new Request();
+    private Request request;
     private String usuario = null;
     private String URL = null;
 
@@ -74,6 +74,13 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
                 .findViewById(R.id.articuloEditArticulo);
         articuloEditArticulo.setTypeface(editTextFont);
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        communicator = (CommunicatorAdeful) getActivity();
+        init();
     }
 
     @Override
@@ -117,6 +124,7 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
     }
 
     public void envioWebService() {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("titulo", articulo.getTITULO());
         request.setParametrosDatos("articulo", articulo.getARTICULO());
@@ -132,7 +140,7 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
             request.setParametrosDatos("fecha_actualizacion", articulo.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Articulo");
         }
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Articulo", articulo, insertar, "o");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Articulo", articulo, insertar, "o");
     }
 
     @Override
@@ -154,14 +162,9 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
         menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 

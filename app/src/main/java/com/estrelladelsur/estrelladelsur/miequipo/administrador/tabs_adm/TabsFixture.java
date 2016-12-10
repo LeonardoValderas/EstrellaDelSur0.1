@@ -1,6 +1,5 @@
 package com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -32,16 +31,13 @@ public class TabsFixture extends AppCompatActivity {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
-    private Typeface titulos;
-    private AuxiliarGeneral auxiliarGeneral;
+    private int restart = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_general);
 
-        auxiliarGeneral = new AuxiliarGeneral(TabsFixture.this);
-        //	titulos = auxiliarGeneral.tituloFont(TabsFixture.this);
         // Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -49,10 +45,8 @@ public class TabsFixture extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("FIXTURE");
-
 
         if (savedInstanceState != null) {
             viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
@@ -78,23 +72,30 @@ public class TabsFixture extends AppCompatActivity {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setupWithViewPager(viewPager);
-
+        restart = getIntent().getIntExtra("restart", 0);
         init();
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
+
     public void init() {
+        if (restart == 1) {
+            viewPager.setCurrentItem(2);
+        }
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
                 invalidateOptionsMenu();
             }
-
             @Override
             public void onPageSelected(int position) {
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -151,8 +152,6 @@ public class TabsFixture extends AppCompatActivity {
             if (fm == null) {
                 mCurTransaction = fm.beginTransaction();
             }
-
-            // Do we already have this fragment?
             String name = makeFragmentName(container.getId(), position);
             Fragment fragment = fm.findFragmentByTag(name);
             if (fragment != null) {
@@ -167,7 +166,6 @@ public class TabsFixture extends AppCompatActivity {
                 mCurTransaction.add(container.getId(), fragment,
                         makeFragmentName(container.getId(), position));
             }
-
             return fragment;
         }
 
@@ -177,7 +175,6 @@ public class TabsFixture extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            // Generate title based on item position
             return tabTitles[position];
         }
     }

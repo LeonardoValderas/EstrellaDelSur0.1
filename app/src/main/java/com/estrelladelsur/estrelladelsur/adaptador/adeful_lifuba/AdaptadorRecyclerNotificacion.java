@@ -41,6 +41,10 @@ public class AdaptadorRecyclerNotificacion extends
                 String fecha = notificacion.getFECHA_ACTUALIZACION().substring(0, 8);
                 fecha = auxiliarGeneral.dateFormate(fecha);
                 textRecyclerViewFecha.setText("ult.act: " + fecha);
+            } else if(notificacion.getFECHA_CREACION() != null && !notificacion.getFECHA_CREACION().isEmpty()){
+                String fecha = notificacion.getFECHA_CREACION().substring(0, 8);
+                fecha = auxiliarGeneral.dateFormate(fecha);
+                textRecyclerViewFecha.setText("ult.act: " + fecha);
             }
         }
     }

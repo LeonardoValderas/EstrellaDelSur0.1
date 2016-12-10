@@ -43,7 +43,11 @@ public class AdaptadorRecyclerArticulo extends
                 String fecha = articulo.getFECHA_ACTUALIZACION().substring(0, 8);
                 fecha = auxiliarGeneral.dateFormate(fecha);
                 textRecyclerViewFecha.setText("ult.act: " + fecha);
-            }
+            } else if(articulo.getFECHA_CREACION() != null && !articulo.getFECHA_CREACION().isEmpty()){
+                String fecha = articulo.getFECHA_CREACION().substring(0, 8);
+                fecha = auxiliarGeneral.dateFormate(fecha);
+                textRecyclerViewFecha.setText("ult.act: " + fecha);
+           }
         }
     }
 

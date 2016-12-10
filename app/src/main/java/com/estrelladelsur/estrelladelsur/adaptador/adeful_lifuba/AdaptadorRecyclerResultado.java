@@ -37,6 +37,8 @@ public class AdaptadorRecyclerResultado extends
 		private TextView textRecyclerViewCancha;
 		private TextView textRecyclerViewResultadoV;
 		private TextView textRecyclerViewResultadoL;
+		private TextView textFecha;
+		private TextView textAnio;
 		private LinearLayout linearCancha;
 		private LinearLayout linearDiaHora;
 
@@ -79,7 +81,10 @@ public class AdaptadorRecyclerResultado extends
 					.findViewById(R.id.linearDiaHora);
 			linearDiaHora.setVisibility(View.GONE);
 
-
+			textFecha = (TextView) itemView
+					.findViewById(R.id.textFecha);
+			textAnio = (TextView) itemView
+							.findViewById(R.id.textAnio);
 
 		}
 
@@ -134,6 +139,9 @@ public class AdaptadorRecyclerResultado extends
 				textRecyclerViewResultadoV.setText("-");
 				textRecyclerViewResultadoV.setTypeface(texto, Typeface.BOLD);
 			}
+
+			textAnio.setText(resultadoRecycler.getANIO());
+			textFecha.setText(resultadoRecycler.getFECHA());
 		}
 	}
 

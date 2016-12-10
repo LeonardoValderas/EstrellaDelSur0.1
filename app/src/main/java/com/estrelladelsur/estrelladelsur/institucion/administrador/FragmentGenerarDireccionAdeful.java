@@ -38,7 +38,7 @@ import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdapterSpinnerC
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
-import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGeneric;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.io.ByteArrayOutputStream;
@@ -77,7 +77,7 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
     private Typeface editTextFont, textViewFont;
     private AuxiliarGeneral auxiliarGeneral;
     private TextView tituloTextPeriodo, tituloTextCargo;
-    private Request request = new Request();
+    private Request request;
     private boolean isComision = true;
     private String fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_direccion = null,
             URL = null, usuario = null, url_nombre_foto = null, encodedImage = null;
@@ -144,6 +144,14 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("curChoice", CheckedPositionFragment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        communicator = (CommunicatorAdeful) getActivity();
+        controladorGeneral = new ControladorGeneral(getActivity());
+        loadSpinnerCargo();
     }
 
     private void init() {
@@ -365,7 +373,7 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
             url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
             fechaFoto = auxiliarGeneral.getFechaImagen();
             nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
-            url_foto_direccion = auxiliarGeneral.getURLFOTODIRECCIONADEFUL() + nombre_foto;
+            url_foto_direccion = auxiliarGeneral.getURLFOTODIRECCION() + nombre_foto;
         }
         URL = auxiliarGeneral.getURLDIRECCIONADEFULALL();
         direccion = new Direccion(id, nombre,
@@ -377,13 +385,14 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
 
     public void cargarEntidadCargo(int id, int ws, String cargoEntidad) {
         URL = null;
-        URL = auxiliarGeneral.getURLCARGOADEFULALL();
+        URL = auxiliarGeneral.getURLCARGOALL();
 
         cargo = new Cargo(id, cargoEntidad, usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
         envioWebServiceCargo(ws);
     }
 
     public void envioWebService(int tipo) {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("nombre", direccion.getNOMBRE_DIRECCION());
         // request.setParametrosDatos("nombre_foto", direccion.getNOMBRE_FOTO());
@@ -415,10 +424,11 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
 
             URL = URL + auxiliarGeneral.getUpdatePHP("Direccion");
         }
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Dirección", direccion, insertar, "a");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Dirección", direccion, insertar, "a");
     }
 
     public void envioWebServiceCargo(int tipo) {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("cargo", cargo.getCARGO());
         if (tipo == 0) {
@@ -434,7 +444,7 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
             insertarCargo = false;
         }
         isComision = false;
-        new AsyncTaskGeneric(getActivity(), this, URL, request, "Cargo", cargo, insertarCargo, "o");
+        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Cargo", cargo, insertarCargo, "o");
     }
 
     @Override
@@ -474,11 +484,7 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_administrador_general, menu);
-        // menu.getItem(0).setVisible(false);//usuario
         menu.getItem(1).setVisible(false);// posicion
-        // menu.getItem(2).setVisible(false);// cargo
-        // menu.getItem(3).setVisible(false);//cerrar
-        // menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
 
