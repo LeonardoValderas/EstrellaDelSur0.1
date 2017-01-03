@@ -88,6 +88,13 @@ public class AdaptadorRecyclerDivisionEntrenamiento extends
 		return divisionArray.size();
 	}
 
+	public void selectAll(boolean isSelect){
+		for (int i = 0; i <divisionArray.size() ; i++) {
+			divisionArray.get(i).setSelected(isSelect);
+		}
+		notifyDataSetChanged();
+	}
+
 	public ArrayList<Entrenamiento> getEntrenamientoList() {
 		  return divisionArray;
 		 }

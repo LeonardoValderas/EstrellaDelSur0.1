@@ -69,30 +69,26 @@ public class ControladorUsuarioLifuba {
         }
     }
 
-    // ACTUALIZAR USUARIO
-    public boolean actualizarTabla(Tabla tabla)
+   public boolean actualizarTablaXTablaIndiv(String tabla, String fecha)
             throws SQLiteException {
 
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
-            cv.put("TABLA", tabla.getTABLA());
-            cv.put("FECHA", tabla.getFECHA());
+            cv.put("FECHA", fecha);
 
-            long valor = database.update("TABLA", cv, "ID_TABLA=" + tabla.getID_TABLA(), null);
-
+            long valor = database.update("TABLA", cv, "TABLA ='" + tabla + "'", null);
             cerrarBaseDeDatos();
-            if (valor > 0) {
+            if (valor > 0)
                 return true;
-            } else {
+            else
                 return false;
-            }
+
         } catch (SQLiteException e) {
             cerrarBaseDeDatos();
             return false;
         }
     }
-
     //LISTA USUARIO
     public String selectTabla(String tabla) {
 
@@ -544,29 +540,6 @@ public class ControladorUsuarioLifuba {
         sql = null;
         return res;
     }
-    ///////MI EQUIPO////////
-  // FECHA INSERTAR
-    public boolean insertFecha(Fecha fecha) {
-        boolean ban = false;
-
-        String sql = "INSERT INTO FECHA ( FECHA) VALUES ('" + fecha.getFECHA()
-                + "')";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-                cerrarBaseDeDatos();
-            } catch (Exception e) {
-                ban = false;
-            }
-        } else {
-            ban = false;
-        }
-        sql = null;
-        database = null;
-        return ban;
-    }
 
     // LISTA FECHA
     public ArrayList<Fecha> selectListaFecha() {
@@ -605,31 +578,7 @@ public class ControladorUsuarioLifuba {
         return arrayFecha;
     }
 
-    // INSERTA ANIO
-    public boolean insertAnio(Anio anio) {
-        boolean ban = false;
-
-        String sql = "INSERT INTO ANIO ( ANIO) VALUES ('" + anio.getANIO()
-                + "')";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-
-            } catch (Exception e) {
-                ban = false;
-            }
-        } else {
-            ban = false;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        database = null;
-        return ban;
-    }
-
-    //LISTA ANIO
+      //LISTA ANIO
     public ArrayList<Anio> selectListaAnio() {
 
         String sql = "SELECT * FROM ANIO";
@@ -668,70 +617,7 @@ public class ControladorUsuarioLifuba {
         return arrayAnio;
     }
 
-    //INSERTAR MES
-    public boolean insertMes(Mes mes) {
-        boolean ban = false;
-
-        String sql = "INSERT INTO MES ( MES) VALUES ('" + mes.getMES()
-                + "')";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-            } catch (Exception e) {
-                ban = false;
-            }
-        } else {
-            ban = false;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        database = null;
-        return ban;
-    }
-
-    //LISTA MES
-    public ArrayList<Mes> selectListaMes() {
-
-        String sql = "SELECT * FROM MES";
-        ArrayList<Mes> arrayMes = new ArrayList<>();
-        String mess = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Mes mes = null;
-                        id = cursor.getInt(cursor.getColumnIndex("ID_MES"));
-                        mess = cursor.getString(cursor.getColumnIndex("MES"));
-                        mes = new Mes(id, mess);
-
-                        arrayMes.add(mes);
-                    }
-                }
-            } catch (Exception e) {
-                arrayMes = null;
-            }
-        } else {
-            arrayMes = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        mess = null;
-        return arrayMes;
-    }
-
-//    // INSERTAR FIXTURE
-
+    //    // INSERTAR FIXTURE
     public boolean insertFixtureUsuarioLifuba(Fixture fixture) throws SQLiteException {
 
         ContentValues cv = new ContentValues();
@@ -764,7 +650,6 @@ public class ControladorUsuarioLifuba {
     }
 
     // ELIMINAR CANCHA
-
     public boolean eliminarFixtureUsuarioLifuba() {
 
         boolean res = false;

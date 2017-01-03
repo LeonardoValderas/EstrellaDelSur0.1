@@ -1,0 +1,66 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="600dp"
+    android:layout_gravity="center_horizontal"
+    android:layout_margin="15dp"
+    android:clickable="true"
+    card_view:cardCornerRadius="10dp"
+    card_view:cardElevation="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/imageRecyclerViewFoto"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:src="@mipmap/ic_foto_galery"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="1dp" />
+
+        <TextView
+            android:id="@+id/textRecyclerViewNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="Nombre"
+            android:textColor="#000000"
+            android:textSize="40dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textRecyclerViewCargo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Cargo"
+            android:textColor="#000000"
+            android:textSize="35dp" />
+
+        <TextView
+            android:id="@+id/textRecyclerViewPeriodoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="Periodo de Gestion"
+            android:textColor="#000000"
+            android:textSize="32dp" />
+
+        <TextView
+            android:id="@+id/textRecyclerViewPeriodo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="Periodo"
+            android:textColor="#000000"
+            android:textSize="28dp" />
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

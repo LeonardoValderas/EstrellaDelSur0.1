@@ -44,7 +44,7 @@ public class AdaptadorRecyclerCanchaUsuario extends
 
         public void bindTitular(Cancha cancha, Typeface nombre) {
             textRecyclerView.setText(cancha.getNOMBRE());
-            textRecyclerView.setTypeface(nombre);
+        //    textRecyclerView.setTypeface(nombre);
             textRecyclerView2.setVisibility(View.VISIBLE);
             textRecyclerView2.setText(cancha.getDIRECCION());
             imageViewEscudo.setImageResource(R.mipmap.ic_mapa_icon);

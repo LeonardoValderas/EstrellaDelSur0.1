@@ -32,7 +32,7 @@ public class AdaptadorRecyclerNotificacionUsuario extends
 
             textRecyclerViewTitulo = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewTitulo);
-            textRecyclerViewTitulo.setTypeface(type,Typeface.BOLD);
+          //  textRecyclerViewTitulo.setTypeface(type,Typeface.BOLD);
         }
         public void bindTitular(Notificacion notificacion) {
             textRecyclerViewTitulo.setText(notificacion.getTITULO());

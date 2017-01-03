@@ -172,7 +172,11 @@ public class FragmentEditarDireccionAdeful extends Fragment implements MyAsyncTa
         URL = null;
         URL = auxiliarGeneral.getURLDIRECCIONADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Direccion");
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Dirección", true, posicion, "a", fecha);
+
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Dirección", true, posicion, "a", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {

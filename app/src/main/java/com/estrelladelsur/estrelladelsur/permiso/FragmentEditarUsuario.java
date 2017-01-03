@@ -134,11 +134,11 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
 
                                 posicion = usuarioArray.get(position)
                                         .getID_USUARIO();
-                                if(controladorGeneral.isUsuarioWithPermiso(posicion)) {
+                                if (controladorGeneral.isUsuarioWithPermiso(posicion)) {
                                     Toast.makeText(getActivity(), "Usuario con permisos asigando. Elimine dichos permisos para elimine el usuario.", Toast.LENGTH_SHORT).show();
-                                  dialogoAlerta.alertDialog.dismiss();
-                                }else
-                                envioWebService();
+                                    dialogoAlerta.alertDialog.dismiss();
+                                } else
+                                    envioWebService();
                             }
                         });
                 dialogoAlerta.btnCancelar
@@ -168,7 +168,10 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
         URL = auxiliarGeneral.getURLUSUARIOALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Usuario");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Usuario", true, posicion, "o", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Usuario", true, posicion, "o", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {
@@ -183,9 +186,9 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
 
         usuarioArray = controladorGeneral.selectListaUsuario();
         if (usuarioArray != null) {
-          if(usuarioArray.size() > 0){
-              usuarioArray.remove(usuarioArray.size()-1);
-          }
+            if (usuarioArray.size() > 0) {
+                usuarioArray.remove(usuarioArray.size() - 1);
+            }
             adaptadorRecyclerUsuario = new AdaptadorRecyclerUsuario(usuarioArray);
             recyclerArticulo.setAdapter(adaptadorRecyclerUsuario);
         } else {
@@ -204,6 +207,7 @@ public class FragmentEditarUsuario extends Fragment implements MyAsyncTaskListen
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 

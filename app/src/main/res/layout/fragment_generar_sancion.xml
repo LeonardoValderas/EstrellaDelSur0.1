@@ -13,20 +13,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="2dp"
+            android:layout_margin="1dp"
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/linearTorneo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/linearTorneo"
                 android:orientation="horizontal">
 
                 <Spinner
                     android:id="@+id/sancionTorneoSpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="2dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="1dp"
                     android:layout_weight="2"
                     android:background="@drawable/style_spinner"
                     android:spinnerMode="dialog" />
@@ -34,8 +34,8 @@
                 <Spinner
                     android:id="@+id/sancionAnioSpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="2dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="1dp"
                     android:layout_weight="2"
                     android:background="@drawable/style_spinner"
                     android:spinnerMode="dialog" />
@@ -44,17 +44,17 @@
             <Spinner
                 android:id="@+id/sancionDivisionSpinner"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="25dp"
                 android:layout_gravity="center"
-                android:layout_margin="2dp"
+                android:layout_margin="1dp"
                 android:background="@drawable/style_spinner"
                 android:spinnerMode="dialog" />
 
             <Spinner
                 android:id="@+id/sancionJugadorSpinner"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_margin="2dp"
+                android:layout_height="25dp"
+                android:layout_margin="1dp"
                 android:background="@drawable/style_spinner"
                 android:spinnerMode="dialog" />
 
@@ -69,7 +69,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:gravity="center"
-                    android:text="Amarilla" />
+                    android:text="Amarilla"
+                    android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/textRoja"
@@ -77,7 +78,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:gravity="center"
-                    android:text="Roja" />
+                    android:text="Roja"
+                    android:textSize="10dp" />
 
             </LinearLayout>
 
@@ -89,7 +91,7 @@
                 <Spinner
                     android:id="@+id/sancionAmarillaSpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="25dp"
                     android:layout_margin="2dp"
                     android:layout_weight="2"
                     android:background="@drawable/style_spinner"
@@ -98,7 +100,7 @@
                 <Spinner
                     android:id="@+id/sancionRojaSpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="25dp"
                     android:layout_margin="2dp"
                     android:layout_weight="2"
                     android:background="@drawable/style_spinner"
@@ -117,12 +119,13 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:gravity="center"
-                    android:text="Cantidad de Fechas:" />
+                    android:text="Cantidad de Fechas:"
+                    android:textSize="10dp" />
 
                 <Spinner
                     android:id="@+id/cantidadFechasSpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="25dp"
                     android:layout_margin="2dp"
                     android:layout_weight="2"
                     android:background="@drawable/style_spinner"
@@ -138,8 +141,9 @@
                 android:gravity="center"
                 android:hint="Observaciones"
                 android:inputType="textMultiLine"
-                android:lines="5"
-                android:textSize="25dp" />
+                android:lines="3"
+                android:maxLength="70"
+                android:textSize="15dp" />
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

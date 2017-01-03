@@ -1,13 +1,20 @@
 package com.estrelladelsur.estrelladelsur.miequipo.administrador.general;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
@@ -40,8 +47,10 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
-public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListener{
+public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListener {
 
     private Spinner jugadoresDivisionSpinner;
     private Spinner jugadoresPosicionSpinner;
@@ -73,6 +82,7 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
     private Request request;
     private boolean isJugador = true, insertarPosicion = true;
     private ImageButton rotateButton;
+    private static final int PERMISSION_REQUEST_CODE = 1;
 
     public static FragmentGenerarJugador newInstance() {
         FragmentGenerarJugador fragment = new FragmentGenerarJugador();
@@ -130,7 +140,8 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
     public void onResume() {
         super.onResume();
         controladorAdeful = new ControladorAdeful(getActivity());
-        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        loadSpinnerDivision();
         loadSpinnerPosicion();
     }
 
@@ -138,22 +149,7 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
 
         // DIVISION
-        divisionArray = controladorAdeful.selectListaDivisionAdeful();
-        if (divisionArray != null) {
-            // DIVSION SPINNER
-            if (divisionArray.size() != 0) {
-                adapterSpinnerDivision = new AdapterSpinnerDivision(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, divisionArray);
-                jugadoresDivisionSpinner.setAdapter(adapterSpinnerDivision);
-            } else {
-                //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
-                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
-                jugadoresDivisionSpinner.setAdapter(adaptadorInicial);
-            }
-        } else {
-            auxiliarGeneral.errorDataBase(getActivity());
-        }
+        loadSpinnerDivision();
         // POSICION
         loadSpinnerPosicion();
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
@@ -190,6 +186,9 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
 
             @Override
             public void onClick(View v) {
+                if (!auxiliarGeneral.checkPermission(getActivity()))
+                    auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
+                else
                 ImageDialogjugador();
             }
         });
@@ -197,7 +196,7 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
         rotateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imageJugadorByte != null){
+                if (imageJugadorByte != null) {
                     Bitmap theImage = auxiliarGeneral.setByteToBitmap(imageJugadorByte, 150,
                             150);
                     theImage = auxiliarGeneral.RotateBitmap(theImage);
@@ -231,20 +230,81 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
         myAlertDialog.show();
     }
 
+    @Override
+    @SuppressLint("NewApi")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == UtilityImage.GALLERY_PICTURE) {
 
-            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity(), true);
-            if (b != null)
-                imageJugador.setImageBitmap(b);
-            imageJugadorByte = auxiliarGeneral.pasarBitmapByte(b);
+        if (requestCode == UtilityImage.GALLERY_PICTURE) {
+            //  if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+            Uri imageUri = CropImage.getPickImageResultUri(getActivity(), data);
+            startCropImageActivity(imageUri);
         }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == getActivity().RESULT_OK) {
+                String p =  auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
+                Bitmap bitmap =  auxiliarGeneral.asignateImage(p);
+                asignateBitmap(bitmap);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                if(!result.getError().toString().contains("ENOENT"))
+                Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void asignateBitmap(Bitmap photoBitmap) {
+        if (photoBitmap != null) {
+            imageJugador.setImageBitmap(photoBitmap);
+            imageJugadorByte = auxiliarGeneral.pasarBitmapByte(photoBitmap);
+        }
+    }
+
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(getContext(), FragmentGenerarJugador.this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != PERMISSION_REQUEST_CODE) {
+            return;
+        }
+        boolean isGranted = true;
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                isGranted = false;
+                break;
+            }
+        }
+        if (!isGranted)
+            auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
     }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    public void loadSpinnerDivision() {
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        if (divisionArray != null) {
+            // DIVSION SPINNER
+            if (divisionArray.size() != 0) {
+                adapterSpinnerDivision = new AdapterSpinnerDivision(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, divisionArray);
+                jugadoresDivisionSpinner.setAdapter(adapterSpinnerDivision);
+            } else {
+                //SPINNER HINT
+                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                        R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
+                jugadoresDivisionSpinner.setAdapter(adaptadorInicial);
+            }
+        } else {
+            auxiliarGeneral.errorDataBase(getActivity());
+        }
     }
 
     public void loadSpinnerPosicion() {
@@ -286,6 +346,8 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
         }
         jugadoresNombreEdit.setText("");
         imageJugadorByte = null;
+        url_foto_jugador = null;
+        nombre_foto = null;
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
     }
@@ -351,10 +413,15 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
             URL = URL + auxiliarGeneral.getUpdatePHP("Posicion");
             insertarPosicion = false;
         }
-        isJugador = false;
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Posicion", posicion, insertarPosicion, "a");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity())) {
+            isJugador = false;
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Posicion", posicion, insertarPosicion, "a");
+        } else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
+
     public void envioWebService(int tipo) {
+        request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("nombre", jugador.getNOMBRE_JUGADOR());
         request.setParametrosDatos("id_division", String.valueOf(division.getID_DIVISION()));
@@ -386,8 +453,11 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
 
             URL = URL + auxiliarGeneral.getUpdatePHP("Jugador");
         }
-        isJugador = true;
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Jugador", jugador, insertar, "o");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity())) {
+            isJugador = true;
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Jugador", jugador, insertar, "o");
+        } else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     private int getPositionSpinner(int idSpinner, int spinner) {
@@ -410,7 +480,7 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
                     }
                 }
                 break;
-         }
+        }
         return index;
     }
 
@@ -444,7 +514,7 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
             } else {
                 division = (Division) jugadoresDivisionSpinner.getSelectedItem();
                 posicion = (Posicion) jugadoresPosicionSpinner.getSelectedItem();
-                if(insertar)
+                if (insertar)
                     cargarEntidad(0, 0);
                 else
                     cargarEntidad(idJugadorExtra, 1);

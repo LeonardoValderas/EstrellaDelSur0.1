@@ -16,6 +16,9 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 
 public class FragmentTorneoUsuario extends Fragment {
 
@@ -26,6 +29,9 @@ public class FragmentTorneoUsuario extends Fragment {
     private TextView torneoActualtext;
     private LinearLayout linearLayout;
     private RecyclerView recycleViewTorneo;
+    private AdRequest adRequest;
+    private AdView mAdView;
+
 
     public static FragmentTorneoUsuario newInstance() {
         FragmentTorneoUsuario fragment = new FragmentTorneoUsuario();
@@ -60,6 +66,7 @@ public class FragmentTorneoUsuario extends Fragment {
         torneoActualtext.setTypeface(editTextFont, Typeface.BOLD);
         recycleViewTorneo = (RecyclerView) v.findViewById(R.id.recycleViewGeneral);
         recycleViewTorneo.setVisibility(View.GONE);
+        mAdView = (AdView) v.findViewById(R.id.adView);
         return v;
     }
 
@@ -72,11 +79,15 @@ public class FragmentTorneoUsuario extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
         controladorUsuarioAdeful = new ControladorUsuarioAdeful(getActivity());
         init();
     }
 
     private void init() {
+        BannerAd();
         String torneo = controladorUsuarioAdeful.selectTorneoUsuarioAdeful();
         if (torneo != null) {
             torneoActualtext.setText(torneo);
@@ -89,5 +100,21 @@ public class FragmentTorneoUsuario extends Fragment {
         recycleViewTorneo.addItemDecoration(new DividerItemDecoration(
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recycleViewTorneo.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    public void BannerAd() {
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
     }
 }

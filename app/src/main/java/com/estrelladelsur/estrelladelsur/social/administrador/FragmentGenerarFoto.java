@@ -2,9 +2,12 @@ package com.estrelladelsur.estrelladelsur.social.administrador;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
@@ -28,6 +31,8 @@ import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +49,7 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
     private boolean actualizar = false;
     private int idFotoExtra;
     private AuxiliarGeneral auxiliarGeneral;
+    private ControladorGeneral controladorGeneral;
     private Communicator communicator;
     private Typeface editTextFont;
     private String URL = null, usuario = null, encodedImage = null, nombre_foto_anterior = null;
@@ -51,6 +57,7 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
     private ImageButton rotateButton;
     int width = 300;
     int height = 300;
+    private static final int PERMISSION_REQUEST_CODE = 1;
 
     public static FragmentGenerarFoto newInstance() {
         FragmentGenerarFoto fragment = new FragmentGenerarFoto();
@@ -98,12 +105,14 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
     public void onResume() {
         super.onResume();
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        controladorGeneral = new ControladorGeneral(getActivity());
         communicator = (Communicator) getActivity();
     }
 
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
         communicator = (Communicator) getActivity();
+        controladorGeneral = new ControladorGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
@@ -113,8 +122,9 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
             tituloFotoEdit.setText(getActivity().getIntent()
                     .getStringExtra("titulo"));
             //FOTO
-            imageFotoByte = getActivity().getIntent()
-                    .getByteArrayExtra("foto");
+            imageFotoByte = controladorGeneral.selectFotoForId(idFotoExtra);
+//            imageFotoByte = getActivity().getIntent()
+//                    .getByteArrayExtra("foto");
             nombre_foto_anterior = getActivity().getIntent()
                     .getStringExtra("nombre_foto");
             if (imageFotoByte != null) {
@@ -128,6 +138,9 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
         imageFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!auxiliarGeneral.checkPermission(getActivity()))
+                    auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
+                else
                 ImageDialogFoto();
             }
         });
@@ -170,29 +183,53 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == UtilityImage.GALLERY_PICTURE) {
 
-
-            String path = auxiliarGeneral.selectImageForData(data, getActivity());
-            File file = new File(path);
-            try {
-                imageFotoByte = auxiliarGeneral.fileToBytes(file);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (requestCode == UtilityImage.GALLERY_PICTURE) {
+                //  if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+                Uri imageUri = CropImage.getPickImageResultUri(getActivity(), data);
+                startCropImageActivity(imageUri);
             }
-
-            Bitmap b = setResizaInage(path, width, height);
-            if (b != null) {
-               // imageFotoByte = auxiliarGeneral.pasarBitmapByte(b);
-                b = auxiliarGeneral.setByteToBitmap(imageFotoByte, width, height);
-                imageFoto.setImageBitmap(b);
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == getActivity().RESULT_OK) {
+                    String p =  auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
+                    Bitmap bitmap =  auxiliarGeneral.asignateImage(p);
+                    asignateBitmap(bitmap);
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    if(!result.getError().toString().contains("ENOENT"))
+                    Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
+                }
             }
+    }
 
+    public void asignateBitmap(Bitmap photoBitmap) {
+        if (photoBitmap != null) {
+            imageFoto.setImageBitmap(photoBitmap);
+            imageFotoByte = auxiliarGeneral.pasarBitmapByte(photoBitmap);
         }
     }
 
-    public Bitmap setResizaInage(String photoPath, int w, int h) {
-        return auxiliarGeneral.getResizedBitmap(photoPath, w, h);
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(getContext(), FragmentGenerarFoto.this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != PERMISSION_REQUEST_CODE) {
+            return;
+        }
+        boolean isGranted = true;
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                isGranted = false;
+                break;
+            }
+        }
+        if (!isGranted)
+            auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
     }
 
     public void inicializarControles(String mensaje) {
@@ -258,7 +295,10 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
             URL = URL + auxiliarGeneral.getUpdatePHP("Foto");
         }
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Foto", foto, insertar, "a");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Foto", foto, insertar, "a");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void showMessage(String msg) {

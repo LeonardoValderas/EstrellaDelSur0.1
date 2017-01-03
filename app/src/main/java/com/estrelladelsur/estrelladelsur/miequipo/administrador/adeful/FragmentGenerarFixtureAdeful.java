@@ -428,11 +428,11 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
     private int getPositionYearSpinner(List<Anio> anios) {
         String anio = auxiliarGeneral.getYearSpinner();
         int index = 0;
-                for (int i = 0; i < anios.size(); i++) {
-                    if (anios.get(i).getANIO().equals(anio)) {
-                        index = i;
-                    }
-                }
+        for (int i = 0; i < anios.size(); i++) {
+            if (anios.get(i).getANIO().equals(anio)) {
+                index = i;
+            }
+        }
         return index;
     }
 
@@ -485,7 +485,11 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
             request.setParametrosDatos("fecha_actualizacion", fixture.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Fixture");
         }
-        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Fixture", fixture, insertar, "o");
+
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Fixture", fixture, insertar, "o");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     @Override

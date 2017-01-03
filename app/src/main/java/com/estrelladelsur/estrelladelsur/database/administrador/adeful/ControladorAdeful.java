@@ -182,7 +182,7 @@ public class ControladorAdeful {
         try {
             cv.put("FECHA", fecha);
 
-            long valor = database.update("TABLA", cv, "TABLA ='"+tabla+"'", null);
+            long valor = database.update("TABLA", cv, "TABLA ='" + tabla + "'", null);
 
             if (valor > 0) {
                 valor = database.update("TABLA", cv, "TABLA = 'FECHA_TABLA'", null);
@@ -473,6 +473,7 @@ public class ControladorAdeful {
     //DIVISION LISTA
     public ArrayList<Division> selectListaDivisionAdeful() {
 
+     //   String sql = "SELECT * FROM DIVISION_ADEFUL ORDER BY ID_DIVISION DESC";
         String sql = "SELECT * FROM DIVISION_ADEFUL";
         ArrayList<Division> arrayDivision = new ArrayList<>();
         String descripcion = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null;
@@ -575,6 +576,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     public boolean eliminarDivisionAdeful() throws SQLiteException {
 
         boolean res = false;
@@ -684,7 +686,7 @@ public class ControladorAdeful {
     //LISTA TORNEO
     public ArrayList<Torneo> selectListaTorneoAdeful() throws SQLiteException {
 
-        String sql = "SELECT * FROM TORNEO_ADEFUL";
+        String sql = "SELECT * FROM TORNEO_ADEFUL ORDER BY ID_TORNEO DESC";
         ArrayList<Torneo> arrayTorneo = new ArrayList<>();
         String descripcion = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null, tabla = null;
         int id;
@@ -889,9 +891,7 @@ public class ControladorAdeful {
         return res;
     }
 
-
     //ES TORNEO ACTUAL
-
     public Torneo selectActualTorneoAdeful() throws SQLiteException {
 
         String sql = "SELECT * FROM TORNEO_ACTUAL_ADEFUL";
@@ -986,7 +986,7 @@ public class ControladorAdeful {
     //LISTA CANCHA
     public ArrayList<Cancha> selectListaCanchaAdeful() {
 
-        String sql = "SELECT * FROM CANCHA_ADEFUL";
+        String sql = "SELECT * FROM CANCHA_ADEFUL ORDER BY ID_CANCHA DESC";
         ArrayList<Cancha> arrayCancha = new ArrayList<>();
         String nombre = null, longitud = null, latitud = null, direccion = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null;
         int id;
@@ -1092,6 +1092,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     public boolean eliminarCanchaAdeful() {
 
         boolean res = false;
@@ -1114,7 +1115,6 @@ public class ControladorAdeful {
     }
 
     ///////MI EQUIPO////////
-
     // FECHA INSERTAR
     public boolean insertFecha(Fecha fecha) {
         boolean ban = false;
@@ -1314,6 +1314,8 @@ public class ControladorAdeful {
             cv.put("ID_ANIO", fixture.getID_ANIO());
             cv.put("DIA", fixture.getDIA());
             cv.put("HORA", fixture.getHORA());
+            cv.put("RESULTADO_LOCAL", fixture.getRESULTADO_LOCAL());
+            cv.put("RESULTADO_VISITA", fixture.getRESULTADO_VISITA());
             cv.put("USUARIO_CREADOR", fixture.getUSUARIO_CREACION());
             cv.put("USUARIO_ACTUALIZACION", fixture.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_CREACION", fixture.getFECHA_CREACION());
@@ -1516,6 +1518,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     public boolean eliminarFixtureAdeful() {
 
         boolean res = false;
@@ -1645,7 +1648,6 @@ public class ControladorAdeful {
     }
 
     // ///////////////////////////////////JUGADORES////////////////////////////////////////////
-
     // INSERTAR JUGADOR
     public boolean insertJugadorAdeful(int id, Jugador jugador) throws SQLiteException {
 
@@ -1814,6 +1816,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     public boolean eliminarJugadorAdeful() {
 
         boolean res = false;
@@ -1862,6 +1865,7 @@ public class ControladorAdeful {
             return false;
         }
     }
+
     public boolean insertPosicionAdeful(Posicion posicion)
             throws SQLiteException {
 
@@ -2036,7 +2040,7 @@ public class ControladorAdeful {
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
-      //      cv.put("ID_ENTRENAMIENTO_DIVISION", entrenamiento.getID_ENTRENAMIENTO_DIVISION());
+            //      cv.put("ID_ENTRENAMIENTO_DIVISION", entrenamiento.getID_ENTRENAMIENTO_DIVISION());
             cv.put("ID_ENTRENAMIENTO", entrenamiento);
             cv.put("ID_DIVISION", division);
 
@@ -2061,7 +2065,7 @@ public class ControladorAdeful {
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
-           // cv.put("ID_ENTRENAMIENTO_DIVISION", entrenamiento.getID_ENTRENAMIENTO_DIVISION());
+            // cv.put("ID_ENTRENAMIENTO_DIVISION", entrenamiento.getID_ENTRENAMIENTO_DIVISION());
             cv.put("ID_ENTRENAMIENTO", entrenamiento.getID_ENTRENAMIENTO());
             cv.put("ID_DIVISION", entrenamiento.getID_DIVISION());
 
@@ -2106,42 +2110,7 @@ public class ControladorAdeful {
         }
     }
 
-
-    //SELECT ID TABLA INTERMEDIA
-    public int selectIdEntrenamiento_Division() {
-
-        String sql = "SELECT ID_ENTRENAMIENTO_DIVISION FROM ENTRENAMIENTO_DIVISION_ADEFUL ORDER BY ID_ENTRENAMIENTO_DIVISION DESC limit 1";
-        int id = 0;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Posicion posicion = null;
-                        id = cursor.getInt(cursor
-                                .getColumnIndex("ID_ENTRENAMIENTO_DIVISION"));
-                    }
-                }
-            } catch (Exception e) {
-                id = 0;
-            }
-        } else {
-            id = 0;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-
-        return id;
-    }
-
-    //LISTA ENTRENAMIENTO sin division
+     //LISTA ENTRENAMIENTO sin division
     public ArrayList<EntrenamientoRecycler> selectListaEntrenamientoAdeful(String fecha) {
 
         String sql = "SELECT EA.ID_ENTRENAMIENTO, EA.DIA_ENTRENAMIENTO, EA.HORA_ENTRENAMIENTO, EA.ID_CANCHA, CA.NOMBRE"
@@ -2303,6 +2272,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     public boolean eliminarEntrenamientoAdeful() {
 
         boolean res = false;
@@ -2367,6 +2337,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     public boolean eliminarDivisionEntrenamientoAdeful() {
 
         boolean res = false;
@@ -2437,9 +2408,7 @@ public class ControladorAdeful {
         } catch (SQLiteException e) {
             cerrarBaseDeDatos();
             return false;
-
         }
-
     }
 
     //ELIMINAR ASISTENCIA ENTRENAMIENTO
@@ -2484,7 +2453,6 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
-
 
     //lISTA JUGADORES CITADOS POR ENTRENAMIENTO
     public ArrayList<Entrenamiento> selectListaJugadoresEntrenamientoAdeful(int id_entrenamiento) {
@@ -2784,6 +2752,7 @@ public class ControladorAdeful {
         sql = null;
         return res;
     }
+
     public boolean eliminarSancionAdeful() {
 
         boolean res = false;

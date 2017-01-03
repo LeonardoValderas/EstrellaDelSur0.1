@@ -2,7 +2,6 @@ package com.estrelladelsur.estrelladelsur.social.usuario;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -22,9 +21,13 @@ import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerPubl
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
-import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
@@ -38,6 +41,10 @@ public class PublicidadUsuario extends AppCompatActivity {
     private RecyclerView recycleViewUsuarioGeneral;
     private TextView txtToolBarTitulo;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private MyAsyncTaskListener listener;
+    private Request request;
+    private AdRequest adRequest;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,20 +65,41 @@ public class PublicidadUsuario extends AppCompatActivity {
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("PUBLICIDAD");
 
+        mAdView = (AdView) findViewById(R.id.adView);
         init();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        init();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+        auxiliarGeneral = new AuxiliarGeneral(PublicidadUsuario.this);
+        controladorUsuario = new ControladorUsuarioGeneral(PublicidadUsuario.this);
+        initRecycler();
+        recyclerViewLoadPublicidad();
     }
 
     public void init() {
         auxiliarGeneral = new AuxiliarGeneral(PublicidadUsuario.this);
         controladorUsuario = new ControladorUsuarioGeneral(PublicidadUsuario.this);
+        BannerAd();
         initRecycler();
-        recyclerViewLoadFoto();
+        listener = new MyAsyncTaskListener() {
+            @Override
+            public void onPostExecuteConcluded(boolean result, String mensaje) {
+                if (result) {
+                    recyclerViewLoadPublicidad();
+                } else {
+                    auxiliarGeneral.errorWebService(PublicidadUsuario.this, mensaje);
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        };
+        recyclerViewLoadPublicidad();
 
         recycleViewUsuarioGeneral.addOnItemTouchListener(new
                 RecyclerTouchListener(PublicidadUsuario.this,
@@ -90,7 +118,16 @@ public class PublicidadUsuario extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                recyclerViewLoadFoto();
+                String fecha = controladorUsuario.selectTabla(AsyncTaskGenericIndividual.TABLA_PUBLICIDAD);
+                if (fecha != null) {
+                    request = new Request();
+                    request.setMethod("POST");
+                    request.setParametrosDatos("fecha_tabla", fecha);
+                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_PUBLICIDAD);
+                    request.setParametrosDatos("liga", "GENERAL");
+
+                    new AsyncTaskGenericIndividual(PublicidadUsuario.this, listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.PUBLICIDAD);
+                }
             }
         });
     }
@@ -103,7 +140,7 @@ public class PublicidadUsuario extends AppCompatActivity {
         recycleViewUsuarioGeneral.setItemAnimator(new DefaultItemAnimator());
     }
 
-    public void recyclerViewLoadFoto() {
+    public void recyclerViewLoadPublicidad() {
         publicidadArray = controladorUsuario.selectListaPublicidadUsuario();
         if (publicidadArray != null) {
             adaptadorRecyclerPublicidad = new AdaptadorRecyclerPublicidadUsuario(publicidadArray, PublicidadUsuario.this);
@@ -204,4 +241,20 @@ public class PublicidadUsuario extends AppCompatActivity {
         Intent i = new Intent(PublicidadUsuario.this, NavigationUsuario.class);
         startActivity(i);
     }
+    public void BannerAd() {
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
 }

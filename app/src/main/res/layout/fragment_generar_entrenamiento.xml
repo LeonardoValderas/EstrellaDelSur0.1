@@ -12,8 +12,8 @@
 
         <ImageButton
             android:id="@+id/imageButton1"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
             android:src="@android:drawable/ic_menu_my_calendar"
             android:visibility="gone" />
@@ -22,24 +22,24 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="1dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/buttonFechaEntrenamiento"
-                android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:layout_margin="5dp"
+                android:layout_margin="2dp"
                 android:background="@drawable/button_estilo_fecha"
                 android:text="Día" />
 
             <Button
                 android:id="@+id/buttonHoraEntrenamiento"
-                android:layout_width="120dp"
-                android:layout_height="50dp"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:layout_margin="5dp"
+                android:layout_margin="2dp"
                 android:background="@drawable/button_estilo_fecha"
                 android:text="Hora" />
         </LinearLayout>
@@ -49,15 +49,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="1dp"
             android:text="Lugar Entrenamiento"
-            android:textSize="25dp" />
+            android:textSize="15dp" />
 
         <Spinner
             android:id="@+id/spinnerLugarEntrenamiento"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
+            android:layout_height="30dp"
+            android:layout_margin="1dp"
             android:background="@drawable/style_spinner" />
 
         <TextView
@@ -65,16 +65,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="1dp"
             android:text="Divisiones Citadas"
-            android:textSize="25dp" />
+            android:textSize="15dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="1dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seleccionar Todas"
+                android:textSize="7dp" />
+
+            <CheckBox
+                android:id="@+id/checkAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycleViewGeneral"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="1dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

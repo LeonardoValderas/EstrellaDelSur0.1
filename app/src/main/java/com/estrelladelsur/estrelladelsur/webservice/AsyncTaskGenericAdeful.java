@@ -156,6 +156,7 @@ public class AsyncTaskGenericAdeful {
         protected void onPreExecute() {
             dialog = new ProgressDialog(context);
             dialog.setMessage("Procesando...");
+            dialog.setCanceledOnTouchOutside(false);
             dialog.show();
             jsonParsing = new JsonParsing();
         }
@@ -316,6 +317,9 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.insertJugadorAdeful(id, (Jugador) object))
                     insertOk = false;
                 if (insertOk)
+                if (!controladorLifuba.insertJugadorLifuba(id, (Jugador) object))
+                    insertOk = false;
+                if (insertOk)
                     if (!updateTableXTable(TABLA_JUGADOR, ((Jugador) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
@@ -343,6 +347,8 @@ public class AsyncTaskGenericAdeful {
                 }
                 if (insertOk)
                     if (!updateTableXTable(TABLA_ENTRENAMIENTO, ((Entrenamiento) object).getFECHA_CREACION(), 0, context))
+                        insertOk = false;
+                    if (!updateTableXTable(TABLA_DIVISION_ADEFUL, ((Entrenamiento) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }

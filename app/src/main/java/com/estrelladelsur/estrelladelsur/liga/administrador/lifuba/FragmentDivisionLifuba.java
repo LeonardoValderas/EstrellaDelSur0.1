@@ -201,6 +201,7 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -297,10 +298,13 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
             request.setParametrosDatos("fecha_actualizacion", fecha);
             URL = URL + auxiliarGeneral.getDeletePHP("Division");
         }
-        if (isDelete)
-            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false, fecha);
-        else
-            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity())) {
+            if (isDelete)
+                new AsyncTaskGenericLifuba(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false, fecha);
+            else
+                new AsyncTaskGenericLifuba(getContext(), this, URL, request, "División", division, isInsert, isDelete, division.getID_DIVISION(), "a", false);
+        } else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void onCreate(Bundle savedInstanceState) {

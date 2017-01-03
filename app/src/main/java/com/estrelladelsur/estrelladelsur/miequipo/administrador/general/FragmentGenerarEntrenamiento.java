@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -64,13 +66,11 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
     private ArrayList<Entrenamiento> divisionArrayExtra;
     private AdaptadorRecyclerDivisionEntrenamiento adaptadorRecyclerDivisionEntrenamiento;
     private Cancha lugar;
-    private Entrenamiento entrenamiento_Division;
     private Entrenamiento entrenamiento;
     private boolean bandera = false;
     private ArrayAdapter<String> adaptadorInicial;
     private boolean actualizar = false;
     private int idEntrenamientoExtra;
-    private String entrenamientoCanchaExtra = null;
     private boolean insertar = true;
     private ArrayList<Integer> id_divisin_array = null, id_division_add_array = null, id_division_delete_array = null;
     private Typeface editTextFont;
@@ -78,6 +78,7 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
     private AuxiliarGeneral auxiliarGeneral;
     private Request request;
     private String URL = null, usuario = null;
+    private CheckBox checkAll;
 
     public static FragmentGenerarEntrenamiento newInstance() {
         FragmentGenerarEntrenamiento fragment = new FragmentGenerarEntrenamiento();
@@ -129,6 +130,8 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
                 .findViewById(R.id.textViewDivisionCitada);
         textViewDivisionCitada.setTypeface(textViewFont);
 
+        checkAll = (CheckBox)v.findViewById(R.id.checkAll);
+
         return v;
     }
 
@@ -159,7 +162,7 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
                 spinnerLugarEntrenamiento.setAdapter(adapterFixtureCancha);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerCancha));
                 spinnerLugarEntrenamiento.setAdapter(adaptadorInicial);
             }
@@ -179,9 +182,6 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
             // SPINNER
             spinnerLugarEntrenamiento.setSelection(getPositionCancha(getActivity().getIntent()
                     .getIntExtra("id_cancha", 0)));
-
-            entrenamientoCanchaExtra = getActivity().getIntent()
-                    .getStringExtra("cancha");
 
             insertar = false;
         }
@@ -206,6 +206,16 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
             @Override
             public void onClick(View arg0) {
                 setTime();
+            }
+        });
+
+        checkAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                    adaptadorRecyclerDivisionEntrenamiento.selectAll(true);
+                else
+                    adaptadorRecyclerDivisionEntrenamiento.selectAll(false);
             }
         });
     }
@@ -299,6 +309,8 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
         buttonFechaEntrenamiento.setText("Día");
         buttonHoraEntrenamiento.setText("Hora");
         recyclerViewLoadDivision();
+        checkAll.setChecked(false);
+        bandera = false;
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
     }
@@ -357,8 +369,10 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
             request.setParametrosDatos("fecha_actualizacion", entrenamiento.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Entrenamiento");
         }
-
-        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Entrenamiento", entrenamiento, insertar, "o");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Entrenamiento", entrenamiento, insertar, "o");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -451,7 +465,7 @@ public class FragmentGenerarEntrenamiento extends Fragment implements MyAsyncTas
                                     isDelete = true;
                                 }
                             }
-                            if(isDelete)
+                            if (isDelete)
                                 id_division_delete_array.add(divisionArrayExtra.get(i).getID_DIVISION());
 
                         }

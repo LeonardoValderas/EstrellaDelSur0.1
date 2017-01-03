@@ -41,10 +41,11 @@ import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_adm.TabsFixture;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTaskListener{
+public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTaskListener {
 
     private Division division;
     private Torneo torneo;
@@ -136,12 +137,15 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         super.onResume();
         controladorLifuba = new ControladorLifuba(getActivity());
         controladorAdeful = new ControladorAdeful(getActivity());
-        init();
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        addArraySpinner();
     }
+
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         // DIVISION
-        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        addArraySpinner();
+
         if (divisionArray != null) {
             // DIVSION SPINNER
             if (!divisionArray.isEmpty()) {
@@ -158,7 +162,6 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
             auxiliarGeneral.errorDataBase(getActivity());
         }
         // TORNEO
-        torneoArray = controladorLifuba.selectListaTorneoLifuba();
         if (torneoArray != null) {
             // TORNEO SPINNER
             if (!torneoArray.isEmpty()) {
@@ -177,7 +180,6 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         }
 
         // FECHA
-        fechaArray = controladorLifuba.selectListaFecha();
         if (fechaArray != null) {
             // FECHA SPINNER
             adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
@@ -188,7 +190,6 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         }
 
         // ANIO
-        anioArray = controladorLifuba.selectListaAnio();
         if (anioArray != null) {
             // ANIO SPINNER
             adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
@@ -294,6 +295,7 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
                         });
             }
         }));
+
     }
 
     private int getPositionYearSpinner(List<Anio> anios) {
@@ -306,6 +308,7 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         }
         return index;
     }
+
     //LOAD RECYCLER
     public void recyclerViewLoadFixture(int division, int torneo, int fecha,
                                         int anio) {
@@ -325,6 +328,13 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         }
     }
 
+    public void addArraySpinner() {
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        torneoArray = controladorLifuba.selectListaTorneoLifuba();
+        fechaArray = controladorLifuba.selectListaFecha();
+        anioArray = controladorLifuba.selectListaAnio();
+    }
+
     public void envioWebService() {
         String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
@@ -334,7 +344,10 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         URL = auxiliarGeneral.getURLFIXTURELIFUBAAll();
         URL = URL + auxiliarGeneral.getDeletePHP("Fixture");
 
-        new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Fixture", true, posicion, "o", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Fixture", true, posicion, "o", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {
@@ -356,6 +369,7 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -400,6 +414,7 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }

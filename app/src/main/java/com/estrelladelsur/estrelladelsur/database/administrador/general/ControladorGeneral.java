@@ -206,49 +206,6 @@ public class ControladorGeneral {
     }
 
     //LISTA SUBMODULO
-    public ArrayList<SubModulo> selectListaSubModulo() {
-
-        String sql = "SELECT * FROM SUBMODULO";
-        ArrayList<SubModulo> arraySubModulo = new ArrayList<SubModulo>();
-        String nombre = null;
-        int id, id_sub;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        SubModulo submodulo = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_SUBMODULO"));
-                        id_sub = cursor.getInt(cursor.getColumnIndex("ID_MODULO"));
-                        nombre = cursor.getString(cursor
-                                .getColumnIndex("NOMBRE"));
-                        //CLASE AUX
-                        submodulo = new SubModulo(id, nombre, id_sub);
-                        //ARRAY SUBMODULO
-                        arraySubModulo.add(submodulo);
-                    }
-                }
-            } catch (Exception e) {
-                arraySubModulo = null;
-            }
-        } else {
-            arraySubModulo = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        return arraySubModulo;
-    }
-
-    //LISTA SUBMODULO
     public ArrayList<SubModulo> selectListaSubModuloPermiso(int id_permiso) {
 
         String sql = "SELECT P.ID_PERMISO_MODULO, P.ID_SUBMODULO, S.NOMBRE FROM PERMISO_MODULO P "
@@ -438,34 +395,6 @@ public class ControladorGeneral {
     }
 
     // ACTUALIZAR USUARIO
-    public boolean actualizarTabla(Tabla tabla)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TABLA", tabla.getTABLA());
-            cv.put("FECHA", tabla.getFECHA());
-
-            long valor = database.update("TABLA", cv, "ID_TABLA=" + tabla.getID_TABLA(), null);
-
-            if (valor > 0) {
-                valor = database.update("TABLA", cv, "TABLA = FECHA_TABLA", null);
-                cerrarBaseDeDatos();
-                if (valor > 0)
-                    return true;
-                else
-                    return false;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    // ACTUALIZAR USUARIO
     public boolean actualizarTablaXTabla(String tabla, String fecha)
             throws SQLiteException {
 
@@ -523,7 +452,6 @@ public class ControladorGeneral {
         database = null;
         return fecha;
     }
-
 
     // ELIMINAR TODOS
     public boolean eliminarTablaGeneral() {
@@ -1493,7 +1421,6 @@ public class ControladorGeneral {
         return res;
     }
 
-
     //LISTA CARGOS
     public ArrayList<Cargo> selectListaCargo() {
 
@@ -2212,7 +2139,7 @@ public class ControladorGeneral {
     //LISTA NOTIFICACION
     public ArrayList<Notificacion> selectListaNotificacion() {
 
-        String sql = "SELECT * FROM NOTIFICACION";
+        String sql = "SELECT * FROM NOTIFICACION ORDER BY ID_NOTIFICACION DESC";
         ArrayList<Notificacion> arrayNotificacion = new ArrayList<Notificacion>();
         String titulo = null, notifi = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
         int id;
@@ -2398,8 +2325,8 @@ public class ControladorGeneral {
     //LISTA NOTIFICACION
     public ArrayList<Noticia> selectListaNoticia() {
 
-        String sql = "SELECT * FROM NOTICIA";
-        ArrayList<Noticia> arrayNoticia = new ArrayList<Noticia>();
+        String sql = "SELECT * FROM NOTICIA ORDER BY ID_NOTICIA DESC";
+        ArrayList<Noticia> arrayNoticia = new ArrayList<>();
         String titulo = null, descripcion = null, link = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
         int id;
         Cursor cursor = null;
@@ -2621,6 +2548,35 @@ public class ControladorGeneral {
         return arrayFoto;
     }
 
+    // LISTA FOTO
+    public byte[] selectFotoForId(int id) {
+
+        String sql = "SELECT FOTO FROM FOTO wHERE ID_FOTO = " + id;
+        byte[] foto_byte = null;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        foto_byte = cursor.getBlob(cursor
+                                .getColumnIndex("FOTO"));
+                    }
+                }
+            } catch (Exception e) {
+                foto_byte = null;
+            }
+        } else {
+            foto_byte = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+        return foto_byte;
+    }
+
     //ACTUALIZAR FOTO
     public boolean actualizarFoto(Foto foto)
             throws SQLiteException {
@@ -2817,6 +2773,38 @@ public class ControladorGeneral {
         return arrayPublicidad;
     }
 
+    // LISTA PUBLICIDAD
+    public byte[] selectPublicidadForId(int id) {
+
+        String sql = "SELECT LOGO FROM PUBLICIDAD WHERE ID_PUBLICIDAD =" + id;
+        byte[] logo_byte = null;
+        Cursor cursor = null;
+        abrirBaseDeDatos();
+        if (database != null && database.isOpen()) {
+
+            try {
+                cursor = database.rawQuery(sql, null);
+                if (cursor != null && cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+
+                        logo_byte = cursor.getBlob(cursor
+                                .getColumnIndex("LOGO"));
+                    }
+                }
+            } catch (Exception e) {
+                logo_byte = null;
+            }
+        } else {
+            logo_byte = null;
+        }
+        cerrarBaseDeDatos();
+        sql = null;
+        cursor = null;
+        database = null;
+
+        return logo_byte;
+    }
+
     //ACTUALIZAR PUBLICIDAD
     public boolean actualizarPublicidad(Publicidad publicidad)
             throws SQLiteException {
@@ -2888,7 +2876,6 @@ public class ControladorGeneral {
         sql = null;
         return res;
     }
-
 
     // FECHA INSERTAR
     public boolean insertFecha(Fecha fecha) {

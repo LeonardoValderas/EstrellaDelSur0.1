@@ -9,12 +9,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerFixtureUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
@@ -26,7 +32,10 @@ public class FragmentFixtureUsuarioAdeful extends Fragment {
     private ControladorUsuarioAdeful controladorUsuario;
     private AuxiliarGeneral auxiliarGeneral;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
+    private MyAsyncTaskListener listener;
+    private Request request;
+    private AdRequest adRequest;
+    private AdView mAdView;
 
     public static FragmentFixtureUsuarioAdeful newInstance() {
         FragmentFixtureUsuarioAdeful fragment = new FragmentFixtureUsuarioAdeful();
@@ -55,7 +64,9 @@ public class FragmentFixtureUsuarioAdeful extends Fragment {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         recycleViewEquipo = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
-        mSwipeRefreshLayout = (SwipeRefreshLayout)v.findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        mAdView = (AdView) v.findViewById(R.id.adView);
+
         return v;
     }
 
@@ -68,16 +79,42 @@ public class FragmentFixtureUsuarioAdeful extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
         controladorUsuario = new ControladorUsuarioAdeful(getActivity());
         init();
     }
 
     private void init() {
+        BannerAd();
+        listener = new MyAsyncTaskListener() {
+            @Override
+            public void onPostExecuteConcluded(boolean result, String mensaje) {
+                if (result) {
+                    recyclerViewLoadFixture();
+                } else {
+                    auxiliarGeneral.errorWebService(getActivity(), mensaje);
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        };
         recyclerViewLoadFixture();
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                recyclerViewLoadFixture();
+                String fecha = controladorUsuario.selectTabla(AsyncTaskGenericIndividual.TABLA_FIXTURE_ADEFUL);
+                if (fecha != null) {
+                    request = new Request();
+                    request.setMethod("POST");
+                    request.setParametrosDatos("fecha_tabla", fecha);
+                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_FIXTURE_ADEFUL);
+                    request.setParametrosDatos("liga", "ADEFUL");
+
+                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.FIXTURE_ADEFUL);
+                }
             }
         });
     }
@@ -90,7 +127,7 @@ public class FragmentFixtureUsuarioAdeful extends Fragment {
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recycleViewEquipo.setItemAnimator(new DefaultItemAnimator());
 
-       fixtureAdefulArray = controladorUsuario.selectListaFixtureUsuarioAdeful();
+        fixtureAdefulArray = controladorUsuario.selectListaFixtureUsuarioAdeful();
         if (fixtureAdefulArray != null) {
             adaptador = new AdaptadorRecyclerFixtureUsuario(fixtureAdefulArray, getActivity());
             recycleViewEquipo.setAdapter(adaptador);
@@ -101,4 +138,21 @@ public class FragmentFixtureUsuarioAdeful extends Fragment {
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }
+
+    public void BannerAd() {
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
 }

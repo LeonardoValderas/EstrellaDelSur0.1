@@ -20,6 +20,12 @@ import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Comision;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 
 public class ComisionUsuario extends AppCompatActivity {
@@ -32,6 +38,11 @@ public class ComisionUsuario extends AppCompatActivity {
     private RecyclerView recycleViewUsuarioGeneral;
     private TextView txtToolBarTitulo;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private MyAsyncTaskListener listener;
+    private Request request;
+    private AdRequest adRequest;
+    private AdView mAdView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,24 +57,42 @@ public class ComisionUsuario extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("COMISIÓN DIRECTIVA");
+        mAdView = (AdView) findViewById(R.id.adView);
+
         init();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
         auxiliarGeneral = new AuxiliarGeneral(ComisionUsuario.this);
         controladorUsuario = new ControladorUsuarioGeneral(ComisionUsuario.this);
         init();
     }
 
     public void init() {
-        recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        BannerAd();
         initRecycler();
+        listener = new MyAsyncTaskListener() {
+            @Override
+            public void onPostExecuteConcluded(boolean result, String mensaje) {
+                if (result) {
+                    recyclerViewLoadComision();
+                } else {
+                    auxiliarGeneral.errorWebService(ComisionUsuario.this, mensaje);
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        };
         recyclerViewLoadComision();
 
         recycleViewUsuarioGeneral.addOnItemTouchListener(new
@@ -79,7 +108,16 @@ public class ComisionUsuario extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                recyclerViewLoadComision();
+                String fecha = controladorUsuario.selectTabla(AsyncTaskGenericIndividual.TABLA_COMISION);
+                if (fecha != null) {
+                    request = new Request();
+                    request.setMethod("POST");
+                    request.setParametrosDatos("fecha_tabla", fecha);
+                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_COMISION);
+                    request.setParametrosDatos("liga", "GENERAL");
+
+                    new AsyncTaskGenericIndividual(ComisionUsuario.this, listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.COMISION);
+                }
             }
         });
     }
@@ -155,5 +193,20 @@ public class ComisionUsuario extends AppCompatActivity {
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
+    }
+    public void BannerAd() {
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
     }
 }

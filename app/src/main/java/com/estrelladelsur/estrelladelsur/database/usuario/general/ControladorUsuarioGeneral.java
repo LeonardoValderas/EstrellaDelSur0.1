@@ -72,31 +72,7 @@ public class ControladorUsuarioGeneral {
         }
     }
 
-    // ACTUALIZAR USUARIO
-    public boolean actualizarTabla(Tabla tabla)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TABLA", tabla.getTABLA());
-            cv.put("FECHA", tabla.getFECHA());
-
-            long valor = database.update("TABLA", cv, "ID_TABLA=" + tabla.getID_TABLA(), null);
-
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA USUARIO
+     //LISTA USUARIO
     public String selectTabla(String tabla) {
 
         String sql = "SELECT FECHA FROM TABLA WHERE TABLA ='" + tabla + "'";
@@ -126,6 +102,27 @@ public class ControladorUsuarioGeneral {
         cursor = null;
         database = null;
         return fecha;
+    }
+
+    public boolean actualizarTablaXTablaIndiv(String tabla, String fecha)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("FECHA", fecha);
+
+            long valor = database.update("TABLA", cv, "TABLA ='" + tabla + "'", null);
+            cerrarBaseDeDatos();
+            if (valor > 0)
+                return true;
+            else
+                return false;
+
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
     }
 
     public List<Tabla> selectListaTablaGeneral() {
@@ -376,101 +373,6 @@ public class ControladorUsuarioGeneral {
         return res;
     }
 
-    // INSERTAR USUARIO
-    public boolean insertUsuario(Usuario usuario)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_USUARIO", usuario.getID_USUARIO());
-            cv.put("USUARIO", usuario.getUSUARIO());
-            cv.put("PASSWORD", usuario.getPASSWORD());
-
-            long valor = database.insert("USUARIO_USUARIO", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //LISTA USUARIO
-    public ArrayList<Usuario> selectListaUsuario() {
-
-        String sql = "SELECT * FROM USUARIO_USUARIO ORDER BY ID_USUARIO DESC";
-        ArrayList<Usuario> arrayUsuario = new ArrayList<>();
-        String user = null, pass = null;
-        int id;
-        boolean liga;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Usuario usuario = null;
-
-                        id = cursor.getInt(cursor.getColumnIndex("ID_USUARIO"));
-                        user = cursor.getString(cursor
-                                .getColumnIndex("USUARIO"));
-                        pass = cursor.getString(cursor
-                                .getColumnIndex("PASSWORD"));
-
-                        //CLASE AUX
-                        usuario = new Usuario(id, user, pass);
-                        //ARRAY USUARIO
-                        arrayUsuario.add(usuario);
-                    }
-                }
-            } catch (Exception e) {
-                arrayUsuario = null;
-            }
-        } else {
-            arrayUsuario = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        user = null;
-        pass = null;
-        return arrayUsuario;
-    }
-
-    //ELIMINAR USUARIO
-    public boolean eliminarUsuario() {
-
-        boolean res = false;
-        String sql = "DELETE FROM USUARIO_USUARIO";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                database.execSQL(sql);
-                res = true;
-
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
     // INSERTAR ARTICULO
     public boolean insertArticuloUsuario(Articulo articulo)
             throws SQLiteException {
@@ -647,7 +549,6 @@ public class ControladorUsuarioGeneral {
         return arrayComisionAdeful;
     }
 
-    //
 //    //ELIMINAR COMISION
     public boolean eliminarComisionUsuario() {
 
@@ -673,7 +574,6 @@ public class ControladorUsuarioGeneral {
         sql = null;
         return res;
     }
-
 
     //    ////////DIRECCION/////////
 //    //INSERTAR
@@ -758,7 +658,6 @@ public class ControladorUsuarioGeneral {
     }
 
     //    //ELIMINAR DIRECCIOIN
-//
     public boolean eliminarDireccionUsuario() {
         boolean res = false;
         String sql = "DELETE FROM DIRECCION_USUARIO";
@@ -1219,30 +1118,6 @@ public class ControladorUsuarioGeneral {
         return arrayFecha;
     }
 
-    // INSERTA ANIO
-    public boolean insertAnio(Anio anio) {
-        boolean ban = false;
-
-        String sql = "INSERT INTO ANIO ( ANIO) VALUES ('" + anio.getANIO()
-                + "')";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-
-            } catch (Exception e) {
-                ban = false;
-            }
-        } else {
-            ban = false;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        database = null;
-        return ban;
-    }
-
     //LISTA ANIO
     public ArrayList<Anio> selectListaAnio() {
 
@@ -1280,67 +1155,5 @@ public class ControladorUsuarioGeneral {
         database = null;
         anioo = null;
         return arrayAnio;
-    }
-
-    //INSERTAR MES
-    public boolean insertMes(Mes mes) {
-        boolean ban = false;
-
-        String sql = "INSERT INTO MES ( MES) VALUES ('" + mes.getMES()
-                + "')";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-            } catch (Exception e) {
-                ban = false;
-            }
-        } else {
-            ban = false;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        database = null;
-        return ban;
-    }
-
-    //LISTA MES
-    public ArrayList<Mes> selectListaMes() {
-
-        String sql = "SELECT * FROM MES";
-        ArrayList<Mes> arrayMes = new ArrayList<Mes>();
-        String mess = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Mes mes = null;
-                        id = cursor.getInt(cursor.getColumnIndex("ID_MES"));
-                        mess = cursor.getString(cursor.getColumnIndex("MES"));
-                        mes = new Mes(id, mess);
-
-                        arrayMes.add(mes);
-                    }
-                }
-            } catch (Exception e) {
-                arrayMes = null;
-            }
-        } else {
-            arrayMes = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        mess = null;
-        return arrayMes;
     }
 }

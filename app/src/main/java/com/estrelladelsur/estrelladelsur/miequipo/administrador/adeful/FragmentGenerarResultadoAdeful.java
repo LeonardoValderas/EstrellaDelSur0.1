@@ -305,46 +305,46 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
                                                         }
                                     );
                         } else {
-                           auxiliarGeneral.errorDataBase(getActivity());
+                            auxiliarGeneral.errorDataBase(getActivity());
                         }
                     }
 
-                        @Override
-                        public void onLongClick (View view,final int position){
+                    @Override
+                    public void onLongClick(View view, final int position) {
 
-                            dialogoAlerta = new DialogoAlerta(getActivity(),
-                                    "ALERTA", "Desea resetear el resultado?", null,
-                                    null);
-                            dialogoAlerta.btnAceptar.setText("Aceptar");
-                            dialogoAlerta.btnCancelar.setText("Cancelar");
+                        dialogoAlerta = new DialogoAlerta(getActivity(),
+                                "ALERTA", "Desea resetear el resultado?", null,
+                                null);
+                        dialogoAlerta.btnAceptar.setText("Aceptar");
+                        dialogoAlerta.btnCancelar.setText("Cancelar");
 
-                            dialogoAlerta.btnAceptar
-                                    .setOnClickListener(new View.OnClickListener() {
+                        dialogoAlerta.btnAceptar
+                                .setOnClickListener(new View.OnClickListener() {
 
-                                        @Override
-                                        public void onClick(View v) {
-                                            isReset = true;
-                                            cargarEntidad(arrayResultado
-                                                            .get(posicionRecycler)
-                                                            .getID_FIXTURE(), "-",
-                                                    "-");
-                                        }
-                                    });
+                                    @Override
+                                    public void onClick(View v) {
+                                        isReset = true;
+                                        cargarEntidad(arrayResultado
+                                                        .get(posicionRecycler)
+                                                        .getID_FIXTURE(), "-",
+                                                "-");
+                                    }
+                                });
 
-                            dialogoAlerta.btnCancelar
-                                    .setOnClickListener(new View.OnClickListener() {
+                        dialogoAlerta.btnCancelar
+                                .setOnClickListener(new View.OnClickListener() {
 
-                                        @Override
-                                        public void onClick(View v) {
-                                            dialogoAlerta.alertDialog.dismiss();
-                                        }
-                                    });
-                        }
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialogoAlerta.alertDialog.dismiss();
+                                    }
+                                });
                     }
+                }
 
-));
+        ));
 
- }
+    }
 
 
     private int getPositionYearSpinner(List<Anio> anios) {
@@ -410,7 +410,10 @@ public class FragmentGenerarResultadoAdeful extends Fragment implements MyAsyncT
         request.setParametrosDatos("fecha_actualizacion", resultado.getFECHA_ACTUALIZACION());
         URL = URL + auxiliarGeneral.getUpdatePHP("Resultado");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Resultado", resultado, false, "o");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Resultado", resultado, false, "o");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     @Override

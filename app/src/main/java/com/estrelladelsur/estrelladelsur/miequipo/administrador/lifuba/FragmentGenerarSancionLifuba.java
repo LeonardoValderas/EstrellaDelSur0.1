@@ -65,6 +65,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
     private Request request;
     private String URL = null, usuario = null;
     private LinearLayout linearTorneo;
+    private int id_jugador;
 
     public static FragmentGenerarSancionLifuba newInstance() {
         FragmentGenerarSancionLifuba fragment = new FragmentGenerarSancionLifuba();
@@ -137,7 +138,8 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
         super.onResume();
         controladorLifuba = new ControladorLifuba(getActivity());
         controladorAdeful = new ControladorAdeful(getActivity());
-        init();
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        //divisionArray = controladorAdeful.selectListaDivisionAdeful();
     }
 
     private void init() {
@@ -152,7 +154,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
                 sancionDivisionSpinner.setAdapter(adapterFixtureDivision);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
                 sancionDivisionSpinner.setAdapter(adaptadorInicial);
             }
@@ -160,14 +162,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
             auxiliarGeneral.errorDataBase(getActivity());
         }
 
-        adaptadorTarjeta = new ArrayAdapter<>(getActivity(),
-                R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.tarjetaArray));
-        //AMARILLA
-        sancionAmarillaSpinner.setAdapter(adaptadorTarjeta);
-        //ROJA
-        sancionRojaSpinner.setAdapter(adaptadorTarjeta);
-        //FECHA
-        cantidadFechasSpinner.setAdapter(adaptadorTarjeta);
+        populateSpinners();
 
         //POPULATION SPINNER JUGADOR X ID DIVISION
         sancionDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -178,6 +173,9 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
                 if (!divisionArray.isEmpty()) {
                     id_division = divisionArray.get(position).getID_DIVISION();
                     populationSpinnerJugador(id_division);
+                    if (actualizar) {
+                        sancionJugadorSpinner.setSelection(getPositionSpinner(id_jugador, 1));
+                    }
                 }
             }
 
@@ -201,8 +199,8 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
                     .getIntExtra("divisionSpinner", 0);
             populationSpinnerJugador(id_division);
             // JUGADOR 1
-            sancionJugadorSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("jugadorSpinner", 0), 1));
+            id_jugador = getActivity().getIntent()
+                    .getIntExtra("jugadorSpinner", 0);
             // AMARILLA 2
             sancionAmarillaSpinner.setSelection(getActivity().getIntent().getIntExtra("amarillaSpinner", 0));
             // ROJA 3
@@ -215,6 +213,17 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
 
             insertar = false;
         }
+    }
+
+    public void populateSpinners() {
+        adaptadorTarjeta = new ArrayAdapter<>(getActivity(),
+                R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.tarjetaArray));
+        //AMARILLA
+        sancionAmarillaSpinner.setAdapter(adaptadorTarjeta);
+        //ROJA
+        sancionRojaSpinner.setAdapter(adaptadorTarjeta);
+        //FECHA
+        cantidadFechasSpinner.setAdapter(adaptadorTarjeta);
     }
 
     public void populationSpinnerJugador(int id_division) {
@@ -236,7 +245,6 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
         }
     }
 
-
     private int getPositionSpinner(int idSpinner, int spinner) {
 
         int index = 0;
@@ -246,6 +254,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
                 for (int i = 0; i < divisionArray.size(); i++) {
                     if (divisionArray.get(i).getID_DIVISION() == (idSpinner)) {
                         index = i;
+                        break;
                     }
                 }
                 break;
@@ -254,6 +263,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
                 for (int i = 0; i < jugadorArray.size(); i++) {
                     if (jugadorArray.get(i).getID_JUGADOR() == (idSpinner)) {
                         index = i;
+                        break;
                     }
                 }
                 break;
@@ -296,7 +306,10 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
 
             URL = URL + auxiliarGeneral.getUpdatePHP("Sancion");
         }
-        new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Sancion", sancion, insertar, "a");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Sancion", sancion, insertar, "a");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {

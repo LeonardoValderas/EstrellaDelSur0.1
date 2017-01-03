@@ -24,7 +24,12 @@ import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.dialogo.usuario.DialogoArticulo;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
@@ -39,6 +44,10 @@ public class NotificacionUsuario extends AppCompatActivity {
     private DialogoArticulo dialogoArticulo;
     private TextView txtToolBarTitulo;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private MyAsyncTaskListener listener;
+    private Request request;
+    private AdRequest adRequest;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +69,7 @@ public class NotificacionUsuario extends AppCompatActivity {
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("NOTIFICACION");
+        mAdView = (AdView) findViewById(R.id.adView);
 
         init();
     }
@@ -67,6 +77,9 @@ public class NotificacionUsuario extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
         auxiliarGeneral = new AuxiliarGeneral(NotificacionUsuario.this);
         controladorUsuario = new ControladorUsuarioGeneral(NotificacionUsuario.this);
         initRecycler();
@@ -74,7 +87,21 @@ public class NotificacionUsuario extends AppCompatActivity {
     }
 
     public void init() {
+        BannerAd();
         initRecycler();
+        listener = new MyAsyncTaskListener() {
+            @Override
+            public void onPostExecuteConcluded(boolean result, String mensaje) {
+                if (result) {
+                    recyclerViewLoadNotificacion();
+                } else {
+                    auxiliarGeneral.errorWebService(NotificacionUsuario.this, mensaje);
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        };
         recyclerViewLoadNotificacion();
 
         recycleViewUsuarioGeneral.addOnItemTouchListener(new
@@ -101,7 +128,16 @@ public class NotificacionUsuario extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                recyclerViewLoadNotificacion();
+                String fecha = controladorUsuario.selectTabla(AsyncTaskGenericIndividual.TABLA_NOTIFICACION);
+                if (fecha != null) {
+                    request = new Request();
+                    request.setMethod("POST");
+                    request.setParametrosDatos("fecha_tabla", fecha);
+                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_NOTIFICACION);
+                    request.setParametrosDatos("liga", "GENERAL");
+
+                    new AsyncTaskGenericIndividual(NotificacionUsuario.this, listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.NOTIFICACION);
+                }
             }
         });
     }
@@ -206,5 +242,21 @@ public class NotificacionUsuario extends AppCompatActivity {
     public void volver() {
         Intent i = new Intent(NotificacionUsuario.this, NavigationUsuario.class);
        startActivity(i);
+    }
+
+    public void BannerAd() {
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
     }
 }

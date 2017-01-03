@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerNotificacion;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
@@ -139,7 +140,7 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
 
                             @Override
                             public void onClick(View v) {
-                                 dialogoAlerta.alertDialog.dismiss();
+                                dialogoAlerta.alertDialog.dismiss();
                             }
                         });
             }
@@ -155,7 +156,10 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
         URL = auxiliarGeneral.getURLNOTIFICACIONALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Notificacion");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Notificacion", true, posicion, "a", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Notificacion", true, posicion, "a", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -163,7 +167,7 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
         setHasOptionsMenu(true);
     }
 
-    public void inicializarControles(String msg){
+    public void inicializarControles(String msg) {
         recyclerViewLoadNotificacion();
         Toast.makeText(
                 getActivity(),
@@ -174,10 +178,10 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
 
     public void recyclerViewLoadNotificacion() {
         notificacionArray = controladorGeneral.selectListaNotificacion();
-        if(notificacionArray != null) {
+        if (notificacionArray != null) {
             adaptadorRecyclerNotificacion = new AdaptadorRecyclerNotificacion(notificacionArray, getActivity());
             recyclerArticulo.setAdapter(adaptadorRecyclerNotificacion);
-        }else{
+        } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
     }
@@ -193,6 +197,7 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -200,6 +205,7 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
             RecyclerView.OnItemTouchListener {
         private GestureDetector detector;
         private ClickListener clickListener;
+
         public RecyclerTouchListener(Context context,
                                      final RecyclerView recyclerView,
                                      final ClickListener clickListener) {
@@ -211,6 +217,7 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
                         public boolean onSingleTapUp(MotionEvent e) {
                             return true;
                         }
+
                         @Override
                         public void onLongPress(MotionEvent e) {
                             View child = recyclerView.findChildViewUnder(
@@ -222,6 +229,7 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
                         }
                     });
         }
+
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
             // TODO Auto-generated method stub
@@ -232,9 +240,11 @@ public class FragmentEditarNotificacion extends Fragment implements MyAsyncTaskL
             }
             return false;
         }
+
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }

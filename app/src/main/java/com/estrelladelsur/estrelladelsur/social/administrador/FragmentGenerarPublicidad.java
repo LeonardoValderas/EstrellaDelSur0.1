@@ -2,9 +2,12 @@ package com.estrelladelsur.estrelladelsur.social.administrador;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
@@ -28,6 +31,8 @@ import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +50,7 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
     private boolean actualizar = false;
     private int idPublicidadExtra;
     private AuxiliarGeneral auxiliarGeneral;
+    private ControladorGeneral controladorGeneral;
     private Communicator communicator;
     private Typeface editTextFont;
     private String URL = null, usuario = null, encodedImage = null, nombre_foto_anterior = null;
@@ -52,6 +58,8 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
     private ImageButton rotateButton;
     int width = 300;
     int height = 300;
+    private static final int PERMISSION_REQUEST_CODE = 1;
+
     public static FragmentGenerarPublicidad newInstance() {
         FragmentGenerarPublicidad fragment = new FragmentGenerarPublicidad();
         return fragment;
@@ -105,12 +113,13 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
         super.onResume();
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
         communicator = (Communicator) getActivity();
+        controladorGeneral = new ControladorGeneral(getActivity());
     }
 
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
         communicator = (Communicator) getActivity();
-
+        controladorGeneral = new ControladorGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
@@ -120,12 +129,14 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
             tituloPublicidadEdit.setText(getActivity().getIntent()
                     .getStringExtra("titulo"));
             //LOGO
-            imagePublicidadByte = getActivity().getIntent()
-                    .getByteArrayExtra("logo");
+//            imagePublicidadByte = getActivity().getIntent()
+//                    .getByteArrayExtra("logo");
+            //LOGO
+            imagePublicidadByte = controladorGeneral.selectPublicidadForId(idPublicidadExtra);
             nombre_foto_anterior = getActivity().getIntent()
                     .getStringExtra("nombre_foto");
             if (imagePublicidadByte != null) {
-                Bitmap  theImage = auxiliarGeneral.setByteToBitmap(imagePublicidadByte, width, height);
+                Bitmap theImage = auxiliarGeneral.setByteToBitmap(imagePublicidadByte, width, height);
                 imagePublicidad.setImageBitmap(theImage);
             } else {
                 imagePublicidad.setImageResource(R.mipmap.ic_foto);
@@ -139,7 +150,9 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
+                if (!auxiliarGeneral.checkPermission(getActivity()))
+                    auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
+                else
                 ImageDialogPublicidad();
             }
         });
@@ -147,7 +160,7 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
         rotateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imagePublicidadByte != null){
+                if (imagePublicidadByte != null) {
                     Bitmap theImage = auxiliarGeneral.setByteToBitmap(imagePublicidadByte, width, height);
                     theImage = auxiliarGeneral.RotateBitmap(theImage);
                     imagePublicidad.setImageBitmap(theImage);
@@ -183,25 +196,53 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
-            String path = auxiliarGeneral.selectImageForData(data, getActivity());
-            File file = new File(path);
-            try {
-                imagePublicidadByte = auxiliarGeneral.fileToBytes(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Bitmap b = setResizaInage(path, width, height);
-            if (b != null) {
-               // imagePublicidadByte = auxiliarGeneral.pasarBitmapByte(b);
-                b = auxiliarGeneral.setByteToBitmap(imagePublicidadByte, width, height);
-                imagePublicidad.setImageBitmap(b);
+            //  if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+            Uri imageUri = CropImage.getPickImageResultUri(getActivity(), data);
+            startCropImageActivity(imageUri);
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == getActivity().RESULT_OK) {
+                String p =  auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
+                Bitmap bitmap =  auxiliarGeneral.asignateImage(p);
+                asignateBitmap(bitmap);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                if(!result.getError().toString().contains("ENOENT"))
+                Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
             }
         }
     }
-    public Bitmap setResizaInage(String photoPath, int w, int h) {
-        return auxiliarGeneral.getResizedBitmap(photoPath, w, h);
+
+    public void asignateBitmap(Bitmap photoBitmap) {
+        if (photoBitmap != null) {
+            imagePublicidad.setImageBitmap(photoBitmap);
+            imagePublicidadByte = auxiliarGeneral.pasarBitmapByte(photoBitmap);
+        }
     }
+
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(getContext(), FragmentGenerarPublicidad.this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != PERMISSION_REQUEST_CODE) {
+            return;
+        }
+        boolean isGranted = true;
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                isGranted = false;
+                break;
+            }
+        }
+        if (!isGranted)
+            auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
+    }
+
     public void cargarEntidad(int id) {
         URL = null;
         URL = auxiliarGeneral.getURLPUBLICIDADALL();
@@ -229,8 +270,8 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
         request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("titulo", publicidad.getTITULO());
-        if(publicidad.getOTROS() != null)
-        request.setParametrosDatos("otros", publicidad.getOTROS());
+        if (publicidad.getOTROS() != null)
+            request.setParametrosDatos("otros", publicidad.getOTROS());
 
         if (imagePublicidadByte != null) {
             encodedImage = Base64.encodeToString(imagePublicidadByte,
@@ -255,7 +296,10 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
             URL = URL + auxiliarGeneral.getUpdatePHP("Publicidad");
         }
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Publicidad", publicidad, insertar, "a");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Publicidad", publicidad, insertar, "a");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {
@@ -316,7 +360,7 @@ public class FragmentGenerarPublicidad extends Fragment implements MyAsyncTaskLi
             }
             return true;
         }
-         if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
 
             NavUtils.navigateUpFromSameTask(getActivity());
 

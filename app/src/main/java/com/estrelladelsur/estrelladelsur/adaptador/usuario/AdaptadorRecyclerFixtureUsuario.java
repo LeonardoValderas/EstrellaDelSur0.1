@@ -106,9 +106,9 @@ public class AdaptadorRecyclerFixtureUsuario extends
 			}
 
 			textRecyclerViewEquipoL.setText(fixtureRecycler.getEQUIPO_LOCAL());
-			textRecyclerViewEquipoL.setTypeface(equipo, Typeface.BOLD);
+			//textRecyclerViewEquipoL.setTypeface(equipo, Typeface.BOLD);
 			textRecyclerViewEquipoV.setText(fixtureRecycler.getEQUIPO_VISITA());
-			textRecyclerViewEquipoV.setTypeface(equipo, Typeface.BOLD);
+			//textRecyclerViewEquipoV.setTypeface(equipo, Typeface.BOLD);
 			textRecyclerViewDia.setText(fixtureRecycler.getDIA());
 			textRecyclerViewDia.setTypeface(texto);
 			textRecyclerViewHora.setText(fixtureRecycler.getHORA());

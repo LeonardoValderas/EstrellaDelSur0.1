@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
@@ -43,12 +44,7 @@ public class GCMIntentService extends IntentService {
         String messageType = gcm.getMessageType(intent);
 
         if (!extras.isEmpty()) { // has effect of unparcelling Bundle
-			/*
-			 * Filter messages based on message type. Since it is likely that
-			 * GCM will be extended in the future with new message types, just
-			 * ignore any message types you're not interested in, or that you
-			 * don't recognize.
-			 */
+
             if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
                     .equals(messageType)) {
                 sendNotification("Send error: " + extras.toString(),"");
@@ -80,21 +76,6 @@ public class GCMIntentService extends IntentService {
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-//        String messageType = gcm.getMessageType(intent);
-//        Bundle extras = intent.getExtras();
-//
-//        if (!extras.isEmpty())
-//        {
-//            if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType))
-//            {
-//                mostrarNotification(extras.getString("msg"));
-//            }
-//        }
-//
-//        GCMBroadcastReceiver.completeWakefulIntent(intent);
-//    }
-
-
     private void sendNotification(String msg, String txt) {
 
         boolean isNotificacion = true;
@@ -116,10 +97,11 @@ public class GCMIntentService extends IntentService {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 this)
-                .setContentTitle(msg)
+
+        .setContentTitle(msg)
                 .setContentText(txt)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(R.drawable.ic_icon_notif).setTicker(getApplicationContext().getResources().getString(R.string.app_name))
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_icon_notification))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(txt))
                 .setAutoCancel(true).setSound(soundUri).setContentText(txt);
 

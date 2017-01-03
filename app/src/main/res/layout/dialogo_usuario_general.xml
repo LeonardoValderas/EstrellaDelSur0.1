@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="30dp"
         android:background="@color/color_primary"
         android:gravity="center">
 
@@ -19,7 +19,7 @@
             android:padding="5dp"
             android:text="Titulo"
             android:textColor="#FFFFFF"
-            android:textSize="25dp" />
+            android:textSize="15dp" />
     </RelativeLayout>
 
     <LinearLayout
@@ -52,7 +52,7 @@
                     android:scrollbars="vertical"
                     android:text="texto detalleaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                     android:textColor="#000000"
-                    android:textSize="20dp" />
+                    android:textSize="12dp" />
 
             </LinearLayout>
         </ScrollView>

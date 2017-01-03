@@ -248,7 +248,10 @@ public class MapaCanchaLifuba extends AppCompatActivity implements OnMapReadyCal
             request.setParametrosDatos("fecha_actualizacion", cancha.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Cancha");
         }
-        new AsyncTaskGenericLifuba(MapaCanchaLifuba.this, this, URL, request, "Cancha", cancha, insertar, "a");
+        if (auxiliarGeneral.isNetworkAvailable(MapaCanchaLifuba.this))
+            new AsyncTaskGenericLifuba(MapaCanchaLifuba.this, this, URL, request, "Cancha", cancha, insertar, "a");
+        else
+            auxiliarGeneral.errorWebService(MapaCanchaLifuba.this, MapaCanchaLifuba.this.getResources().getString(R.string.error_without_internet));
     }
 
     @Override

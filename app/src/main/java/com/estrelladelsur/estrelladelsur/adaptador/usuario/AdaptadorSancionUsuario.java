@@ -68,11 +68,11 @@ public class AdaptadorSancionUsuario extends
 				imageViewFotoJugador.setImageBitmap(escudoLocalBitmap);
 			}
 			textRecyclerViewNombre.setText(sancion.getNOMBRE_JUGADOR());
-			textRecyclerViewNombre.setTypeface(texto, Typeface.BOLD);
+		//	textRecyclerViewNombre.setTypeface(texto, Typeface.BOLD);
 			String tarjetas = "Amarrilas: "+sancion.getAMARILLA()+" Rojas: "+sancion.getROJA();
 			textRecyclerViewTarjetas.setText(tarjetas);
 			textRecyclerViewTarjetas.setTypeface(equipo);
-			textRecyclerViewFecha.setText("Fechas de Sanción: " + sancion.getFECHA_SUSPENSION());
+			textRecyclerViewFecha.setText("Fecha Sanción: " + sancion.getFECHA_SUSPENSION());
 			textRecyclerViewFecha.setTypeface(texto, Typeface.BOLD);
 			textRecyclerViewObs.setText(sancion.getOBSERVACIONES());
 			//textRecyclerViewObs.setTypeface(texto);

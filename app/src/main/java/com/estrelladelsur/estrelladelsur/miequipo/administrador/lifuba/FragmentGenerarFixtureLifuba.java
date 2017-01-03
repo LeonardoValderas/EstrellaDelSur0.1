@@ -430,6 +430,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
         }
         return index;
     }
+
     private int getPositionYearSpinner(List<Anio> anios) {
         String anio = auxiliarGeneral.getYearSpinner();
         int index = 0;
@@ -491,7 +492,10 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
             URL = URL + auxiliarGeneral.getUpdatePHP("Fixture");
         }
 
-        new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Fixture", fixture, insertar, "o");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Fixture", fixture, insertar, "o");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     @Override

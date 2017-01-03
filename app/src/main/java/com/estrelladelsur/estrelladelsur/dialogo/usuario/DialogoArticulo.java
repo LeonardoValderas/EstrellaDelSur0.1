@@ -41,7 +41,7 @@ public class DialogoArticulo {
         // TITULO
         titulo = (TextView) layout.findViewById(R.id.alertGenericoTitulo);
         titulo.setText(tituloS);
-        titulo.setTypeface(tituloFont, Typeface.BOLD);
+      //  titulo.setTypeface(tituloFont, Typeface.BOLD);
 
         detalle = (TextView) layout
                 .findViewById(R.id.alertGenericoDetalle);

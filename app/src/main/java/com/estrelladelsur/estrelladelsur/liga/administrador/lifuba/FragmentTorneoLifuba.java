@@ -420,10 +420,14 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
             request.setParametrosDatos("fecha_actualizacion", fecha);
             URL = URL + auxiliarGeneral.getDeletePHP("Torneo");
         }
-        if (isDelete)
-            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false, fecha);
-        else
-            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity())) {
+            if (isDelete)
+                new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false, fecha);
+            else
+                new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Torneo", torneo, isInsert, isDelete, torneo.getID_TORNEO(), "o", false);
+        } else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
+
     }
 
     public void onCreate(Bundle savedInstanceState) {

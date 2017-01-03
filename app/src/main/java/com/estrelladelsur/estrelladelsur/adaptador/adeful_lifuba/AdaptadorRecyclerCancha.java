@@ -48,7 +48,7 @@ public class AdaptadorRecyclerCancha extends
 
 		public void bindTitular(Cancha cancha, Typeface nombre, Typeface dire) {
 			textRecyclerView.setText(cancha.getNOMBRE());
-			textRecyclerView.setTypeface(nombre, Typeface.BOLD);
+			//textRecyclerView.setTypeface(nombre, Typeface.BOLD);
 			textRecyclerView2.setText(cancha.getDIRECCION());
 			textRecyclerView2.setTextSize(15);
 			textRecyclerView2.setTypeface(dire);

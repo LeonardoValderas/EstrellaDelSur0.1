@@ -30,7 +30,7 @@ public class AdaptadorRecyclerNotificacion extends
 
             textRecyclerViewTitulo = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewTitulo);
-            textRecyclerViewTitulo.setTypeface(type,Typeface.BOLD);
+         //   textRecyclerViewTitulo.setTypeface(type,Typeface.BOLD);
             textRecyclerViewFecha = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewFecha);
             textRecyclerViewFecha.setTypeface(type);

@@ -140,6 +140,7 @@ public class AsyncTaskGenericLifuba {
         protected void onPreExecute() {
             dialog = new ProgressDialog(context);
             dialog.setMessage("Procesando...");
+            dialog.setCanceledOnTouchOutside(false);
             dialog.show();
             jsonParsing = new JsonParsing();
         }
@@ -315,7 +316,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.actualizarSancionLifuba((Sancion) object))
                     updateOk = false;
                 if (updateOk)
-                    if (!updateTableXTable(TABLA_SANCION_LIFUBA, ((Equipo) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(TABLA_SANCION_LIFUBA, ((Sancion) object).getFECHA_CREACION(), context))
                         updateOk = false;
                 break;
             }

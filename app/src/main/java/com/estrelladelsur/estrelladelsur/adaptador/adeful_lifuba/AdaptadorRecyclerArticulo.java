@@ -1,9 +1,11 @@
 package com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba;
 
 import java.util.ArrayList;
+
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Articulo;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
@@ -32,22 +34,27 @@ public class AdaptadorRecyclerArticulo extends
 
             textRecyclerViewTitulo = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewTitulo);
-            textRecyclerViewTitulo.setTypeface(type,Typeface.BOLD);
+            textRecyclerViewTitulo.setTypeface(type, Typeface.BOLD);
             textRecyclerViewFecha = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewFecha);
             textRecyclerViewFecha.setTypeface(type);
         }
+
         public void bindTitular(Articulo articulo, AuxiliarGeneral auxiliarGeneral) {
             textRecyclerViewTitulo.setText(articulo.getTITULO());
-            if(articulo.getFECHA_ACTUALIZACION() != null && !articulo.getFECHA_ACTUALIZACION().isEmpty()) {
-                String fecha = articulo.getFECHA_ACTUALIZACION().substring(0, 8);
-                fecha = auxiliarGeneral.dateFormate(fecha);
-                textRecyclerViewFecha.setText("ult.act: " + fecha);
-            } else if(articulo.getFECHA_CREACION() != null && !articulo.getFECHA_CREACION().isEmpty()){
-                String fecha = articulo.getFECHA_CREACION().substring(0, 8);
-                fecha = auxiliarGeneral.dateFormate(fecha);
-                textRecyclerViewFecha.setText("ult.act: " + fecha);
-           }
+            if (articulo.getFECHA_ACTUALIZACION() != null && !articulo.getFECHA_ACTUALIZACION().isEmpty()) {
+                if (articulo.getFECHA_ACTUALIZACION().length() >= 8) {
+                    String fecha = articulo.getFECHA_ACTUALIZACION().substring(0, 8);
+                    fecha = auxiliarGeneral.dateFormate(fecha);
+                    textRecyclerViewFecha.setText("ult.act: " + fecha);
+                }
+            } else if (articulo.getFECHA_CREACION() != null && !articulo.getFECHA_CREACION().isEmpty()) {
+                if (articulo.getFECHA_CREACION().length() >= 8) {
+                    String fecha = articulo.getFECHA_CREACION().substring(0, 8);
+                    fecha = auxiliarGeneral.dateFormate(fecha);
+                    textRecyclerViewFecha.setText("ult.act: " + fecha);
+                }
+            }
         }
     }
 
@@ -55,7 +62,7 @@ public class AdaptadorRecyclerArticulo extends
         this.articuloArray = articuloArray;
         auxiliarGeneral = new AuxiliarGeneral(context);
         editTextFont = auxiliarGeneral.textFont(context);
-       }
+    }
 
     @Override
     public ArticuloViewHolder onCreateViewHolder(ViewGroup viewGroup,
@@ -64,7 +71,7 @@ public class AdaptadorRecyclerArticulo extends
                 R.layout.recyclerview_item_articulo, viewGroup, false);
 
         itemView.setOnClickListener(this);
-        ArticuloViewHolder tvh = new ArticuloViewHolder(itemView,editTextFont);
+        ArticuloViewHolder tvh = new ArticuloViewHolder(itemView, editTextFont);
 
         return tvh;
     }

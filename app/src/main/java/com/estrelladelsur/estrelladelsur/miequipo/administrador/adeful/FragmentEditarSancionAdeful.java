@@ -122,7 +122,9 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
     public void onResume() {
         super.onResume();
         controladorAdeful = new ControladorAdeful(getActivity());
-        init();
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        torneoActual = controladorAdeful.selectActualTorneoAdeful();
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
     }
 
     private void init() {
@@ -261,8 +263,10 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
         URL = null;
         URL = auxiliarGeneral.getURLSANCIONADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Sancion");
-
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Sancion", true, posicion, "a", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Sancion", true, posicion, "a", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void populationSpinnerJugador(int id_division) {

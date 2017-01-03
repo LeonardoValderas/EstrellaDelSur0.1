@@ -41,7 +41,7 @@ public class AdaptadorRecyclerEquipo extends
 
 		public void bindTitular(Equipo equipoAdeful,Typeface nombre) {
 			textRecyclerView.setText(equipoAdeful.getNOMBRE_EQUIPO());
-			textRecyclerView.setTypeface(nombre);
+		//	textRecyclerView.setTypeface(nombre);
 
 			byte[] image = equipoAdeful.getESCUDO();
 			if (image == null) {

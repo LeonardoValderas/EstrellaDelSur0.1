@@ -295,12 +295,26 @@
     <!--MENSAJE ERROR-->
     <string name="error_data_base">Error en la base de datos interna,
         vuelva a intentar.\nSi el error persiste comuniquese con soporte.</string>
-
+    <!--MENSAJE ERROR INTERNET-->
+    <string name="error_without_internet">Sin conexión a Internet. Vuelva a intentarlo.</string>
 
     <!--USUARIO-->
     <string-array name="vacioSpinnerDivision">
         <item>Sin Datos.</item>
     </string-array>
     <string name="vacioSpinnerDivision">Sin Datos.</string>
+    <!--BANNER-->
+    <string name="banner_articulo">ca-app-pub-5908373302541656/8012476929</string>
+    <string name="banner_comision">ca-app-pub-5908373302541656/8453128926</string>
+    <string name="banner_direccion">ca-app-pub-5908373302541656/2406595329</string>
+    <string name="banner_equipo">ca-app-pub-5908373302541656/5360061726</string>
+
+    <string name="interstitial_usuario">ca-app-pub-5908373302541656/1890061323</string>
+    <string name="interstitial_adm">ca-app-pub-5908373302541656/3366794528</string>
+
+
+
+
+
 
 </resources>

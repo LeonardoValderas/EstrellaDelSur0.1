@@ -59,7 +59,7 @@ public class MapaCanchaUsuario extends AppCompatActivity implements OnMapReadyCa
 
         txtTitulo = (TextView) toolbar.findViewById(R.id.txtToolBarTitulo);
         txtTitulo.setText("MAPA");
-        txtTitulo.setTypeface(titulos);
+        txtTitulo.setTypeface(titulos, Typeface.BOLD);
 
         init();
     }

@@ -231,8 +231,10 @@ public class FragmentEditarPermiso extends Fragment implements MyAsyncTaskListen
         request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = URL + auxiliarGeneral.getDeletePHP("Permiso");
 
-
-        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Permiso", permiso, true, "o", true);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Permiso", permiso, true, "o", true);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {
@@ -264,6 +266,7 @@ public class FragmentEditarPermiso extends Fragment implements MyAsyncTaskListen
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 

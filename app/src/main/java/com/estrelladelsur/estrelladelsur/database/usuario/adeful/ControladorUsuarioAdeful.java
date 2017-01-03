@@ -74,30 +74,6 @@ public class ControladorUsuarioAdeful {
         }
     }
 
-    // ACTUALIZAR USUARIO
-    public boolean actualizarTabla(Tabla tabla)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("TABLA", tabla.getTABLA());
-            cv.put("FECHA", tabla.getFECHA());
-
-            long valor = database.update("TABLA", cv, "ID_TABLA=" + tabla.getID_TABLA(), null);
-
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
     //LISTA USUARIO
     public String selectTabla(String tabla) {
 
@@ -195,6 +171,27 @@ public class ControladorUsuarioAdeful {
         database = null;
         sql = null;
         return res;
+    }
+
+    public boolean actualizarTablaXTablaIndiv(String tabla, String fecha)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        abrirBaseDeDatos();
+        try {
+            cv.put("FECHA", fecha);
+
+            long valor = database.update("TABLA", cv, "TABLA ='" + tabla + "'", null);
+            cerrarBaseDeDatos();
+            if (valor > 0)
+                return true;
+            else
+                return false;
+
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return false;
+        }
     }
 
 
@@ -341,7 +338,6 @@ public class ControladorUsuarioAdeful {
         database = null;
         return descripcion;
     }
-
 
     //ELIMINAR TORNEO
     public boolean eliminarTorneoUsuarioAdeful() {
@@ -524,7 +520,6 @@ public class ControladorUsuarioAdeful {
         return arrayCancha;
     }
 
-
     // ELIMINAR CANCHA
     public boolean eliminarCanchaUsuarioAdeful() {
 
@@ -547,32 +542,7 @@ public class ControladorUsuarioAdeful {
         return res;
     }
 
-
-    ///////MI EQUIPO////////
-  // FECHA INSERTAR
-    public boolean insertFecha(Fecha fecha) {
-        boolean ban = false;
-
-        String sql = "INSERT INTO FECHA ( FECHA) VALUES ('" + fecha.getFECHA()
-                + "')";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-                cerrarBaseDeDatos();
-            } catch (Exception e) {
-                ban = false;
-            }
-        } else {
-            ban = false;
-        }
-        sql = null;
-        database = null;
-        return ban;
-    }
-
-    // LISTA FECHA
+   // LISTA FECHA
     public ArrayList<Fecha> selectListaFecha() {
 
         String sql = "SELECT * FROM FECHA";
@@ -607,30 +577,6 @@ public class ControladorUsuarioAdeful {
         database = null;
         fechaa = null;
         return arrayFecha;
-    }
-
-    // INSERTA ANIO
-    public boolean insertAnio(Anio anio) {
-        boolean ban = false;
-
-        String sql = "INSERT INTO ANIO ( ANIO) VALUES ('" + anio.getANIO()
-                + "')";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-
-            } catch (Exception e) {
-                ban = false;
-            }
-        } else {
-            ban = false;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        database = null;
-        return ban;
     }
 
     //LISTA ANIO
@@ -672,69 +618,7 @@ public class ControladorUsuarioAdeful {
         return arrayAnio;
     }
 
-    //INSERTAR MES
-    public boolean insertMes(Mes mes) {
-        boolean ban = false;
-
-        String sql = "INSERT INTO MES ( MES) VALUES ('" + mes.getMES()
-                + "')";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-            } catch (Exception e) {
-                ban = false;
-            }
-        } else {
-            ban = false;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        database = null;
-        return ban;
-    }
-
-    //LISTA MES
-    public ArrayList<Mes> selectListaMes() {
-
-        String sql = "SELECT * FROM MES";
-        ArrayList<Mes> arrayMes = new ArrayList<>();
-        String mess = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Mes mes = null;
-                        id = cursor.getInt(cursor.getColumnIndex("ID_MES"));
-                        mess = cursor.getString(cursor.getColumnIndex("MES"));
-                        mes = new Mes(id, mess);
-
-                        arrayMes.add(mes);
-                    }
-                }
-            } catch (Exception e) {
-                arrayMes = null;
-            }
-        } else {
-            arrayMes = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        mess = null;
-        return arrayMes;
-    }
-
-//    // INSERTAR FIXTURE
+    // INSERTAR FIXTURE
     public boolean insertFixtureUsuarioAdeful(Fixture fixture) throws SQLiteException {
 
         ContentValues cv = new ContentValues();
@@ -867,7 +751,6 @@ public class ControladorUsuarioAdeful {
 
         return arrayFixture;
     }
-
 
 //    // ///////////////////////////////////JUGADORES////////////////////////////////////////////
 //    // INSERTAR JUGADOR
@@ -1182,50 +1065,7 @@ public class ControladorUsuarioAdeful {
         return arrayDivision;
     }
 
-    //lISTA ENTRENAMIENTO division
-    public ArrayList<Entrenamiento> selectListaDivisionEntrenamientoAdeful() {
-
-        String sql = "SELECT * FROM DIVISION_ADEFUL";
-        ArrayList<Entrenamiento> arrayDivision = new ArrayList<>();
-        int id, id_division;
-        String descripcion = null;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Entrenamiento entrenamiento_division = null;
-                        id = 0;
-                        id_division = cursor.getInt(cursor
-                                .getColumnIndex("ID_DIVISION"));
-                        descripcion = cursor.getString(cursor
-                                .getColumnIndex("DESCRIPCION"));
-
-                        entrenamiento_division = new Entrenamiento(id,
-                                id, id_division, descripcion, false);
-
-                        arrayDivision.add(entrenamiento_division);
-                    }
-                }
-            } catch (Exception e) {
-                arrayDivision = null;
-            }
-        } else {
-            arrayDivision = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        descripcion = null;
-        return arrayDivision;
-    }
-
-//    //ELIMINAR ENTRENAMIENTO
+    //ELIMINAR ENTRENAMIENTO
     public boolean eliminarEntrenamientoUsuarioAdeful() {
 
         boolean res = false;
@@ -1246,8 +1086,8 @@ public class ControladorUsuarioAdeful {
         sql = null;
         return res;
     }
-//
-//    //ELIMINAR DIVISION_ENTRENAMIENTO
+
+   //ELIMINAR DIVISION_ENTRENAMIENTO
     public boolean eliminarDivisionEntrenamientoUsuarioAdeful() {
 
         boolean res = false;
@@ -1416,7 +1256,6 @@ public class ControladorUsuarioAdeful {
         return res;
     }
 
-
     //LISTA FIXTURE RECYCLER
     public ArrayList<Sancion> selectListaSancionUsuarioAdeful(int division) {
 
@@ -1487,5 +1326,4 @@ public class ControladorUsuarioAdeful {
 
         return arraySancion;
     }
-
 }

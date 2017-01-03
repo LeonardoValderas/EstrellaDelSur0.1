@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clickable="true"
+    tools:context=".navegador.usuario.NavigationUsuario"
+    tools:showIn="@layout/navigation_drawer">
+
+    <!-- Toolbar -->
+    <include android:id="@+id/appbar"
+        layout="@layout/toolbar" />
+
+
+    <!-- Resto de la interfaz de usuario -->
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:background="@drawable/escudo_fragments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

@@ -15,6 +15,12 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
 
 public class FragmentEquipoUsuario extends Fragment {
@@ -26,6 +32,10 @@ public class FragmentEquipoUsuario extends Fragment {
     private AuxiliarGeneral auxiliarGeneral;
     private String usuario = null;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private MyAsyncTaskListener listener;
+    private Request request;
+    private AdRequest adRequest;
+    private AdView mAdView;
 
     public static FragmentEquipoUsuario newInstance() {
         FragmentEquipoUsuario fragment = new FragmentEquipoUsuario();
@@ -55,6 +65,7 @@ public class FragmentEquipoUsuario extends Fragment {
         recycleViewEquipo = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
         mSwipeRefreshLayout = (SwipeRefreshLayout)v.findViewById(R.id.swipeRefreshLayout);
+        mAdView = (AdView) v.findViewById(R.id.adView);
         return v;
     }
 
@@ -67,17 +78,43 @@ public class FragmentEquipoUsuario extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
         controladorUsuario = new ControladorUsuarioAdeful(getActivity());
         init();
     }
 
     private void init() {
+        BannerAd();
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        listener = new MyAsyncTaskListener() {
+            @Override
+            public void onPostExecuteConcluded(boolean result, String mensaje) {
+                if (result) {
+                    recyclerViewLoadEquipo();
+                } else {
+                    auxiliarGeneral.errorWebService(getActivity(), mensaje);
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        };
         recyclerViewLoadEquipo();
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                recyclerViewLoadEquipo();
+                String fecha = controladorUsuario.selectTabla(AsyncTaskGenericIndividual.TABLA_EQUIPO_ADEFUL);
+                if (fecha != null) {
+                    request = new Request();
+                    request.setMethod("POST");
+                    request.setParametrosDatos("fecha_tabla", fecha);
+                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_EQUIPO_ADEFUL);
+                    request.setParametrosDatos("liga", "ADEFUL");
+
+                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.EQUIPO_ADEFUL);
+                }
             }
         });
     }
@@ -100,5 +137,20 @@ public class FragmentEquipoUsuario extends Fragment {
         if (mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
+    }
+    public void BannerAd() {
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
     }
 }

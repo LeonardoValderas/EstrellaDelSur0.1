@@ -33,7 +33,7 @@ public class AdaptadorRecyclerNoticiaUsuario extends
 
             textRecyclerViewTitulo = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewTitulo);
-            textRecyclerViewTitulo.setTypeface(type,Typeface.BOLD);
+         //   textRecyclerViewTitulo.setTypeface(type,Typeface.BOLD);
         }
         public void bindTitular(Noticia noticia) {
             textRecyclerViewTitulo.setText(noticia.getTITULO());

@@ -32,6 +32,7 @@ public class TabsSancion extends AppCompatActivity {
     private static final String TAG = "FragmentPagerAdapter";
     private static final boolean DEBUG = false;
     private TextView txtToolBarTitulo;
+    private int restartLifuba;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class TabsSancion extends AppCompatActivity {
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setupWithViewPager(viewPager);
 
+        restartLifuba = getIntent().getIntExtra("restart", 0);
         init();
     }
 
@@ -83,6 +85,9 @@ public class TabsSancion extends AppCompatActivity {
     }
 
     public void init() {
+        if (restartLifuba == 1) {
+            viewPager.setCurrentItem(2);
+        }
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset,

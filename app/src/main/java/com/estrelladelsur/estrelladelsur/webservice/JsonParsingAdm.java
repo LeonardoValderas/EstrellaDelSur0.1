@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -88,9 +89,13 @@ public class JsonParsingAdm {
 
                 return null;
             }
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+
         } finally {
             if (reader != null) {
                 try {
@@ -133,8 +138,7 @@ public class JsonParsingAdm {
                 precessOK = false;
 
             }
-        }
-        else {
+        } else {
             precessOK = false;
         }
         return precessOK;
@@ -310,6 +314,13 @@ public class JsonParsingAdm {
             }
         }
         return deleteOk;
+    }
+
+    public boolean processingJson(String entity, Context context) {
+        boolean precessOK = true;
+        if (!deleteEntity(entity, context))
+            precessOK = false;
+        return precessOK;
     }
 
     public boolean populateEntity(String entity, JSONObject jsonAux, Context context) {

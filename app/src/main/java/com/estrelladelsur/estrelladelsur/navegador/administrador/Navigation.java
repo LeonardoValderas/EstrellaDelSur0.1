@@ -1,14 +1,21 @@
 package com.estrelladelsur.estrelladelsur.navegador.administrador;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.View;
 import android.support.v4.widget.DrawerLayout;
@@ -49,6 +56,8 @@ import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsFoto;
 import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsNoticia;
 import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsNotificacion;
 import com.estrelladelsur.estrelladelsur.social.administrador.tabs.TabsPublicidad;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,19 +92,23 @@ public class Navigation extends AppCompatActivity {
     private int idUsuarioAdministrador;
     private String clickGrup = null;
     private String clickChild = null;
+    private static final int PERMISSION_REQUEST_CODE = 1;
+    private InterstitialAd mInterstitialAd;
+    private AdRequest adRequest;
+    private int conteo = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
-//        ImageView imageFull = (ImageView)findViewById(R.id.imageFull);
-//        imageFull.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.escudo_fragment, 150, 100));
-
         initAll();
+        if (!auxiliarGeneral.checkPermission(Navigation.this))
+            auxiliarGeneral.showDialogPermission(Navigation.this, this);
 
     }
     public void initAll(){
+        InterstitialAd();
         controladorGeneral = new ControladorGeneral(this);
         controladorAdeful = new ControladorAdeful(this);
         controladorLifuba = new ControladorLifuba(this);
@@ -108,49 +121,22 @@ public class Navigation extends AppCompatActivity {
         inicializarDatosGenerales();
     }
 
-//    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-//                                                         int reqWidth, int reqHeight) {
-//
-//        // First decode with inJustDecodeBounds=true to check dimensions
-//        final BitmapFactory.Options options = new BitmapFactory.Options();
-//        options.inJustDecodeBounds = true;
-//        BitmapFactory.decodeResource(res, resId, options);
-//
-//        // Calculate inSampleSize
-//        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-//
-//        // Decode bitmap with inSampleSize set
-//        options.inJustDecodeBounds = false;
-//        return BitmapFactory.decodeResource(res, resId, options);
-//    }
-//
-//    public static int calculateInSampleSize(
-//            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-//        // Raw height and width of image
-//        final int height = options.outHeight;
-//        final int width = options.outWidth;
-//        int inSampleSize = 1;
-//
-//        if (height > reqHeight || width > reqWidth) {
-//
-//            final int halfHeight = height / 2;
-//            final int halfWidth = width / 2;
-//
-//            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-//            // height and width larger than the requested height and width.
-//            while ((halfHeight / inSampleSize) > reqHeight
-//                    && (halfWidth / inSampleSize) > reqWidth) {
-//                inSampleSize *= 2;
-//            }
-//        }
-//
-//        return inSampleSize;
-//    }
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//    //    initAll();
-//    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != PERMISSION_REQUEST_CODE) {
+            return;
+        }
+        boolean isGranted = true;
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                isGranted = false;
+                break;
+            }
+        }
+
+        if (!isGranted)
+            auxiliarGeneral.showDialogPermission(Navigation.this, this);
+    }
 
     public void init() {
         // Referencia al ScrimInsetsFrameLayout
@@ -181,15 +167,18 @@ public class Navigation extends AppCompatActivity {
                         case "Articulos":
                             Intent estrella = new Intent(Navigation.this, TabsArticulo.class);
                             startActivity(estrella);
+                            conteoClick();
                             break;
                         case "Comisión Directiva":
                             Intent comision = new Intent(Navigation.this, TabsComision.class);
                             startActivity(comision);
+                            conteoClick();
                             break;
 
                         case "Dirección Técnica":
                             Intent direccion = new Intent(Navigation.this, TabsDireccion.class);
                             startActivity(direccion);
+                            conteoClick();
                             break;
                     }
                 } else if (clickGrup.equals("MI EQUIPO")) {
@@ -197,22 +186,27 @@ public class Navigation extends AppCompatActivity {
                         case "Fixture":
                             Intent fixture = new Intent(Navigation.this, TabsFixture.class);
                             startActivity(fixture);
+                            conteoClick();
                             break;
                         case "Resultados":
                             Intent resultado = new Intent(Navigation.this, TabsResultado.class);
                             startActivity(resultado);
+                            conteoClick();
                             break;
                         case "Jugadores":
                             Intent jugadores = new Intent(Navigation.this, TabsJugador.class);
                             startActivity(jugadores);
+                            conteoClick();
                             break;
                         case "Entrenamientos":
                             Intent entrenamiento = new Intent(Navigation.this, TabsEntrenamiento.class);
                             startActivity(entrenamiento);
+                            conteoClick();
                             break;
                         case "Sancionados":
                             Intent sanciones = new Intent(Navigation.this, TabsSancion.class);
                             startActivity(sanciones);
+                            conteoClick();
                             break;
                     }
 
@@ -221,10 +215,12 @@ public class Navigation extends AppCompatActivity {
                         case "Adeful":
                             Intent ligaAdeful = new Intent(Navigation.this, TabsAdeful.class);
                             startActivity(ligaAdeful);
+                            conteoClick();
                             break;
                         case "Lifuba":
                             Intent ligaLifuba = new Intent(Navigation.this, TabsLifuba.class);
                             startActivity(ligaLifuba);
+                            conteoClick();
                             break;
                     }
                 } else if (clickGrup.equals("SOCIAL")) {
@@ -232,19 +228,23 @@ public class Navigation extends AppCompatActivity {
                         case "Notificación":
                             Intent notificacion = new Intent(Navigation.this, TabsNotificacion.class);
                             startActivity(notificacion);
+                            conteoClick();
                             break;
                         case "Noticias":
                             Intent noticia = new Intent(Navigation.this, TabsNoticia.class);
                             startActivity(noticia);
+                            conteoClick();
                             break;
                         case "Fotos":
                             Intent foto = new Intent(Navigation.this, TabsFoto.class);
                             startActivity(foto);
+                            conteoClick();
                             break;
 
                         case "Publicidad":
                             Intent publicidad = new Intent(Navigation.this, TabsPublicidad.class);
                             startActivity(publicidad);
+                            conteoClick();
                             break;
                     }
                 } else if (clickGrup.equals("PERMISO")) {
@@ -252,10 +252,12 @@ public class Navigation extends AppCompatActivity {
                         case "Usuarios":
                             Intent usuario = new Intent(Navigation.this, TabsUsuario.class);
                             startActivity(usuario);
+                            conteoClick();
                             break;
                         case "Permisos":
                             Intent permiso = new Intent(Navigation.this, TabsPermiso.class);
                             startActivity(permiso);
+                            conteoClick();
                             break;
                     }
                 }
@@ -266,6 +268,16 @@ public class Navigation extends AppCompatActivity {
             }
         });
 
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int previousItem = -1;
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (groupPosition != previousItem)
+                    expListView.collapseGroup(previousItem);
+                previousItem = groupPosition;
+            }
+        });
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -310,6 +322,32 @@ public class Navigation extends AppCompatActivity {
     public int getIdUsuarioPreferences() {
         SharedPreferences getUser = getSharedPreferences("UsuarioLog", MODE_PRIVATE);
         return getUser.getInt("id_usuario", 0);
+    }
+
+    public void InterstitialAd() {
+        mInterstitialAd = new InterstitialAd(Navigation.this);
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_usuario));
+
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    private void showInterstitial() {
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }
+    }
+
+    public void conteoClick() {
+        if (conteo == 6) {
+            showInterstitial();
+            conteo = 0;
+        } else {
+            conteo++;
+        }
     }
 
     @Override

@@ -187,7 +187,10 @@ public class FragmentEditarArticuloAdeful extends Fragment implements MyAsyncTas
         URL = auxiliarGeneral.getURLARTICULOADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Articulo");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Articulo", true, posicion, "o", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Articulo", true, posicion, "o", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     @Override

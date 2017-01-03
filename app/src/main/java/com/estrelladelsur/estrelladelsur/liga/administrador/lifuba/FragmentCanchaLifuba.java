@@ -200,7 +200,10 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
         request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = URL + auxiliarGeneral.getDeletePHP("Cancha");
 
-        new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Cancha", true, id_cancha, "a", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Cancha", true, id_cancha, "a", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +37,7 @@ import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.miequipo.administrador.tabs_general.TabsJugador;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.google.android.gms.ads.AdView;
 
 public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListener {
 
@@ -56,6 +58,8 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
     private String URL = null;
     private Request request = new Request();
     private int posicion = 0;
+    private AdView mAdView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static FragmentEditarJugador newInstance() {
         FragmentEditarJugador fragment = new FragmentEditarJugador();
@@ -92,6 +96,11 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
         // BUTTON
         botonFloating = (FloatingActionButton) v
                 .findViewById(R.id.botonFloating);
+        mAdView = (AdView) v.findViewById(R.id.adView);
+        mAdView.setVisibility(View.GONE);
+//
+//        mSwipeRefreshLayout =(SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+//        mSwipeRefreshLayout.setRefreshing(false);
         return v;
     }
 
@@ -105,7 +114,8 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
     public void onResume() {
         super.onResume();
         controladorAdeful = new ControladorAdeful(getActivity());
-        init();
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
     }
 
     private void init() {
@@ -120,7 +130,7 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
                 jugadoresDivisionSpinner.setAdapter(adapterSpinnerDivision);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
                 jugadoresDivisionSpinner.setAdapter(adaptadorInicial);
             }
@@ -215,7 +225,10 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
         URL = auxiliarGeneral.getURLJUGADORADEFULAll();
         URL = URL + auxiliarGeneral.getDeletePHP("Jugador");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Jugador", true, posicion, "o", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Jugador", true, posicion, "o", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {
@@ -258,6 +271,7 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -311,6 +325,7 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
     }
+
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_administrador_general, menu);
         menu.getItem(1).setVisible(false);// posicion

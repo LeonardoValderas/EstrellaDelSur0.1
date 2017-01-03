@@ -413,7 +413,10 @@ public class FragmentGenerarResultadoLifuba extends Fragment implements MyAsyncT
         request.setParametrosDatos("fecha_actualizacion", resultado.getFECHA_ACTUALIZACION());
         URL = URL + auxiliarGeneral.getUpdatePHP("Resultado");
 
-        new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Resultado", resultado, false, "o");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Resultado", resultado, false, "o");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     @Override

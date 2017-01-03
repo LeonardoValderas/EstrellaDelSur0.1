@@ -149,7 +149,10 @@ public class FragmentGenerarNotificacion extends Fragment implements MyAsyncTask
             URL = URL + auxiliarGeneral.getUpdatePHP("Notificacion");
         }
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Notificacion", notificacion, insertar, "a");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Notificacion", notificacion, insertar, "a");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     @Override
@@ -202,7 +205,7 @@ public class FragmentGenerarNotificacion extends Fragment implements MyAsyncTask
             return true;
         }
 
-         if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(getActivity());
             return true;
         }

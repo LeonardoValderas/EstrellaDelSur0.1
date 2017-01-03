@@ -156,7 +156,11 @@ public class FragmentEditarComisionAdeful extends Fragment implements MyAsyncTas
         URL = null;
         URL = auxiliarGeneral.getURLCOMISIONADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Comision");
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Comisión", true, posicion, "a",fecha);
+
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Comisión", true, posicion, "a",fecha);
+        else
+           auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
     public void inicializarControles(String mensaje) {
         recyclerViewLoadComision();

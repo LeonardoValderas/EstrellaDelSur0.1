@@ -7,14 +7,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="150dp"
         android:background="@drawable/escudo_fragments"
         android:gravity="center">
 
         <ProgressBar
             android:id="@+id/progressSplash"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="bottom"
             android:visibility="gone"/>
 

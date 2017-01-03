@@ -88,7 +88,7 @@ public class FragmentEditarFoto extends Fragment implements MyAsyncTaskListener 
         super.onResume();
         controladorGeneral = new ControladorGeneral(getActivity());
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
-        recyclerViewLoadFoto();
+        //  recyclerViewLoadPublicidad();
     }
 
     private void init() {
@@ -117,8 +117,8 @@ public class FragmentEditarFoto extends Fragment implements MyAsyncTaskListener 
                         fotoArray.get(position).getID_FOTO());
                 editarFoto.putExtra("titulo",
                         fotoArray.get(position).getTITULO());
-                editarFoto.putExtra("foto",
-                        fotoArray.get(position).getFOTO());
+                //                editarFoto.putExtra("foto",
+//                        fotoArray.get(position).getFOTO());
                 editarFoto.putExtra("nombre_foto",
                         fotoArray.get(position).getNOMBRE_FOTO());
 
@@ -174,7 +174,10 @@ public class FragmentEditarFoto extends Fragment implements MyAsyncTaskListener 
         URL = auxiliarGeneral.getURLFOTOALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Foto");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Foto", true, posicion, "a", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Foto", true, posicion, "a", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {

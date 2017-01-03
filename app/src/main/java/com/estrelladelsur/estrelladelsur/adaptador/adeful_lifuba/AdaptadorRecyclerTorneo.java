@@ -36,7 +36,7 @@ public class AdaptadorRecyclerTorneo extends
 
 			textRecyclerView = (TextView) itemView
 					.findViewById(R.id.textRecyclerView);
-			textRecyclerView.setTypeface(nombre);
+			//textRecyclerView.setTypeface(nombre);
 
 			linearEscudo = (LinearLayout) itemView
 					.findViewById(R.id.linearEscudo);

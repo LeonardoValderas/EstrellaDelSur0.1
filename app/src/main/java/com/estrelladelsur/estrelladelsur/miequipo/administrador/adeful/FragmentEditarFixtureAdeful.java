@@ -132,13 +132,14 @@ public class FragmentEditarFixtureAdeful extends Fragment implements MyAsyncTask
     public void onResume() {
         super.onResume();
         controladorAdeful = new ControladorAdeful(getActivity());
-        init();
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        addArraySpinner();
     }
 
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         // DIVISION
-        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        addArraySpinner();
         if (divisionArray != null) {
             // DIVSION SPINNER
             if (!divisionArray.isEmpty()) {
@@ -155,7 +156,6 @@ public class FragmentEditarFixtureAdeful extends Fragment implements MyAsyncTask
             auxiliarGeneral.errorDataBase(getActivity());
         }
         // TORNEO
-        torneoArray = controladorAdeful.selectListaTorneoAdeful();
         if (torneoArray != null) {
             // TORNEO SPINNER
             if (!torneoArray.isEmpty()) {
@@ -173,7 +173,6 @@ public class FragmentEditarFixtureAdeful extends Fragment implements MyAsyncTask
             auxiliarGeneral.errorDataBase(getActivity());
         }
         // FECHA
-        fechaArray = controladorAdeful.selectListaFecha();
         if (fechaArray != null) {
             // FECHA SPINNER
             adapterFixtureFecha = new AdapterSpinnerFecha(getActivity(),
@@ -183,7 +182,6 @@ public class FragmentEditarFixtureAdeful extends Fragment implements MyAsyncTask
             auxiliarGeneral.errorDataBase(getActivity());
         }
         // ANIO
-        anioArray = controladorAdeful.selectListaAnio();
         if (anioArray != null) {
             // ANIO SPINNER
             adapterFixtureAnio = new AdapterSpinnerAnio(getActivity(),
@@ -289,6 +287,13 @@ public class FragmentEditarFixtureAdeful extends Fragment implements MyAsyncTask
         }));
     }
 
+    public void addArraySpinner() {
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        torneoArray = controladorAdeful.selectListaTorneoAdeful();
+        fechaArray = controladorAdeful.selectListaFecha();
+        anioArray = controladorAdeful.selectListaAnio();
+    }
+
     private int getPositionYearSpinner(List<Anio> anios) {
         String anio = auxiliarGeneral.getYearSpinner();
         int index = 0;
@@ -328,7 +333,10 @@ public class FragmentEditarFixtureAdeful extends Fragment implements MyAsyncTask
         URL = auxiliarGeneral.getURLFIXTUREADEFULAll();
         URL = URL + auxiliarGeneral.getDeletePHP("Fixture");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Fixture", true, posicion, "o", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Fixture", true, posicion, "o", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {

@@ -67,7 +67,7 @@ public class AdaptadorRecyclerJugadorUsuario extends
 				imageRecyclerViewFoto.setImageBitmap(fotoBitmap);
 			}
 			textRecyclerViewNombre.setText(jugador.getNOMBRE_JUGADOR());
-			textRecyclerViewNombre.setTypeface(nombre, Typeface.BOLD);
+			//textRecyclerViewNombre.setTypeface(nombre, Typeface.BOLD);
 			textRecyclerViewDivision.setText(jugador.getNOMBRE_DIVISION());
 			textRecyclerViewDivision.setTextSize(20);
 			textRecyclerViewDivision.setTypeface(nombre);

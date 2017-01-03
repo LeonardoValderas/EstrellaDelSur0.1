@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".liga.administrador.adeful.MapaCanchaAdeful">
+
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/toolbar_usuario_lifuba_adeful" />
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:layout_below="@+id/appbar"
+        tools:context=".liga.administrador.adeful.MapaCanchaAdeful" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/editTextInputNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/map">
+
+        <EditText
+            android:id="@+id/editTextNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/map"
+            android:layout_marginTop="20dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Nombre de la cancha"
+            android:textSize="40dp">
+
+            <requestFocus />
+        </EditText>
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tvAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30dp"
+        android:layout_below="@+id/editTextInputNombre"
+        android:layout_marginTop="10dp" />
+
+</RelativeLayout>

@@ -23,7 +23,7 @@ public class DialogoResultado {
     public TextView alertEquipoVisita;
     public EditText resultadoLocal;
     public EditText resultadoVisita;
-    public ImageButton imageButtonGoleadores;
+//    public ImageButton imageButtonGoleadores;
     private Typeface tituloFont;
     private Typeface textFont;
 
@@ -63,11 +63,6 @@ public class DialogoResultado {
         resultadoTextErrorVacio = (TextView) layout
                 .findViewById(R.id.resultadoTextErrorVacio);
         resultadoTextErrorVacio.setTypeface(textFont,Typeface.BOLD);
-
-        // BOTON GOLEADOR
-        imageButtonGoleadores = (ImageButton) layout
-                .findViewById(R.id.imageButtonGoleadores);
-        imageButtonGoleadores.setVisibility(View.GONE);
 
         // ACEPTAR
         btnAceptar = (Button) layout.findViewById(R.id.alerGenericoBtnAceptar);

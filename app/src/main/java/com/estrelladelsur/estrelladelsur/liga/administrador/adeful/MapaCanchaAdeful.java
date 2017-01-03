@@ -249,7 +249,10 @@ public class MapaCanchaAdeful extends AppCompatActivity implements OnMapReadyCal
             request.setParametrosDatos("fecha_actualizacion", cancha.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Cancha");
         }
+        if (auxiliarGeneral.isNetworkAvailable(MapaCanchaAdeful.this))
         new AsyncTaskGenericAdeful(MapaCanchaAdeful.this, this, URL, request, "Cancha", cancha, insertar, "a");
+        else
+        auxiliarGeneral.errorWebService(MapaCanchaAdeful.this, MapaCanchaAdeful.this.getResources().getString(R.string.error_without_internet));
     }
 
     @Override

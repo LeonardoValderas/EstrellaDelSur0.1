@@ -1,12 +1,16 @@
 package com.estrelladelsur.estrelladelsur.liga.administrador.lifuba;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -39,7 +43,11 @@ import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericLifuba;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListener {
@@ -66,6 +74,7 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
     private boolean isDelete = false;
     private boolean isInsert = true;
     private ImageButton rotateButton;
+    private static final int PERMISSION_REQUEST_CODE = 1;
 
     public static FragmentEquipoLifuba newInstance() {
         FragmentEquipoLifuba fragment = new FragmentEquipoLifuba();
@@ -126,7 +135,10 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
         imageEquipo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageDialogEquipo();
+                if (!auxiliarGeneral.checkPermission(getActivity()))
+                    auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
+                else
+                    ImageDialogEquipo();
             }
         });
         editTextInputDescripcion.setHint("Ingrese el equipo");
@@ -244,14 +256,57 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
         myAlertDialog.show();
     }
 
+    @Override
+    @SuppressLint("NewApi")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
-            Bitmap b = auxiliarGeneral.SeleccionarImagen(data, getActivity(), true);
-            if (b != null)
-                imageEquipo.setImageBitmap(b);
-            imagenEscudo = auxiliarGeneral.pasarBitmapByte(b);
+            //  if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+            Uri imageUri = CropImage.getPickImageResultUri(getActivity(), data);
+            startCropImageActivity(imageUri);
         }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == getActivity().RESULT_OK) {
+                String p =  auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
+                Bitmap bitmap =  auxiliarGeneral.asignateImage(p);
+                asignateBitmap(bitmap);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                if(!result.getError().toString().contains("ENOENT"))
+                Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void asignateBitmap(Bitmap photoBitmap) {
+        if (photoBitmap != null) {
+            imageEquipo.setImageBitmap(photoBitmap);
+            imagenEscudo = auxiliarGeneral.pasarBitmapByte(photoBitmap);
+        }
+    }
+
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(getContext(), FragmentEquipoLifuba.this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != PERMISSION_REQUEST_CODE) {
+            return;
+        }
+        boolean isGranted = true;
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                isGranted = false;
+                break;
+            }
+        }
+        if (!isGranted)
+            auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
     }
 
     @Override
@@ -402,11 +457,14 @@ public class FragmentEquipoLifuba extends Fragment implements MyAsyncTaskListene
             request.setParametrosDatos("fecha_actualizacion", fecha);
             URL = URL + auxiliarGeneral.getDeletePHP("Equipo");
         }
-        if (isDelete)
-            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false, fecha);
-        else
-            new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity())) {
+            if (isDelete)
+                new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false, fecha);
+            else
+                new AsyncTaskGenericLifuba(getContext(), this, URL, request, "Equipo", equipoAdeful, isInsert, isDelete, equipoAdeful.getID_EQUIPO(), "o", false);
 
+        } else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void onCreate(Bundle savedInstanceState) {

@@ -48,9 +48,11 @@ public class SplashUsuario extends AppCompatActivity {
     private JsonParsing jsonParsing = new JsonParsing();
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+    private static final String TAG_DATE = "fecha";
     private Context context;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final long EXPIRATION_TIME_MS = 1000 * 3600 * 24 * 7;
+    private long date_gcm;
     private String SENDER_ID = "686300125964";
     private String regid;
     private GoogleCloudMessaging gcm;
@@ -73,9 +75,9 @@ public class SplashUsuario extends AppCompatActivity {
     public static final String CANCHA_LIFUBA = "cancha_lifuba";
     public static final String FIXTURE_ADEFUL = "fixture_adeful";
     public static final String FIXTURE_LIFUBA = "fixture_lifuba";
-   // public static final String RESULTADO_ADEFUL = "resultado_adeful";
+    // public static final String RESULTADO_ADEFUL = "resultado_adeful";
     public static final String JUGADOR_ADEFUL = "jugador_adeful";
-   // public static final String POSICION_ADEFUL = "posicion_adeful";
+    // public static final String POSICION_ADEFUL = "posicion_adeful";
     public static final String ENTRENAMIENTO_ADEFUL = "entrenamiento_adeful";
     public static final String ENTRENAMIENTO_DIVISION_ADEFUL = "entrenamiento_division_adeful";
     public static final String ENTRENAMIENTO_CANTIDAD_ADEFUL = "entrenamiento_cantidad_adeful";
@@ -123,14 +125,17 @@ public class SplashUsuario extends AppCompatActivity {
     public static final String TABLA_USUARIO = "USUARIO";
     public static final String TABLA_MODULO = "MODULO";
     public static final String TABLA_SUBMODULO = "SUBMODULO";
-  //  public static final String TABLA_PERMISO = "PERMISO";
+    //  public static final String TABLA_PERMISO = "PERMISO";
     public static final String TABLA_ANIO = "ANIO";
     public static final String TABLA_FECHA = "FECHA";
 
     public static String TAG = "GCM";
     private int id = 0;
     private boolean isNotificacion = false;
-    private boolean close = false;
+  //  private boolean close = false;
+    private String fecha_anterior;
+    private boolean gestion = true;
+    private boolean isDate = false;
 
 
     @Override
@@ -143,18 +148,18 @@ public class SplashUsuario extends AppCompatActivity {
         controladorUsuarioGeneral = new ControladorUsuarioGeneral(this);
         auxiliarGeneral = new AuxiliarGeneral(SplashUsuario.this);
 
-        close = SplashUsuario.this.getIntent().getBooleanExtra("close",
-                false);
-        if (close)
-            closeApp();
+//        close = SplashUsuario.this.getIntent().getBooleanExtra("close",
+//                false);
+//        if (close)
+//            closeApp();
 
         if (checkGCM())
             init();
     }
 
-    public void closeApp() {
-        finish();
-    }
+//    public void closeApp() {
+//        finish();
+//    }
 
     @Override
     protected void onDestroy() {
@@ -286,8 +291,10 @@ public class SplashUsuario extends AppCompatActivity {
         }
         requestUrl = new Request();
         requestUrl.setParametrosDatos("URL", auxiliarGeneral.getURL() + auxiliarGeneral.getURLSINCRONIZARUSUARIO());
-
-        new TaskSincronizar().execute(request, requestUrl);
+        if (auxiliarGeneral.isNetworkAvailable(SplashUsuario.this))
+            new TaskSincronizar().execute(request, requestUrl);
+        else
+            auxiliarGeneral.errorWebService(SplashUsuario.this, SplashUsuario.this.getResources().getString(R.string.error_without_internet));
     }
 
 
@@ -833,6 +840,8 @@ public class SplashUsuario extends AppCompatActivity {
         return true;
     }
 
+
+
     private String getRegistrationId(Context context) {
         SharedPreferences prefs = getSharedPreferences(
                 SplashUsuario.class.getSimpleName(),
@@ -890,8 +899,9 @@ public class SplashUsuario extends AppCompatActivity {
                 }
                 regid = gcm.register(SENDER_ID);
 
+                date_gcm = System.currentTimeMillis() + EXPIRATION_TIME_MS;
                 //Nos registramos en nuestro servidor
-                boolean registrado = registroServidor(regid, String.valueOf(System.currentTimeMillis() + EXPIRATION_TIME_MS));
+                boolean registrado = registroServidor(regid, String.valueOf(date_gcm), gestion);
 
                 //Guardamos los datos del registro
                 if (registrado) {
@@ -913,13 +923,17 @@ public class SplashUsuario extends AppCompatActivity {
         }
     }
 
-    private boolean registroServidor(String regId, String fecha) {
+    private boolean registroServidor(String regId, String fecha, boolean gestion ) {
 
         final String URL = auxiliarGeneral.getURLGCMALL();
         Request request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("id", regId);
         request.setParametrosDatos("fecha", fecha);
+        if(gestion)
+            request.setParametrosDatos("gestion", "0");
+        else
+            request.setParametrosDatos("gestion", "1");
 
         int success;
         JSONObject json = null;
@@ -932,11 +946,15 @@ public class SplashUsuario extends AppCompatActivity {
                 if (success == 0) {
                     id = json.getInt(TAG_ID);
                     if (id > 0) {
+                        isDate = false;
                         return precessOK;
                     } else {
                         mensaje = "Error id GCM";
                         precessOK = false;
                     }
+                } else if(success == 4){
+                    fecha_anterior = json.getString(TAG_DATE);
+                    isDate = true;
                 } else {
                     mensaje = "Error GCM";
                     precessOK = false;
@@ -953,6 +971,18 @@ public class SplashUsuario extends AppCompatActivity {
     }
 
     private void setRegistrationId(Context context, String regId) {
+
+        if(isDate){
+            long verify_date =  Long.parseLong(fecha_anterior);
+            if (System.currentTimeMillis() > verify_date) {
+                gestion = false;
+                TareaRegistroGCM tarea = new TareaRegistroGCM();
+                tarea.execute("");
+            } else {
+                date_gcm = verify_date;
+            }
+        }
+
         SharedPreferences prefs = getSharedPreferences(
                 SplashUsuario.class.getSimpleName(),
                 Context.MODE_PRIVATE);
@@ -963,8 +993,7 @@ public class SplashUsuario extends AppCompatActivity {
         editor.putInt(PROPERTY_USER, id);
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        editor.putLong(PROPERTY_EXPIRATION_TIME,
-                System.currentTimeMillis() + EXPIRATION_TIME_MS);
+        editor.putLong(PROPERTY_EXPIRATION_TIME, date_gcm);
 
         editor.commit();
     }

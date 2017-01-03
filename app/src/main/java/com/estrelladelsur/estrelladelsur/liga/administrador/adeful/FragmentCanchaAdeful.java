@@ -200,7 +200,11 @@ public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListene
         request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = URL + auxiliarGeneral.getDeletePHP("Cancha");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Cancha", true, id_cancha, "a", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Cancha", true, id_cancha, "a", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
+
 
     }
 
@@ -215,6 +219,7 @@ public class FragmentCanchaAdeful extends Fragment implements MyAsyncTaskListene
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 

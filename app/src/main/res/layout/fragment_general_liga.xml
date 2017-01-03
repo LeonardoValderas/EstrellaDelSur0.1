@@ -14,21 +14,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:orientation="vertical">
 
             <ImageButton
                 android:id="@+id/rotateButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="50dp"
                 android:src="@android:drawable/stat_notify_sync" />
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/imageButtonEquipo_Cancha"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_gravity="center_horizontal"
                 android:clickable="true"
                 android:src="@drawable/escudo_gris_image"
@@ -51,12 +50,12 @@
                     android:id="@+id/editTextDescripcion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="1dp"
                     android:ems="10"
                     android:gravity="center"
                     android:maxLength="20"
                     android:textColor="#000000"
-                    android:textSize="30dp">
+                    android:textSize="15dp">
 
                     <requestFocus />
                 </EditText>
@@ -66,7 +65,7 @@
                 android:id="@+id/linearTorneoActual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="1dp"
                 android:orientation="horizontal"
                 android:visibility="gone">
 
@@ -95,7 +94,7 @@
             android:id="@+id/recycleViewGeneral"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="1dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </LinearLayout>
 </FrameLayout>

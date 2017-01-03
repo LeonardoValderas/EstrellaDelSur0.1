@@ -19,110 +19,114 @@ import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import java.util.ArrayList;
 
 public class AdaptadorRecyclerAsistenciaUsuario extends
-		RecyclerView.Adapter<AdaptadorRecyclerAsistenciaUsuario.JugadorViewHolder> implements
-		View.OnClickListener {
+        RecyclerView.Adapter<AdaptadorRecyclerAsistenciaUsuario.JugadorViewHolder> implements
+        View.OnClickListener {
 
-	private View.OnClickListener listener;
-	private ArrayList<Jugador> jugadorArray;
-	private Typeface nombreFont;
-	private Typeface cargoPeriodoFont;
-	private AuxiliarGeneral auxiliarGeneral;
-	private int cantidad;
+    private View.OnClickListener listener;
+    private ArrayList<Jugador> jugadorArray;
+    private Typeface nombreFont;
+    private Typeface cargoPeriodoFont;
+    private AuxiliarGeneral auxiliarGeneral;
+    private int cantidad;
     private ControladorUsuarioAdeful controladorUsuarioAdeful;
 
-	public static class JugadorViewHolder extends RecyclerView.ViewHolder {
-		private TextView textRecyclerViewNombre;
-		private TextView textRecyclerViewPosicion;
-		private TextView textRecyclerViewPeriodoText;
-		private TextView textRecyclerViewDivision;
-		private ImageView imageRecyclerViewFoto;
-		private byte[] foto;
-		private Bitmap fotoBitmap;
+    public static class JugadorViewHolder extends RecyclerView.ViewHolder {
+        private TextView textRecyclerViewNombre;
+        private TextView textRecyclerViewPosicion;
+        private TextView textRecyclerViewPeriodoText;
+        private TextView textRecyclerViewDivision;
+        private ImageView imageRecyclerViewFoto;
+        private byte[] foto;
+        private Bitmap fotoBitmap;
 
 
-		public JugadorViewHolder(View itemView) {
-			super(itemView);
+        public JugadorViewHolder(View itemView) {
+            super(itemView);
 
-			textRecyclerViewNombre = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewNombre);
-			textRecyclerViewDivision = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewCargo);
-			textRecyclerViewPosicion = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewPeriodo);
-			textRecyclerViewPeriodoText = (TextView) itemView
-					.findViewById(R.id.textRecyclerViewPeriodoText);
-			imageRecyclerViewFoto = (ImageView) itemView
-					.findViewById(R.id.imageRecyclerViewFoto);
-		}
+            textRecyclerViewNombre = (TextView) itemView
+                    .findViewById(R.id.textRecyclerViewNombre);
+            textRecyclerViewDivision = (TextView) itemView
+                    .findViewById(R.id.textRecyclerViewCargo);
+            textRecyclerViewPosicion = (TextView) itemView
+                    .findViewById(R.id.textRecyclerViewPeriodo);
+            textRecyclerViewPeriodoText = (TextView) itemView
+                    .findViewById(R.id.textRecyclerViewPeriodoText);
+            imageRecyclerViewFoto = (ImageView) itemView
+                    .findViewById(R.id.imageRecyclerViewFoto);
+        }
 
-		public void bindTitular(Jugador jugador, Typeface nombre, Typeface cargo, ControladorUsuarioAdeful controladorUsuarioAdeful, int cantidad) {
-			// ESCUDO EQUIPO LOCAL
-			int cant = controladorUsuarioAdeful.selectCountEntrenamientoJugador(jugador.getID_JUGADOR());
-			int porcentaje = cant * 100 / cantidad;
-			foto = jugador.getFOTO_JUGADOR();
-			if (foto == null) {
+        public void bindTitular(Jugador jugador, Typeface nombre, Typeface cargo, ControladorUsuarioAdeful controladorUsuarioAdeful, int cantidad) {
+            // ESCUDO EQUIPO LOCAL
 
-				imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
-			} else {
-				fotoBitmap = BitmapFactory.decodeByteArray(
-						jugador.getFOTO_JUGADOR(), 0,
-						jugador.getFOTO_JUGADOR().length);
+            int cant = controladorUsuarioAdeful.selectCountEntrenamientoJugador(jugador.getID_JUGADOR());
+            int porcentaje = 0;
+            if (cant > 0)
+                porcentaje = cant * 100 / cantidad;
 
-				fotoBitmap = Bitmap.createScaledBitmap(
-						fotoBitmap, 150, 150, true);
+            foto = jugador.getFOTO_JUGADOR();
+            if (foto == null) {
+                imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
+            } else {
+                fotoBitmap = BitmapFactory.decodeByteArray(
+                        jugador.getFOTO_JUGADOR(), 0,
+                        jugador.getFOTO_JUGADOR().length);
 
-				imageRecyclerViewFoto.setImageBitmap(fotoBitmap);
-			}
-			textRecyclerViewNombre.setText(jugador.getNOMBRE_JUGADOR());
-			textRecyclerViewNombre.setTypeface(nombre, Typeface.BOLD);
-			textRecyclerViewDivision.setText(String.valueOf(porcentaje)+"%")	;
-			textRecyclerViewDivision.setTextSize(20);
-			textRecyclerViewDivision.setTypeface(nombre);
-			textRecyclerViewPosicion.setText("");
-			//textRecyclerViewPosicion.setTypeface(cargo,Typeface.BOLD);
-			textRecyclerViewPeriodoText.setText("De "+cantidad+" entrenamientos, asistió a "+cant+".");
-		}
-	}
-	public AdaptadorRecyclerAsistenciaUsuario(ArrayList<Jugador> jugadorArray, int cantidad, Context context) {
-		this.jugadorArray = jugadorArray;
-		this.cantidad = cantidad;
-		auxiliarGeneral = new AuxiliarGeneral(context);
-		this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
-		this.nombreFont = auxiliarGeneral.tituloFont(context);
-		controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
-	}
+                fotoBitmap = Bitmap.createScaledBitmap(
+                        fotoBitmap, 150, 150, true);
 
-	@Override
-	public JugadorViewHolder onCreateViewHolder(ViewGroup viewGroup,
-			int viewType) {
-		View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
-				R.layout.recyclerview_item_comision, viewGroup, false);
+                imageRecyclerViewFoto.setImageBitmap(fotoBitmap);
+            }
+            textRecyclerViewNombre.setText(jugador.getNOMBRE_JUGADOR());
+            textRecyclerViewNombre.setTypeface(nombre, Typeface.BOLD);
+            textRecyclerViewDivision.setText(String.valueOf(porcentaje) + "%");
+            textRecyclerViewDivision.setTextSize(20);
+            textRecyclerViewDivision.setTypeface(nombre);
+            textRecyclerViewPosicion.setText("");
+            //textRecyclerViewPosicion.setTypeface(cargo,Typeface.BOLD);
+            textRecyclerViewPeriodoText.setText("De " + cantidad + " entrenamientos,\nasistió a " + cant + ".");
+        }
+    }
 
-		itemView.setOnClickListener(this);
-		JugadorViewHolder tvh = new JugadorViewHolder(itemView);
+    public AdaptadorRecyclerAsistenciaUsuario(ArrayList<Jugador> jugadorArray, int cantidad, Context context) {
+        this.jugadorArray = jugadorArray;
+        this.cantidad = cantidad;
+        auxiliarGeneral = new AuxiliarGeneral(context);
+        this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
+        this.nombreFont = auxiliarGeneral.tituloFont(context);
+        controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
+    }
 
-		return tvh;
-	}
+    @Override
+    public JugadorViewHolder onCreateViewHolder(ViewGroup viewGroup,
+                                                int viewType) {
+        View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
+                R.layout.recyclerview_item_comision, viewGroup, false);
 
-	@Override
-	public void onBindViewHolder(JugadorViewHolder viewHolder, int pos) {
-		Jugador item = jugadorArray.get(pos);
+        itemView.setOnClickListener(this);
+        JugadorViewHolder tvh = new JugadorViewHolder(itemView);
 
-		viewHolder.bindTitular(item, nombreFont, cargoPeriodoFont, controladorUsuarioAdeful, cantidad);
-	}
+        return tvh;
+    }
 
-	@Override
-	public int getItemCount() {
-		return jugadorArray.size();
-	}
+    @Override
+    public void onBindViewHolder(JugadorViewHolder viewHolder, int pos) {
+        Jugador item = jugadorArray.get(pos);
 
-	public void setOnClickListener(View.OnClickListener listener) {
-		this.listener = listener;
-	}
+        viewHolder.bindTitular(item, nombreFont, cargoPeriodoFont, controladorUsuarioAdeful, cantidad);
+    }
 
-	@Override
-	public void onClick(View view) {
-		if (listener != null)
-			listener.onClick(view);
-	}
+    @Override
+    public int getItemCount() {
+        return jugadorArray.size();
+    }
+
+    public void setOnClickListener(View.OnClickListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (listener != null)
+            listener.onClick(view);
+    }
 }

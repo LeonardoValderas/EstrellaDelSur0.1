@@ -44,6 +44,8 @@ import com.estrelladelsur.estrelladelsur.social.usuario.FotoUsuario;
 import com.estrelladelsur.estrelladelsur.social.usuario.NoticiaUsuario;
 import com.estrelladelsur.estrelladelsur.social.usuario.NotificacionUsuario;
 import com.estrelladelsur.estrelladelsur.social.usuario.PublicidadUsuario;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,24 +66,31 @@ public class NavigationUsuario extends AppCompatActivity {
     private List<String> socialChild;
     private HashMap<String, List<String>> listDataChild;
     private List<String> institucionalChild;
-    private TextView  txtAbTitulo;
+    private TextView txtAbTitulo;
     private ControladorGeneral controladorGeneral;
     private ControladorUsuarioGeneral controladorUsuarioGeneral;
     private Typeface titulos;
     private Typeface adeful;
     private AuxiliarGeneral auxiliarGeneral;
+    private InterstitialAd mInterstitialAd;
+    private AdRequest adRequest;
+    private int conteo = 0;
+    private boolean close = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
+        close = NavigationUsuario.this.getIntent().getBooleanExtra("close",
+                false);
+        if (close)
+            finish();
 
-//        ImageView imageFull = (ImageView)findViewById(R.id.imageFull);
-//        imageFull.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.drawable.escudo_fragment, 150, 100));
         initAll();
-   }
+    }
 
-    public void initAll(){
+    public void initAll() {
+        InterstitialAd();
         controladorGeneral = new ControladorGeneral(this);
         controladorUsuarioGeneral = new ControladorUsuarioGeneral(this);
         auxiliarGeneral = new AuxiliarGeneral(NavigationUsuario.this);
@@ -92,44 +101,6 @@ public class NavigationUsuario extends AppCompatActivity {
         inicializarDatosGenerales();
     }
 
-//    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-//                                                         int reqWidth, int reqHeight) {
-//
-//        // First decode with inJustDecodeBounds=true to check dimensions
-//        final BitmapFactory.Options options = new BitmapFactory.Options();
-//        options.inJustDecodeBounds = true;
-//        BitmapFactory.decodeResource(res, resId, options);
-//
-//        // Calculate inSampleSize
-//        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-//
-//        // Decode bitmap with inSampleSize set
-//        options.inJustDecodeBounds = false;
-//        return BitmapFactory.decodeResource(res, resId, options);
-//    }
-//
-//    public static int calculateInSampleSize(
-//            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-//        // Raw height and width of image
-//        final int height = options.outHeight;
-//        final int width = options.outWidth;
-//        int inSampleSize = 1;
-//
-//        if (height > reqHeight || width > reqWidth) {
-//
-//            final int halfHeight = height / 2;
-//            final int halfWidth = width / 2;
-//
-//            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-//            // height and width larger than the requested height and width.
-//            while ((halfHeight / inSampleSize) > reqHeight
-//                    && (halfWidth / inSampleSize) > reqWidth) {
-//                inSampleSize *= 2;
-//            }
-//        }
-//
-//        return inSampleSize;
-//    }
     public void init() {
 
         // Referencia al ScrimInsetsFrameLayout
@@ -156,21 +127,23 @@ public class NavigationUsuario extends AppCompatActivity {
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
 
-                Fragment fragment = null;
                 if (groupPosition == 0) {
                     switch (childPosition) {
                         case 0:
                             Intent estrella = new Intent(NavigationUsuario.this, ArticuloUsuario.class);
                             startActivity(estrella);
+                            conteoClick();
                             break;
                         case 1:
                             Intent comision = new Intent(NavigationUsuario.this, ComisionUsuario.class);
                             startActivity(comision);
+                            conteoClick();
                             break;
 
                         case 2:
                             Intent direccion = new Intent(NavigationUsuario.this, DireccionUsuario.class);
                             startActivity(direccion);
+                            conteoClick();
                             break;
                     }
                 } else if (groupPosition == 1) {
@@ -178,18 +151,22 @@ public class NavigationUsuario extends AppCompatActivity {
                         case 0:
                             Intent fixture = new Intent(NavigationUsuario.this, TabsFixtureUsuario.class);
                             startActivity(fixture);
+                            conteoClick();
                             break;
                         case 1:
                             Intent jugadores = new Intent(NavigationUsuario.this, JugadorUsuario.class);
                             startActivity(jugadores);
+                            conteoClick();
                             break;
                         case 2:
                             Intent entrenamiento = new Intent(NavigationUsuario.this, TabsEntrenamientoUsuario.class);
                             startActivity(entrenamiento);
+                            conteoClick();
                             break;
                         case 3:
                             Intent sanciones = new Intent(NavigationUsuario.this, TabsSancionUsuario.class);
                             startActivity(sanciones);
+                            conteoClick();
                             break;
                     }
                 } else if (groupPosition == 2) {
@@ -197,10 +174,12 @@ public class NavigationUsuario extends AppCompatActivity {
                         case 0:
                             Intent liga = new Intent(NavigationUsuario.this, TabsAdefulUsuario.class);
                             startActivity(liga);
+                            conteoClick();
                             break;
                         case 1:
                             Intent ligaL = new Intent(NavigationUsuario.this, TabsLifubaUsuario.class);
                             startActivity(ligaL);
+                            conteoClick();
                             break;
                     }
                 } else if (groupPosition == 3) {
@@ -208,18 +187,22 @@ public class NavigationUsuario extends AppCompatActivity {
                         case 0:
                             Intent notificacion = new Intent(NavigationUsuario.this, NotificacionUsuario.class);
                             startActivity(notificacion);
+                            conteoClick();
                             break;
                         case 1:
                             Intent noticia = new Intent(NavigationUsuario.this, NoticiaUsuario.class);
                             startActivity(noticia);
+                            conteoClick();
                             break;
                         case 2:
                             Intent foto = new Intent(NavigationUsuario.this, FotoUsuario.class);
                             startActivity(foto);
+                            conteoClick();
                             break;
                         case 3:
                             Intent publicidad = new Intent(NavigationUsuario.this, PublicidadUsuario.class);
                             startActivity(publicidad);
+                            conteoClick();
                             break;
                     }
                 }
@@ -227,6 +210,17 @@ public class NavigationUsuario extends AppCompatActivity {
                 drawerLayout.openDrawer(sifl);
 
                 return false;
+            }
+        });
+
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int previousItem = -1;
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (groupPosition != previousItem)
+                    expListView.collapseGroup(previousItem);
+                previousItem = groupPosition;
             }
         });
 
@@ -254,6 +248,32 @@ public class NavigationUsuario extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
     }
 
+    public void InterstitialAd() {
+        mInterstitialAd = new InterstitialAd(NavigationUsuario.this);
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_usuario));
+
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    private void showInterstitial() {
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }
+    }
+
+    public void conteoClick() {
+        if (conteo == 6) {
+            showInterstitial();
+            conteo = 0;
+        } else {
+            conteo++;
+        }
+    }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -274,9 +294,9 @@ public class NavigationUsuario extends AppCompatActivity {
         List<SubModulo> submodulos = new ArrayList<>();
         modulos = controladorUsuarioGeneral.selectListaModuloUsuario();
         submodulos = controladorUsuarioGeneral.selectListaSubModulo();
-        if(modulos != null ) {
-            for (int i = 0; i < modulos.size()-1; i++) {
-             listDataHeader.add(modulos.get(i).getMODULO());
+        if (modulos != null) {
+            for (int i = 0; i < modulos.size() - 1; i++) {
+                listDataHeader.add(modulos.get(i).getMODULO());
             }
         }
 
@@ -285,18 +305,18 @@ public class NavigationUsuario extends AppCompatActivity {
         mi_equipoChild = new ArrayList<>();
         ligaChild = new ArrayList<>();
         socialChild = new ArrayList<>();
-        if(submodulos != null) {
-            for (int i = 0; i < submodulos.size()-2; i++) {
+        if (submodulos != null) {
+            for (int i = 0; i < submodulos.size() - 2; i++) {
 
-                switch (submodulos.get(i).getID_MODULO()){
+                switch (submodulos.get(i).getID_MODULO()) {
 
                     case 1:
                         institucionalChild.add(submodulos.get(i).getSUBMODULO());
                         break;
 
                     case 2:
-                        if(submodulos.get(i).getID_SUBMODULO() != 5)
-                        mi_equipoChild.add(submodulos.get(i).getSUBMODULO());
+                        if (submodulos.get(i).getID_SUBMODULO() != 5)
+                            mi_equipoChild.add(submodulos.get(i).getSUBMODULO());
                         break;
 
                     case 3:
@@ -316,7 +336,7 @@ public class NavigationUsuario extends AppCompatActivity {
         listDataChild.put(listDataHeader.get(3), socialChild);
     }
 
-     public void inicializarDatosGenerales() {
+    public void inicializarDatosGenerales() {
         iniciarFecha();
         iniciarAnio();
         iniciarMes();
@@ -374,6 +394,14 @@ public class NavigationUsuario extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            finish();
+
+//            Intent intent = new Intent(this, NavigationUsuario.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+//                    | Intent.FLAG_ACTIVITY_NEW_TASK
+//                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(intent);
             return false;
         }
         return false;
@@ -400,7 +428,7 @@ public class NavigationUsuario extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_cerrar) {
-            auxiliarGeneral.close(NavigationUsuario.this);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

@@ -37,6 +37,7 @@ import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTaskListener {
 
@@ -109,7 +110,9 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
     public void onResume() {
         super.onResume();
         controladorAdeful = new ControladorAdeful(getActivity());
-        init();
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        anioArray = controladorAdeful.selectListaAnio();
+        mesArray = controladorAdeful.selectListaMes();
     }
 
     private void init() {
@@ -122,6 +125,7 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
             adapterSpinnerAnio = new AdapterSpinnerAnio(getActivity(),
                     R.layout.simple_spinner_dropdown_item, anioArray);
             entrenamientoAnioSpinner.setAdapter(adapterSpinnerAnio);
+            entrenamientoAnioSpinner.setSelection(getPositionYearSpinner(anioArray));
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
@@ -225,7 +229,10 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
         URL = auxiliarGeneral.getURLENTRENAMIENTOADEFULALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Entrenamiento");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Entrenamiento", true, posicion, "o", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Entrenamiento", true, posicion, "o", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void recyclerViewLoadEntrenamiento(String fecha) {
@@ -241,6 +248,17 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
+    }
+
+    private int getPositionYearSpinner(List<Anio> anios) {
+        String anio = auxiliarGeneral.getYearSpinner();
+        int index = 0;
+        for (int i = 0; i < anios.size(); i++) {
+            if (anios.get(i).getANIO().equals(anio)) {
+                index = i;
+            }
+        }
+        return index;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -260,6 +278,7 @@ public class FragmentEditarEntrenamiento extends Fragment implements MyAsyncTask
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 

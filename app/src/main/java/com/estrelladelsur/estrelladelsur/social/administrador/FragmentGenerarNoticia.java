@@ -151,7 +151,10 @@ public class FragmentGenerarNoticia extends Fragment implements MyAsyncTaskListe
             URL = URL + auxiliarGeneral.getUpdatePHP("Noticia");
         }
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Noticia", noticia, insertar, "a");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Noticia", noticia, insertar, "a");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void onCreate(Bundle savedInstanceState) {

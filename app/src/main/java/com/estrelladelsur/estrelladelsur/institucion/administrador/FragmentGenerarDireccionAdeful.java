@@ -1,13 +1,17 @@
 package com.estrelladelsur.estrelladelsur.institucion.administrador;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
@@ -40,8 +44,12 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,6 +90,7 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
     private String fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_direccion = null,
             URL = null, usuario = null, url_nombre_foto = null, encodedImage = null;
     private ImageButton rotateButton;
+    private static final int PERMISSION_REQUEST_CODE = 1;
 
     public static FragmentGenerarDireccionAdeful newInstance() {
         FragmentGenerarDireccionAdeful fragment = new FragmentGenerarDireccionAdeful();
@@ -196,7 +205,10 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
             @Override
             public void onClick(View v) {
                 //Alerta galeria
-                ImageDialogDireccion();
+                if (!auxiliarGeneral.checkPermission(getActivity()))
+                    auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
+                else
+                    ImageDialogDireccion();
             }
         });
 
@@ -268,18 +280,58 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
         return index;
     }
 
+    @Override
+    @SuppressLint("NewApi")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == UtilityImage.GALLERY_PICTURE) {
-            Bitmap bitmapWeb = auxiliarGeneral.SeleccionarImagen(data, getContext(), true);
-            if (bitmapWeb != null) {
-                fotoImageDireccion.setImageBitmap(bitmapWeb);
-                baos = new ByteArrayOutputStream();
-                bitmapWeb.compress(Bitmap.CompressFormat.PNG, 0, baos);
-                imageDireccion = baos.toByteArray();
+            Uri imageUri = CropImage.getPickImageResultUri(getActivity(), data);
+            startCropImageActivity(imageUri);
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == getActivity().RESULT_OK) {
+                String p =  auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
+                Bitmap bitmap =  auxiliarGeneral.asignateImage(p);
+                asignateBitmap(bitmap);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                if(!result.getError().toString().contains("ENOENT"))
+                Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
             }
         }
     }
+
+    private void startCropImageActivity(Uri imageUri) {
+        CropImage.activity(imageUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMultiTouchEnabled(true)
+                .start(getContext(), FragmentGenerarDireccionAdeful.this);
+    }
+
+    public void asignateBitmap(Bitmap photoBitmap) {
+        if (photoBitmap != null) {
+            fotoImageDireccion.setImageBitmap(photoBitmap);
+            imageDireccion = auxiliarGeneral.pasarBitmapByte(photoBitmap);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != PERMISSION_REQUEST_CODE) {
+            return;
+        }
+        boolean isGranted = true;
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                isGranted = false;
+                break;
+            }
+        }
+
+        if (!isGranted)
+            auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
+    }
+
 
     public ArrayList<Cargo> selectCargoList() {
         // CARGO
@@ -345,6 +397,9 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
         desdeButtonDireccion.setText("Desde");
         hastaButtonDireccion.setText("Hasta");
         imageDireccion = null;
+        url_foto_direccion = null;
+        nombre_foto = null;
+        nombre_foto_anterior = null;
         fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
         communicator.refreshAdeful();
         Toast.makeText(getActivity(), mensaje,
@@ -424,7 +479,10 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
 
             URL = URL + auxiliarGeneral.getUpdatePHP("Direccion");
         }
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Dirección", direccion, insertar, "a");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Dirección", direccion, insertar, "a");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void envioWebServiceCargo(int tipo) {
@@ -443,8 +501,11 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
             URL = URL + auxiliarGeneral.getUpdatePHP("Cargo");
             insertarCargo = false;
         }
-        isComision = false;
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Cargo", cargo, insertarCargo, "o");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity())) {
+            isComision = false;
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Cargo", cargo, insertarCargo, "o");
+        } else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     @Override

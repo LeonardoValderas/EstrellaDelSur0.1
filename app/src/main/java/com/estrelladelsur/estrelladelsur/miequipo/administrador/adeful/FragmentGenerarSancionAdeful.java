@@ -63,6 +63,7 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
     private Request request;
     private String URL = null, usuario = null;
     private LinearLayout linearTorneo;
+    private int id_jugador;
 
 
     public static FragmentGenerarSancionAdeful newInstance() {
@@ -135,7 +136,9 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
     public void onResume() {
         super.onResume();
         controladorAdeful = new ControladorAdeful(getActivity());
-        init();
+        usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
+        // populateSpinners();
     }
 
     private void init() {
@@ -158,14 +161,7 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
             auxiliarGeneral.errorDataBase(getActivity());
         }
 
-        adaptadorTarjeta = new ArrayAdapter<>(getActivity(),
-                R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.tarjetaArray));
-        //AMARILLA
-        sancionAmarillaSpinner.setAdapter(adaptadorTarjeta);
-        //ROJA
-        sancionRojaSpinner.setAdapter(adaptadorTarjeta);
-        //FECHA
-        cantidadFechasSpinner.setAdapter(adaptadorTarjeta);
+        populateSpinners();
 
         //POPULATION SPINNER JUGADOR X ID DIVISION
         sancionDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -176,6 +172,9 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
                 if (!divisionArray.isEmpty()) {
                     id_division = divisionArray.get(position).getID_DIVISION();
                     populationSpinnerJugador(id_division);
+                    if (actualizar) {
+                        sancionJugadorSpinner.setSelection(getPositionSpinner(id_jugador, 1));
+                    }
                 }
             }
 
@@ -199,8 +198,8 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
                     .getIntExtra("divisionSpinner", 0);
             populationSpinnerJugador(id_division);
             // JUGADOR 1
-            sancionJugadorSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
-                    .getIntExtra("jugadorSpinner", 0), 1));
+            id_jugador = getActivity().getIntent()
+                    .getIntExtra("jugadorSpinner", 0);
             // AMARILLA 2
             sancionAmarillaSpinner.setSelection(getActivity().getIntent().getIntExtra("amarillaSpinner", 0));
             // ROJA 3
@@ -215,6 +214,17 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
         }
     }
 
+    public void populateSpinners() {
+        adaptadorTarjeta = new ArrayAdapter<>(getActivity(),
+                R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.tarjetaArray));
+        //AMARILLA
+        sancionAmarillaSpinner.setAdapter(adaptadorTarjeta);
+        //ROJA
+        sancionRojaSpinner.setAdapter(adaptadorTarjeta);
+        //FECHA
+        cantidadFechasSpinner.setAdapter(adaptadorTarjeta);
+    }
+
     public void populationSpinnerJugador(int id_division) {
 
         jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
@@ -225,7 +235,7 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
                 sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerJugador));
                 sancionJugadorSpinner.setAdapter(adaptadorInicial);
             }
@@ -240,16 +250,18 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
             //DIVISION 0
             case 0:
                 for (int i = 0; i < divisionArray.size(); i++) {
-                    if (divisionArray.get(i).getID_DIVISION() == (idSpinner)) {
+                    if (divisionArray.get(i).getID_DIVISION() == idSpinner) {
                         index = i;
+                        break;
                     }
                 }
                 break;
             // JUGADOR 1
             case 1:
                 for (int i = 0; i < jugadorArray.size(); i++) {
-                    if (jugadorArray.get(i).getID_JUGADOR() == (idSpinner)) {
+                    if (jugadorArray.get(i).getID_JUGADOR() == idSpinner) {
                         index = i;
+                        break;
                     }
                 }
                 break;
@@ -293,7 +305,11 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
 
             URL = URL + auxiliarGeneral.getUpdatePHP("Sancion");
         }
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Sancion", sancion, insertar, "a");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Sancion", sancion, insertar, "a");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
+
     }
 
     public void inicializarControles(String mensaje) {
@@ -306,10 +322,12 @@ public class FragmentGenerarSancionAdeful extends Fragment implements MyAsyncTas
         Toast.makeText(getActivity(), mgs,
                 Toast.LENGTH_SHORT).show();
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_administrador_general, menu);
         menu.getItem(1).setVisible(false);// posicion

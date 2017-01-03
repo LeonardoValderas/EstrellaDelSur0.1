@@ -21,25 +21,24 @@
 
                 <ImageButton
                     android:id="@+id/rotateButton"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginLeft="40dp"
                     android:src="@android:drawable/stat_notify_sync" />
 
                 <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/fotoImageComisionDireccion"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
+                    android:layout_width="41dp"
+                    android:layout_height="41dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="1dp"
                     android:clickable="true"
                     android:src="@mipmap/ic_foto_galery"
                     app:civ_border_color="#FF000000"
                     app:civ_border_width="1dp" />
 
                 <android.support.design.widget.TextInputLayout
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -47,12 +46,12 @@
                         android:id="@+id/nombreEditComisionDireccion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="1dp"
                         android:ems="10"
                         android:gravity="center"
                         android:hint="Nombre"
                         android:maxLength="20"
-                        android:textSize="30dp">
+                        android:textSize="10dp">
 
                         <requestFocus />
                     </EditText>
@@ -61,7 +60,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="1dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -70,13 +69,13 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Cargo"
-                        android:textSize="25dp" />
+                        android:textSize="12dp" />
 
                     <Spinner
                         android:id="@+id/puestoSpinnerComisionDireccion"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_height="25dp"
+                        android:layout_marginTop="1dp"
                         android:background="@drawable/style_spinner"
                         android:gravity="center" />
                 </LinearLayout>
@@ -86,7 +85,7 @@
                 android:id="@+id/linerFoto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="1dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -95,31 +94,33 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Periodo"
-                    android:textSize="25dp" />
+                    android:textSize="12dp" />
             </LinearLayout>
 
             <LinearLayout
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="1dp"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/desdeEditComisionDireccion"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_estilo_fecha"
-                    android:text="Desde" />
+                    android:text="Desde"
+                    android:textSize="10dp" />
 
                 <Button
                     android:id="@+id/hastaEditComisionDireccion"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_weight="1"
                     android:background="@drawable/button_estilo_fecha"
-                    android:text="Hasta" />
+                    android:text="Hasta"
+                    android:textSize="10dp" />
 
             </LinearLayout>
         </LinearLayout>

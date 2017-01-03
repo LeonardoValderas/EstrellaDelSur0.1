@@ -29,39 +29,18 @@ public class AdaptadorRecyclerEditarPermiso extends
     private Typeface usuarioFont, modulosfont;
 
     public static class PermisoViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageViewEscudoL;
         private TextView textRecyclerViewEquipoL;
-        private ImageView imageViewEscudoV;
-        private TextView textRecyclerViewEquipoV;
         private TextView textRecyclerViewDia;
         private TextView textRecyclerViewHora;
         private TextView textRecyclerViewCancha;
-        private TextView textRecyclerViewResultadoV;
         private TextView textRecyclerViewResultadoL;
         private String permisos = "";
-        //private ControladorAdeful controladorAdeful;
         private ControladorGeneral controladorGeneral;
         private ArrayList<Permiso> permisoDivisionArray;
-        private LinearLayout linearEscudoL, linearEscudoV, linearVisita, linearFechaAnio;
 
         public PermisoViewHolder(View itemView) {
             super(itemView);
 
-            linearEscudoL = (LinearLayout) itemView
-                    .findViewById(R.id.linearEscudoL);
-            linearEscudoL.setVisibility(View.GONE);
-
-            linearEscudoV = (LinearLayout) itemView
-                    .findViewById(R.id.linearEscudoV);
-            linearEscudoV.setVisibility(View.GONE);
-
-            linearVisita = (LinearLayout) itemView
-                    .findViewById(R.id.linearVisita);
-            linearVisita.setVisibility(View.GONE);
-
-            linearFechaAnio = (LinearLayout) itemView
-                    .findViewById(R.id.linearFechaAnio);
-            linearFechaAnio.setVisibility(View.GONE);
             // EQUIPO LOCAL
             textRecyclerViewEquipoL = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewEquipoL);
@@ -80,10 +59,6 @@ public class AdaptadorRecyclerEditarPermiso extends
             textRecyclerViewResultadoL = (TextView) itemView
                     .findViewById(R.id.textRecyclerViewResultadoL);
             textRecyclerViewResultadoL.setVisibility(View.GONE);
-            // RESULTADO VISITA
-            textRecyclerViewResultadoV = (TextView) itemView
-                    .findViewById(R.id.textRecyclerViewResultadoV);
-            textRecyclerViewResultadoV.setVisibility(View.GONE);
         }
 
         public void bindTitular(Permiso permiso, Context context, Typeface u, Typeface m) {
@@ -93,7 +68,6 @@ public class AdaptadorRecyclerEditarPermiso extends
             textRecyclerViewEquipoL.setTypeface(u, Typeface.BOLD);
             textRecyclerViewDia.setText("Permisos:");
             textRecyclerViewDia.setTypeface(m, Typeface.BOLD);
-            //controladorAdeful = new ControladorAdeful(context);
             controladorGeneral = new ControladorGeneral(context);
             permisoDivisionArray = controladorGeneral.selectListaPermisoId(permiso.getID_PERMISO());
             if (permisoDivisionArray != null) {
@@ -127,7 +101,7 @@ public class AdaptadorRecyclerEditarPermiso extends
     public PermisoViewHolder onCreateViewHolder(ViewGroup viewGroup,
                                                 int viewType) {
         View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
-                R.layout.recyclerview_item_fixture, viewGroup, false);
+                R.layout.recyclerview_item_entrenamiento, viewGroup, false);
         itemView.setOnClickListener(this);
         PermisoViewHolder tvh = new PermisoViewHolder(itemView);
         return tvh;

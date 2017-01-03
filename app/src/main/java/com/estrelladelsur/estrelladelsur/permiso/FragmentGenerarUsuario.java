@@ -162,8 +162,11 @@ public class FragmentGenerarUsuario extends Fragment implements MyAsyncTaskListe
             request.setParametrosDatos("fecha_actualizacion", usuario.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Usuario");
         }
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Usuario", usuario, insertar, "o");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Usuario", usuario, insertar, "o");
     }
 
     public void showMesaje(String mensaje) {

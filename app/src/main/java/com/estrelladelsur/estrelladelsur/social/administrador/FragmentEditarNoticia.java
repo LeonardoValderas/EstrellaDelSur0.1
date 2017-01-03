@@ -163,7 +163,10 @@ public class FragmentEditarNoticia extends Fragment implements MyAsyncTaskListen
         URL = auxiliarGeneral.getURLNOTICIAALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Noticia");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Noticia", true, posicion, "a", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Noticia", true, posicion, "a", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -202,6 +205,7 @@ public class FragmentEditarNoticia extends Fragment implements MyAsyncTaskListen
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 

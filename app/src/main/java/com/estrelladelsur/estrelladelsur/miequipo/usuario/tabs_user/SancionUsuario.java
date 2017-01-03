@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,6 +26,8 @@ import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
@@ -43,8 +46,10 @@ public class SancionUsuario extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private Spinner jugadoresDivisionSpinner;
     private RecyclerView recyclerViewSancion;
-    private FloatingActionButton botonFloating;
+  //  private FloatingActionButton botonFloating;
     private ArrayList<Division> divisionArray;
+    private AdRequest adRequest;
+    private AdView mAdView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,25 +67,30 @@ public class SancionUsuario extends AppCompatActivity {
 
         txtToolBarTitulo = (TextView) findViewById(R.id.txtToolBarTitulo);
         txtToolBarTitulo.setText("SANCION");
+        mAdView = (AdView) findViewById(R.id.adView);
+
         init();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
         auxiliarGeneral = new AuxiliarGeneral(SancionUsuario.this);
         controladorUsuarioAdeful = new ControladorUsuarioAdeful(SancionUsuario.this);
         init();
     }
 
     public void init() {
-
+        BannerAd();
         // DIVISION
         jugadoresDivisionSpinner = (Spinner) findViewById(R.id.jugadoresDivisionSpinner);
         // RECYCLER
         recyclerViewSancion = (RecyclerView) findViewById(R.id.recycleViewGeneral);
         // BUTTON
-        botonFloating = (FloatingActionButton) findViewById(R.id.botonFloating);
+       // botonFloating = (FloatingActionButton) findViewById(R.id.botonFloating);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         initRecycler();
@@ -102,10 +112,9 @@ public class SancionUsuario extends AppCompatActivity {
             auxiliarGeneral.errorDataBase(SancionUsuario.this);
         }
 
-        botonFloating.setOnClickListener(new View.OnClickListener() {
-
+        jugadoresDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (jugadoresDivisionSpinner.getSelectedItem().toString().equals(getResources().
                         getString(R.string.vacioSpinnerDivision))) {
                     Toast.makeText(SancionUsuario.this, "No hay datos cargados.",
@@ -116,7 +125,27 @@ public class SancionUsuario extends AppCompatActivity {
                     recyclerViewLoadSancion(divisionSpinner);
                 }
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
+//        botonFloating.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                if (jugadoresDivisionSpinner.getSelectedItem().toString().equals(getResources().
+//                        getString(R.string.vacioSpinnerDivision))) {
+//                    Toast.makeText(SancionUsuario.this, "No hay datos cargados.",
+//                            Toast.LENGTH_SHORT).show();
+//                } else {
+//                    division = (Division) jugadoresDivisionSpinner.getSelectedItem();
+//                    divisionSpinner = division.getID_DIVISION();
+//                    recyclerViewLoadSancion(divisionSpinner);
+//                }
+//            }
+//        });
 
         recyclerViewSancion.addOnItemTouchListener(new
                 RecyclerTouchListener(SancionUsuario.this,
@@ -213,5 +242,20 @@ public class SancionUsuario extends AppCompatActivity {
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
+    }
+    public void BannerAd() {
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
     }
 }

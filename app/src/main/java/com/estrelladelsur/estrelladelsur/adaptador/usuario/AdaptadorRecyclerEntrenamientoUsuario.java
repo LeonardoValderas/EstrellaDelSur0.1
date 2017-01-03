@@ -34,7 +34,7 @@ public class AdaptadorRecyclerEntrenamientoUsuario extends
 		private TextView textRecyclerViewDivisiones;
 		private TextView textRecyclerViewCancha;
 		private TextView textRecyclerViewResultadoL;
-		private LinearLayout linearEscudoL, linearEscudoV, linearVisita, linearFechaAnio, linearDiaHora, linearDivisiones;
+		private LinearLayout linearDiaHora, linearDivisiones;
         private String divisiones="";
 		private ControladorUsuarioAdeful controladorUsuarioAdeful;
 		private ArrayList<Entrenamiento> entrenamientoDivisionArray;
@@ -42,23 +42,6 @@ public class AdaptadorRecyclerEntrenamientoUsuario extends
 
 		public EntrenamientoViewHolder(View itemView) {
 			super(itemView);
-
-			// lINEAR ESCUDO LOCAL
-			linearEscudoL = (LinearLayout) itemView
-					.findViewById(R.id.linearEscudoL);
-			linearEscudoL.setVisibility(View.GONE);
-            // lINEAR ESCUDO VISITA
-			linearEscudoV = (LinearLayout) itemView
-					.findViewById(R.id.linearEscudoV);
-			linearEscudoV.setVisibility(View.GONE);
-		   // lINEAR  VISITA
-			linearVisita = (LinearLayout) itemView
-					.findViewById(R.id.linearVisita);
-			linearVisita.setVisibility(View.GONE);
-
-			linearFechaAnio = (LinearLayout) itemView
-					.findViewById(R.id.linearFechaAnio);
-			linearFechaAnio.setVisibility(View.GONE);
 
 			linearDiaHora = (LinearLayout) itemView
 					.findViewById(R.id.linearDiaHora);
@@ -82,7 +65,6 @@ public class AdaptadorRecyclerEntrenamientoUsuario extends
 			// RESULTADO LOCAL
 			textRecyclerViewResultadoL = (TextView) itemView
 					.findViewById(R.id.textRecyclerViewResultadoL);
-
      	}
 
 			public void bindTitular(EntrenamientoRecycler entrenamientoRecycler,Context context,Typeface equipo, Typeface texto, AuxiliarGeneral a) {
@@ -92,8 +74,8 @@ public class AdaptadorRecyclerEntrenamientoUsuario extends
 			textRecyclerViewEquipoL.setTypeface(texto, Typeface.BOLD);
 			textRecyclerViewResultadoL.setText(entrenamientoRecycler.getDIA().toString() + " " + entrenamientoRecycler.getHORA().toString()+ " hs.");
 			textRecyclerViewResultadoL.setTypeface(equipo);
-			textRecyclerViewDivision.setText("Divisines citadas");
-			textRecyclerViewDivision.setTypeface(texto);
+			textRecyclerViewDivision.setText("Divisiones citadas");
+			textRecyclerViewDivision.setTypeface(texto, Typeface.BOLD);
 			controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
 			entrenamientoDivisionArray = controladorUsuarioAdeful.selectListaDivisionEntrenamientoAdefulId(entrenamientoRecycler.getID_ENTRENAMIENTO());
 			if(entrenamientoDivisionArray != null) {
@@ -125,7 +107,7 @@ public class AdaptadorRecyclerEntrenamientoUsuario extends
 	public EntrenamientoViewHolder onCreateViewHolder(ViewGroup viewGroup,
 			int viewType) {
 		View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(
-				R.layout.recyclerview_item_fixture, viewGroup, false);
+				R.layout.recyclerview_item_entrenamiento, viewGroup, false);
 		itemView.setOnClickListener(this);
 		EntrenamientoViewHolder tvh = new EntrenamientoViewHolder(itemView);
 		return tvh;

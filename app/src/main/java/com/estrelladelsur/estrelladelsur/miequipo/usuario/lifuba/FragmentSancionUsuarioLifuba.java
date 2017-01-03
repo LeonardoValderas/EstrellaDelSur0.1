@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -25,6 +26,11 @@ import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.lifuba.ControladorUsuarioLifuba;
 import com.estrelladelsur.estrelladelsur.entidad.Division;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
@@ -37,12 +43,16 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
     private AuxiliarGeneral auxiliarGeneral;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private Spinner jugadoresDivisionSpinner;
-    private FloatingActionButton botonFloating;
+  //  private FloatingActionButton botonFloating;
     private ArrayList<Sancion> sancionArray;
     private ArrayList<Division> divisionArray;
     private Division division;
     private int divisionSpinner;
     private AdaptadorSancionUsuario adaptadorSancionUsuario;
+    private MyAsyncTaskListener listener;
+    private Request request;
+    private AdRequest adRequest;
+    private AdView mAdView;
 
     public static FragmentSancionUsuarioLifuba newInstance() {
         FragmentSancionUsuarioLifuba fragment = new FragmentSancionUsuarioLifuba();
@@ -72,9 +82,10 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
 
         recyclerViewSancion = (RecyclerView) v
                 .findViewById(R.id.recycleViewGeneral);
-        mSwipeRefreshLayout = (SwipeRefreshLayout)v.findViewById(R.id.swipeRefreshLayout);
-        jugadoresDivisionSpinner = (Spinner)v.findViewById(R.id.jugadoresDivisionSpinner);
-        botonFloating = (FloatingActionButton) v.findViewById(R.id.botonFloating);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
+        jugadoresDivisionSpinner = (Spinner) v.findViewById(R.id.jugadoresDivisionSpinner);
+      //  botonFloating = (FloatingActionButton) v.findViewById(R.id.botonFloating);
+        mAdView = (AdView) v.findViewById(R.id.adView);
         return v;
     }
 
@@ -87,11 +98,15 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
         controladorUsuarioLifuba = new ControladorUsuarioLifuba(getActivity());
         init();
     }
 
     private void init() {
+        BannerAd();
         initRecycler();
 
         divisionArray = controladorUsuarioLifuba.selectListaDivisionUsuarioLifuba();
@@ -111,13 +126,13 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
             auxiliarGeneral.errorDataBase(getActivity());
         }
 
-        botonFloating.setOnClickListener(new View.OnClickListener() {
-
+        jugadoresDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (jugadoresDivisionSpinner.getSelectedItem().toString().equals(getResources().
                         getString(R.string.vacioSpinnerDivision))) {
-                    Toast.makeText(getActivity(), "No hay datos cargados.",
+                    if (isAdded() && isVisible() && getUserVisibleHint())
+                        Toast.makeText(getActivity(), "No hay datos cargados.",
                             Toast.LENGTH_SHORT).show();
                 } else {
                     division = (Division) jugadoresDivisionSpinner.getSelectedItem();
@@ -125,8 +140,40 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
                     recyclerViewLoadSancion(divisionSpinner);
                 }
             }
-        });
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+//        botonFloating.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                if (jugadoresDivisionSpinner.getSelectedItem().toString().equals(getResources().
+//                        getString(R.string.vacioSpinnerDivision))) {
+//                    Toast.makeText(getActivity(), "No hay datos cargados.",
+//                            Toast.LENGTH_SHORT).show();
+//                } else {
+//                    division = (Division) jugadoresDivisionSpinner.getSelectedItem();
+//                    divisionSpinner = division.getID_DIVISION();
+//                    recyclerViewLoadSancion(divisionSpinner);
+//                }
+//            }
+//        });
+        listener = new MyAsyncTaskListener() {
+            @Override
+            public void onPostExecuteConcluded(boolean result, String mensaje) {
+                if (result) {
+                    recyclerViewLoadSancion(divisionSpinner);
+                } else {
+                    auxiliarGeneral.errorWebService(getActivity(), mensaje);
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        };
 
         recyclerViewSancion.addOnItemTouchListener(new
                 RecyclerTouchListener(getActivity(),
@@ -134,6 +181,7 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
             @Override
             public void onClick(View view, int position) {
             }
+
             @Override
             public void onLongClick(View view, final int position) {
             }
@@ -141,8 +189,16 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                String fecha = controladorUsuarioLifuba.selectTabla(AsyncTaskGenericIndividual.TABLA_SANCION_LIFUBA);
+                if (fecha != null) {
+                    request = new Request();
+                    request.setMethod("POST");
+                    request.setParametrosDatos("fecha_tabla", fecha);
+                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_SANCION_LIFUBA);
+                    request.setParametrosDatos("liga", "LIFUBA");
 
-                recyclerViewLoadSancion(divisionSpinner);
+                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.SANCION_LIFUBA);
+                }
             }
         });
     }
@@ -153,7 +209,8 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
             adaptadorSancionUsuario = new AdaptadorSancionUsuario(sancionArray, getActivity());
             recyclerViewSancion.setAdapter(adaptadorSancionUsuario);
             if (sancionArray.isEmpty())
-                Toast.makeText(
+                if (isAdded() && isVisible() && getUserVisibleHint())
+                    Toast.makeText(
                         getActivity(),
                         "Selección sin datos",
                         Toast.LENGTH_SHORT).show();
@@ -165,7 +222,7 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
         }
     }
 
-    public void initRecycler(){
+    public void initRecycler() {
         recyclerViewSancion.setLayoutManager(new LinearLayoutManager(
                 getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerViewSancion.addItemDecoration(new DividerItemDecoration(
@@ -175,8 +232,10 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
+
     static class RecyclerTouchListener implements
             RecyclerView.OnItemTouchListener {
 
@@ -216,11 +275,29 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
             }
             return false;
         }
+
         @Override
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
+    }
+
+    public void BannerAd() {
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
     }
 }

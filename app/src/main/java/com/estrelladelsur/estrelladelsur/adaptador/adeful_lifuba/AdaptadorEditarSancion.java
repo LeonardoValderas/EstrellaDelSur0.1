@@ -66,7 +66,7 @@ public class AdaptadorEditarSancion extends
 				imageViewFotoJugador.setImageBitmap(escudoLocalBitmap);
 			}
 			textRecyclerViewNombre.setText(sancion.getNOMBRE_JUGADOR());
-			textRecyclerViewNombre.setTypeface(texto, Typeface.BOLD);
+			//textRecyclerViewNombre.setTypeface(texto, Typeface.BOLD);
 			String tarjetas = "Amarrilas: "+sancion.getAMARILLA()+" Rojas: "+sancion.getROJA();
 			textRecyclerViewTarjetas.setText(tarjetas);
 			textRecyclerViewTarjetas.setTypeface(equipo);

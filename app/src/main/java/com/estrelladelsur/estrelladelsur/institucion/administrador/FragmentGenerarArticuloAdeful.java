@@ -140,7 +140,10 @@ public class FragmentGenerarArticuloAdeful extends Fragment implements MyAsyncTa
             request.setParametrosDatos("fecha_actualizacion", articulo.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Articulo");
         }
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Articulo", articulo, insertar, "o");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Articulo", articulo, insertar, "o");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     @Override

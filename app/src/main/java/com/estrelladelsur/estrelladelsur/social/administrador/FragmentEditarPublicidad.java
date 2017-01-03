@@ -119,8 +119,8 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
                         publicidadArray.get(position).getID_PUBLICIDAD());
                 editarPublicidad.putExtra("titulo",
                         publicidadArray.get(position).getTITULO());
-                editarPublicidad.putExtra("logo",
-                        publicidadArray.get(position).getLOGO());
+//                editarPublicidad.putExtra("logo",
+//                        publicidadArray.get(position).getLOGO());
                 editarPublicidad.putExtra("nombre_foto",
                         publicidadArray.get(position).getNOMBRE_FOTO());
                 editarPublicidad.putExtra("otros",
@@ -192,7 +192,10 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
         URL = auxiliarGeneral.getURLPUBLICIDADALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Publicidad");
 
-        new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Publicidad", true, posicion, "a", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getActivity(), this, URL, request, "Publicidad", true, posicion, "a", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void recyclerViewLoadPublicidad() {
@@ -217,6 +220,7 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -269,6 +273,7 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
             // TODO Auto-generated method stub
         }
     }
+
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_administrador_general, menu);
         menu.getItem(1).setVisible(false);// posicion
@@ -276,6 +281,7 @@ public class FragmentEditarPublicidad extends Fragment implements MyAsyncTaskLis
         menu.getItem(4).setVisible(false);// guardar
         super.onCreateOptionsMenu(menu, inflater);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

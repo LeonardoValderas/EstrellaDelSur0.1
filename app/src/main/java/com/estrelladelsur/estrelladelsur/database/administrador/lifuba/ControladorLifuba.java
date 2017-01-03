@@ -105,7 +105,7 @@ public class ControladorLifuba {
         try {
             cv.put("FECHA", fecha);
 
-            long valor = database.update("TABLA", cv, "TABLA = '"+tabla+"'", null);
+            long valor = database.update("TABLA", cv, "TABLA = '" + tabla + "'", null);
 
             if (valor > 0) {
                 valor = database.update("TABLA", cv, "TABLA = 'FECHA_TABLA'", null);
@@ -416,29 +416,6 @@ public class ControladorLifuba {
         return res;
     }
 
-    // DIVISION INSERTAR
-    public boolean insertDivisionLifuba(int id, Division division) throws SQLiteException {
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_DIVISION", id);
-            cv.put("DESCRIPCION", division.getDESCRIPCION());
-            cv.put("USUARIO_CREADOR", division.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", division.getFECHA_CREACION());
-
-            long valor = database.insert("DIVISION_LIFUBA", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
     public boolean insertDivisionLifuba(Division division) throws SQLiteException {
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
@@ -464,7 +441,7 @@ public class ControladorLifuba {
     //DIVISION LISTA
     public ArrayList<Division> selectListaDivisionLifuba() {
 
-        String sql = "SELECT * FROM DIVISION_LIFUBA";
+        String sql = "SELECT * FROM DIVISION_LIFUBA ORDER BY ID_DIVISION DESC";
         ArrayList<Division> arrayDivision = new ArrayList<>();
         String descripcion = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null;
         int id;
@@ -514,57 +491,6 @@ public class ControladorLifuba {
         usuario_act = null;
 
         return arrayDivision;
-    }
-
-    // ACTUALIZAR DIVISION
-    public boolean actualizarDivisionLifuba(Division division) throws SQLiteException {
-
-        boolean res = false;
-        String sql = "UPDATE DIVISION_LIFUBA SET DESCRIPCION='"
-                + division.getDESCRIPCION() + "', USUARIO_ACTUALIZACION='"
-                + division.getUSUARIO_ACTUALIZACION() + "', FECHA_ACTUALIZACION='"
-                + division.getFECHA_ACTUALIZACION() +
-                "' WHERE ID_DIVISION ='" + division.getID_DIVISION() + "'";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    //ELIMINAR DIVISION
-    public boolean eliminarDivisionLifuba(int id) throws SQLiteException {
-
-        boolean res = false;
-
-        String sql = "DELETE FROM DIVISION_LIFUBA WHERE ID_DIVISION = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
     }
 
     public boolean eliminarDivisionLifuba() throws SQLiteException {
@@ -676,7 +602,7 @@ public class ControladorLifuba {
     //LISTA TORNEO
     public ArrayList<Torneo> selectListaTorneoLifuba() throws SQLiteException {
 
-        String sql = "SELECT * FROM TORNEO_LIFUBA";
+        String sql = "SELECT * FROM TORNEO_LIFUBA ORDER BY ID_TORNEO DESC";
         ArrayList<Torneo> arrayTorneo = new ArrayList<>();
         String descripcion = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null, tabla = null;
         int id;
@@ -882,7 +808,6 @@ public class ControladorLifuba {
     }
 
     //ES TORNEO ACTUAL
-
     public Torneo selectActualTorneoLifuba() throws SQLiteException {
 
         String sql = "SELECT * FROM TORNEO_ACTUAL_LIFUBA";
@@ -977,7 +902,7 @@ public class ControladorLifuba {
     //LISTA CANCHA
     public ArrayList<Cancha> selectListaCanchaLifuba() {
 
-        String sql = "SELECT * FROM CANCHA_LIFUBA";
+        String sql = "SELECT * FROM CANCHA_LIFUBA ORDER BY ID_CANCHA DESC";
         ArrayList<Cancha> arrayCancha = new ArrayList<>();
         String nombre = null, longitud = null, latitud = null, direccion = null, usuario = null, fechaCreacion = null, fechaActualizacion = null, usuario_act = null;
         int id;
@@ -1106,7 +1031,6 @@ public class ControladorLifuba {
     }
 
     ///////MI EQUIPO////////
-
     // FECHA INSERTAR
     public boolean insertFecha(Fecha fecha) {
         boolean ban = false;
@@ -1228,68 +1152,6 @@ public class ControladorLifuba {
         return arrayAnio;
     }
 
-    //INSERTAR MES
-    public boolean insertMes(Mes mes) {
-        boolean ban = false;
-
-        String sql = "INSERT INTO MES ( MES) VALUES ('" + mes.getMES()
-                + "')";
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                ban = true;
-            } catch (Exception e) {
-                ban = false;
-            }
-        } else {
-            ban = false;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        database = null;
-        return ban;
-    }
-
-    //LISTA MES
-    public ArrayList<Mes> selectListaMes() {
-
-        String sql = "SELECT * FROM MES";
-        ArrayList<Mes> arrayMes = new ArrayList<>();
-        String mess = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Mes mes = null;
-                        id = cursor.getInt(cursor.getColumnIndex("ID_MES"));
-                        mess = cursor.getString(cursor.getColumnIndex("MES"));
-                        mes = new Mes(id, mess);
-
-                        arrayMes.add(mes);
-                    }
-                }
-            } catch (Exception e) {
-                arrayMes = null;
-            }
-        } else {
-            arrayMes = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        mess = null;
-        return arrayMes;
-    }
-
     // INSERTAR FIXTURE
     public boolean insertFixtureLifuba(int id, Fixture fixture) throws SQLiteException {
 
@@ -1306,6 +1168,8 @@ public class ControladorLifuba {
             cv.put("ID_ANIO", fixture.getID_ANIO());
             cv.put("DIA", fixture.getDIA());
             cv.put("HORA", fixture.getHORA());
+            cv.put("RESULTADO_LOCAL", fixture.getRESULTADO_LOCAL());
+            cv.put("RESULTADO_VISITA", fixture.getRESULTADO_VISITA());
             cv.put("USUARIO_CREADOR", fixture.getUSUARIO_CREACION());
             cv.put("USUARIO_ACTUALIZACION", fixture.getUSUARIO_ACTUALIZACION());
             cv.put("FECHA_CREACION", fixture.getFECHA_CREACION());
@@ -1391,7 +1255,6 @@ public class ControladorLifuba {
             return false;
         }
     }
-
 
     //LISTA FIXTURE RECYCLER
     public ArrayList<Fixture> selectListaFixtureLifuba(int division,
@@ -1504,6 +1367,7 @@ public class ControladorLifuba {
         sql = null;
         return res;
     }
+
     public boolean eliminarFixtureLifuba() {
 
         boolean res = false;
@@ -1631,7 +1495,6 @@ public class ControladorLifuba {
     }
 
     // ///////////////////////////////////JUGADORES////////////////////////////////////////////
-
     // INSERTAR JUGADOR
     public boolean insertJugadorLifuba(int id, Jugador jugador) throws SQLiteException {
 
@@ -1662,7 +1525,6 @@ public class ControladorLifuba {
     }
 
     public boolean insertJugadorLifuba(Jugador jugador) throws SQLiteException {
-
         ContentValues cv = new ContentValues();
         abrirBaseDeDatos();
         try {
@@ -1751,55 +1613,6 @@ public class ControladorLifuba {
         return arrayJugador;
     }
 
-    //ACTUALIZAR JUGADOR
-    public boolean actualizarJugadorLifuba(Jugador jugador)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("NOMBRE_JUGADOR", jugador.getNOMBRE_JUGADOR());
-            cv.put("FOTO_JUGADOR", jugador.getFOTO_JUGADOR());
-            cv.put("ID_DIVISION", jugador.getID_DIVISION());
-            cv.put("ID_POSICION", jugador.getID_POSICION());
-            cv.put("USUARIO_ACTUALIZACION", jugador.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", jugador.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("JUGADOR_LIFUBA", cv, "ID_JUGADOR="
-                    + jugador.getID_JUGADOR(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //ELIMINAR JUGADOR
-    public boolean eliminarJugadorLifuba(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM JUGADOR_LIFUBA WHERE ID_JUGADOR = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
     public boolean eliminarJugadorLifuba() {
 
         boolean res = false;
@@ -1848,6 +1661,7 @@ public class ControladorLifuba {
             return false;
         }
     }
+
     public boolean insertPosicionLifuba(Posicion posicion)
             throws SQLiteException {
 
@@ -1874,7 +1688,6 @@ public class ControladorLifuba {
         }
     }
 
-
     //ACTUALIZAR
     public boolean actualizarPosicionLifuba(Posicion posicion)
             throws SQLiteException {
@@ -1900,46 +1713,6 @@ public class ControladorLifuba {
         }
     }
 
-    //LISTA POSICION
-    public ArrayList<Posicion> selectListaPosicionLifuba() {
-
-        String sql = "SELECT * FROM POSICION_LIFUBA";
-        ArrayList<Posicion> arrayPosicion = new ArrayList<>();
-        String descripcion = null;
-        int id;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-                        Posicion posicion = null;
-                        id = cursor
-                                .getInt(cursor.getColumnIndex("ID_POSICION"));
-                        descripcion = cursor.getString(cursor
-                                .getColumnIndex("DESCRIPCION"));
-                        posicion = new Posicion(id, descripcion, null, null, null, null);
-
-                        arrayPosicion.add(posicion);
-                    }
-                }
-            } catch (Exception e) {
-                arrayPosicion = null;
-            }
-        } else {
-            arrayPosicion = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        descripcion = null;
-
-        return arrayPosicion;
-    }
-
     public boolean eliminarPosicionLifuba() {
 
         boolean res = false;
@@ -1960,566 +1733,6 @@ public class ControladorLifuba {
         sql = null;
         return res;
     }
-
-    ////ENTRENAMIENTO//////
-//INSERTAR
-    public boolean insertEntrenamientoLifuba(int id, Entrenamiento entrenamiento)
-            throws SQLiteException {
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_ENTRENAMIENTO", id);
-            cv.put("DIA_ENTRENAMIENTO", entrenamiento.getDIA());
-            cv.put("HORA_ENTRENAMIENTO", entrenamiento.getHORA());
-            cv.put("ID_CANCHA", entrenamiento.getID_CANCHA());
-            cv.put("USUARIO_CREADOR", entrenamiento.getUSUARIO_CREADOR());
-            cv.put("FECHA_CREACION", entrenamiento.getFECHA_CREACION());
-            cv.put("USUARIO_ACTUALIZACION", entrenamiento.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", entrenamiento.getFECHA_ACTUALIZACION());
-
-            long valor = database.insert("ENTRENAMIENTO_LIFUBA", null, cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    // INSERT TABLA INTERMEDIA
-    public boolean insertEntrenamientoDivisionLifuba(int id, int division)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_ENTRENAMIENTO", id);
-            cv.put("ID_DIVISION", division);
-
-            long valor = database.insert("ENTRENAMIENTO_DIVISION_LIFUBA", null,
-                    cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-    //ACTUALIZAR
-    public boolean actualizarEntrenamientoLifuba(Entrenamiento entrenamiento)
-            throws SQLiteException {
-        //   int id_entrenamiento = 0;
-        ContentValues cv = new ContentValues();
-        abrirBaseDeDatos();
-        try {
-            cv.put("DIA_ENTRENAMIENTO", entrenamiento.getDIA());
-            cv.put("HORA_ENTRENAMIENTO", entrenamiento.getHORA());
-            cv.put("ID_CANCHA", entrenamiento.getID_CANCHA());
-            cv.put("USUARIO_ACTUALIZACION", entrenamiento.getUSUARIO_ACTUALIZACION());
-            cv.put("FECHA_ACTUALIZACION", entrenamiento.getFECHA_ACTUALIZACION());
-
-            long valor = database.update("ENTRENAMIENTO_LIFUBA", cv, "ID_ENTRENAMIENTO="
-                    + entrenamiento.getID_ENTRENAMIENTO(), null);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-        }
-    }
-
-
-    //SELECT ID TABLA INTERMEDIA
-    public int selectIdEntrenamiento_Division() {
-
-        String sql = "SELECT ID_ENTRENAMIENTO_DIVISION FROM ENTRENAMIENTO_DIVISION_LIFUBA ORDER BY ID_ENTRENAMIENTO_DIVISION DESC limit 1";
-        int id = 0;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Posicion posicion = null;
-                        id = cursor.getInt(cursor
-                                .getColumnIndex("ID_ENTRENAMIENTO_DIVISION"));
-                    }
-                }
-            } catch (Exception e) {
-                id = 0;
-            }
-        } else {
-            id = 0;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-
-        return id;
-    }
-
-    //LISTA ENTRENAMIENTO sin division
-    public ArrayList<EntrenamientoRecycler> selectListaEntrenamientoLifuba(String fecha) {
-
-        String sql = "SELECT EA.ID_ENTRENAMIENTO, EA.DIA_ENTRENAMIENTO, EA.HORA_ENTRENAMIENTO, EA.ID_CANCHA, CA.NOMBRE"
-                + " FROM ENTRENAMIENTO_LIFUBA EA INNER JOIN CANCHA_Lifuba CA ON EA.ID_CANCHA = CA.ID_CANCHA"
-                + " WHERE substr(EA.DIA_ENTRENAMIENTO , 4, 7) = '" + fecha + "' ORDER BY EA.ID_ENTRENAMIENTO DESC";
-
-        ArrayList<EntrenamientoRecycler> arrayEntrenamiento = new ArrayList<EntrenamientoRecycler>();
-        int id_entrenamiento, id_cancha;
-        String dia = null, hora = null, nombre = null;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-                        EntrenamientoRecycler entrenamientoRecycler = null;
-
-                        id_entrenamiento = cursor.getInt(cursor
-                                .getColumnIndex("ID_ENTRENAMIENTO"));
-                        dia = cursor.getString(cursor
-                                .getColumnIndex("DIA_ENTRENAMIENTO"));
-                        hora = cursor.getString(cursor
-                                .getColumnIndex("HORA_ENTRENAMIENTO"));
-                        id_cancha = cursor.getInt(cursor
-                                .getColumnIndex("ID_CANCHA"));
-                        nombre = cursor.getString(cursor.getColumnIndex("NOMBRE"));
-
-                        entrenamientoRecycler = new EntrenamientoRecycler(id_entrenamiento,
-                                dia, hora, id_cancha, nombre);
-
-                        arrayEntrenamiento.add(entrenamientoRecycler);
-                    }
-                }
-            } catch (Exception e) {
-                arrayEntrenamiento = null;
-            }
-        } else {
-            arrayEntrenamiento = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        dia = null;
-        hora = null;
-        nombre = null;
-        return arrayEntrenamiento;
-    }
-
-    //LISTA Division por Id
-    public ArrayList<Entrenamiento> selectListaDivisionEntrenamientoLifubaId(int id_entrenamiento) {
-
-        String sql = "SELECT ED.ID_ENTRENAMIENTO_DIVISION, ED.ID_DIVISION, D.DESCRIPCION"
-                + " FROM ENTRENAMIENTO_DIVISION_LIFUBA ED INNER JOIN DIVISION_LIFUBA D ON"
-                + " ED.ID_DIVISION = D.ID_DIVISION"
-                + " WHERE ID_ENTRENAMIENTO = " + id_entrenamiento + "";
-
-        Cursor cursor = null;
-        ArrayList<Entrenamiento> arrayDivision = new ArrayList<>();
-        int id, id_division;
-        String descripcion = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-
-                if (cursor != null && cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-                        Entrenamiento entrenamiento_division = null;
-                        id = cursor.getInt(cursor
-                                .getColumnIndex("ID_ENTRENAMIENTO_DIVISION"));
-                        id_division = cursor.getInt(cursor
-                                .getColumnIndex("ID_DIVISION"));
-                        descripcion = cursor.getString(cursor
-                                .getColumnIndex("DESCRIPCION"));
-
-                        entrenamiento_division = new Entrenamiento(id,
-                                id_entrenamiento, id_division, descripcion, false);
-                        arrayDivision.add(entrenamiento_division);
-                    }
-                }
-            } catch (Exception e) {
-                arrayDivision = null;
-            }
-        } else {
-            arrayDivision = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        return arrayDivision;
-    }
-
-    //lISTA ENTRENAMIENTO division
-    public ArrayList<Entrenamiento> selectListaDivisionEntrenamientoLifuba() {
-
-        String sql = "SELECT * FROM DIVISION_LIFUBA";
-        ArrayList<Entrenamiento> arrayDivision = new ArrayList<>();
-        int id, id_division;
-        String descripcion = null;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Entrenamiento entrenamiento_division = null;
-                        id = 0;
-                        id_division = cursor.getInt(cursor
-                                .getColumnIndex("ID_DIVISION"));
-                        descripcion = cursor.getString(cursor
-                                .getColumnIndex("DESCRIPCION"));
-
-                        entrenamiento_division = new Entrenamiento(id,
-                                id, id_division, descripcion, false);
-
-                        arrayDivision.add(entrenamiento_division);
-                    }
-                }
-            } catch (Exception e) {
-                arrayDivision = null;
-            }
-        } else {
-            arrayDivision = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        descripcion = null;
-        return arrayDivision;
-    }
-
-    //ELIMINAR ENTRENAMIENTO
-    public boolean eliminarEntrenamientoLifuba(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM ENTRENAMIENTO_LIFUBA WHERE ID_ENTRENAMIENTO = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    //ELIMINAR DIVISION_ENTRENAMIENTO
-    public boolean eliminarDivisionEntrenamientoLifuba(int id, int division) {
-
-        boolean res = false;
-        String sql = "DELETE FROM ENTRENAMIENTO_DIVISION_LIFUBA WHERE ID_ENTRENAMIENTO = " + id + " AND ID_DIVISION =" + division;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    //ELIMINAR DIVISION_ENTRENAMIENTO
-    public boolean eliminarDivisionEntrenamientoLifuba(int id) {
-
-        boolean res = false;
-        String sql = "DELETE FROM ENTRENAMIENTO_DIVISION_LIFUBA WHERE ID_ENTRENAMIENTO = " + id;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-
-    // INSERT ASISTENCIA
-    public boolean insertAsistenciaEntrenamientoLifuba(int id, int id_jugador)
-            throws SQLiteException {
-
-        ContentValues cv = new ContentValues();
-        long valor = 0;
-        abrirBaseDeDatos();
-        try {
-            cv.put("ID_ENTRENAMIENTO", id);
-            cv.put("ID_JUGADOR", id_jugador);
-
-            valor = database.insert("ENTRENAMIENTO_ASISTENCIA_LIFUBA", null,
-                    cv);
-            cerrarBaseDeDatos();
-            if (valor > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLiteException e) {
-            cerrarBaseDeDatos();
-            return false;
-
-        }
-
-    }
-
-    //ELIMINAR ASISTENCIA ENTRENAMIENTO
-    public boolean eliminarAsistenciaEntrenamientoLifuba(int id_entrenamiento, int id_jugador) {
-
-        boolean res = false;
-        String sql = "DELETE FROM ENTRENAMIENTO_ASISTENCIA_LIFUBA WHERE ID_ENTRENAMIENTO =" + id_entrenamiento + " AND ID_JUGADOR=" + id_jugador;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                database.execSQL(sql);
-                res = true;
-            } catch (Exception e) {
-                res = false;
-            }
-        } else {
-            res = false;
-        }
-        cerrarBaseDeDatos();
-        database = null;
-        sql = null;
-        return res;
-    }
-
-    //lISTA JUGADORES CITADOS POR ENTRENAMIENTO
-    public ArrayList<Entrenamiento> selectListaJugadoresEntrenamientoLifuba(int id_entrenamiento) {
-
-        String sql = "SELECT * FROM ENTRENAMIENTO_ASISTENCIA_LIFUBA WHERE ID_ENTRENAMIENTO=" + id_entrenamiento;
-        ArrayList<Entrenamiento> arrayAsistencia = new ArrayList<>();
-
-        int id, id_jugador, id_entre;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Entrenamiento entrenamientoAsistencia = null;
-                        id = cursor.getInt(cursor
-                                .getColumnIndex("ID_ENTRENAMIENTO_ASISTENCIA"));
-                        id_entre = cursor.getInt(cursor
-                                .getColumnIndex("ID_ENTRENAMIENTO"));
-                        id_jugador = cursor.getInt(cursor
-                                .getColumnIndex("ID_JUGADOR"));
-
-                        entrenamientoAsistencia = new Entrenamiento(id, id_entre, id_jugador, "");
-
-                        arrayAsistencia.add(entrenamientoAsistencia);
-                    }
-                }
-            } catch (Exception e) {
-                arrayAsistencia = null;
-            }
-        } else {
-            arrayAsistencia = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        return arrayAsistencia;
-    }
-
-    //lISTA JUGADORES CITADOS POR ID DIVISION
-    public ArrayList<Entrenamiento> selectListaJugadoresEntrenamientoLifuba(ArrayList<Integer> id_division_array, int id_entrenamiento) {
-
-        String sql = "SELECT * FROM ENTRENAMIENTO_ASISTENCIA_LIFUBA WHERE ID_ENTRENAMIENTO=" + id_entrenamiento;
-        ArrayList<Entrenamiento> arrayAsistencia = new ArrayList<Entrenamiento>();
-        int id, id_jugador, id_entre;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        Entrenamiento entrenamientoAsistencia = null;
-                        id = cursor.getInt(cursor
-                                .getColumnIndex("ID_ENTRENAMIENTO_ASISTENCIA"));
-                        id_entre = cursor.getInt(cursor
-                                .getColumnIndex("ID_ENTRENAMIENTO"));
-                        id_jugador = cursor.getInt(cursor
-                                .getColumnIndex("ID_JUGADOR"));
-
-                        entrenamientoAsistencia = new Entrenamiento(id,
-                                id_entre, id_jugador, "");
-
-                        arrayAsistencia.add(entrenamientoAsistencia);
-                    }
-                }
-            } catch (Exception e) {
-                arrayAsistencia = null;
-            }
-        } else {
-            arrayAsistencia = null;
-        }
-        cerrarBaseDeDatos();
-
-        String sqlId = "";
-        for (int ids = 0; ids < id_division_array.size(); ids++) {
-            if (id_division_array.size() != 1) {
-                if (ids == 0) {
-                    sqlId = "" + id_division_array.get(0);
-                } else {
-                    sqlId += " OR J.ID_DIVISION=" + id_division_array.get(ids);
-                }
-            } else {
-                sqlId = "" + id_division_array.get(ids);
-            }
-        }
-
-        String sqlJ = "SELECT J.ID_JUGADOR, J.NOMBRE_JUGADOR, J.ID_DIVISION, D.DESCRIPCION " +
-                "FROM JUGADOR_LIFUBA J INNER JOIN DIVISION_LIFUBA D ON D.ID_DIVISION = J.ID_DIVISION " +
-                "WHERE J.ID_DIVISION=" + sqlId;
-        ArrayList<Entrenamiento> arrayAsistenciaJugador = new ArrayList<>();
-
-        int id_jug, id_divi;
-        String nombre = null, descripcion = null;
-        Cursor cursorJ = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursorJ = database.rawQuery(sqlJ, null);
-                if (cursorJ != null && cursorJ.getCount() > 0) {
-
-                    while (cursorJ.moveToNext()) {
-
-                        Entrenamiento entrenamientoAsistenciaJugador = null;
-                        id_jug = cursorJ.getInt(cursorJ
-                                .getColumnIndex("ID_JUGADOR"));
-                        nombre = cursorJ.getString(cursorJ
-                                .getColumnIndex("NOMBRE_JUGADOR"));
-                        id_divi = cursorJ.getInt(cursorJ
-                                .getColumnIndex("ID_DIVISION"));
-                        descripcion = cursorJ.getString(cursorJ
-                                .getColumnIndex("DESCRIPCION"));
-
-                        entrenamientoAsistenciaJugador = new Entrenamiento(0,
-                                0, id_divi, descripcion, id_jug, nombre, false);
-
-                        arrayAsistenciaJugador.add(entrenamientoAsistenciaJugador);
-                    }
-                }
-            } catch (Exception e) {
-                arrayAsistenciaJugador = null;
-            }
-        } else {
-            arrayAsistenciaJugador = null;
-        }
-
-        if (arrayAsistencia != null) {
-            if (arrayAsistencia.size() > 0) {
-
-                for (int i = 0; i < arrayAsistencia.size(); i++) {
-                    for (int j = 0; j < arrayAsistenciaJugador.size(); j++) {
-
-                        if (arrayAsistencia.get(i).getID_JUGADOR() == arrayAsistenciaJugador.get(j).getID_JUGADOR()) {
-                            arrayAsistenciaJugador.get(j).setSelected(true);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        nombre = null;
-        return arrayAsistenciaJugador;
-    }
-
-    //lISTA JUGADORES CITADOS
-    public ArrayList<Integer> selectListaIdDivisionEntrenamientoLifuba(int id_entrenamiento) {
-
-        String sql = "SELECT ID_DIVISION FROM ENTRENAMIENTO_DIVISION_LIFUBA WHERE ID_ENTRENAMIENTO=" + id_entrenamiento;
-        ArrayList<Integer> id_division_array = new ArrayList<>();
-        int id_division;
-        Cursor cursor = null;
-        abrirBaseDeDatos();
-        if (database != null && database.isOpen()) {
-            try {
-                cursor = database.rawQuery(sql, null);
-                if (cursor != null && cursor.getCount() > 0) {
-
-                    while (cursor.moveToNext()) {
-
-                        id_division = cursor.getInt(cursor
-                                .getColumnIndex("ID_DIVISION"));
-
-                        id_division_array.add(id_division);
-                    }
-                }
-            } catch (Exception e) {
-                id_division_array = null;
-            }
-        } else {
-            id_division_array = null;
-        }
-        cerrarBaseDeDatos();
-        sql = null;
-        cursor = null;
-        database = null;
-        return id_division_array;
-    }
-
 
     // INSERTAR JUGADOR
     public boolean insertSancionLifuba(int id, Sancion sancion) throws SQLiteException {
@@ -2631,6 +1844,7 @@ public class ControladorLifuba {
         sql = null;
         return res;
     }
+
     public boolean eliminarSancionLifuba() {
 
         boolean res = false;

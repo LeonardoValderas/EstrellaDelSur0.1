@@ -43,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener {
@@ -153,6 +154,7 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
             adapterSpinnerAnio = new AdapterSpinnerAnio(getActivity(),
                     R.layout.simple_spinner_dropdown_item, anioArray);
             entrenamientoAnioSpinner.setAdapter(adapterSpinnerAnio);
+            entrenamientoAnioSpinner.setSelection(getPositionYearSpinner(anioArray));
         } else {
             auxiliarGeneral.errorDataBase(getActivity());
         }
@@ -240,6 +242,17 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
 
     }
 
+    private int getPositionYearSpinner(List<Anio> anios) {
+        String anio = auxiliarGeneral.getYearSpinner();
+        int index = 0;
+        for (int i = 0; i < anios.size(); i++) {
+            if (anios.get(i).getANIO().equals(anio)) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
     public void cargarEntidad(int id, ArrayList<Integer> jugadorArrayAdd, ArrayList<Integer> jugadorArrayDelete) throws JSONException {
         URL = null;
         URL = auxiliarGeneral.getURLENTRENAMIENTOASISTENCIAADEFULALL();
@@ -283,7 +296,10 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
         request.setParametrosDatos("fecha_creacion", entrenamiento.getFECHA_CREACION());
         URL = URL + auxiliarGeneral.getInsertPHP("Asistencia");
 
-        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Asistencia", entrenamiento, true, "a");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Asistencia", entrenamiento, true, "a");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void showMessage(String msg) {
@@ -310,6 +326,7 @@ public class FragmentAsistencia extends Fragment implements MyAsyncTaskListener 
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 

@@ -126,13 +126,14 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
         super.onResume();
         controladorLifuba = new ControladorLifuba(getActivity());
         controladorAdeful = new ControladorAdeful(getActivity());
-        init();
+        auxiliarGeneral = new AuxiliarGeneral(getActivity());
+        torneoActual = controladorLifuba.selectActualTorneoLifuba();
+        divisionArray = controladorAdeful.selectListaDivisionAdeful();
     }
 
     private void init() {
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         torneoActual = controladorLifuba.selectActualTorneoLifuba();
-
 
         // DIVISION
         divisionArray = controladorAdeful.selectListaDivisionAdeful();
@@ -162,6 +163,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
                     populationSpinnerJugador(id_division);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
@@ -176,31 +178,30 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
 
         botonFloating.setOnClickListener(new View.OnClickListener() {
 
-             @Override
-             public void onClick(View v) {
-                 if (torneoActual.getISACTUAL()) {
+                                             @Override
+                                             public void onClick(View v) {
+                                                 if (torneoActual.getISACTUAL()) {
 
-                     if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
-                             getString(R.string.ceroSpinnerDivision))) {
-                         showToast("Debe agregar un division (Liga).");
-                     } else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
-                             getString(R.string.ceroSpinnerJugador))) {
-                         showToast("Debe agregar un jugador.");
-                     } else {
-                         division = (Division) sancionDivisionSpinner.getSelectedItem();
-                         jugadorRecycler = (Jugador) sancionJugadorSpinner.getSelectedItem();
+                                                     if (sancionDivisionSpinner.getSelectedItem().toString().equals(getResources().
+                                                             getString(R.string.ceroSpinnerDivision))) {
+                                                         showToast("Debe agregar un division (Liga).");
+                                                     } else if (sancionJugadorSpinner.getSelectedItem().toString().equals(getResources().
+                                                             getString(R.string.ceroSpinnerJugador))) {
+                                                         showToast("Debe agregar un jugador.");
+                                                     } else {
+                                                         division = (Division) sancionDivisionSpinner.getSelectedItem();
+                                                         jugadorRecycler = (Jugador) sancionJugadorSpinner.getSelectedItem();
 
-                         divisionSpinner = division.getID_DIVISION();
-                         jugadorSpinner = jugadorRecycler.getID_JUGADOR();
+                                                         divisionSpinner = division.getID_DIVISION();
+                                                         jugadorSpinner = jugadorRecycler.getID_JUGADOR();
 
-                         recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, torneoActual.getID_TORNEO());
-                     }
-                 } else {
-                     showToast("Debe seleccionar un torneo actual.");
-
-                 }
-             }
-         }
+                                                         recyclerViewLoadSancion(divisionSpinner, jugadorSpinner, torneoActual.getID_TORNEO());
+                                                     }
+                                                 } else {
+                                                     showToast("Debe seleccionar un torneo actual.");
+                                                 }
+                                             }
+                                         }
         );
         recyclerViewSancion.addOnItemTouchListener(new
                 RecyclerTouchListener(getActivity(),
@@ -212,6 +213,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
 
                         Intent editarSancion = new Intent(getActivity(),
                                 TabsSancion.class);
+                        editarSancion.putExtra("restart", 1);
                         editarSancion.putExtra("actualizar", true);
                         editarSancion.putExtra("id_sancion",
                                 sancionArray.get(position).getID_SANCION());
@@ -265,7 +267,10 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
         URL = auxiliarGeneral.getURLSANCIONLIFUBAALL();
         URL = URL + auxiliarGeneral.getDeletePHP("Sancion");
 
-        new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Sancion", true, posicion, "a", fecha);
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericLifuba(getActivity(), this, URL, request, "Sancion", true, posicion, "a", fecha);
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void populationSpinnerJugador(int id_division) {
@@ -278,7 +283,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
                 sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerJugador));
                 sancionJugadorSpinner.setAdapter(adaptadorInicial);
             }
@@ -324,6 +329,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -375,6 +381,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
         public void onRequestDisallowInterceptTouchEvent(boolean arg0) {
         }
     }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);

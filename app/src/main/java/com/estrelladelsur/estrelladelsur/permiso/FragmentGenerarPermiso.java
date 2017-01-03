@@ -243,7 +243,6 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
         permiso = new Permiso(id, usuario.getID_USUARIO(), subModulosTrue, submoduloArrayFalse,
                 usuarioCreador, auxiliarGeneral.getFechaOficial(), usuarioCreador, auxiliarGeneral.getFechaOficial());
 
-
         envioWebService();
     }
 
@@ -284,15 +283,17 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
             request.setParametrosDatos("fecha_actualizacion", permiso.getFECHA_ACTUALIZACION());
             URL = URL + auxiliarGeneral.getUpdatePHP("Permiso");
         }
-
-        new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Permiso", permiso, insertar, "o");
+        if (auxiliarGeneral.isNetworkAvailable(getActivity()))
+            new AsyncTaskGenericAdeful(getContext(), this, URL, request, "Permiso", permiso, insertar, "o");
+        else
+            auxiliarGeneral.errorWebService(getActivity(), getActivity().getResources().getString(R.string.error_without_internet));
     }
 
     public void inicializarControles(String mensaje) {
         recyclerViewLoadModulos();
         communicator.refresh();
         showMessage(mensaje);
-        if(!usuarioCreador.equals("ADM")) {
+        if (!usuarioCreador.equals("ADM")) {
             Intent nav = new Intent(getActivity(), Navigation.class);
             nav.putExtra("usuario", usuarioCreador);
             startActivity(nav);
@@ -376,7 +377,7 @@ public class FragmentGenerarPermiso extends Fragment implements MyAsyncTaskListe
                                     isDelete = true;
                                 }
                             }
-                            if(isDelete)
+                            if (isDelete)
                                 id_sub_delete_array.add(submoduloArrayExtraTrue.get(i));
                         }
                         try {

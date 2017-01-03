@@ -22,7 +22,12 @@ import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Foto;
+import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
+import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
+import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
@@ -36,13 +41,18 @@ public class FotoUsuario extends AppCompatActivity {
     private RecyclerView recycleViewUsuarioGeneral;
     private TextView txtToolBarTitulo;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private MyAsyncTaskListener listener;
+    private Request request;
+    private AdRequest adRequest;
+    private AdView mAdView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario_general);
 
-      // Toolbar
+        // Toolbar
         toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
 
@@ -54,13 +64,41 @@ public class FotoUsuario extends AppCompatActivity {
         txtToolBarTitulo.setText("FOTO");
         recycleViewUsuarioGeneral = (RecyclerView) findViewById(R.id.recycleViewUsuarioGeneral);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mAdView = (AdView) findViewById(R.id.adView);
 
         init();
     }
 
-    public void init() {
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+        auxiliarGeneral = new AuxiliarGeneral(FotoUsuario.this);
         controladorUsuario = new ControladorUsuarioGeneral(FotoUsuario.this);
         initRecycler();
+        recyclerViewLoadFoto();
+    }
+
+    public void init() {
+        auxiliarGeneral = new AuxiliarGeneral(FotoUsuario.this);
+        controladorUsuario = new ControladorUsuarioGeneral(FotoUsuario.this);
+        BannerAd();
+        initRecycler();
+        listener = new MyAsyncTaskListener() {
+            @Override
+            public void onPostExecuteConcluded(boolean result, String mensaje) {
+                if (result) {
+                    recyclerViewLoadFoto();
+                } else {
+                    auxiliarGeneral.errorWebService(FotoUsuario.this, mensaje);
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        };
         recyclerViewLoadFoto();
 
         recycleViewUsuarioGeneral.addOnItemTouchListener(new
@@ -80,7 +118,16 @@ public class FotoUsuario extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                recyclerViewLoadFoto();
+                String fecha = controladorUsuario.selectTabla(AsyncTaskGenericIndividual.TABLA_FOTO);
+                if (fecha != null) {
+                    request = new Request();
+                    request.setMethod("POST");
+                    request.setParametrosDatos("fecha_tabla", fecha);
+                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_FOTO);
+                    request.setParametrosDatos("liga", "GENERAL");
+
+                    new AsyncTaskGenericIndividual(FotoUsuario.this, listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.FOTO);
+                }
             }
         });
     }
@@ -109,6 +156,7 @@ public class FotoUsuario extends AppCompatActivity {
 
     public static interface ClickListener {
         public void onClick(View view, int position);
+
         public void onLongClick(View view, int position);
     }
 
@@ -192,5 +240,21 @@ public class FotoUsuario extends AppCompatActivity {
     public void volver() {
         Intent i = new Intent(FotoUsuario.this, NavigationUsuario.class);
         startActivity(i);
+    }
+
+    public void BannerAd() {
+        adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("B52960D9E6A2A5833E82FEA8ACD4B80C")
+                .build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
     }
 }
