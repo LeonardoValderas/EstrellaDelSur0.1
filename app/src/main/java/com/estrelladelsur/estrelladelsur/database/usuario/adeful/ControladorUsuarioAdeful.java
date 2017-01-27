@@ -74,10 +74,36 @@ public class ControladorUsuarioAdeful {
         }
     }
 
+    public boolean insertTabla(List<Tabla> tablas)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Tabla tabla : tablas) {
+                cv.put("ID_TABLA", tabla.getID_TABLA());
+                cv.put("TABLA", tabla.getTABLA());
+                cv.put("FECHA", tabla.getFECHA());
+
+                long valor = database.insert("TABLA", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            return isOK = false;
+        }
+        return isOK;
+    }
+
     //LISTA USUARIO
     public String selectTabla(String tabla) {
 
-        String sql = "SELECT FECHA FROM TABLA WHERE TABLA ='"+tabla+"'";
+        String sql = "SELECT FECHA FROM TABLA WHERE TABLA ='" + tabla + "'";
         String fecha = "";
         Cursor cursor = null;
         abrirBaseDeDatos();
@@ -105,6 +131,7 @@ public class ControladorUsuarioAdeful {
         database = null;
         return fecha;
     }
+
     public List<Tabla> selectListaTablaAdeful() {
 
         String sql = "SELECT * FROM TABLA";
@@ -194,7 +221,6 @@ public class ControladorUsuarioAdeful {
         }
     }
 
-
     ////////LIGA USUARIO/////////
     //EQUIPO INSERTAR
     public boolean insertEquipoUsuarioAdeful(Equipo equipoUsuario)
@@ -220,13 +246,40 @@ public class ControladorUsuarioAdeful {
         }
     }
 
+    public boolean insertEquipoUsuarioAdeful(List<Equipo> equiposUsuario)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Equipo equipoUsuario : equiposUsuario) {
+                cv.put("ID_EQUIPO", equipoUsuario.getID_EQUIPO());
+                cv.put("NOMBRE", equipoUsuario.getNOMBRE_EQUIPO());
+              //  cv.put("ESCUDO", equipoUsuario.getESCUDO());
+                cv.put("ESCUDO", equipoUsuario.getURL_ESCUDO());
+
+                long valor = database.insert("EQUIPO_USUARIO_ADEFUL", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     //EQUIPO lISTA
     public ArrayList<Equipo> selectListaEquipoUsuarioAdeful() {
 
-        String sql = "SELECT * FROM EQUIPO_USUARIO_ADEFUL";
+        String sql = "SELECT * FROM EQUIPO_USUARIO_ADEFUL ORDER BY NOMBRE";
         ArrayList<Equipo> arrayEquipoAdeful = new ArrayList<>();
-        String equipo = null;
-        byte[] escudo = null;
+        String equipo = null, escudo = null;
+       // byte[] escudo = null;
         int id;
         Cursor cursor = null;
         abrirBaseDeDatos();
@@ -243,7 +296,7 @@ public class ControladorUsuarioAdeful {
                         equipo = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE"));
                         escudo = cursor
-                                .getBlob(cursor.getColumnIndex("ESCUDO"));
+                                .getString(cursor.getColumnIndex("ESCUDO"));
 
                         equipoAdeful = new Equipo(id, equipo, escudo);
 
@@ -288,7 +341,6 @@ public class ControladorUsuarioAdeful {
         return res;
     }
 
-    // INSERTAR TORNEO
     public boolean insertTorneoUsuarioAdeful(Torneo torneo) throws SQLiteException {
         abrirBaseDeDatos();
         ContentValues cv = new ContentValues();
@@ -303,8 +355,34 @@ public class ControladorUsuarioAdeful {
                 return false;
             }
         } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
             return false;
         }
+    }
+
+
+    // INSERTAR TORNEO
+    public boolean insertTorneoUsuarioAdeful(List<Torneo> torneos) throws SQLiteException {
+        abrirBaseDeDatos();
+        boolean isOK = true;
+        ContentValues cv = new ContentValues();
+        try {
+            for (Torneo torneo : torneos) {
+
+                cv.put("ID_TORNEO", torneo.getID_TORNEO());
+                cv.put("DESCRIPCION", torneo.getDESCRIPCION());
+                long valor = database.insert("TORNEO_USUARIO_ADEFUL", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     //LISTA TORNEO
@@ -383,10 +461,34 @@ public class ControladorUsuarioAdeful {
         }
     }
 
+    public boolean insertDivisionUsuarioAdeful(List<Division> divisiones) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Division division : divisiones) {
+                cv.put("ID_DIVISION", division.getID_DIVISION());
+                cv.put("DESCRIPCION", division.getDESCRIPCION());
+
+                long valor = database.insert("DIVISION_USUARIO_ADEFUL", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     //LISTA CANCHA
     public ArrayList<Division> selectListaDivisionUsuarioAdeful() {
 
-        String sql = "SELECT * FROM DIVISION_USUARIO_ADEFUL";
+        String sql = "SELECT * FROM DIVISION_USUARIO_ADEFUL ORDER BY DESCRIPCION";
         ArrayList<Division> arrayDivision = new ArrayList<>();
         String nombre = null;
         int id;
@@ -424,6 +526,7 @@ public class ControladorUsuarioAdeful {
 
         return arrayDivision;
     }
+
     // ELIMINAR CANCHA
     public boolean eliminarDivisionUsuarioAdeful() {
 
@@ -471,10 +574,37 @@ public class ControladorUsuarioAdeful {
         }
     }
 
+    public boolean insertCanchaUsuarioAdeful(List<Cancha> canchas) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Cancha cancha : canchas) {
+                cv.put("ID_CANCHA", cancha.getID_CANCHA());
+                cv.put("NOMBRE", cancha.getNOMBRE());
+                cv.put("LONGITUD", cancha.getLONGITUD());
+                cv.put("LATITUD", cancha.getLATITUD());
+                cv.put("DIRECCION", cancha.getDIRECCION());
+
+                long valor = database.insert("CANCHA_USUARIO_ADEFUL", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     //LISTA CANCHA
     public ArrayList<Cancha> selectListaCanchaUsuarioAdeful() {
 
-        String sql = "SELECT * FROM CANCHA_USUARIO_ADEFUL";
+        String sql = "SELECT * FROM CANCHA_USUARIO_ADEFUL ORDER BY NOMBRE";
         ArrayList<Cancha> arrayCancha = new ArrayList<>();
         String nombre = null, longitud = null, latitud = null, direccion = null;
         int id;
@@ -542,7 +672,7 @@ public class ControladorUsuarioAdeful {
         return res;
     }
 
-   // LISTA FECHA
+    // LISTA FECHA
     public ArrayList<Fecha> selectListaFecha() {
 
         String sql = "SELECT * FROM FECHA";
@@ -650,6 +780,40 @@ public class ControladorUsuarioAdeful {
         }
     }
 
+    public boolean insertFixtureUsuarioAdeful(List<Fixture> fixtures) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Fixture fixture : fixtures) {
+                cv.put("ID_FIXTURE", fixture.getID_FIXTURE());
+                cv.put("ID_EQUIPO_LOCAL", fixture.getID_EQUIPO_LOCAL());
+                cv.put("ID_EQUIPO_VISITA", fixture.getID_EQUIPO_VISITA());
+                cv.put("ID_DIVISION", fixture.getID_DIVISION());
+                cv.put("ID_TORNEO", fixture.getID_TORNEO());
+                cv.put("ID_CANCHA", fixture.getID_CANCHA());
+                cv.put("RESULTADO_LOCAL", fixture.getRESULTADO_LOCAL());
+                cv.put("RESULTADO_VISITA", fixture.getRESULTADO_VISITA());
+                cv.put("DIA", fixture.getDIA());
+                cv.put("HORA", fixture.getHORA());
+                cv.put("FECHA", fixture.getFECHA());
+                cv.put("ANIO", fixture.getANIO());
+
+                long valor = database.insert("FIXTURE_USUARIO_ADEFUL", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     // ELIMINAR CANCHA
     public boolean eliminarFixtureUsuarioAdeful() {
 
@@ -674,23 +838,25 @@ public class ControladorUsuarioAdeful {
 
 
     //LISTA FIXTURE RECYCLER
-    public ArrayList<Fixture> selectListaFixtureUsuarioAdeful() {
+    public ArrayList<Fixture> selectListaFixtureUsuarioAdeful(int id_division) {
 
-        String sql = "SELECT F.ID_FIXTURE AS ID, LOCALE.NOMBRE AS LOCAL, LOCALE.ESCUDO AS ESCUDOLOCAL, F.RESULTADO_LOCAL AS RESULTADOLOCAL, "
+        String sql = "SELECT F.ID_FIXTURE AS ID, F.ID_DIVISION,  LOCALE.NOMBRE AS LOCAL, LOCALE.ESCUDO AS ESCUDOLOCAL, F.RESULTADO_LOCAL AS RESULTADOLOCAL, "
                 + "VISITAE.NOMBRE AS VISITA, VISITAE.ESCUDO AS ESCUDOVISITA, F.RESULTADO_VISITA AS RESULTADOVISITA, "
                 + "C.NOMBRE AS CANCHA, DIA, HORA, FECHA, ANIO, D.DESCRIPCION AS DESCRIPCION "
                 + "FROM FIXTURE_USUARIO_ADEFUL F INNER JOIN EQUIPO_USUARIO_ADEFUL LOCALE ON LOCALE.ID_EQUIPO = F.ID_EQUIPO_LOCAL "
                 + "INNER JOIN EQUIPO_USUARIO_ADEFUL VISITAE ON  VISITAE.ID_EQUIPO =  F.ID_EQUIPO_VISITA "
                 + "INNER JOIN CANCHA_USUARIO_ADEFUL C ON C.ID_CANCHA = F.ID_CANCHA "
-                + "INNER JOIN DIVISION_USUARIO_ADEFUL D ON D.ID_DIVISION = F.ID_DIVISION ";
+                + "INNER JOIN DIVISION_USUARIO_ADEFUL D ON D.ID_DIVISION = F.ID_DIVISION "
+                + "WHERE F.ID_DIVISION = " + id_division + " "
+                + "ORDER BY FECHA DESC, ANIO, DIA,  SUBSTR('0' || HORA, -5, 5)";
 
 
         ArrayList<Fixture> arrayFixture = new ArrayList<>();
         String dia = null, hora = null, e_local = null, e_visita = null, cancha = null, r_local = null,
                 r_visita = null, fecha = null, anio = null, descripcion = null;
         int id_fixture;
-        byte[] escudolocal, escudovisita;
-
+  //      byte[] escudolocal, escudovisita;
+        String escudolocal, escudovisita;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -705,13 +871,13 @@ public class ControladorUsuarioAdeful {
                         id_fixture = cursor.getInt(cursor.getColumnIndex("ID"));
                         e_local = cursor.getString(cursor
                                 .getColumnIndex("LOCAL"));
-                        escudolocal = cursor.getBlob(cursor
+                        escudolocal = cursor.getString(cursor
                                 .getColumnIndex("ESCUDOLOCAL"));
                         r_local = cursor.getString(cursor
                                 .getColumnIndex("RESULTADOLOCAL"));
                         e_visita = cursor.getString(cursor
                                 .getColumnIndex("VISITA"));
-                        escudovisita = cursor.getBlob(cursor
+                        escudovisita = cursor.getString(cursor
                                 .getColumnIndex("ESCUDOVISITA"));
                         r_visita = cursor.getString(cursor
                                 .getColumnIndex("RESULTADOVISITA"));
@@ -752,7 +918,7 @@ public class ControladorUsuarioAdeful {
         return arrayFixture;
     }
 
-//    // ///////////////////////////////////JUGADORES////////////////////////////////////////////
+    //    // ///////////////////////////////////JUGADORES////////////////////////////////////////////
 //    // INSERTAR JUGADOR
     public boolean insertJugadorUsuarioAdeful(Jugador jugador) throws SQLiteException {
 
@@ -777,6 +943,35 @@ public class ControladorUsuarioAdeful {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertJugadorUsuarioAdeful(List<Jugador> jugadores) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Jugador jugador : jugadores) {
+                cv.put("ID_JUGADOR", jugador.getID_JUGADOR());
+                cv.put("NOMBRE_JUGADOR", jugador.getNOMBRE_JUGADOR());
+                cv.put("FOTO_JUGADOR", jugador.getURL_JUGADOR());
+                //   cv.put("FOTO_JUGADOR", jugador.getFOTO_JUGADOR());
+                cv.put("ID_DIVISION", jugador.getID_DIVISION());
+                cv.put("DIVISION", jugador.getNOMBRE_DIVISION());
+                cv.put("POSICION", jugador.getNOMBRE_POSICION());
+
+                long valor = database.insert("JUGADOR_USUARIO_ADEFUL", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     // ELIMINAR JUGADOR
@@ -804,13 +999,17 @@ public class ControladorUsuarioAdeful {
     // LISTA JUGADOR
     public ArrayList<Jugador> selectListaJugadorUsuarioAdeful(int division) {
 
+//        String sql = "SELECT ID_JUGADOR, NOMBRE_JUGADOR, FOTO_JUGADOR,"
+//                + " DIVISION, POSICION "
+//                + " FROM JUGADOR_USUARIO_ADEFUL WHERE ID_DIVISION=" + division + " ORDER BY NOMBRE_JUGADOR";
         String sql = "SELECT ID_JUGADOR, NOMBRE_JUGADOR, FOTO_JUGADOR,"
                 + " DIVISION, POSICION "
-                + " FROM JUGADOR_USUARIO_ADEFUL WHERE ID_DIVISION=" + division;
+                + " FROM JUGADOR_USUARIO_ADEFUL WHERE ID_DIVISION =" + division + " ORDER BY NOMBRE_JUGADOR";
 
         ArrayList<Jugador> arrayJugador = new ArrayList<Jugador>();
         String nombre = null, descripcion_division = null, descripcion_posicion = null;
-        byte[] foto = null;
+     //   byte[] foto = null;
+        String url_foto = null;
         int id;
         Cursor cursor = null;
         abrirBaseDeDatos();
@@ -826,14 +1025,14 @@ public class ControladorUsuarioAdeful {
                         id = cursor.getInt(cursor.getColumnIndex("ID_JUGADOR"));
                         nombre = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_JUGADOR"));
-                        foto = cursor.getBlob(cursor
+                        url_foto = cursor.getString(cursor
                                 .getColumnIndex("FOTO_JUGADOR"));
                         descripcion_division = cursor.getString(cursor
                                 .getColumnIndex("DIVISION"));
                         descripcion_posicion = cursor.getString(cursor
                                 .getColumnIndex("POSICION"));
 
-                        jugador = new Jugador(id, nombre, foto,
+                        jugador = new Jugador(id, nombre, url_foto,
                                 0, descripcion_division,
                                 descripcion_posicion);
                         arrayJugador.add(jugador);
@@ -855,7 +1054,7 @@ public class ControladorUsuarioAdeful {
     }
 
     ////ENTRENAMIENTO//////
-   //INSERTAR
+    //INSERTAR
     public boolean insertEntrenamientoUsuarioAdeful(Entrenamiento entrenamiento)
             throws SQLiteException {
         ContentValues cv = new ContentValues();
@@ -877,6 +1076,32 @@ public class ControladorUsuarioAdeful {
             return false;
         }
     }
+
+    public boolean insertEntrenamientoUsuarioAdeful(List<Entrenamiento> entrenamientos)
+            throws SQLiteException {
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Entrenamiento entrenamiento : entrenamientos) {
+                cv.put("ID_ENTRENAMIENTO", entrenamiento.getID_ENTRENAMIENTO());
+                cv.put("DIA_ENTRENAMIENTO", entrenamiento.getDIA());
+                cv.put("HORA_ENTRENAMIENTO", entrenamiento.getHORA());
+                cv.put("CANCHA", entrenamiento.getCANCHA());
+
+                long valor = database.insert("ENTRENAMIENTO_USUARIO_ADEFUL", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            isOK = false;
+        }
+        return isOK;
+    }
+
 
     // INSERT TABLA INTERMEDIA
     public boolean insertEntrenamientoDivisionUsuarioAdeful(Entrenamiento entrenamiento_Division)
@@ -904,10 +1129,40 @@ public class ControladorUsuarioAdeful {
             return false;
         }
     }
+
+    public boolean insertEntrenamientoDivisionUsuarioAdeful(List<Entrenamiento> entrenamiento_Divisiones)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Entrenamiento entrenamiento_Division : entrenamiento_Divisiones) {
+                cv.put("ID_ENTRENAMIENTO_DIVISION",
+                        entrenamiento_Division.getID_ENTRENAMIENTO_DIVISION());
+                cv.put("ID_ENTRENAMIENTO",
+                        entrenamiento_Division.getID_ENTRENAMIENTO());
+                cv.put("ID_DIVISION", entrenamiento_Division.getID_DIVISION());
+
+                long valor = database.insert("ENTRENAMIENTO_DIVISION_USUARIO_ADEFUL", null,
+                        cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     //SELECT ID TABLA INTERMEDIA
     public int selectCountEntrenamientoCantidad(int id_division) {
 
-        String sql = "SELECT COUNT(*) AS CANTIDAD FROM ENTRENAMIENTO_DIVISION_USUARIO_ADEFUL WHERE ID_DIVISION = "+id_division;
+        String sql = "SELECT COUNT(*) AS CANTIDAD FROM ENTRENAMIENTO_DIVISION_USUARIO_ADEFUL WHERE ID_DIVISION = " + id_division;
         int cant = 0;
         Cursor cursor = null;
         abrirBaseDeDatos();
@@ -936,10 +1191,11 @@ public class ControladorUsuarioAdeful {
 
         return cant;
     }
+
     //SELECT ID TABLA INTERMEDIA
     public int selectCountEntrenamientoJugador(int id_jugador) {
 
-        String sql = "SELECT COUNT(*) AS CANTIDAD FROM ENTRENAMIENTO_ASISTENCIA_USUARIO_ADEFUL WHERE ID_JUGADOR = "+id_jugador;
+        String sql = "SELECT COUNT(*) AS CANTIDAD FROM ENTRENAMIENTO_ASISTENCIA_USUARIO_ADEFUL WHERE ID_JUGADOR = " + id_jugador;
         int cant = 0;
         Cursor cursor = null;
         abrirBaseDeDatos();
@@ -1087,7 +1343,7 @@ public class ControladorUsuarioAdeful {
         return res;
     }
 
-   //ELIMINAR DIVISION_ENTRENAMIENTO
+    //ELIMINAR DIVISION_ENTRENAMIENTO
     public boolean eliminarDivisionEntrenamientoUsuarioAdeful() {
 
         boolean res = false;
@@ -1158,9 +1414,35 @@ public class ControladorUsuarioAdeful {
         } catch (SQLiteException e) {
             cerrarBaseDeDatos();
             return false;
-
         }
+    }
 
+    public boolean insertAsistenciaEntrenamientoUsuarioAdeful(List<Entrenamiento> entrenamientoAsistencias)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        long valor = 0;
+        abrirBaseDeDatos();
+        try {
+            for (Entrenamiento entrenamientoAsistencia : entrenamientoAsistencias) {
+                cv.put("ID_ENTRENAMIENTO_ASISTENCIA", entrenamientoAsistencia.getID_ENTRENAMIENTO_ASISTENCIA());
+                cv.put("ID_ENTRENAMIENTO", entrenamientoAsistencia.getID_ENTRENAMIENTO());
+                cv.put("ID_JUGADOR", entrenamientoAsistencia.getID_JUGADOR());
+
+                valor = database.insert("ENTRENAMIENTO_ASISTENCIA_USUARIO_ADEFUL", null,
+                        cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     //ELIMINAR ASISTENCIA ENTRENAMIENTO
@@ -1184,7 +1466,8 @@ public class ControladorUsuarioAdeful {
         sql = null;
         return res;
     }
-//
+
+    //
     //ELIMINAR ASISTENCIA ENTRENAMIENTO
     public boolean eliminarAsistenciaEntrenamientoUsuarioAdeful() {
 
@@ -1207,7 +1490,7 @@ public class ControladorUsuarioAdeful {
         return res;
     }
 
-    // INSERTAR JUGADOR
+    // INSERTAR SANCION
     public boolean insertSancionUsuarioAdeful(Sancion sancion) throws SQLiteException {
 
         ContentValues cv = new ContentValues();
@@ -1234,7 +1517,37 @@ public class ControladorUsuarioAdeful {
         }
     }
 
+    public boolean insertSancionUsuarioAdeful(List<Sancion> sanciones) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Sancion sancion : sanciones) {
+                cv.put("ID_SANCION", sancion.getID_SANCION());
+                cv.put("ID_JUGADOR", sancion.getID_JUGADOR());
+                cv.put("ID_TORNEO", sancion.getID_TORNEO());
+                cv.put("AMARILLA", sancion.getAMARILLA());
+                cv.put("ROJA", sancion.getROJA());
+                cv.put("FECHA_SUSPENSION", sancion.getFECHA_SUSPENSION());
+                cv.put("OBSERVACIONES", sancion.getOBSERVACIONES());
+
+                long valor = database.insert("SANCION_USUARIO_ADEFUL", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     //ELIMINAR SANCION JUGADOR
+
     public boolean eliminarSancionUsuarioAdeful() {
 
         boolean res = false;
@@ -1264,12 +1577,13 @@ public class ControladorUsuarioAdeful {
                 + "FROM SANCION_USUARIO_ADEFUL S INNER JOIN JUGADOR_USUARIO_ADEFUL J ON J.ID_JUGADOR = S.ID_JUGADOR "
                 + "INNER JOIN DIVISION_USUARIO_ADEFUL D ON D.ID_DIVISION = J.ID_DIVISION "
                 + "WHERE D.ID_DIVISION="
-                + division+"";
+                + division + " ORDER BY NOMBRE_JUGADOR ";
 
         ArrayList<Sancion> arraySancion = new ArrayList<>();
         String nombre_jugador = null, descripcion_division = null, obsevaciones = null;
         int id_sancion, id_jugador, id_division, amarilla, roja, fechas;
-        byte[] foto = null;
+      //  byte[] foto = null;
+        String foto = null;
         abrirBaseDeDatos();
         Cursor cursor = null;
 
@@ -1287,7 +1601,7 @@ public class ControladorUsuarioAdeful {
                                 .getColumnIndex("ID_JUGADOR"));
                         nombre_jugador = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_JUGADOR"));
-                        foto = cursor.getBlob(cursor
+                        foto = cursor.getString(cursor
                                 .getColumnIndex("FOTO_JUGADOR"));
                         id_division = cursor.getInt(cursor
                                 .getColumnIndex("ID_DIVISION"));

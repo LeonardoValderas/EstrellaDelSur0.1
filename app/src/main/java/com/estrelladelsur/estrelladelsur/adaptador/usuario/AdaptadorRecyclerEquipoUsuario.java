@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Equipo;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -25,6 +27,7 @@ public class AdaptadorRecyclerEquipoUsuario extends
 	private ArrayList<Equipo> datosEquipoArray;
 	private Typeface nombreFont;
 	private AuxiliarGeneral auxiliarGeneral;
+	private Context context;
 
 	public static class EquipoAdefulViewHolder extends RecyclerView.ViewHolder {
 
@@ -40,20 +43,40 @@ public class AdaptadorRecyclerEquipoUsuario extends
 					.findViewById(R.id.imageViewEscudo);
 		}
 
-		public void bindTitular(Equipo equipoAdeful,Typeface nombre) {
+		public void bindTitular(Equipo equipoAdeful, Typeface nombre, Context context) {
 			textRecyclerView.setText(equipoAdeful.getNOMBRE_EQUIPO());
 			//textRecyclerView.setTypeface(nombre);
 
-			byte[] image = equipoAdeful.getESCUDO();
-			if (image == null) {
-				 imageViewEscudo.setImageResource(R.mipmap.ic_escudo_cris);
-			} else {
-				Bitmap theImage = BitmapFactory.decodeByteArray(
-						equipoAdeful.getESCUDO(), 0,
-						equipoAdeful.getESCUDO().length);
-				theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
-				imageViewEscudo.setImageBitmap(theImage);
-			}
+//			byte[] image = equipoAdeful.getESCUDO();
+//			if (image == null) {
+//				 imageViewEscudo.setImageResource(R.mipmap.ic_escudo_cris);
+//			} else {
+//				Bitmap theImage = BitmapFactory.decodeByteArray(
+//						equipoAdeful.getESCUDO(), 0,
+//						equipoAdeful.getESCUDO().length);
+//				theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
+//				imageViewEscudo.setImageBitmap(theImage);
+//			}
+			if(!equipoAdeful.getURL_ESCUDO().isEmpty())
+				Picasso.with(context)
+						.load(equipoAdeful.getURL_ESCUDO()).fit()
+						.placeholder(R.mipmap.ic_escudo_cris)
+						.into(imageViewEscudo, new Callback() {
+							@Override
+							public void onSuccess() {
+
+							}
+
+							@Override
+							public void onError() {
+								imageViewEscudo.setImageResource(R.mipmap.ic_escudo_cris);
+							}
+						});
+			else
+				Picasso.with(context)
+						.load(R.mipmap.ic_escudo_cris).fit()
+						.placeholder(R.mipmap.ic_escudo_cris)
+						.into(imageViewEscudo);
 		}
 	}
 
@@ -61,6 +84,7 @@ public class AdaptadorRecyclerEquipoUsuario extends
 		this.datosEquipoArray = datosEquipoArray;
 	    auxiliarGeneral = new AuxiliarGeneral(context);
 		this.nombreFont = auxiliarGeneral.tituloFont(context);
+		this.context = context;
 	}
 	@Override
 	public EquipoAdefulViewHolder onCreateViewHolder(ViewGroup viewGroup,
@@ -74,7 +98,7 @@ public class AdaptadorRecyclerEquipoUsuario extends
 	@Override
 	public void onBindViewHolder(EquipoAdefulViewHolder viewHolder, int pos) {
 		Equipo item = datosEquipoArray.get(pos);
-		viewHolder.bindTitular(item,nombreFont);
+		viewHolder.bindTitular(item, nombreFont, context);
 	}
 	@Override
 	public int getItemCount() {

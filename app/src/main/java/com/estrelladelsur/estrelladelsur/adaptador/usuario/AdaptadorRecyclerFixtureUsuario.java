@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -26,6 +28,7 @@ public class AdaptadorRecyclerFixtureUsuario extends
 	private Typeface textFont;
 	private Typeface equipoFont;
 	private AuxiliarGeneral auxiliarGeneral;
+	private Context context;
 
 	public static class FixtureViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewEscudoL;
@@ -79,31 +82,73 @@ public class AdaptadorRecyclerFixtureUsuario extends
 		}
 
 
-		public void bindTitular(Fixture fixtureRecycler , Typeface equipo, Typeface texto) {
+		public void bindTitular(Fixture fixtureRecycler , Typeface equipo, Typeface texto, Context context) {
 			// ESCUDO EQUIPO LOCAL
-			byte[] escudoLocal = fixtureRecycler.getESCUDOLOCAL();
-			if (escudoLocal == null) {
-				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_cris);
-			} else {
-				Bitmap escudoLocalBitmap = BitmapFactory.decodeByteArray(
-						fixtureRecycler.getESCUDOLOCAL(), 0,
-						fixtureRecycler.getESCUDOLOCAL().length);
-				escudoLocalBitmap = Bitmap.createScaledBitmap(
-						escudoLocalBitmap, 150, 150, true);
-				imageViewEscudoL.setImageBitmap(escudoLocalBitmap);
-			}
+//			byte[] escudoLocal = fixtureRecycler.getESCUDOLOCAL();
+//			if (escudoLocal == null) {
+//				imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_cris);
+//			} else {
+//				Bitmap escudoLocalBitmap = BitmapFactory.decodeByteArray(
+//						fixtureRecycler.getESCUDOLOCAL(), 0,
+//						fixtureRecycler.getESCUDOLOCAL().length);
+//				escudoLocalBitmap = Bitmap.createScaledBitmap(
+//						escudoLocalBitmap, 150, 150, true);
+//				imageViewEscudoL.setImageBitmap(escudoLocalBitmap);
+//			}
+			if(!fixtureRecycler.getESCUDOLOCALURL().isEmpty())
+				Picasso.with(context)
+						.load(fixtureRecycler.getESCUDOLOCALURL()).fit()
+						.placeholder(R.mipmap.ic_escudo_cris)
+						.into(imageViewEscudoL, new Callback() {
+							@Override
+							public void onSuccess() {
+
+							}
+
+							@Override
+							public void onError() {
+								imageViewEscudoL.setImageResource(R.mipmap.ic_escudo_cris);
+							}
+						});
+			else
+				Picasso.with(context)
+						.load(R.mipmap.ic_escudo_cris).fit()
+						.placeholder(R.mipmap.ic_escudo_cris)
+						.into(imageViewEscudoL);
+
+
 			// ESCUDO EQUIPO VISITA
-			byte[] escudovisita = fixtureRecycler.getESCUDOVISITA();
-			if (escudovisita == null) {
-				imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_cris);
-			} else {
-				Bitmap escudoVisitaBitmap = BitmapFactory.decodeByteArray(
-						fixtureRecycler.getESCUDOVISITA(), 0,
-						fixtureRecycler.getESCUDOVISITA().length);
-				escudoVisitaBitmap = Bitmap.createScaledBitmap(
-						escudoVisitaBitmap, 150, 150, true);
-				imageViewEscudoV.setImageBitmap(escudoVisitaBitmap);
-			}
+//			byte[] escudovisita = fixtureRecycler.getESCUDOVISITA();
+//			if (escudovisita == null) {
+//				imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_cris);
+//			} else {
+//				Bitmap escudoVisitaBitmap = BitmapFactory.decodeByteArray(
+//						fixtureRecycler.getESCUDOVISITA(), 0,
+//						fixtureRecycler.getESCUDOVISITA().length);
+//				escudoVisitaBitmap = Bitmap.createScaledBitmap(
+//						escudoVisitaBitmap, 150, 150, true);
+//				imageViewEscudoV.setImageBitmap(escudoVisitaBitmap);
+//			}
+			if(!fixtureRecycler.getESCUDOVISITAURL().isEmpty())
+				Picasso.with(context)
+						.load(fixtureRecycler.getESCUDOVISITAURL()).fit()
+						.placeholder(R.mipmap.ic_escudo_cris)
+						.into(imageViewEscudoV, new Callback() {
+							@Override
+							public void onSuccess() {
+
+							}
+
+							@Override
+							public void onError() {
+								imageViewEscudoV.setImageResource(R.mipmap.ic_escudo_cris);
+							}
+						});
+			else
+				Picasso.with(context)
+						.load(R.mipmap.ic_escudo_cris).fit()
+						.placeholder(R.mipmap.ic_escudo_cris)
+						.into(imageViewEscudoV);
 
 			textRecyclerViewEquipoL.setText(fixtureRecycler.getEQUIPO_LOCAL());
 			//textRecyclerViewEquipoL.setTypeface(equipo, Typeface.BOLD);
@@ -139,6 +184,7 @@ public class AdaptadorRecyclerFixtureUsuario extends
 		auxiliarGeneral = new AuxiliarGeneral(context);
 		textFont = auxiliarGeneral.textFont(context);
 		equipoFont = auxiliarGeneral.tituloFont(context);
+		this.context = context;
 	}
 
 	@Override
@@ -155,7 +201,7 @@ public class AdaptadorRecyclerFixtureUsuario extends
 	@Override
 	public void onBindViewHolder(FixtureViewHolder viewHolder, int pos) {
 		Fixture item = fixtureArray.get(pos);
-		viewHolder.bindTitular(item,textFont, equipoFont);
+		viewHolder.bindTitular(item,textFont, equipoFont, context);
 	}
 
 	@Override

@@ -40,6 +40,14 @@ public class Direccion {
         PERIODO_DESDE = periodo_desde;
         PERIODO_HASTA = periodo_hasta;
     }
+    public Direccion(int id, String nombre, String url_direccion, String cargo, String periodo_desde, String periodo_hasta) {
+        ID_DIRECCION = id;
+        NOMBRE_DIRECCION = nombre;
+        URL_DIRECCION = url_direccion;
+        CARGO = cargo;
+        PERIODO_DESDE = periodo_desde;
+        PERIODO_HASTA = periodo_hasta;
+    }
     public String getCARGO() {
         return CARGO;
     }

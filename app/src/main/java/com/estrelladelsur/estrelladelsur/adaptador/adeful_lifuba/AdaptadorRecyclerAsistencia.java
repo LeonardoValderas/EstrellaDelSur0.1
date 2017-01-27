@@ -21,7 +21,7 @@ public class AdaptadorRecyclerAsistencia extends
 	private ArrayList<Entrenamiento> asistenciaArray;
 	private ArrayList<Entrenamiento> asistenciaTrueArray = new ArrayList<Entrenamiento>();
 	private Typeface textFont;
-	private Typeface equipoFont;
+//	private Typeface equipoFont;
 	private AuxiliarGeneral auxiliarGeneral;
 
 	public static class AsistenciaViewHolder extends RecyclerView.ViewHolder {
@@ -58,7 +58,7 @@ public class AdaptadorRecyclerAsistencia extends
 		this.asistenciaArray = asistenciaArray;
 		auxiliarGeneral = new AuxiliarGeneral(context);
 		textFont = auxiliarGeneral.textFont(context);
-		equipoFont = auxiliarGeneral.tituloFont(context);
+	//	equipoFont = auxiliarGeneral.tituloFont(context);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class AdaptadorRecyclerAsistencia extends
 		final int position = pos;
 
 		viewHolder.editTextDivision.setText(asistenciaArray.get(position).getNOMBRE());
-		viewHolder.editTextDivision.setTypeface(equipoFont, Typeface.BOLD);
+		//viewHolder.editTextDivision.setTypeface(equipoFont, Typeface.BOLD);
 		viewHolder.textViewDivision.setText(asistenciaArray.get(position).getDESCRIPCION());
 		viewHolder.textViewDivision.setTypeface(textFont, Typeface.BOLD);
 

@@ -27,6 +27,8 @@ public class Fixture {
     private String CANCHA;
     private byte[] ESCUDOLOCAL;
     private byte[] ESCUDOVISITA;
+    private String ESCUDOLOCALURL;
+    private String ESCUDOVISITAURL;
 
     public Fixture(int id, int id_equipo_local, int id_equipo_visita, int id_division, int id_torneo, int id_cancha, int id_fecha, int id_anio, String dia, String hora, String usuario,
                    String fechaCreacion, String usuario_act, String fechaActualizacion) {
@@ -159,6 +161,25 @@ public class Fixture {
         ANIO = anio;
     }
 
+    public Fixture(int id, int id_equipo_local, String equipo_local, String url_Local, String r_local, int id_equipo_visita, String equipo_visita, String url_visita, String r_visita, int id_cancha, String cancha, String dia, String hora, String fecha, String anio) {
+
+        ID_FIXTURE = id;
+        ID_EQUIPO_LOCAL = id_equipo_local;
+        EQUIPO_LOCAL = equipo_local;
+        ESCUDOLOCALURL = url_Local;
+        RESULTADO_LOCAL = r_local;
+        ID_EQUIPO_VISITA = id_equipo_visita;
+        EQUIPO_VISITA = equipo_visita;
+        ESCUDOVISITAURL = url_visita;
+        RESULTADO_VISITA = r_visita;
+        ID_CANCHA = id_cancha;
+        CANCHA = cancha;
+        DIA = dia;
+        HORA = hora;
+        FECHA = fecha;
+        ANIO = anio;
+    }
+
     // ENTRENAMIENTO RECYCLER
     public Fixture(int id, int id_equipo_local, int id_equipo_visita, int id_division, int id_torneo, int id_cancha, String fecha, String anio, String dia, String hora, String rlocal, String rvisita) {
         ID_FIXTURE = id;
@@ -207,6 +228,21 @@ public class Fixture {
         ANIO = anio;
         DESCRIPCION = descripcion;
     }
+    public Fixture(int id, String equipo_local, String escudoLocal, String r_local, String equipo_visita, String escudovisita, String r_visita, String cancha, String dia, String hora, String fecha, String anio, String descripcion) {
+        ID_FIXTURE = id;
+        EQUIPO_LOCAL = equipo_local;
+        ESCUDOLOCALURL = escudoLocal;
+        RESULTADO_LOCAL = r_local;
+        EQUIPO_VISITA = equipo_visita;
+        ESCUDOVISITAURL = escudovisita;
+        RESULTADO_VISITA = r_visita;
+        CANCHA = cancha;
+        DIA = dia;
+        HORA = hora;
+        FECHA = fecha;
+        ANIO = anio;
+        DESCRIPCION = descripcion;
+    }
 
     public String getDESCRIPCION() {
         return DESCRIPCION;
@@ -243,5 +279,21 @@ public class Fixture {
 
     public byte[] getESCUDOVISITA() {
         return ESCUDOVISITA;
+    }
+
+    public String getESCUDOLOCALURL() {
+        return ESCUDOLOCALURL;
+    }
+
+    public void setESCUDOLOCALURL(String ESCUDOLOCALURL) {
+        this.ESCUDOLOCALURL = ESCUDOLOCALURL;
+    }
+
+    public String getESCUDOVISITAURL() {
+        return ESCUDOVISITAURL;
+    }
+
+    public void setESCUDOVISITAURL(String ESCUDOVISITAURL) {
+        this.ESCUDOVISITAURL = ESCUDOVISITAURL;
     }
 }

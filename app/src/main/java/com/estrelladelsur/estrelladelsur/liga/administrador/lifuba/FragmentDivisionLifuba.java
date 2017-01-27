@@ -55,7 +55,6 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
     private AuxiliarGeneral auxiliarGeneral;
     private Request request;
     private boolean isInsert = true, isDelete = false;
-    private ImageButton rotateButton;
 
     public static FragmentDivisionLifuba newInstance() {
         FragmentDivisionLifuba fragment = new FragmentDivisionLifuba();
@@ -83,8 +82,6 @@ public class FragmentDivisionLifuba extends Fragment implements MyAsyncTaskListe
                 false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
-        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
-        rotateButton.setVisibility(View.GONE);
         editTextDivision = (EditText) v.findViewById(
                 R.id.editTextDescripcion);
         editTextDivision.setTypeface(editTextFont);

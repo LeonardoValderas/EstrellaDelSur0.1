@@ -25,6 +25,8 @@ public class Resultado {
     private String EQUIPO_VISITA;
     private byte[] ESCUDOLOCAL;
     private byte[] ESCUDOVISITA;
+    private String ESCUDOLOCALURL;
+    private String ESCUDOVISITAURL;
 
     public Resultado(int id, int id_equipo_local, int id_equipo_visita, String resultado_local, String resultado_visita, int id_division, int id_torneo, int id_cancha, int id_fecha, int id_anio, String dia, String hora, String usuario,
                      String fechaCreacion, String usuarioActualizacion, String fechaActualizacion) {
@@ -148,6 +150,20 @@ public class Resultado {
         ANIO = anio;
     }
 
+    public Resultado(int id, int id_equipo_local, String equipo_local, String escudoLocal, String resultado_local, int id_equipo_visita, String equipo_visita, String escudovisita, String resultado_visita, String fecha, String anio) {
+        ID_FIXTURE = id;
+        ID_EQUIPO_LOCAL = id_equipo_local;
+        EQUIPO_LOCAL = equipo_local;
+        ESCUDOLOCALURL = escudoLocal;
+        RESULTADO_LOCAL = resultado_local;
+        ID_EQUIPO_VISITA = id_equipo_visita;
+        EQUIPO_VISITA = equipo_visita;
+        ESCUDOVISITAURL = escudovisita;
+        RESULTADO_VISITA = resultado_visita;
+        FECHA = fecha;
+        ANIO = anio;
+    }
+
     public String getEQUIPO_LOCAL() {
         return EQUIPO_LOCAL;
     }
@@ -178,5 +194,21 @@ public class Resultado {
 
     public void setFECHA(String FECHA) {
         this.FECHA = FECHA;
+    }
+
+    public String getESCUDOLOCALURL() {
+        return ESCUDOLOCALURL;
+    }
+
+    public void setESCUDOLOCALURL(String ESCUDOLOCALURL) {
+        this.ESCUDOLOCALURL = ESCUDOLOCALURL;
+    }
+
+    public String getESCUDOVISITAURL() {
+        return ESCUDOVISITAURL;
+    }
+
+    public void setESCUDOVISITAURL(String ESCUDOVISITAURL) {
+        this.ESCUDOVISITAURL = ESCUDOVISITAURL;
     }
 }

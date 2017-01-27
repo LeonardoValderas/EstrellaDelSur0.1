@@ -29,6 +29,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Jugador;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.estrelladelsur.estrelladelsur.webservice.Variable;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -141,22 +142,6 @@ public class FragmentEntrenamientoAsistencia extends Fragment {
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerViewJugador.setItemAnimator(new DefaultItemAnimator());
 
-//        botonFloating.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                if (jugadoresDivisionSpinner.getSelectedItem().toString().equals(getResources().
-//                        getString(R.string.vacioSpinnerDivision))) {
-//                    Toast.makeText(getActivity(), "Sin datos.",
-//                            Toast.LENGTH_SHORT).show();
-//                } else {
-//                    division = (Division) jugadoresDivisionSpinner.getSelectedItem();
-//                    divisionSpinner = division.getID_DIVISION();
-//                    recyclerViewLoadJugador(divisionSpinner);
-//                }
-//            }
-//        });
-
         jugadoresDivisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -195,15 +180,15 @@ public class FragmentEntrenamientoAsistencia extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                String fecha = controladorAdeful.selectTabla(AsyncTaskGenericIndividual.TABLA_ENTRENAMIENTO);
+                String fecha = controladorAdeful.selectTabla(Variable.TABLA_ENTRENAMIENTO);
                 if (fecha != null) {
                     request = new Request();
                     request.setMethod("POST");
                     request.setParametrosDatos("fecha_tabla", fecha);
-                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_ENTRENAMIENTO);
+                    request.setParametrosDatos("tabla", Variable.TABLA_ENTRENAMIENTO);
                     request.setParametrosDatos("liga", "ADEFUL");
 
-                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.ENTRENAMIENTO_ADEFUL);
+                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, Variable.ENTRENAMIENTO_ADEFUL);
                 }
             }
         });

@@ -184,7 +184,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
             }
         });
 
-        actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
+        actualizar = getActivity().getIntent().getBooleanExtra("actualizarLifuba",
                 false);
         //Metodo Extra
         if (actualizar) {
@@ -228,7 +228,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
 
     public void populationSpinnerJugador(int id_division) {
 
-        jugadorArray = controladorLifuba.selectListaJugadorLifuba(id_division);
+        jugadorArray = controladorLifuba.selectListaJugadorSpinner(id_division);
         if (jugadorArray != null) {
             if (!jugadorArray.isEmpty()) {
                 adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),
@@ -236,7 +236,7 @@ public class FragmentGenerarSancionLifuba extends Fragment implements MyAsyncTas
                 sancionJugadorSpinner.setAdapter(adapterSpinnerJugador);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerJugador));
                 sancionJugadorSpinner.setAdapter(adaptadorInicial);
             }

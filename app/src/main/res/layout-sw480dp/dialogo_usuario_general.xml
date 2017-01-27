@@ -18,8 +18,9 @@
             android:gravity="center"
             android:padding="5dp"
             android:text="Titulo"
+            android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:textSize="35dp" />
+            android:textSize="40dp" />
     </RelativeLayout>
 
     <LinearLayout

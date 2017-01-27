@@ -43,7 +43,7 @@
                     android:hint="Articulo"
                     android:maxLength="1998"
                     android:inputType="textMultiLine"
-                    android:lines="5"
+                    android:lines="15"
                     android:textSize="35dp" />
 
                 <EditText

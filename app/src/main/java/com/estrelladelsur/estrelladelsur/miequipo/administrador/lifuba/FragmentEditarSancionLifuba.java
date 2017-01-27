@@ -214,7 +214,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
                         Intent editarSancion = new Intent(getActivity(),
                                 TabsSancion.class);
                         editarSancion.putExtra("restart", 1);
-                        editarSancion.putExtra("actualizar", true);
+                        editarSancion.putExtra("actualizarLifuba", true);
                         editarSancion.putExtra("id_sancion",
                                 sancionArray.get(position).getID_SANCION());
                         editarSancion.putExtra("divisionSpinner", divisionSpinner);
@@ -275,7 +275,7 @@ public class FragmentEditarSancionLifuba extends Fragment implements MyAsyncTask
 
     public void populationSpinnerJugador(int id_division) {
 
-        jugadorArray = controladorLifuba.selectListaJugadorLifuba(id_division);
+        jugadorArray = controladorLifuba.selectListaJugadorSpinner(id_division);
         if (jugadorArray != null) {
             if (!jugadorArray.isEmpty()) {
                 adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),

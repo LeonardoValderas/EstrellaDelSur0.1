@@ -45,7 +45,8 @@ public class AdaptadorRecyclerPublicidad extends
 
 		public void bindTitular(Publicidad publicidadAdeful, Typeface foto) {
 			textRecyclerView.setText(publicidadAdeful.getTITULO());
-			textRecyclerView.setTypeface(foto, Typeface.BOLD);
+			textRecyclerView.setTextSize(20);
+			//	textRecyclerView.setTypeface(foto, Typeface.BOLD);
 			byte[] image = publicidadAdeful.getLOGO();
 			if (image == null) {
 				 imageViewPublicidad.setImageResource(R.mipmap.ic_foto);
@@ -62,7 +63,7 @@ public class AdaptadorRecyclerPublicidad extends
 	public AdaptadorRecyclerPublicidad(ArrayList<Publicidad> publicidadArray, Context context) {
 		this.publicidadArray = publicidadArray;
 		auxiliarGeneral = new AuxiliarGeneral(context);
-		fotoFont = auxiliarGeneral.tituloFont(context);
+	//	fotoFont = auxiliarGeneral.tituloFont(context);
 
 	}
 	@Override

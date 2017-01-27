@@ -31,10 +31,32 @@ public class Comision {
         USUARIO_ACTUALIZACION = usuario_actualizacion;
         FECHA_ACTUALIZACION = fecha_actualizacion;
     }
+    public Comision(int id, String nombre, String nombre_foto, int id_cargo,String periodo_desde, String periodo_hasta, String url_comision, String usuario,
+                    String fecha_creacion, String usuario_actualizacion, String fecha_actualizacion) {
+        ID_COMISION = id;
+        NOMBRE_COMISION = nombre;
+        NOMBRE_FOTO = nombre_foto;
+        ID_CARGO = id_cargo;
+        PERIODO_DESDE = periodo_desde;
+        PERIODO_HASTA = periodo_hasta;
+        URL_COMISION = url_comision;
+        USUARIO_CREADOR = usuario;
+        FECHA_CREACION = fecha_creacion;
+        USUARIO_ACTUALIZACION = usuario_actualizacion;
+        FECHA_ACTUALIZACION = fecha_actualizacion;
+    }
     public Comision(int id, String nombre, byte[] foto, String cargo, String periodo_desde, String periodo_hasta) {
         ID_COMISION = id;
         NOMBRE_COMISION = nombre;
         FOTO_COMISION = foto;
+        CARGO = cargo;
+        PERIODO_DESDE = periodo_desde;
+        PERIODO_HASTA = periodo_hasta;
+    }
+    public Comision(int id, String nombre, String url_comision, String cargo, String periodo_desde, String periodo_hasta) {
+        ID_COMISION = id;
+        NOMBRE_COMISION = nombre;
+        URL_COMISION = url_comision;
         CARGO = cargo;
         PERIODO_DESDE = periodo_desde;
         PERIODO_HASTA = periodo_hasta;

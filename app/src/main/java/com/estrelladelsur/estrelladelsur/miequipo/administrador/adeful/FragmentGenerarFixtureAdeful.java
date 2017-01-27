@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -72,7 +73,7 @@ public class FragmentGenerarFixtureAdeful extends Fragment implements MyAsyncTas
     private Mes mes;
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
-    private DateFormat form = DateFormat.getTimeInstance(DateFormat.SHORT);
+    private DateFormat form = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.UK);
     private Calendar calendar = Calendar.getInstance();
     private Calendar calenda = Calendar.getInstance();
     private Button btn_dia;

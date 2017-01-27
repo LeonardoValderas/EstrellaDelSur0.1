@@ -49,6 +49,8 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoAlerta;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -69,16 +71,13 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
     private Typeface editTextFont;
     private AuxiliarGeneral auxiliarGeneral;
     private String nombreEscudoAnterior = null, usuario = null,
-            url_escudo_equipo = null, encodedImage = null, URL = null;
+            url_escudo_equipo = "", encodedImage = null, URL = null, nombre_equipo = "";
     private Request request;
     private String url_nombre_escudo;
     private String nombreEquipo;
     private boolean isDelete = false;
     private boolean isInsert = true;
-    private ImageButton rotateButton;
     private static final int PERMISSION_REQUEST_CODE = 1;
-    int width = 300;
-    int height = 300;
 
     public static FragmentEquipoAdeful newInstance() {
         FragmentEquipoAdeful fragment = new FragmentEquipoAdeful();
@@ -106,7 +105,6 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
                 false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
-        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
         imageEquipo = (ImageView) v
                 .findViewById(R.id.imageButtonEquipo_Cancha);
         editTextNombre = (EditText) v.findViewById(R.id.editTextDescripcion);
@@ -185,40 +183,35 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
             public void onClick(View view, int position) {
                 gestion = 1;
                 isInsert = false;
-                imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
                 nombreEscudoAnterior = equipoAdefulArray.get(position)
                         .getNOMBRE_ESCUDO();
-                editTextNombre.setText(equipoAdefulArray.get(position).getNOMBRE_EQUIPO());
-                if (equipoAdefulArray.get(position).getESCUDO() != null) {
-                    Bitmap theImage = BitmapFactory
-                            .decodeByteArray(
-                                    equipoAdefulArray.get(position)
-                                            .getESCUDO(), 0,
-                                    equipoAdefulArray.get(position)
-                                            .getESCUDO().length);
-                    theImage = Bitmap.createScaledBitmap(theImage, 150,
-                            150, true);
-                    imageEquipo.setImageBitmap(theImage);
-                    imagenEscudo = equipoAdefulArray.get(position)
-                            .getESCUDO();
-                }
+                nombre_equipo = equipoAdefulArray.get(position).getNOMBRE_EQUIPO();
+                editTextNombre.setText(nombre_equipo);
+                url_escudo_equipo = equipoAdefulArray.get(position).getURL_ESCUDO();
+                if (!url_escudo_equipo.isEmpty())
+                    Picasso.with(getActivity())
+                            .load(url_escudo_equipo).fit()
+                            .placeholder(R.mipmap.ic_escudo_cris)
+                            .into(imageEquipo, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError() {
+                                    imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
+                                }
+                            });
+                else
+                    Picasso.with(getActivity())
+                            .load(R.mipmap.ic_escudo_cris).fit()
+                            .placeholder(R.mipmap.ic_escudo_cris)
+                            .into(imageEquipo);
                 posicion = position;
             }
         }));
         recyclerViewLoadEquipo();
-
-        rotateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (imagenEscudo != null) {
-                    Bitmap theImage = auxiliarGeneral.setByteToBitmap(imagenEscudo, 150,
-                            150);
-                    theImage = auxiliarGeneral.RotateBitmap(theImage);
-                    imageEquipo.setImageBitmap(theImage);
-                    imagenEscudo = auxiliarGeneral.pasarBitmapByte(theImage);
-                }
-            }
-        });
     }
 
     public void recyclerViewLoadEquipo() {
@@ -272,12 +265,12 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == getActivity().RESULT_OK) {
-                String p =  auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
-                Bitmap bitmap =  auxiliarGeneral.asignateImage(p);
+                String p = auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
+                Bitmap bitmap = auxiliarGeneral.asignateImage(p);
                 asignateBitmap(bitmap);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                if(!result.getError().toString().contains("ENOENT"))
-                Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
+                if (!result.getError().toString().contains("ENOENT"))
+                    Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -391,11 +384,10 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
 
         recyclerViewLoadEquipo();
         editTextNombre.setText("");
-        url_nombre_escudo = null;
-        url_escudo_equipo = null;
-        if (imagenEscudo != null) {
-            imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
-        }
+        url_nombre_escudo = "";
+        url_escudo_equipo = "";
+        nombreEquipo = "";
+        imageEquipo.setImageResource(R.mipmap.ic_escudo_cris);
         Toast.makeText(getActivity(),
                 mensaje,
                 Toast.LENGTH_SHORT).show();
@@ -410,15 +402,24 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
             nombreEquipo = editTextNombre.getText()
                     .toString();
             if (imagenEscudo != null) {
-                url_nombre_escudo = auxiliarGeneral.getFechaImagen() + auxiliarGeneral.removeAccents(nombreEquipo.replace(" ", "").trim()) + ".PNG";
-                url_escudo_equipo = URL + auxiliarGeneral.getURLESCUDOEQUIPO() +
-                        url_nombre_escudo;
+                setUrlFoto();
+            } else if (!url_escudo_equipo.isEmpty()) {
+                if (nombre_equipo.compareTo(nombreEquipo) == 0)
+                    nombreEscudoAnterior = null;
+                else
+                    setUrlFoto();
             }
         }
         equipoAdeful = new Equipo(id, nombreEquipo, url_nombre_escudo, imagenEscudo, url_escudo_equipo, usuario,
                 auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
         envioWebService(ws);
+    }
+
+    public void setUrlFoto() {
+        url_nombre_escudo = auxiliarGeneral.getFechaImagen() + auxiliarGeneral.removeAccents(nombreEquipo.replace(" ", "").trim()) + ".PNG";
+        url_escudo_equipo = URL + auxiliarGeneral.getURLESCUDOEQUIPO() +
+                url_nombre_escudo;
     }
 
     public void envioWebService(int tipo) {
@@ -435,7 +436,15 @@ public class FragmentEquipoAdeful extends Fragment implements MyAsyncTaskListene
             request.setParametrosDatos("escudo_equipo", encodedImage);
             request.setParametrosDatos("url_escudo", url_escudo_equipo);
             request.setParametrosDatos("nombre_escudo", url_nombre_escudo);
+        } else if(!url_escudo_equipo.isEmpty()){
+            request.setParametrosDatos("escudo_equipo", "222");
+            request.setParametrosDatos("url_escudo",
+                    url_escudo_equipo);
+            request.setParametrosDatos("nombre_escudo", url_nombre_escudo);
+        } else{
+            request.setParametrosDatos("escudo_equipo", "222");
         }
+
         //0 = insert // 1 = update // 2 = delete
         if (tipo == 0) {
             isInsert = true;

@@ -29,6 +29,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Sancion;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.estrelladelsur.estrelladelsur.webservice.Variable;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -189,15 +190,15 @@ public class FragmentSancionUsuarioLifuba extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                String fecha = controladorUsuarioLifuba.selectTabla(AsyncTaskGenericIndividual.TABLA_SANCION_LIFUBA);
+                String fecha = controladorUsuarioLifuba.selectTabla(Variable.TABLA_SANCION_LIFUBA);
                 if (fecha != null) {
                     request = new Request();
                     request.setMethod("POST");
                     request.setParametrosDatos("fecha_tabla", fecha);
-                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_SANCION_LIFUBA);
+                    request.setParametrosDatos("tabla", Variable.TABLA_SANCION_LIFUBA);
                     request.setParametrosDatos("liga", "LIFUBA");
 
-                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.SANCION_LIFUBA);
+                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, Variable.SANCION_LIFUBA);
                 }
             }
         });

@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -26,6 +28,7 @@ public class AdaptadorSancionUsuario extends
 	private Typeface textFont;
 	private Typeface equipoFont;
 	private AuxiliarGeneral auxiliarGeneral;
+	private Context context;
 
 	public static class SancionViewHolder extends RecyclerView.ViewHolder {
 		private ImageView imageViewFotoJugador;
@@ -54,19 +57,41 @@ public class AdaptadorSancionUsuario extends
 					.findViewById(R.id.textRecyclerViewObservacion);
 		}
 
-		public void bindTitular(Sancion sancion, Typeface equipo, Typeface texto) {
+		public void bindTitular(Sancion sancion, Typeface equipo, Typeface texto, Context context) {
 			// Jugador
-			byte[] foto = sancion.getFOTO_JUGADOR();
-			if (foto == null) {
-				imageViewFotoJugador.setImageResource(R.mipmap.ic_foto_galery);
-			} else {
-				Bitmap escudoLocalBitmap = BitmapFactory.decodeByteArray(
-						foto, 0,
-						foto.length);
-				escudoLocalBitmap = Bitmap.createScaledBitmap(
-						escudoLocalBitmap, 150, 150, true);
-				imageViewFotoJugador.setImageBitmap(escudoLocalBitmap);
-			}
+//			byte[] foto = sancion.getFOTO_JUGADOR();
+//			if (foto == null) {
+//				imageViewFotoJugador.setImageResource(R.mipmap.ic_foto_galery);
+//			} else {
+//				Bitmap escudoLocalBitmap = BitmapFactory.decodeByteArray(
+//						foto, 0,
+//						foto.length);
+//				escudoLocalBitmap = Bitmap.createScaledBitmap(
+//						escudoLocalBitmap, 150, 150, true);
+//				imageViewFotoJugador.setImageBitmap(escudoLocalBitmap);
+//			}
+
+			if(!sancion.getFOTO_JUGADOR_URL().isEmpty())
+				Picasso.with(context)
+						.load(sancion.getFOTO_JUGADOR_URL()).fit()
+						.placeholder(R.mipmap.ic_foto_galery)
+						.into(imageViewFotoJugador, new Callback() {
+							@Override
+							public void onSuccess() {
+
+							}
+
+							@Override
+							public void onError() {
+								imageViewFotoJugador.setImageResource(R.mipmap.ic_foto_galery);
+							}
+						});
+			else
+				Picasso.with(context)
+						.load(R.mipmap.ic_foto_galery).fit()
+						.placeholder(R.mipmap.ic_foto_galery)
+						.into(imageViewFotoJugador);
+
 			textRecyclerViewNombre.setText(sancion.getNOMBRE_JUGADOR());
 		//	textRecyclerViewNombre.setTypeface(texto, Typeface.BOLD);
 			String tarjetas = "Amarrilas: "+sancion.getAMARILLA()+" Rojas: "+sancion.getROJA();
@@ -84,6 +109,7 @@ public class AdaptadorSancionUsuario extends
 		auxiliarGeneral = new AuxiliarGeneral(context);
 		textFont = auxiliarGeneral.textFont(context);
 		equipoFont = auxiliarGeneral.tituloFont(context);
+		this.context = context;
 	}
 
 	@Override
@@ -99,7 +125,7 @@ public class AdaptadorSancionUsuario extends
 	@Override
 	public void onBindViewHolder(SancionViewHolder viewHolder, int pos) {
 		Sancion item = sancionArray.get(pos);
-		viewHolder.bindTitular(item,textFont, equipoFont);
+		viewHolder.bindTitular(item,textFont, equipoFont, context);
 	}
 
 	@Override

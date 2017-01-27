@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerEquipo;
+import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerEquipoUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.lifuba.ControladorUsuarioLifuba;
@@ -19,6 +20,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.estrelladelsur.estrelladelsur.webservice.Variable;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -28,7 +30,7 @@ public class FragmentEquipoUsuario extends Fragment {
 
     private RecyclerView recycleViewEquipo;
     private ArrayList<Equipo> equipoAdefulArray;
-    private AdaptadorRecyclerEquipo adaptador;
+    private AdaptadorRecyclerEquipoUsuario adaptador;
     private int CheckedPositionFragment;
     private ControladorUsuarioLifuba controladorUsuarioLifuba;
     private AuxiliarGeneral auxiliarGeneral;
@@ -108,15 +110,15 @@ public class FragmentEquipoUsuario extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                String fecha = controladorUsuarioLifuba.selectTabla(AsyncTaskGenericIndividual.TABLA_EQUIPO_LIFUBA);
+                String fecha = controladorUsuarioLifuba.selectTabla(Variable.TABLA_EQUIPO_LIFUBA);
                 if (fecha != null) {
                     request = new Request();
                     request.setMethod("POST");
                     request.setParametrosDatos("fecha_tabla", fecha);
-                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_EQUIPO_LIFUBA);
+                    request.setParametrosDatos("tabla", Variable.TABLA_EQUIPO_LIFUBA);
                     request.setParametrosDatos("liga", "LIFUBA");
 
-                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.EQUIPO_LIFUBA);
+                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, Variable.EQUIPO_LIFUBA);
                 }
             }
         });
@@ -132,7 +134,7 @@ public class FragmentEquipoUsuario extends Fragment {
 
         equipoAdefulArray = controladorUsuarioLifuba.selectListaEquipoUsuarioLifuba();
         if (equipoAdefulArray != null) {
-            adaptador = new AdaptadorRecyclerEquipo(equipoAdefulArray, getActivity());
+            adaptador = new AdaptadorRecyclerEquipoUsuario(equipoAdefulArray, getActivity());
             recycleViewEquipo.setAdapter(adaptador);
         } else {
             auxiliarGeneral.errorDataBase(getActivity());

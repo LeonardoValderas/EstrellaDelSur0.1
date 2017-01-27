@@ -31,6 +31,8 @@ import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -49,12 +51,11 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
     private boolean actualizar = false;
     private int idFotoExtra;
     private AuxiliarGeneral auxiliarGeneral;
-    private ControladorGeneral controladorGeneral;
     private Communicator communicator;
     private Typeface editTextFont;
-    private String URL = null, usuario = null, encodedImage = null, nombre_foto_anterior = null;
+    private String URL = null, nombre_foto = null, usuario = null, encodedImage = null, nombre_foto_anterior = "", url_foto = "", titulo_anterior = "";
     private Request request;
-    private ImageButton rotateButton;
+    //   private ImageButton rotateButton;
     int width = 300;
     int height = 300;
     private static final int PERMISSION_REQUEST_CODE = 1;
@@ -85,7 +86,6 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
                 container, false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
-        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
         // FOTO
         imageFoto = (ImageView) v.findViewById(R.id.imageFoto);
         // TITULO FOTO
@@ -105,34 +105,49 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
     public void onResume() {
         super.onResume();
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
-        controladorGeneral = new ControladorGeneral(getActivity());
         communicator = (Communicator) getActivity();
     }
 
     private void init() {
         usuario = auxiliarGeneral.getUsuarioPreferences(getActivity());
         communicator = (Communicator) getActivity();
-        controladorGeneral = new ControladorGeneral(getActivity());
         actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
                 false);
         //Metodo Extra
         if (actualizar) {
             idFotoExtra = getActivity().getIntent().getIntExtra("id_foto", 0);
             //TITULO
-            tituloFotoEdit.setText(getActivity().getIntent()
-                    .getStringExtra("titulo"));
+            titulo_anterior = getActivity().getIntent()
+                    .getStringExtra("titulo");
+            tituloFotoEdit.setText(titulo_anterior);
             //FOTO
-            imageFotoByte = controladorGeneral.selectFotoForId(idFotoExtra);
-//            imageFotoByte = getActivity().getIntent()
-//                    .getByteArrayExtra("foto");
+            url_foto = getActivity().getIntent()
+                    .getStringExtra("url_foto");
+
             nombre_foto_anterior = getActivity().getIntent()
                     .getStringExtra("nombre_foto");
-            if (imageFotoByte != null) {
-                Bitmap theImage = auxiliarGeneral.setByteToBitmap(imageFotoByte, width, height);
-                imageFoto.setImageBitmap(theImage);
-            } else {
-                imageFoto.setImageResource(R.mipmap.ic_foto);
-            }
+
+            if (!url_foto.isEmpty())
+                Picasso.with(getActivity())
+                        .load(url_foto).fit()
+                        .placeholder(R.mipmap.ic_foto)
+                        .into(imageFoto, new Callback() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+
+                            @Override
+                            public void onError() {
+                                imageFoto.setImageResource(R.mipmap.ic_foto);
+                            }
+                        });
+            else
+                Picasso.with(getActivity())
+                        .load(R.mipmap.ic_foto).fit()
+                        .placeholder(R.mipmap.ic_foto)
+                        .into(imageFoto);
+
             insertar = false;
         }
         imageFoto.setOnClickListener(new View.OnClickListener() {
@@ -141,19 +156,7 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
                 if (!auxiliarGeneral.checkPermission(getActivity()))
                     auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
                 else
-                ImageDialogFoto();
-            }
-        });
-
-        rotateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (imageFotoByte != null) {
-                    Bitmap theImage = auxiliarGeneral.setByteToBitmap(imageFotoByte, width, height);
-                    theImage = auxiliarGeneral.RotateBitmap(theImage);
-                    imageFoto.setImageBitmap(theImage);
-                    imageFotoByte = auxiliarGeneral.pasarBitmapByte(theImage);
-                }
+                    ImageDialogFoto();
             }
         });
     }
@@ -184,22 +187,22 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == UtilityImage.GALLERY_PICTURE) {
-                //  if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
-                Uri imageUri = CropImage.getPickImageResultUri(getActivity(), data);
-                startCropImageActivity(imageUri);
-            }
-            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-                CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                if (resultCode == getActivity().RESULT_OK) {
-                    String p =  auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
-                    Bitmap bitmap =  auxiliarGeneral.asignateImage(p);
-                    asignateBitmap(bitmap);
-                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                    if(!result.getError().toString().contains("ENOENT"))
+        if (requestCode == UtilityImage.GALLERY_PICTURE) {
+            //  if (requestCode == CropImage.PICK_IMAGE_CHOOSER_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+            Uri imageUri = CropImage.getPickImageResultUri(getActivity(), data);
+            startCropImageActivity(imageUri);
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == getActivity().RESULT_OK) {
+                String p = auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
+                Bitmap bitmap = auxiliarGeneral.asignateImage(p);
+                asignateBitmap(bitmap);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                if (!result.getError().toString().contains("ENOENT"))
                     Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
-                }
             }
+        }
     }
 
     public void asignateBitmap(Bitmap photoBitmap) {
@@ -235,12 +238,13 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
     public void inicializarControles(String mensaje) {
 
         tituloFotoEdit.setText("");
-        if (imageFotoByte != null) {
-            imageFoto
-                    .setImageResource(R.mipmap.ic_foto);
-            imageFotoByte = null;
-        }
+        imageFoto
+                .setImageResource(R.mipmap.ic_foto);
         imageFotoByte = null;
+        imageFotoByte = null;
+        nombre_foto = null;
+        url_foto = "";
+        titulo_anterior = "";
         communicator.refresh();
         showMessage(mensaje);
     }
@@ -250,20 +254,29 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
         URL = auxiliarGeneral.getURLFOTOALL();
 
         String titulo = tituloFotoEdit.getText().toString();
-        String url_foto = null;
-        String url_nombre_foto = null;
-        String fechaFoto = null;
-        String nombre_foto = null;
         if (imageFotoByte != null) {
-            url_nombre_foto = auxiliarGeneral.removeAccents(titulo.replace(" ", "").trim());
-            fechaFoto = auxiliarGeneral.getFechaImagen();
-            nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
-            url_foto = auxiliarGeneral.getURLFOTOFOLDER() + nombre_foto;
+            setUrlFoto(titulo);
+        } else if (!url_foto.isEmpty()) {
+            if (titulo.compareTo(titulo_anterior) == 0)
+                nombre_foto_anterior = null;
+            else
+                setUrlFoto(titulo);
         }
+
         foto = new Foto(id, titulo, imageFotoByte, nombre_foto, url_foto,
                 usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
         envioWebService();
+    }
+
+    public void setUrlFoto(String titulo) {
+        String url_nombre_foto = null;
+        String fechaFoto = null;
+        nombre_foto = null;
+        url_nombre_foto = auxiliarGeneral.removeAccents(titulo.replace(" ", "").trim());
+        fechaFoto = auxiliarGeneral.getFechaImagen();
+        nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
+        url_foto = auxiliarGeneral.getURLFOTOFOLDER() + nombre_foto;
     }
 
     public void envioWebService() {
@@ -280,12 +293,18 @@ public class FragmentGenerarFoto extends Fragment implements MyAsyncTaskListener
                     foto.getURL_FOTO());
             request.setParametrosDatos("nombre_foto", foto.getNOMBRE_FOTO());
 
+        } else if (!url_foto.isEmpty()) {
+            request.setParametrosDatos("foto", "222");
+            request.setParametrosDatos("url_foto",
+                    foto.getURL_FOTO());
+            request.setParametrosDatos("nombre_foto", foto.getNOMBRE_FOTO());
+        } else {
+            request.setParametrosDatos("foto", "222");
         }
         if (insertar) {
             request.setParametrosDatos("usuario_creador", foto.getUSUARIO_CREACION());
             request.setParametrosDatos("fecha_creacion", foto.getFECHA_CREACION());
             URL = URL + auxiliarGeneral.getInsertPHP("Foto");
-
         } else {
             request.setParametrosDatos("id_foto", String.valueOf(foto.getID_FOTO()));
             request.setParametrosDatos("usuario_actualizacion", foto.getUSUARIO_ACTUALIZACION());

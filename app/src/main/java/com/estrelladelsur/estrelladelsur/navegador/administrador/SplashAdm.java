@@ -17,6 +17,8 @@ import com.estrelladelsur.estrelladelsur.entidad.Tabla;
 import com.estrelladelsur.estrelladelsur.navegador.usuario.NavigationUsuario;
 import com.estrelladelsur.estrelladelsur.webservice.JsonParsingAdm;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.estrelladelsur.estrelladelsur.webservice.Variable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,69 +39,6 @@ public class SplashAdm extends AppCompatActivity {
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private String mensaje = null;
-    public static final String ARTICULO = "articulo";
-    public static final String COMISION = "comision";
-    public static final String DIRECCION = "direccion";
-    public static final String CARGO = "cargo";
-    public static final String EQUIPO_ADEFUL = "equipo_adeful";
-    public static final String EQUIPO_LIFUBA = "equipo_lifuba";
-    public static final String DIVISION_ADEFUL = "division_adeful";
-    public static final String TORNEO_ADEFUL = "torneo_adeful";
-    public static final String TORNEO_LIFUBA = "torneo_lifuba";
-    public static final String CANCHA_ADEFUL = "cancha_adeful";
-    public static final String CANCHA_LIFUBA = "cancha_lifuba";
-    public static final String FIXTURE_ADEFUL = "fixture_adeful";
-    public static final String FIXTURE_LIFUBA = "fixture_lifuba";
-    public static final String JUGADOR_ADEFUL = "jugador_adeful";
-    public static final String POSICION_ADEFUL = "posicion_adeful";
-    public static final String ENTRENAMIENTO_ADEFUL = "entrenamiento_adeful";
-    public static final String ENTRENAMIENTO_DIVISION_ADEFUL = "entrenamiento_division_adeful";
-    public static final String ENTRENAMIENTO_ASISTENCIA_ADEFUL = "entrenamiento_asistencia_adeful";
-    public static final String SANCION_ADEFUL = "sancion_adeful";
-    public static final String SANCION_LIFUBA = "sancion_lifuba";
-    public static final String NOTIFICACION = "notificacion";
-    public static final String NOTICIA = "noticia";
-    public static final String FOTO = "foto";
-    public static final String PUBLICIDAD = "publicidad";
-    public static final String USUARIO = "usuario";
-    public static final String PERMISO = "permiso";
-    public static final String PERMISO_MODULO = "permiso_modulo";
-    public static final String ANIO = "anio";
-    public static final String FECHA = "fecha";
-    public static final String TABLA_ADEFUL = "tabla_fecha_adeful";
-    public static final String TABLA_LIFUBA = "tabla_fecha_lifuba";
-    public static final String TABLA_GENERAL = "tabla_fecha_general";
-    public static final String TABLA_ARTICULO = "ARTICULO";
-    public static final String TABLA_CANCHA_ADEFUL = "CANCHA_ADEFUL";
-    public static final String TABLA_CANCHA_LIFUBA = "CANCHA_LIFUBA";
-    public static final String TABLA_CARGO_ADEFUL = "CARGO";
-    public static final String TABLA_COMISION= "COMISION";
-    public static final String TABLA_DIRECCION = "DIRECCION";
-    public static final String TABLA_DIVISION_ADEFUL = "DIVISION_ADEFUL";
-    public static final String TABLA_ENTRENAMIENTO = "ENTRENAMIENTO_ADEFUL";
-    public static final String TABLA_ENTRENAMIENTO_DIVISION = "ENTRENAMIENTO_DIVISION_ADEFUL";
-    public static final String TABLA_EQUIPO_ADEFUL = "EQUIPO_ADEFUL";
-    public static final String TABLA_EQUIPO_LIFUBA = "EQUIPO_LIFUBA";
-    public static final String TABLA_FIXTURE_ADEFUL = "FIXTURE_ADEFUL";
-    public static final String TABLA_FIXTURE_LIFUBA = "FIXTURE_LIFUBA";
-    public static final String TABLA_JUGADOR = "JUGADOR_ADEFUL";
-    public static final String TABLA_POSICION = "POSICION_ADEFUL";
-    public static final String TABLA_SANCION_ADEFUL = "SANCION_ADEFUL";
-    public static final String TABLA_SANCION_LIFUBA = "SANCION_LIFUBA";
-    public static final String TABLA_TORNEO_ADEFUL = "TORNEO_ADEFUL";
-    public static final String TABLA_TORNEO_LIFUBA = "TORNEO_LIFUBA";
-    public static final String TABLA_ASISTENCIA = "ENTRENAMIENTO_ASISTENCIA_ADEFUL";
-    public static final String TABLA_TABLA_ADEFUL = "FECHA_TABLA";
-    public static final String TABLA_TABLA_LIFUBA = "FECHA_TABLA";
-    public static final String TABLA_TABLA_GENERAL = "FECHA_TABLA";
-    public static final String TABLA_NOTIFICACION = "NOTIFICACION";
-    public static final String TABLA_NOTICIA = "NOTICIA";
-    public static final String TABLA_FOTO = "FOTO";
-    public static final String TABLA_PUBLICIDAD = "PUBLICIDAD";
-    public static final String TABLA_USUARIO = "USUARIO";
-    public static final String TABLA_PERMISO = "PERMISO";
-    public static final String TABLA_ANIO = "ANIO";
-    public static final String TABLA_FECHA = "FECHA";
     private String usuarioAdministrador = null;
     private int idUsuarioAdministrador;
     private boolean close = false;
@@ -130,12 +69,6 @@ public class SplashAdm extends AppCompatActivity {
          finish();
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        init();
-//    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -161,108 +94,108 @@ public class SplashAdm extends AppCompatActivity {
        //ADEFUL
         for (int i = 0; i < listTablaAdeful.size(); i++) {
             switch (listTablaAdeful.get(i).getTABLA()){
-                case TABLA_TABLA_ADEFUL:
-                    request.setParametrosDatos(TABLA_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_TABLA_ADEFUL:
+                    request.setParametrosDatos(Variable.TABLA_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_EQUIPO_ADEFUL:
-                    request.setParametrosDatos(EQUIPO_ADEFUL,  listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_EQUIPO_ADEFUL:
+                    request.setParametrosDatos(Variable.EQUIPO_ADEFUL,  listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_DIVISION_ADEFUL:
-                    request.setParametrosDatos(DIVISION_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_DIVISION_ADEFUL:
+                    request.setParametrosDatos(Variable.DIVISION_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_TORNEO_ADEFUL:
-                    request.setParametrosDatos(TORNEO_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_TORNEO_ADEFUL:
+                    request.setParametrosDatos(Variable.TORNEO_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_CANCHA_ADEFUL:
-                    request.setParametrosDatos(CANCHA_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_CANCHA_ADEFUL:
+                    request.setParametrosDatos(Variable.CANCHA_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_FIXTURE_ADEFUL:
-                    request.setParametrosDatos(FIXTURE_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_FIXTURE_ADEFUL:
+                    request.setParametrosDatos(Variable.FIXTURE_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_JUGADOR:
-                    request.setParametrosDatos(JUGADOR_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_JUGADOR:
+                    request.setParametrosDatos(Variable.JUGADOR_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_POSICION:
-                    request.setParametrosDatos(POSICION_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_POSICION:
+                    request.setParametrosDatos(Variable.POSICION_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_ENTRENAMIENTO:
-                    request.setParametrosDatos(ENTRENAMIENTO_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_ENTRENAMIENTO:
+                    request.setParametrosDatos(Variable.ENTRENAMIENTO_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_ENTRENAMIENTO_DIVISION:
-                    request.setParametrosDatos(ENTRENAMIENTO_DIVISION_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_ENTRENAMIENTO_DIVISION:
+                    request.setParametrosDatos(Variable.ENTRENAMIENTO_DIVISION_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_ASISTENCIA:
-                    request.setParametrosDatos(ENTRENAMIENTO_ASISTENCIA_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_ASISTENCIA:
+                    request.setParametrosDatos(Variable.ENTRENAMIENTO_ASISTENCIA_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
-                case TABLA_SANCION_ADEFUL:
-                    request.setParametrosDatos(SANCION_ADEFUL, listTablaAdeful.get(i).getFECHA());
+                case Variable.TABLA_SANCION_ADEFUL:
+                    request.setParametrosDatos(Variable.SANCION_ADEFUL, listTablaAdeful.get(i).getFECHA());
                     break;
             }
         }
         //LIFUBA
         for (int i = 0; i < listTablaLifuba.size(); i++) {
             switch (listTablaLifuba.get(i).getTABLA()){
-                case TABLA_TABLA_LIFUBA:
-                    request.setParametrosDatos(TABLA_LIFUBA, listTablaLifuba.get(i).getFECHA());
+                case Variable.TABLA_TABLA_LIFUBA:
+                    request.setParametrosDatos(Variable.TABLA_LIFUBA, listTablaLifuba.get(i).getFECHA());
                     break;
-                case TABLA_EQUIPO_LIFUBA:
-                    request.setParametrosDatos(EQUIPO_LIFUBA,  listTablaLifuba.get(i).getFECHA());
+                case Variable.TABLA_EQUIPO_LIFUBA:
+                    request.setParametrosDatos(Variable.EQUIPO_LIFUBA,  listTablaLifuba.get(i).getFECHA());
                     break;
-                case TABLA_TORNEO_LIFUBA:
-                    request.setParametrosDatos(TORNEO_LIFUBA, listTablaLifuba.get(i).getFECHA());
+                case Variable.TABLA_TORNEO_LIFUBA:
+                    request.setParametrosDatos(Variable.TORNEO_LIFUBA, listTablaLifuba.get(i).getFECHA());
                     break;
-                case TABLA_CANCHA_LIFUBA:
-                    request.setParametrosDatos(CANCHA_LIFUBA, listTablaLifuba.get(i).getFECHA());
+                case Variable.TABLA_CANCHA_LIFUBA:
+                    request.setParametrosDatos(Variable.CANCHA_LIFUBA, listTablaLifuba.get(i).getFECHA());
                     break;
-                case TABLA_FIXTURE_LIFUBA:
-                    request.setParametrosDatos(FIXTURE_LIFUBA, listTablaLifuba.get(i).getFECHA());
+                case Variable.TABLA_FIXTURE_LIFUBA:
+                    request.setParametrosDatos(Variable.FIXTURE_LIFUBA, listTablaLifuba.get(i).getFECHA());
                     break;
-                case TABLA_SANCION_LIFUBA:
-                    request.setParametrosDatos(SANCION_LIFUBA, listTablaLifuba.get(i).getFECHA());
+                case Variable.TABLA_SANCION_LIFUBA:
+                    request.setParametrosDatos(Variable.SANCION_LIFUBA, listTablaLifuba.get(i).getFECHA());
                     break;
             }
         }
         //GENERAL
         for (int i = 0; i < listTablaGeneral.size(); i++) {
             switch (listTablaGeneral.get(i).getTABLA()){
-                case TABLA_TABLA_GENERAL:
-                    request.setParametrosDatos(TABLA_GENERAL, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_TABLA_GENERAL:
+                    request.setParametrosDatos(Variable.TABLA_GENERAL, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_ARTICULO:
-                    request.setParametrosDatos(ARTICULO, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_ARTICULO:
+                    request.setParametrosDatos(Variable.ARTICULO, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_COMISION:
-                    request.setParametrosDatos(COMISION, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_COMISION:
+                    request.setParametrosDatos(Variable.COMISION, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_DIRECCION:
-                    request.setParametrosDatos(DIRECCION,  listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_DIRECCION:
+                    request.setParametrosDatos(Variable.DIRECCION,  listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_CARGO_ADEFUL:
-                    request.setParametrosDatos(CARGO,  listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_CARGO_ADEFUL:
+                    request.setParametrosDatos(Variable.CARGO,  listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_NOTIFICACION:
-                    request.setParametrosDatos(NOTIFICACION, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_NOTIFICACION:
+                    request.setParametrosDatos(Variable.NOTIFICACION, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_NOTICIA:
-                    request.setParametrosDatos(NOTICIA, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_NOTICIA:
+                    request.setParametrosDatos(Variable.NOTICIA, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_FOTO:
-                    request.setParametrosDatos(FOTO, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_FOTO:
+                    request.setParametrosDatos(Variable.FOTO, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_PUBLICIDAD:
-                    request.setParametrosDatos(PUBLICIDAD, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_PUBLICIDAD:
+                    request.setParametrosDatos(Variable.PUBLICIDAD, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_USUARIO:
-                    request.setParametrosDatos(USUARIO, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_USUARIO:
+                    request.setParametrosDatos(Variable.USUARIO, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_PERMISO:
-                    request.setParametrosDatos(PERMISO, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_PERMISO:
+                    request.setParametrosDatos(Variable.PERMISO, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_ANIO:
-                    request.setParametrosDatos(ANIO, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_ANIO:
+                    request.setParametrosDatos(Variable.ANIO, listTablaGeneral.get(i).getFECHA());
                     break;
-                case TABLA_FECHA:
-                    request.setParametrosDatos(FECHA, listTablaGeneral.get(i).getFECHA());
+                case Variable.TABLA_FECHA:
+                    request.setParametrosDatos(Variable.FECHA, listTablaGeneral.get(i).getFECHA());
                     break;
             }
         }
@@ -306,11 +239,11 @@ public class SplashAdm extends AppCompatActivity {
                     mensaje = jsonArrayResponseAux.getString(TAG_MESSAGE);
 
                     if (success == 0) {
-                        jsonArray = json.optJSONArray(TABLA_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.TABLA_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, TABLA_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.TABLA_ADEFUL, SplashAdm.this)) {
                                     precessOK = false;
                                     mensaje = addMessage("tabla_adeful");
                                 }
@@ -318,11 +251,11 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(TABLA_LIFUBA);
+                        jsonArray = json.optJSONArray(Variable.TABLA_LIFUBA);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, TABLA_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.TABLA_LIFUBA, SplashAdm.this)) {
                                     precessOK = false;
                                     mensaje = addMessage("tabla_lifuba");
                                 }
@@ -330,11 +263,11 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(TABLA_GENERAL);
+                        jsonArray = json.optJSONArray(Variable.TABLA_GENERAL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, TABLA_GENERAL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.TABLA_GENERAL, SplashAdm.this)) {
                                     precessOK = false;
                                     mensaje = addMessage("tabla_general");
                                 }
@@ -342,16 +275,16 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(ARTICULO);
+                        jsonArray = json.optJSONArray(Variable.ARTICULO);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, ARTICULO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.ARTICULO, SplashAdm.this)) {
                                     precessOK = false;
                                     mensaje = addMessage("articulo");
                                 }
                             }  else {
-                                if (!jsonParsing.processingJson(ARTICULO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.ARTICULO, SplashAdm.this)) {
                                     mensaje = addMessage("articulo");
                                     precessOK = false;
                                 }
@@ -359,16 +292,16 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(COMISION);
+                        jsonArray = json.optJSONArray(Variable.COMISION);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, COMISION, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.COMISION, SplashAdm.this)) {
                                     precessOK = false;
                                     mensaje = addMessage("comision");
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(jsonArray, COMISION, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.COMISION, SplashAdm.this)) {
                                     mensaje = addMessage("comision");
                                     precessOK = false;
                                 }
@@ -376,16 +309,16 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(DIRECCION);
+                        jsonArray = json.optJSONArray(Variable.DIRECCION);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, DIRECCION, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.DIRECCION, SplashAdm.this)) {
                                     mensaje = addMessage("direccion");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(jsonArray, DIRECCION, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.DIRECCION, SplashAdm.this)) {
                                     mensaje = addMessage("direccion");
                                     precessOK = false;
                                 }
@@ -393,16 +326,16 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(CARGO);
+                        jsonArray = json.optJSONArray(Variable.CARGO);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
 
-                                if (!jsonParsing.processingJson(jsonArray, CARGO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.CARGO, SplashAdm.this)) {
                                     mensaje = addMessage("cargo");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(jsonArray, CARGO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.CARGO, SplashAdm.this)) {
                                     mensaje = addMessage("cargo");
                                     precessOK = false;
                                 }
@@ -410,15 +343,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(EQUIPO_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.EQUIPO_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, EQUIPO_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.EQUIPO_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("equipo_adeful");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(jsonArray, EQUIPO_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.EQUIPO_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("equipo_adeful");
                                     precessOK = false;
                                 }
@@ -426,15 +359,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(EQUIPO_LIFUBA);
+                        jsonArray = json.optJSONArray(Variable.EQUIPO_LIFUBA);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, EQUIPO_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.EQUIPO_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("equipo_lifuba");
                                     precessOK = false;
                                 }
                             }  else {
-                                if (!jsonParsing.processingJson(jsonArray, EQUIPO_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.EQUIPO_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("equipo_lifuba");
                                     precessOK = false;
                                 }
@@ -442,15 +375,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(TORNEO_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.TORNEO_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, TORNEO_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.TORNEO_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("torneo_adeful");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(TORNEO_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.TORNEO_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("torneo_adeful");
                                     precessOK = false;
                                 }
@@ -458,15 +391,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(TORNEO_LIFUBA);
+                        jsonArray = json.optJSONArray(Variable.TORNEO_LIFUBA);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, TORNEO_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.TORNEO_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("torneo_lifuba");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(TORNEO_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.TORNEO_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("torneo_lifuba");
                                     precessOK = false;
                                 }
@@ -474,15 +407,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(CANCHA_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.CANCHA_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, CANCHA_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.CANCHA_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("cancha_adeful");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(CANCHA_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.CANCHA_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("cancha_adeful");
                                     precessOK = false;
                                 }
@@ -490,15 +423,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(CANCHA_LIFUBA);
+                        jsonArray = json.optJSONArray(Variable.CANCHA_LIFUBA);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, CANCHA_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.CANCHA_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("cancha_lifuba");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(CANCHA_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.CANCHA_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("cancha_lifuba");
                                     precessOK = false;
                                 }
@@ -506,16 +439,16 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(DIVISION_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.DIVISION_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
                                 isAsistencia = true;
-                                if (!jsonParsing.processingJson(jsonArray, DIVISION_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.DIVISION_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("division");
                                     precessOK = false;
                                 }
                             }  else {
-                                if (!jsonParsing.processingJson(DIVISION_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.DIVISION_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("division");
                                     precessOK = false;
                                 }
@@ -523,15 +456,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(FIXTURE_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.FIXTURE_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, FIXTURE_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.FIXTURE_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("fixture_adeful");
                                     precessOK = false;
                                 }
                             }  else {
-                                if (!jsonParsing.processingJson(FIXTURE_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.FIXTURE_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("fixture_adeful");
                                     precessOK = false;
                                 }
@@ -539,15 +472,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(FIXTURE_LIFUBA);
+                        jsonArray = json.optJSONArray(Variable.FIXTURE_LIFUBA);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, FIXTURE_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.FIXTURE_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("fixture_lifuba");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(FIXTURE_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.FIXTURE_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("fixture_lifuba");
                                     precessOK = false;
                                 }
@@ -555,15 +488,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(JUGADOR_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.JUGADOR_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, JUGADOR_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.JUGADOR_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("jugador");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(JUGADOR_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.JUGADOR_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("jugador");
                                     precessOK = false;
                                 }
@@ -571,15 +504,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(POSICION_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.POSICION_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, POSICION_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.POSICION_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("posicion");
                                     precessOK = false;
                                 }
                             }  else {
-                                if (!jsonParsing.processingJson(POSICION_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.POSICION_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("posicion");
                                     precessOK = false;
                                 }
@@ -587,16 +520,16 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(ENTRENAMIENTO_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.ENTRENAMIENTO_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
                                 isAsistencia = true;
-                                if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.ENTRENAMIENTO_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("entrenamiento");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(ENTRENAMIENTO_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.ENTRENAMIENTO_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("entrenamiento");
                                     precessOK = false;
                                 }
@@ -604,16 +537,16 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(ENTRENAMIENTO_DIVISION_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.ENTRENAMIENTO_DIVISION_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
                                 isAsistencia = true;
-                                if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_DIVISION_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.ENTRENAMIENTO_DIVISION_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("entrenamiento_division");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(ENTRENAMIENTO_DIVISION_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.ENTRENAMIENTO_DIVISION_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("entrenamiento_division");
                                     precessOK = false;
                                 }
@@ -621,15 +554,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(ENTRENAMIENTO_ASISTENCIA_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.ENTRENAMIENTO_ASISTENCIA_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, ENTRENAMIENTO_ASISTENCIA_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.ENTRENAMIENTO_ASISTENCIA_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("asistencia");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(ENTRENAMIENTO_ASISTENCIA_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.ENTRENAMIENTO_ASISTENCIA_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("asistencia");
                                     precessOK = false;
                                 }
@@ -637,15 +570,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(SANCION_ADEFUL);
+                        jsonArray = json.optJSONArray(Variable.SANCION_ADEFUL);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, SANCION_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.SANCION_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("sancion_adeful");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(SANCION_ADEFUL, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.SANCION_ADEFUL, SplashAdm.this)) {
                                     mensaje = addMessage("sancion_adeful");
                                     precessOK = false;
                                 }
@@ -653,15 +586,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(SANCION_LIFUBA);
+                        jsonArray = json.optJSONArray(Variable.SANCION_LIFUBA);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, SANCION_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.SANCION_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("sancion_lifuba");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(SANCION_LIFUBA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.SANCION_LIFUBA, SplashAdm.this)) {
                                     mensaje = addMessage("sancion_lifuba");
                                     precessOK = false;
                                 }
@@ -669,15 +602,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(NOTIFICACION);
+                        jsonArray = json.optJSONArray(Variable.NOTIFICACION);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, NOTIFICACION, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.NOTIFICACION, SplashAdm.this)) {
                                     mensaje = addMessage("notificacion");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(NOTIFICACION, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.NOTIFICACION, SplashAdm.this)) {
                                     mensaje = addMessage("notificacion");
                                     precessOK = false;
                                 }
@@ -685,15 +618,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(NOTICIA);
+                        jsonArray = json.optJSONArray(Variable.NOTICIA);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, NOTICIA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.NOTICIA, SplashAdm.this)) {
                                     mensaje = addMessage("noticia");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(NOTICIA, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.NOTICIA, SplashAdm.this)) {
                                     mensaje = addMessage("noticia");
                                     precessOK = false;
                                 }
@@ -701,15 +634,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(FOTO);
+                        jsonArray = json.optJSONArray(Variable.FOTO);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, FOTO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.FOTO, SplashAdm.this)) {
                                     mensaje = addMessage("foto ");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(FOTO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.FOTO, SplashAdm.this)) {
                                     mensaje = addMessage("foto");
                                     precessOK = false;
                                 }
@@ -717,15 +650,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(PUBLICIDAD);
+                        jsonArray = json.optJSONArray(Variable.PUBLICIDAD);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, PUBLICIDAD, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.PUBLICIDAD, SplashAdm.this)) {
                                     mensaje = addMessage("publicidad");
                                     precessOK = false;
                                 }
                             } else {
-                                if (!jsonParsing.processingJson(PUBLICIDAD, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.PUBLICIDAD, SplashAdm.this)) {
                                     mensaje = addMessage("publicidad");
                                     precessOK = false;
                                 }
@@ -733,10 +666,10 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(USUARIO);
+                        jsonArray = json.optJSONArray(Variable.USUARIO);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, USUARIO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.USUARIO, SplashAdm.this)) {
                                     mensaje = addMessage("usuario");
                                     precessOK = false;
                                 }
@@ -744,15 +677,15 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(PERMISO);
+                        jsonArray = json.optJSONArray(Variable.PERMISO);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, PERMISO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.PERMISO, SplashAdm.this)) {
                                     mensaje = addMessage("permiso");
                                     precessOK = false;
                                 }
                             }  else {
-                                if (!jsonParsing.processingJson(PERMISO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.PERMISO, SplashAdm.this)) {
                                     mensaje = addMessage("permiso");
                                     precessOK = false;
                                 }
@@ -760,42 +693,20 @@ public class SplashAdm extends AppCompatActivity {
                         }
                         jsonArray = null;
                         jsonAux = null;
-                        jsonArray = json.optJSONArray(PERMISO_MODULO);
+                        jsonArray = json.optJSONArray(Variable.PERMISO_MODULO);
                         if (jsonArray != null) {
                             if (jsonArray.length() > 0) {
-                                if (!jsonParsing.processingJson(jsonArray, PERMISO_MODULO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(jsonArray, Variable.PERMISO_MODULO, SplashAdm.this)) {
                                     mensaje = addMessage("permiso_modulo");
                                     precessOK = false;
                                 }
                             }  else {
-                                if (!jsonParsing.processingJson(PERMISO_MODULO, SplashAdm.this)) {
+                                if (!jsonParsing.processingJson(Variable.PERMISO_MODULO, SplashAdm.this)) {
                                     mensaje = addMessage("permiso_modulo");
                                     precessOK = false;
                                 }
                             }
                         }
-//                        jsonArray = null;
-//                        jsonAux = null;
-//                        jsonArray = json.optJSONArray(MODULO);
-//                        if (jsonArray != null) {
-//                            if (jsonArray.length() > 0) {
-//                                if (!jsonParsing.processingJson(jsonArray, MODULO, SplashAdm.this)) {
-//                                    mensaje = addMessage("modulo");
-//                                    precessOK = false;
-//                                }
-//                            }
-//                        }
-//                        jsonArray = null;
-//                        jsonAux = null;
-//                        jsonArray = json.optJSONArray(SUBMODULO);
-//                        if (jsonArray != null) {
-//                            if (jsonArray.length() > 0) {
-//                                if (!jsonParsing.processingJson(jsonArray, SUBMODULO, SplashAdm.this)) {
-//                                    mensaje = addMessage("submodulo");
-//                                    precessOK = false;
-//                                }
-//                            }
-//                        }
                     } else if (success == 3) {
                         Intent i = new Intent(SplashAdm.this, Navigation.class);
                         startActivity(i);
@@ -828,8 +739,6 @@ public class SplashAdm extends AppCompatActivity {
             }
         }
     }
-
-
 
     public String addMessage(String entity) {
         return "Error(" + entity + "). Por favor comuniquese con soporte.";

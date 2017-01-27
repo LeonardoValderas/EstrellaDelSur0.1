@@ -19,13 +19,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ImageButton
-                    android:id="@+id/rotateButton"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="65dp"
-                    android:src="@android:drawable/stat_notify_sync" />
+                <!--<ImageButton-->
+                    <!--android:id="@+id/rotateButton"-->
+                    <!--android:layout_width="55dp"-->
+                    <!--android:layout_height="55dp"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:layout_marginLeft="65dp"-->
+                    <!--android:src="@android:drawable/stat_notify_sync" />-->
 
                 <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/fotoImageComisionDireccion"

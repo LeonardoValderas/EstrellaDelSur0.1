@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.adaptador.adeful_lifuba.AdaptadorRecyclerEquipo;
+import com.estrelladelsur.estrelladelsur.adaptador.usuario.AdaptadorRecyclerEquipoUsuario;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.DividerItemDecoration;
 import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
@@ -18,6 +19,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.estrelladelsur.estrelladelsur.webservice.Variable;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -26,7 +28,7 @@ import java.util.ArrayList;
 public class FragmentEquipoUsuario extends Fragment {
     private RecyclerView recycleViewEquipo;
     private ArrayList<Equipo> equipoAdefulArray;
-    private AdaptadorRecyclerEquipo adaptador;
+    private AdaptadorRecyclerEquipoUsuario adaptador;
     private int CheckedPositionFragment;
     private ControladorUsuarioAdeful controladorUsuario;
     private AuxiliarGeneral auxiliarGeneral;
@@ -105,15 +107,15 @@ public class FragmentEquipoUsuario extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                String fecha = controladorUsuario.selectTabla(AsyncTaskGenericIndividual.TABLA_EQUIPO_ADEFUL);
+                String fecha = controladorUsuario.selectTabla(Variable.TABLA_EQUIPO_ADEFUL);
                 if (fecha != null) {
                     request = new Request();
                     request.setMethod("POST");
                     request.setParametrosDatos("fecha_tabla", fecha);
-                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_EQUIPO_ADEFUL);
+                    request.setParametrosDatos("tabla", Variable.TABLA_EQUIPO_ADEFUL);
                     request.setParametrosDatos("liga", "ADEFUL");
 
-                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.EQUIPO_ADEFUL);
+                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, Variable.EQUIPO_ADEFUL);
                 }
             }
         });
@@ -129,7 +131,7 @@ public class FragmentEquipoUsuario extends Fragment {
 
         equipoAdefulArray = controladorUsuario.selectListaEquipoUsuarioAdeful();
         if (equipoAdefulArray != null) {
-            adaptador = new AdaptadorRecyclerEquipo(equipoAdefulArray, getActivity());
+            adaptador = new AdaptadorRecyclerEquipoUsuario(equipoAdefulArray, getActivity());
             recycleViewEquipo.setAdapter(adaptador);
         } else {
             auxiliarGeneral.errorDataBase(getActivity());

@@ -148,7 +148,7 @@ public class FragmentEditarFixtureAdeful extends Fragment implements MyAsyncTask
                 fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
                 fixtureDivisionSpinner.setAdapter(adaptadorInicial);
             }
@@ -165,7 +165,7 @@ public class FragmentEditarFixtureAdeful extends Fragment implements MyAsyncTask
                 fixtureTorneoSpinner.setAdapter(adapterFixtureTorneo);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerTorneo));
                 fixtureTorneoSpinner.setAdapter(adaptadorInicial);
             }

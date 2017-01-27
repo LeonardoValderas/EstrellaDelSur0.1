@@ -74,7 +74,6 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
     private TextInputLayout editTextInputDescripcion;
     private Request request;
     private boolean isInsert = true, isDelete = false;
-    private ImageButton rotateButton;
 
     public static FragmentTorneoLifuba newInstance() {
         FragmentTorneoLifuba fragment = new FragmentTorneoLifuba();
@@ -103,8 +102,6 @@ public class FragmentTorneoLifuba extends Fragment implements MyAsyncTaskListene
                 false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
-        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
-        rotateButton.setVisibility(View.GONE);
         editTextTorneo = (EditText) v.findViewById(
                 R.id.editTextDescripcion);
         editTextTorneo.setTypeface(editTextFont);

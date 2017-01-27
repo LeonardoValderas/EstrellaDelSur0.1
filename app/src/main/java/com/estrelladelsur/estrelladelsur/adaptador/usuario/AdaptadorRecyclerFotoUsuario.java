@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Foto;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -26,6 +28,8 @@ public class AdaptadorRecyclerFotoUsuario extends
 	private Typeface nombreFont;
 	private Typeface cargoPeriodoFont;
 	private AuxiliarGeneral auxiliarGeneral;
+	private Context context;
+
 	public static class FotoViewHolder extends RecyclerView.ViewHolder {
 		private TextView tituloFoto;
 		private ImageView imageFoto;
@@ -41,16 +45,37 @@ public class AdaptadorRecyclerFotoUsuario extends
 					.findViewById(R.id.imageFoto);
 		}
 
-		public void bindTitular(Foto foto, Typeface nombre, Typeface cargo, AuxiliarGeneral auxiliarGeneral) {
+		public void bindTitular(Foto foto, Typeface nombre, Typeface cargo, AuxiliarGeneral auxiliarGeneral, Context context) {
 			// ESCUDO EQUIPO LOCAL
-			fotoByte = foto.getFOTO();
-			if (fotoByte == null) {
-				imageFoto.setImageResource(R.mipmap.ic_foto);
-			} else {
+//			fotoByte = foto.getFOTO();
+//			if (fotoByte == null) {
+//				imageFoto.setImageResource(R.mipmap.ic_foto);
+//			} else {
+//
+//				fotoBitmap = auxiliarGeneral.setByteToBitmap(fotoByte, 300, 300);
+//				imageFoto.setImageBitmap(fotoBitmap);
+//			}
+			if(!foto.getURL_FOTO().isEmpty())
+				Picasso.with(context)
+						.load(foto.getURL_FOTO()).fit()
+						.placeholder(R.mipmap.ic_foto)
+						.into(imageFoto, new Callback() {
+							@Override
+							public void onSuccess() {
 
-				fotoBitmap = auxiliarGeneral.setByteToBitmap(fotoByte, 300, 300);
-				imageFoto.setImageBitmap(fotoBitmap);
-			}
+							}
+
+							@Override
+							public void onError() {
+								imageFoto.setImageResource(R.mipmap.ic_foto);
+							}
+						});
+			else
+				Picasso.with(context)
+						.load(R.mipmap.ic_foto).fit()
+						.placeholder(R.mipmap.ic_foto)
+						.into(imageFoto);
+
 			tituloFoto.setText(foto.getTITULO());
 		}
 	}
@@ -59,6 +84,7 @@ public class AdaptadorRecyclerFotoUsuario extends
 		auxiliarGeneral = new AuxiliarGeneral(context);
 		this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
 		this.nombreFont = auxiliarGeneral.tituloFont(context);
+		this.context = context;
 	}
 
 	@Override
@@ -77,7 +103,7 @@ public class AdaptadorRecyclerFotoUsuario extends
 	public void onBindViewHolder(FotoViewHolder viewHolder, int pos) {
 		Foto item = fotoArray.get(pos);
 
-		viewHolder.bindTitular(item, nombreFont, cargoPeriodoFont, auxiliarGeneral);
+		viewHolder.bindTitular(item, nombreFont, cargoPeriodoFont, auxiliarGeneral, context);
 	}
 
 	@Override

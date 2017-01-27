@@ -46,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTaskListener {
 
@@ -73,7 +74,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
     private Mes mes;
     private SimpleDateFormat formate = new SimpleDateFormat(
             "dd-MM-yyyy");
-    private DateFormat form = DateFormat.getTimeInstance(DateFormat.SHORT);
+    private DateFormat form = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.UK );
     private Calendar calendar = Calendar.getInstance();
     private Calendar calenda = Calendar.getInstance();
     private Button btn_dia;
@@ -296,7 +297,7 @@ public class FragmentGenerarFixtureLifuba extends Fragment implements MyAsyncTas
             }
         });
 
-        actualizar = getActivity().getIntent().getBooleanExtra("actualizar",
+        actualizar = getActivity().getIntent().getBooleanExtra("actualizarLifuba",
                 false);
         //Metodo Extra
         if (actualizar) {

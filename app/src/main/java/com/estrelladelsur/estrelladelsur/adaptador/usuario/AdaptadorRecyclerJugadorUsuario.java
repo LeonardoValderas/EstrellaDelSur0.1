@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -26,6 +29,8 @@ public class AdaptadorRecyclerJugadorUsuario extends
 	private Typeface nombreFont;
 	private Typeface cargoPeriodoFont;
 	private AuxiliarGeneral auxiliarGeneral;
+	private Context context;
+
 	public static class JugadorViewHolder extends RecyclerView.ViewHolder {
 		private TextView textRecyclerViewNombre;
 		private TextView textRecyclerViewPosicion;
@@ -34,6 +39,7 @@ public class AdaptadorRecyclerJugadorUsuario extends
 		private ImageView imageRecyclerViewFoto;
 		private byte[] foto;
 		private Bitmap fotoBitmap;
+
 
 		public JugadorViewHolder(View itemView) {
 			super(itemView);
@@ -50,24 +56,43 @@ public class AdaptadorRecyclerJugadorUsuario extends
 					.findViewById(R.id.imageRecyclerViewFoto);
 		}
 
-		public void bindTitular(Jugador jugador, Typeface nombre, Typeface cargo) {
+		public void bindTitular(Jugador jugador, Typeface nombre, Typeface cargo, Context context) {
 			// ESCUDO EQUIPO LOCAL
-			foto = jugador.getFOTO_JUGADOR();
-			if (foto == null) {
+//			foto = jugador.getFOTO_JUGADOR();
+//			if (foto == null) {
+//				imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
+//			} else {
+//				fotoBitmap = BitmapFactory.decodeByteArray(
+//						jugador.getFOTO_JUGADOR(), 0,
+//						jugador.getFOTO_JUGADOR().length);
+//
+//				fotoBitmap = Bitmap.createScaledBitmap(
+//						fotoBitmap, 150, 150, true);
+//
+//				imageRecyclerViewFoto.setImageBitmap(fotoBitmap);
+//			}
+			if(!jugador.getURL_JUGADOR().isEmpty())
+			Picasso.with(context)
+					.load(jugador.getURL_JUGADOR()).fit()
+					.placeholder(R.mipmap.ic_foto_galery)
+					.into(imageRecyclerViewFoto, new Callback() {
+						@Override
+						public void onSuccess() {
 
-				imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
-			} else {
-				fotoBitmap = BitmapFactory.decodeByteArray(
-						jugador.getFOTO_JUGADOR(), 0,
-						jugador.getFOTO_JUGADOR().length);
+						}
 
-				fotoBitmap = Bitmap.createScaledBitmap(
-						fotoBitmap, 150, 150, true);
+						@Override
+						public void onError() {
+							imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
+						}
+					});
+			else
+				Picasso.with(context)
+						.load(R.mipmap.ic_foto_galery).fit()
+						.placeholder(R.mipmap.ic_foto_galery)
+						.into(imageRecyclerViewFoto);
 
-				imageRecyclerViewFoto.setImageBitmap(fotoBitmap);
-			}
 			textRecyclerViewNombre.setText(jugador.getNOMBRE_JUGADOR());
-			//textRecyclerViewNombre.setTypeface(nombre, Typeface.BOLD);
 			textRecyclerViewDivision.setText(jugador.getNOMBRE_DIVISION());
 			textRecyclerViewDivision.setTextSize(20);
 			textRecyclerViewDivision.setTypeface(nombre);
@@ -81,6 +106,7 @@ public class AdaptadorRecyclerJugadorUsuario extends
 		auxiliarGeneral = new AuxiliarGeneral(context);
 		this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
 		this.nombreFont = auxiliarGeneral.tituloFont(context);
+		this.context = context;
 	}
 
 	@Override
@@ -99,7 +125,7 @@ public class AdaptadorRecyclerJugadorUsuario extends
 	public void onBindViewHolder(JugadorViewHolder viewHolder, int pos) {
 		Jugador item = jugadorArray.get(pos);
 
-		viewHolder.bindTitular(item,nombreFont,cargoPeriodoFont);
+		viewHolder.bindTitular(item,nombreFont,cargoPeriodoFont, context);
 	}
 
 	@Override

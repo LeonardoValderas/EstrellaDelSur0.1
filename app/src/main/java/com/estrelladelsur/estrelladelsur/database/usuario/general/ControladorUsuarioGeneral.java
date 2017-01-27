@@ -72,7 +72,35 @@ public class ControladorUsuarioGeneral {
         }
     }
 
-     //LISTA USUARIO
+    public boolean insertTabla(List<Tabla> tablas)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Tabla tabla : tablas) {
+
+
+                cv.put("ID_TABLA", tabla.getID_TABLA());
+                cv.put("TABLA", tabla.getTABLA());
+                cv.put("FECHA", tabla.getFECHA());
+
+                long valor = database.insert("TABLA", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOk = false;
+        }
+        return isOk;
+    }
+
+    //LISTA USUARIO
     public String selectTabla(String tabla) {
 
         String sql = "SELECT FECHA FROM TABLA WHERE TABLA ='" + tabla + "'";
@@ -216,6 +244,31 @@ public class ControladorUsuarioGeneral {
         }
     }
 
+    public boolean insertModuloUsuario(List<Modulo> modulos)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Modulo modulo : modulos) {
+                cv.put("ID_MODULO", modulo.getID_MODULO());
+                cv.put("NOMBRE", modulo.getMODULO());
+
+                long valor = database.insert("MODULO_USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     //LISTA MODULO
     public ArrayList<Modulo> selectListaModuloUsuario() {
 
@@ -304,6 +357,32 @@ public class ControladorUsuarioGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertSubModuloUsuario(List<SubModulo> Submodulos)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (SubModulo Submodulo : Submodulos) {
+                cv.put("ID_SUBMODULO", Submodulo.getID_SUBMODULO());
+                cv.put("NOMBRE", Submodulo.getSUBMODULO());
+                cv.put("ID_MODULO", Submodulo.getID_MODULO());
+
+                long valor = database.insert("SUBMODULO_USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     //LISTA SUBMODULO
@@ -395,6 +474,32 @@ public class ControladorUsuarioGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertArticuloUsuario(List<Articulo> articulos)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Articulo articulo : articulos) {
+                cv.put("ID_ARTICULO", articulo.getID_ARTICULO());
+                cv.put("TITULO", articulo.getTITULO());
+                cv.put("ARTICULO", articulo.getARTICULO());
+
+                long valor = database.insert("ARTICULO_USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOk = false;
+        }
+        return isOk;
     }
 
     //LISTA ARTICULO
@@ -493,15 +598,43 @@ public class ControladorUsuarioGeneral {
         }
     }
 
+    public boolean insertComisionUsuario(List<Comision> comisiones) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Comision comision : comisiones) {
+                cv.put("ID_COMISION", comision.getID_COMISION());
+                cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
+             //   cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
+                cv.put("FOTO_COMISION", comision.getURL_COMISION());
+                cv.put("CARGO", comision.getCARGO());
+                cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
+                cv.put("PERIODO_HASTA", comision.getPERIODO_HASTA());
+
+                long valor = database.insert("COMISION_USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOk = false;
+        }
+        return isOk;
+    }
 
     //LISTA COMISION
     public ArrayList<Comision> selectListaComisionUsuario() {
 
         String sql = "SELECT * FROM COMISION_USUARIO";
-        ArrayList<Comision> arrayComisionAdeful = new ArrayList<Comision>();
-        String nombre = null, desde = null, hasta = null, cargo = null;
+        ArrayList<Comision> arrayComisionAdeful = new ArrayList<>();
+        String nombre = null, desde = null, hasta = null, cargo = null, foto = null;
         int id;
-        byte[] foto = null;
+       // byte[] foto = null;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -517,7 +650,7 @@ public class ControladorUsuarioGeneral {
                         id = cursor.getInt(cursor.getColumnIndex("ID_COMISION"));
                         nombre = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_COMISION"));
-                        foto = cursor.getBlob(cursor
+                        foto = cursor.getString(cursor
                                 .getColumnIndex("FOTO_COMISION"));
                         cargo = cursor.getString(cursor
                                 .getColumnIndex("CARGO"));
@@ -549,7 +682,7 @@ public class ControladorUsuarioGeneral {
         return arrayComisionAdeful;
     }
 
-//    //ELIMINAR COMISION
+    //    //ELIMINAR COMISION
     public boolean eliminarComisionUsuario() {
 
         boolean res = false;
@@ -602,14 +735,43 @@ public class ControladorUsuarioGeneral {
         }
     }
 
+    public boolean insertDireccionUsuario(List<Direccion> direcciones) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Direccion direccion : direcciones) {
+                cv.put("ID_DIRECCION", direccion.getID_DIRECCION());
+                cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
+//                cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
+                cv.put("FOTO_DIRECCION", direccion.getURL_DIRECCION());
+                cv.put("CARGO", direccion.getCARGO());
+                cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
+                cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
+
+                long valor = database.insert("DIRECCION_USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOk = false;
+        }
+        return isOk;
+    }
+
     //    //LISTA COMISION
     public ArrayList<Direccion> selectListaDireccionUsuario() {
 
         String sql = "SELECT * FROM DIRECCION_USUARIO";
         ArrayList<Direccion> arrayDireccionAdeful = new ArrayList<>();
-        String nombre = null, desde = null, hasta = null, cargo = null;
+        String nombre = null, desde = null, hasta = null, cargo = null, foto = null;
         int id;
-        byte[] foto = null;
+       // byte[] foto = null;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -625,7 +787,7 @@ public class ControladorUsuarioGeneral {
                         id = cursor.getInt(cursor.getColumnIndex("ID_DIRECCION"));
                         nombre = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_DIRECCION"));
-                        foto = cursor.getBlob(cursor
+                        foto = cursor.getString(cursor
                                 .getColumnIndex("FOTO_DIRECCION"));
                         cargo = cursor.getString(cursor
                                 .getColumnIndex("CARGO"));
@@ -705,6 +867,32 @@ public class ControladorUsuarioGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertNotificacionUsuario(List<Notificacion> notificaciones)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Notificacion notificacion : notificaciones) {
+                cv.put("ID_NOTIFICACION", notificacion.getID_NOTIFICACION());
+                cv.put("TITULO", notificacion.getTITULO());
+                cv.put("NOTIFICACION", notificacion.getNOTIFICACION());
+
+                long valor = database.insert("NOTIFICACION_USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     //LISTA NOTIFICACION
@@ -800,6 +988,33 @@ public class ControladorUsuarioGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertNoticiaUsuario(List<Noticia> noticias)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Noticia noticia : noticias) {
+                cv.put("ID_NOTICIA", noticia.getID_NOTICIA());
+                cv.put("TITULO", noticia.getTITULO());
+                cv.put("DESCRIPCION", noticia.getDESCRIPCION());
+                cv.put("LINK", noticia.getLINK());
+
+                long valor = database.insert("NOTICIA_USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
 
@@ -899,14 +1114,41 @@ public class ControladorUsuarioGeneral {
         }
     }
 
+    public boolean insertFotoUsuario(List<Foto> fotos) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Foto foto : fotos) {
+                cv.put("ID_FOTO", foto.getID_FOTO());
+                cv.put("TITULO", foto.getTITULO());
+                //cv.put("FOTO", foto.getFOTO());
+                cv.put("FOTO", foto.getURL_FOTO());
+
+                long valor = database.insert("FOTO_USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     // LISTA FOTO
     public ArrayList<Foto> selectListaFotoUsuario() {
 
         String sql = "SELECT * FROM FOTO_USUARIO ORDER BY ID_FOTO DESC";
-        ArrayList<Foto> arrayFoto = new ArrayList<Foto>();
+        ArrayList<Foto> arrayFoto = new ArrayList<>();
         String titulo = null;
         int id;
-        byte[] foto_byte = null;
+      //  byte[] foto_byte = null;
+        String foto_byte;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -921,7 +1163,7 @@ public class ControladorUsuarioGeneral {
                         id = cursor.getInt(cursor.getColumnIndex("ID_FOTO"));
                         titulo = cursor.getString(cursor
                                 .getColumnIndex("TITULO"));
-                        foto_byte = cursor.getBlob(cursor
+                        foto_byte = cursor.getString(cursor
                                 .getColumnIndex("FOTO"));
 
                         foto = new Foto(id, titulo, foto_byte);
@@ -990,6 +1232,33 @@ public class ControladorUsuarioGeneral {
         }
     }
 
+    public boolean insertPublicidadUsuario(List<Publicidad> publicidades) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Publicidad publicidad : publicidades) {
+                cv.put("ID_PUBLICIDAD", publicidad.getID_PUBLICIDAD());
+                cv.put("TITULO", publicidad.getTITULO());
+              //  cv.put("LOGO", publicidad.getLOGO());
+                cv.put("LOGO", publicidad.getURL_FOTO());
+                cv.put("OTROS", publicidad.getOTROS());
+
+                long valor = database.insert("PUBLICIDAD_USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     // LISTA PUBLICIDAD
     public ArrayList<Publicidad> selectListaPublicidadUsuario() {
 
@@ -997,7 +1266,8 @@ public class ControladorUsuarioGeneral {
         ArrayList<Publicidad> arrayPublicidad = new ArrayList<>();
         String titulo = null, otros = null;
         int id;
-        byte[] logo_byte = null;
+  //      byte[] logo_byte = null;
+        String logo_byte;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -1012,7 +1282,7 @@ public class ControladorUsuarioGeneral {
                         id = cursor.getInt(cursor.getColumnIndex("ID_PUBLICIDAD"));
                         titulo = cursor.getString(cursor
                                 .getColumnIndex("TITULO"));
-                        logo_byte = cursor.getBlob(cursor
+                        logo_byte = cursor.getString(cursor
                                 .getColumnIndex("LOGO"));
                         otros = cursor.getString(cursor
                                 .getColumnIndex("OTROS"));

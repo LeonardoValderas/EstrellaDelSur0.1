@@ -18,6 +18,7 @@ import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -604,7 +605,7 @@ public class AuxiliarGeneral {
 
         Calendar c = Calendar.getInstance();
 
-       // int year = c.get(Calendar.YEAR);
+        // int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         String monthStg = String.valueOf(month);
         if (monthStg.length() == 1)
@@ -623,7 +624,7 @@ public class AuxiliarGeneral {
         context.startActivity(login);
     }
 
-    public static void close(Context  context) {
+    public static void close(Context context) {
         Intent intent = new Intent(context, NavigationUsuario.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.putExtra("close", true);
@@ -878,4 +879,6 @@ public class AuxiliarGeneral {
         //     int nh = (int) (bitmapImage.getHeight() * (512.0 / bitmapImage.getWidth()));
         return Bitmap.createScaledBitmap(bitmapImage, 300, 300, true);
     }
+
+
 }

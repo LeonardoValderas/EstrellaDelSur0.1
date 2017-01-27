@@ -23,6 +23,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Articulo;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.estrelladelsur.estrelladelsur.webservice.Variable;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -125,15 +126,15 @@ public class ArticuloUsuario extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                String fecha = controladorUsuario.selectTabla(AsyncTaskGenericIndividual.TABLA_ARTICULO);
+                String fecha = controladorUsuario.selectTabla(Variable.TABLA_ARTICULO);
                 if (fecha != null) {
                     request = new Request();
                     request.setMethod("POST");
                     request.setParametrosDatos("fecha_tabla", fecha);
-                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_ARTICULO);
+                    request.setParametrosDatos("tabla", Variable.TABLA_ARTICULO);
                     request.setParametrosDatos("liga", "GENERAL");
 
-                    new AsyncTaskGenericIndividual(ArticuloUsuario.this, listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.ARTICULO);
+                    new AsyncTaskGenericIndividual(ArticuloUsuario.this, listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, Variable.ARTICULO);
                 }
             }
         });

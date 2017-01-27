@@ -47,6 +47,8 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -74,14 +76,13 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
     private int idJugadorExtra;
     private String usuario;
     private String URL = null, encodedImage = null, nombre_foto_anterior = null,
-            url_foto_jugador = null, fechaFoto = null, nombre_foto = null, url_nombre_foto = null;
+            url_foto_jugador = "", fechaFoto = null, nombre_foto = null, url_nombre_foto = null, nombre_anterior = "";
     private ArrayAdapter<Posicion> posicionAdapter;
     private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
     private Typeface editTextFont;
     private Request request;
     private boolean isJugador = true, insertarPosicion = true;
-    private ImageButton rotateButton;
     private static final int PERMISSION_REQUEST_CODE = 1;
 
     public static FragmentGenerarJugador newInstance() {
@@ -99,7 +100,6 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
         controladorAdeful = new ControladorAdeful(getActivity());
         if (state != null) {
             CheckedPositionFragment = state.getInt("curChoice", 0);
-
         } else {
             init();
         }
@@ -113,8 +113,6 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
                 container, false);
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
-
-        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
         // FOTO JUGADOR
         imageJugador = (ImageView) v.findViewById(R.id.imageJugador);
         // NOMBRE JUGADOR
@@ -164,24 +162,43 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
             jugadoresPosicionSpinner.setSelection(getPositionSpinner(getActivity().getIntent()
                     .getIntExtra("posicionSpinner", 0), 1));
             //NOMBRE
-            jugadoresNombreEdit.setText(getActivity().getIntent()
-                    .getStringExtra("nombre"));
+            nombre_anterior = getActivity().getIntent()
+                    .getStringExtra("nombre");
+
+            jugadoresNombreEdit.setText(nombre_anterior);
 
             nombre_foto_anterior = getActivity().getIntent()
                     .getStringExtra("nombre_foto");
             //FOTO
-            imageJugadorByte = getActivity().getIntent()
-                    .getByteArrayExtra("foto");
+            url_foto_jugador = getActivity().getIntent()
+                    .getStringExtra("foto");
 
-            if (imageJugadorByte != null) {
-                Bitmap theImage = auxiliarGeneral.setByteToBitmap(imageJugadorByte, 150,
-                        150);
-                imageJugador.setImageBitmap(theImage);
-            } else {
-                imageJugador.setImageResource(R.mipmap.ic_foto_galery);
+            if (!url_foto_jugador.isEmpty()) {
+                Picasso.with(getActivity())
+                        .load(url_foto_jugador).fit()
+                        .placeholder(R.mipmap.ic_foto_galery)
+                        .into(imageJugador, new Callback() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+
+                            @Override
+                            public void onError() {
+                                imageJugador.setImageResource(R.mipmap.ic_foto_galery);
+                            }
+                        });
+            }
+            else {
+                Picasso.with(getActivity())
+                        .load(R.mipmap.ic_foto_galery).fit()
+                        .placeholder(R.mipmap.ic_foto_galery)
+                        .into(imageJugador);
+
             }
             insertar = false;
         }
+
         imageJugador.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -189,20 +206,7 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
                 if (!auxiliarGeneral.checkPermission(getActivity()))
                     auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
                 else
-                ImageDialogjugador();
-            }
-        });
-
-        rotateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (imageJugadorByte != null) {
-                    Bitmap theImage = auxiliarGeneral.setByteToBitmap(imageJugadorByte, 150,
-                            150);
-                    theImage = auxiliarGeneral.RotateBitmap(theImage);
-                    imageJugador.setImageBitmap(theImage);
-                    imageJugadorByte = auxiliarGeneral.pasarBitmapByte(theImage);
-                }
+                    ImageDialogjugador();
             }
         });
     }
@@ -243,12 +247,12 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == getActivity().RESULT_OK) {
-                String p =  auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
-                Bitmap bitmap =  auxiliarGeneral.asignateImage(p);
+                String p = auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
+                Bitmap bitmap = auxiliarGeneral.asignateImage(p);
                 asignateBitmap(bitmap);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                if(!result.getError().toString().contains("ENOENT"))
-                Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
+                if (!result.getError().toString().contains("ENOENT"))
+                    Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -298,7 +302,7 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
                 jugadoresDivisionSpinner.setAdapter(adapterSpinnerDivision);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
                 jugadoresDivisionSpinner.setAdapter(adaptadorInicial);
             }
@@ -339,14 +343,12 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
     }
 
     public void inicializarControles(String mensaje) {
-        if (imageJugadorByte != null) {
-            imageJugador
-                    .setImageResource(R.mipmap.ic_foto_galery);
-            imageJugadorByte = null;
-        }
+        imageJugador.setImageResource(R.mipmap.ic_foto_galery);
+        imageJugadorByte = null;
         jugadoresNombreEdit.setText("");
         imageJugadorByte = null;
-        url_foto_jugador = null;
+        url_foto_jugador = "";
+        nombre_anterior = "";
         nombre_foto = null;
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();
@@ -380,14 +382,16 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
         String nombre = null;
         nombre = jugadoresNombreEdit.getText().toString();
         URL = null;
-        url_foto_jugador = null;
         // si la foto es null(default) no enviaremos la url.
         if (imageJugadorByte != null) {
-            url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
-            fechaFoto = auxiliarGeneral.getFechaImagen();
-            nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
-            url_foto_jugador = auxiliarGeneral.getURLFOTOJUGADORADEFUL() + nombre_foto;
+            setUrlFoto(nombre);
+        } else if (!url_foto_jugador.isEmpty()) {
+            if (nombre.compareTo(nombre_anterior) == 0)
+                nombre_foto_anterior = null;
+            else
+                setUrlFoto(nombre);
         }
+
         URL = auxiliarGeneral.getURLJUGADORADEFULAll();
 
         jugador = new Jugador(id, nombre, imageJugadorByte, nombre_foto, url_foto_jugador,
@@ -395,6 +399,13 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
                 auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
         envioWebService(ws);
+    }
+
+    public void setUrlFoto(String nombre) {
+        url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
+        fechaFoto = auxiliarGeneral.getFechaImagen();
+        nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
+        url_foto_jugador = auxiliarGeneral.getURLFOTOJUGADORADEFUL() + nombre_foto;
     }
 
     public void envioWebServicePosicion(int tipo) {
@@ -436,6 +447,13 @@ public class FragmentGenerarJugador extends Fragment implements MyAsyncTaskListe
                     jugador.getURL_JUGADOR());
             request.setParametrosDatos("nombre_foto", jugador.getNOMBRE_FOTO());
 
+        }else if(!url_foto_jugador.isEmpty()){
+            request.setParametrosDatos("foto", "222");
+            request.setParametrosDatos("url_foto",
+                    jugador.getURL_JUGADOR());
+            request.setParametrosDatos("nombre_foto", jugador.getNOMBRE_FOTO());
+        } else{
+            request.setParametrosDatos("foto", "222");
         }
         if (tipo == 0) {
             //request.setQuery("SUBIR");

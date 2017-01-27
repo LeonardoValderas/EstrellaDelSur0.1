@@ -28,8 +28,8 @@ public class MapaCanchaUsuario extends AppCompatActivity implements OnMapReadyCa
 
     private TextView tvAddress;
     private GoogleMap mapa;
-    public static double latBache = -41.139755445793554;
-    public static double lonBache = -71.296729134343434;
+   // public static double latBache = -41.139755445793554;
+   // public static double lonBache = -71.296729134343434;
     private Toolbar toolbar;
     private TextView txtTitulo;
     private String locationAddress;
@@ -67,6 +67,14 @@ public class MapaCanchaUsuario extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        longitud = getIntent().getStringExtra("longitud");
+        latitud = getIntent().getStringExtra("latitud");
+        longitudExtra = Double.valueOf(longitud);
+        latitudExtra = Double.valueOf(latitud);
+        locationAddress = getIntent().getStringExtra("direccion");
+        nombre = getIntent().getStringExtra("nombre");
+        txtTitulo.setText(nombre);
+
         mapa = googleMap;
         touchScreem = new Handler();
         touchScreem.postDelayed(new Runnable() {
@@ -77,18 +85,11 @@ public class MapaCanchaUsuario extends AppCompatActivity implements OnMapReadyCa
         }, 3000);
         mapa.getUiSettings().setAllGesturesEnabled(false);
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(latBache, lonBache)).zoom(15).build();
+                .target(new LatLng(latitudExtra, longitudExtra)).zoom(15).build();
         CameraUpdate cu = CameraUpdateFactory
                 .newCameraPosition(cameraPosition);
         mapa.animateCamera(cu);
 
-        longitud = getIntent().getStringExtra("longitud");
-        latitud = getIntent().getStringExtra("latitud");
-        longitudExtra = Double.valueOf(longitud);
-        latitudExtra = Double.valueOf(latitud);
-        locationAddress = getIntent().getStringExtra("direccion");
-        nombre = getIntent().getStringExtra("nombre");
-        txtTitulo.setText(nombre);
         mapa.addMarker(new MarkerOptions().position(
                 new LatLng(latitudExtra, longitudExtra)).snippet(locationAddress).title(nombre));
 

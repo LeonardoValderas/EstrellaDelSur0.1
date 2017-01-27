@@ -117,11 +117,12 @@ public class FragmentEditarFoto extends Fragment implements MyAsyncTaskListener 
                         fotoArray.get(position).getID_FOTO());
                 editarFoto.putExtra("titulo",
                         fotoArray.get(position).getTITULO());
-                //                editarFoto.putExtra("foto",
-//                        fotoArray.get(position).getFOTO());
+
                 editarFoto.putExtra("nombre_foto",
                         fotoArray.get(position).getNOMBRE_FOTO());
 
+                editarFoto.putExtra("url_foto",
+                        fotoArray.get(position).getURL_FOTO());
                 startActivity(editarFoto);
             }
 

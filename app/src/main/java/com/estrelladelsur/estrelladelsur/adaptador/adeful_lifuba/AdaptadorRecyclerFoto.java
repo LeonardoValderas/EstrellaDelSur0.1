@@ -44,7 +44,8 @@ public class AdaptadorRecyclerFoto extends
 
 		public void bindTitular(Foto fotoAdeful, Typeface foto) {
 			textRecyclerView.setText(fotoAdeful.getTITULO());
-			textRecyclerView.setTypeface(foto, Typeface.BOLD);
+			textRecyclerView.setTextSize(20);
+		//	textRecyclerView.setTypeface(foto, Typeface.BOLD);
 			byte[] image = fotoAdeful.getFOTO();
 			if (image == null) {
 				 imageViewFoto.setImageResource(R.mipmap.ic_foto);

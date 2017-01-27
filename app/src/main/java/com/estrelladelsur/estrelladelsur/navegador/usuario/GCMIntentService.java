@@ -67,6 +67,8 @@ public class GCMIntentService extends IntentService {
                 }
                 Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
                 // Post notification of received message.
+
+                if(!extras.getString("Notice").equals("REG_ID") && !extras.getString("Text").equals("GCM"))
                 sendNotification(extras.getString("Notice"),extras.getString("Text"));
 
                 Log.i(TAG, "Received: " + extras.toString());

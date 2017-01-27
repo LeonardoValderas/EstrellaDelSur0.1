@@ -55,11 +55,10 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
     private AdaptadorRecyclerJugador adaptadorEditarJugador;
     private ArrayAdapter<String> adaptadorInicial;
     private AuxiliarGeneral auxiliarGeneral;
-    private String URL = null;
+    private String URL = null, nombre_foto = null;
     private Request request = new Request();
     private int posicion = 0;
     private AdView mAdView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static FragmentEditarJugador newInstance() {
         FragmentEditarJugador fragment = new FragmentEditarJugador();
@@ -98,9 +97,7 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
                 .findViewById(R.id.botonFloating);
         mAdView = (AdView) v.findViewById(R.id.adView);
         mAdView.setVisibility(View.GONE);
-//
-//        mSwipeRefreshLayout =(SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
-//        mSwipeRefreshLayout.setRefreshing(false);
+
         return v;
     }
 
@@ -180,7 +177,7 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
                 editarJugador.putExtra("nombre_foto",
                         jugadorArray.get(position).getNOMBRE_FOTO());
                 editarJugador.putExtra("foto",
-                        jugadorArray.get(position).getFOTO_JUGADOR());
+                        jugadorArray.get(position).getURL_JUGADOR());
 
                 startActivity(editarJugador);
 
@@ -200,6 +197,8 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
                             public void onClick(View v) {
                                 posicion = jugadorArray.get(position)
                                         .getID_JUGADOR();
+                                nombre_foto = jugadorArray.get(position)
+                                        .getNOMBRE_FOTO();
                                 envioWebService();
                             }
                         });
@@ -220,6 +219,10 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
         String fecha = auxiliarGeneral.getFechaOficial();
         request.setMethod("POST");
         request.setParametrosDatos("id_jugador", String.valueOf(posicion));
+
+        if(nombre_foto != null)
+        request.setParametrosDatos("nombre_foto",nombre_foto);
+
         request.setParametrosDatos("fecha_actualizacion", fecha);
         URL = null;
         URL = auxiliarGeneral.getURLJUGADORADEFULAll();
@@ -234,6 +237,7 @@ public class FragmentEditarJugador extends Fragment implements MyAsyncTaskListen
     public void inicializarControles(String mensaje) {
         recyclerViewLoadJugador(divisionSpinner);
         posicion = 0;
+        nombre_foto = null;
         dialogoAlerta.alertDialog.dismiss();
         Toast.makeText(getActivity(), mensaje,
                 Toast.LENGTH_SHORT).show();

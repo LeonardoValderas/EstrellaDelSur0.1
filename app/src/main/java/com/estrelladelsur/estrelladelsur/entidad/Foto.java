@@ -25,10 +25,14 @@ public class Foto {
 		FECHA_ACTUALIZACION = fechaActualizacion;
 	}
 	public Foto(int id_foto, String titulo, byte[] foto) {
-
 		ID_FOTO = id_foto;
 		TITULO = titulo;
 		FOTO = foto;
+	}
+	public Foto(int id_foto, String titulo, String foto) {
+		ID_FOTO = id_foto;
+		TITULO = titulo;
+		URL_FOTO = foto;
 	}
 
 	public int getID_FOTO() {

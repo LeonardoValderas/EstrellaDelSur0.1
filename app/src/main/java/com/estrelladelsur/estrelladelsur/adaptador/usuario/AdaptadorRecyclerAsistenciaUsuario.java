@@ -15,6 +15,8 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -29,6 +31,7 @@ public class AdaptadorRecyclerAsistenciaUsuario extends
     private AuxiliarGeneral auxiliarGeneral;
     private int cantidad;
     private ControladorUsuarioAdeful controladorUsuarioAdeful;
+    private Context context;
 
     public static class JugadorViewHolder extends RecyclerView.ViewHolder {
         private TextView textRecyclerViewNombre;
@@ -55,7 +58,8 @@ public class AdaptadorRecyclerAsistenciaUsuario extends
                     .findViewById(R.id.imageRecyclerViewFoto);
         }
 
-        public void bindTitular(Jugador jugador, Typeface nombre, Typeface cargo, ControladorUsuarioAdeful controladorUsuarioAdeful, int cantidad) {
+        public void bindTitular(Jugador jugador, Typeface nombre, Typeface cargo, ControladorUsuarioAdeful controladorUsuarioAdeful, int cantidad, Context
+                                context) {
             // ESCUDO EQUIPO LOCAL
 
             int cant = controladorUsuarioAdeful.selectCountEntrenamientoJugador(jugador.getID_JUGADOR());
@@ -63,21 +67,42 @@ public class AdaptadorRecyclerAsistenciaUsuario extends
             if (cant > 0)
                 porcentaje = cant * 100 / cantidad;
 
-            foto = jugador.getFOTO_JUGADOR();
-            if (foto == null) {
-                imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
-            } else {
-                fotoBitmap = BitmapFactory.decodeByteArray(
-                        jugador.getFOTO_JUGADOR(), 0,
-                        jugador.getFOTO_JUGADOR().length);
+//            foto = jugador.getFOTO_JUGADOR();
+//            if (foto == null) {
+//                imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
+//            } else {
+//                fotoBitmap = BitmapFactory.decodeByteArray(
+//                        jugador.getFOTO_JUGADOR(), 0,
+//                        jugador.getFOTO_JUGADOR().length);
+//
+//                fotoBitmap = Bitmap.createScaledBitmap(
+//                        fotoBitmap, 150, 150, true);
+//
+//                imageRecyclerViewFoto.setImageBitmap(fotoBitmap);
+//            }
+            if(!jugador.getURL_JUGADOR().isEmpty())
+                Picasso.with(context)
+                        .load(jugador.getURL_JUGADOR()).fit()
+                        .placeholder(R.mipmap.ic_foto_galery)
+                        .into(imageRecyclerViewFoto, new Callback() {
+                            @Override
+                            public void onSuccess() {
 
-                fotoBitmap = Bitmap.createScaledBitmap(
-                        fotoBitmap, 150, 150, true);
+                            }
 
-                imageRecyclerViewFoto.setImageBitmap(fotoBitmap);
-            }
+                            @Override
+                            public void onError() {
+                                imageRecyclerViewFoto.setImageResource(R.mipmap.ic_foto_galery);
+                            }
+                        });
+            else
+                Picasso.with(context)
+                        .load(R.mipmap.ic_foto_galery).fit()
+                        .placeholder(R.mipmap.ic_foto_galery)
+                        .into(imageRecyclerViewFoto);
+
             textRecyclerViewNombre.setText(jugador.getNOMBRE_JUGADOR());
-            textRecyclerViewNombre.setTypeface(nombre, Typeface.BOLD);
+        //    textRecyclerViewNombre.setTypeface(nombre, Typeface.BOLD);
             textRecyclerViewDivision.setText(String.valueOf(porcentaje) + "%");
             textRecyclerViewDivision.setTextSize(20);
             textRecyclerViewDivision.setTypeface(nombre);
@@ -94,6 +119,7 @@ public class AdaptadorRecyclerAsistenciaUsuario extends
         this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
         this.nombreFont = auxiliarGeneral.tituloFont(context);
         controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
+        this.context = context;
     }
 
     @Override
@@ -112,7 +138,7 @@ public class AdaptadorRecyclerAsistenciaUsuario extends
     public void onBindViewHolder(JugadorViewHolder viewHolder, int pos) {
         Jugador item = jugadorArray.get(pos);
 
-        viewHolder.bindTitular(item, nombreFont, cargoPeriodoFont, controladorUsuarioAdeful, cantidad);
+        viewHolder.bindTitular(item, nombreFont, cargoPeriodoFont, controladorUsuarioAdeful, cantidad, context);
     }
 
     @Override

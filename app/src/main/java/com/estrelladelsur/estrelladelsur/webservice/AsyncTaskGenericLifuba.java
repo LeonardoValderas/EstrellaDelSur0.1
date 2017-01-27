@@ -45,7 +45,7 @@ public class AsyncTaskGenericLifuba {
     private String entity;
     private String fecha_delete = null;
     private boolean insert, isActual, delete, isPermiso;
-    int id_delete;
+    private int id_delete;
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
     private static final String TAG_ID = "id";
@@ -55,11 +55,6 @@ public class AsyncTaskGenericLifuba {
     private String CORRECTO = " correctamente";
     private String URL = null, mensaje = null, genero;
     private MyAsyncTaskListener mListener;
-    public static final String TABLA_CANCHA_LIFUBA = "CANCHA_LIFUBA";
-    public static final String TABLA_EQUIPO_LIFUBA = "EQUIPO_LIFUBA";
-    public static final String TABLA_FIXTURE_LIFUBA = "FIXTURE_LIFUBA";
-    public static final String TABLA_SANCION_LIFUBA = "SANCION_LIFUBA";
-    public static final String TABLA_TORNEO_LIFUBA = "TORNEO_LIFUBA";
 
     //FOR INSERT-UPDATE-DELETE
     public AsyncTaskGenericLifuba(Context context, MyAsyncTaskListener listener, String URL, Request request, String entity, Object object, boolean insert, boolean delete, int id_delete, String genero, boolean isActual) {
@@ -178,14 +173,12 @@ public class AsyncTaskGenericLifuba {
                                 }
                             }
                         } else if(isPermiso){
-
                             if (deleteEntity(entity, ((Permiso) object).getID_PERMISO(), object, fecha_delete)){
                                 mensaje = entity + ELIMINAR + genero + CORRECTO;
                                 precessOK = true;
                             } else {
                                 precessOK = false;
                             }
-
                         }else {
                             if (deleteEntity(entity, id_delete, null, fecha_delete)){
                                 mensaje = entity + ELIMINAR + genero + CORRECTO;
@@ -215,7 +208,6 @@ public class AsyncTaskGenericLifuba {
         }
     }
 
-
     public boolean insertEntity(String entity, int id, Object object) {
         ControladorLifuba controladorLifuba = new ControladorLifuba(context);
         boolean insertOk = true;
@@ -225,7 +217,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.insertEquipoLifuba(id, (Equipo) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_EQUIPO_LIFUBA, ((Equipo) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_EQUIPO_LIFUBA, ((Equipo) object).getFECHA_CREACION(), context))
                         insertOk = false;
                 break;
             }
@@ -233,7 +225,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.insertTorneoLifuba(id, (Torneo) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_TORNEO_LIFUBA, ((Torneo) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_TORNEO_LIFUBA, ((Torneo) object).getFECHA_CREACION(), context))
                         insertOk = false;
                 break;
             }
@@ -241,7 +233,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.insertCanchaLifuba(id, (Cancha) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_CANCHA_LIFUBA, ((Cancha) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_CANCHA_LIFUBA, ((Cancha) object).getFECHA_CREACION(), context))
                         insertOk = false;
                 break;
             }
@@ -250,7 +242,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.insertFixtureLifuba(id, (Fixture) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_FIXTURE_LIFUBA, ((Fixture) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_FIXTURE_LIFUBA, ((Fixture) object).getFECHA_CREACION(), context))
                         insertOk = false;
                 break;
             }
@@ -258,7 +250,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.insertSancionLifuba(id, (Sancion) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_SANCION_LIFUBA, ((Sancion) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_SANCION_LIFUBA, ((Sancion) object).getFECHA_CREACION(), context))
                         insertOk = false;
                 break;
             }
@@ -275,7 +267,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.actualizarEquipoLifuba((Equipo) object))
                     updateOk = false;
                 if (updateOk)
-                    if (!updateTableXTable(TABLA_EQUIPO_LIFUBA, ((Equipo) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_EQUIPO_LIFUBA, ((Equipo) object).getFECHA_CREACION(), context))
                         updateOk = false;
                 break;
             }
@@ -283,7 +275,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.actualizarTorneoLifuba((Torneo) object))
                     updateOk = false;
                 if (updateOk)
-                    if (!updateTableXTable(TABLA_EQUIPO_LIFUBA, ((Torneo) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_TORNEO_LIFUBA, ((Torneo) object).getFECHA_CREACION(), context))
                         updateOk = false;
                 break;
             }
@@ -291,7 +283,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.actualizarCanchaLifuba((Cancha) object))
                     updateOk = false;
                 if (updateOk)
-                    if (!updateTableXTable(TABLA_CANCHA_LIFUBA, ((Cancha) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_CANCHA_LIFUBA, ((Cancha) object).getFECHA_CREACION(), context))
                         updateOk = false;
                 break;
             }
@@ -300,7 +292,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.actualizarFixtureLifuba((Fixture) object))
                     updateOk = false;
                 if (updateOk)
-                    if (!updateTableXTable(TABLA_FIXTURE_LIFUBA, ((Fixture) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_FIXTURE_LIFUBA, ((Fixture) object).getFECHA_CREACION(), context))
                         updateOk = false;
                 break;
             }
@@ -308,7 +300,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.actualizarResultadoLifuba((Resultado) object))
                     updateOk = false;
                 if (updateOk)
-                    if (!updateTableXTable(TABLA_FIXTURE_LIFUBA, ((Resultado) object).getFECHA_ACTUALIZACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_FIXTURE_LIFUBA, ((Resultado) object).getFECHA_ACTUALIZACION(), context))
                         updateOk = false;
                 break;
             }
@@ -316,7 +308,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.actualizarSancionLifuba((Sancion) object))
                     updateOk = false;
                 if (updateOk)
-                    if (!updateTableXTable(TABLA_SANCION_LIFUBA, ((Sancion) object).getFECHA_CREACION(), context))
+                    if (!updateTableXTable(Variable.TABLA_SANCION_LIFUBA, ((Sancion) object).getFECHA_CREACION(), context))
                         updateOk = false;
                 break;
             }
@@ -333,7 +325,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.eliminarEquipoLifuba(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_EQUIPO_LIFUBA, fecha_delete
+                    if (!updateTableXTable(Variable.TABLA_EQUIPO_LIFUBA, fecha_delete
                             , context))
                         deleteOk = false;
                 break;
@@ -342,25 +334,16 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.eliminarTorneoLifuba(id, isActual))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_TORNEO_LIFUBA, fecha_delete
+                    if (!updateTableXTable(Variable.TABLA_TORNEO_LIFUBA, fecha_delete
                             , context))
                         deleteOk = false;
                 break;
             }
-//            case "División": {
-//                if (!controladorLifuba.eliminarDivisionLifuba(id))
-//                    deleteOk = false;
-//                if (deleteOk)
-//                    if (updateTableXTable(TABLA_EQUIPO_LIFUBA, fecha_delete
-//                            , context))
-//                        deleteOk = false;
-//                break;
-//            }
             case "Cancha": {
                 if (!controladorLifuba.eliminarCanchaLifuba(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_CANCHA_LIFUBA, fecha_delete
+                    if (!updateTableXTable(Variable.TABLA_CANCHA_LIFUBA, fecha_delete
                             , context))
                         deleteOk = false;
                 break;
@@ -370,7 +353,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.eliminarFixtureLifuba(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_FIXTURE_LIFUBA, fecha_delete
+                    if (!updateTableXTable(Variable.TABLA_FIXTURE_LIFUBA, fecha_delete
                             , context))
                         deleteOk = false;
                 break;
@@ -379,7 +362,7 @@ public class AsyncTaskGenericLifuba {
                 if (!controladorLifuba.eliminarSancionLifuba(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_SANCION_LIFUBA, fecha_delete
+                    if (!updateTableXTable(Variable.TABLA_SANCION_LIFUBA, fecha_delete
                             , context))
                         deleteOk = false;
                 break;

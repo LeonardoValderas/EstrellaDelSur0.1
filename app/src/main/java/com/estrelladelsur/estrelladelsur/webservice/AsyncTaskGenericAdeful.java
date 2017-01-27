@@ -55,26 +55,6 @@ public class AsyncTaskGenericAdeful {
     private String CORRECTO = " correctamente";
     private String URL = null, mensaje = null, genero;
     private MyAsyncTaskListener mListener;
-    public static final String TABLA_ARTICULO = "ARTICULO";
-    public static final String TABLA_CANCHA_ADEFUL = "CANCHA_ADEFUL";
-    public static final String TABLA_CARGO_ADEFUL = "CARGO";
-    public static final String TABLA_COMISION = "COMISION";
-    public static final String TABLA_DIRECCION = "DIRECCION";
-    public static final String TABLA_DIVISION_ADEFUL = "DIVISION_ADEFUL";
-    public static final String TABLA_ENTRENAMIENTO = "ENTRENAMIENTO_ADEFUL";
-    public static final String TABLA_EQUIPO_ADEFUL = "EQUIPO_ADEFUL";
-    public static final String TABLA_FIXTURE_ADEFUL = "FIXTURE_ADEFUL";
-    public static final String TABLA_JUGADOR = "JUGADOR_ADEFUL";
-    public static final String TABLA_POSICION = "POSICION_ADEFUL";
-    public static final String TABLA_SANCION_ADEFUL = "SANCION_ADEFUL";
-    public static final String TABLA_TORNEO_ADEFUL = "TORNEO_ADEFUL";
-    public static final String TABLA_ASISTENCIA = "ENTRENAMIENTO_ASISTENCIA_ADEFUL";
-    public static final String TABLA_NOTIFICACION = "NOTIFICACION";
-    public static final String TABLA_NOTICIA = "NOTICIA";
-    public static final String TABLA_FOTO = "FOTO";
-    public static final String TABLA_PUBLICIDAD = "PUBLICIDAD";
-    public static final String TABLA_USUARIO = "USUARIO";
-    public static final String TABLA_PERMISO = "PERMISO";
 
     //FOR INSERT-UPDATE-DELETE
     public AsyncTaskGenericAdeful(Context context, MyAsyncTaskListener listener, String URL, Request request, String entity, Object object, boolean insert, boolean delete, int id_delete, String genero, boolean isActual) {
@@ -91,6 +71,7 @@ public class AsyncTaskGenericAdeful {
         this.isActual = isActual;
         new TaskGeneric().execute(request);
     }
+
     public AsyncTaskGenericAdeful(Context context, MyAsyncTaskListener listener, String URL, Request request, String entity, Object object, boolean insert, boolean delete, int id_delete, String genero, boolean isActual, String fecha_delete) {
         this.context = context;
         mListener = listener;
@@ -148,7 +129,6 @@ public class AsyncTaskGenericAdeful {
         this.isPermiso = isPermiso;
         new TaskGeneric().execute(request);
     }
-
 
     public class TaskGeneric extends AsyncTask<Request, Boolean, Boolean> {
 
@@ -243,7 +223,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.insertArticulo(id, (Articulo) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_ARTICULO, ((Articulo) object).getFECHA_CREACION(), 2, context))
+                    if (!updateTableXTable(Variable.TABLA_ARTICULO, ((Articulo) object).getFECHA_CREACION(), 2, context))
                         insertOk = false;
                 break;
             }
@@ -251,7 +231,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.insertComision(id, (Comision) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_COMISION, ((Comision) object).getFECHA_CREACION(), 2, context))
+                    if (!updateTableXTable(Variable.TABLA_COMISION, ((Comision) object).getFECHA_CREACION(), 2, context))
                         insertOk = false;
                 break;
             }
@@ -259,7 +239,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.insertDireccion(id, (Direccion) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_DIRECCION, ((Direccion) object).getFECHA_CREACION(), 2, context))
+                    if (!updateTableXTable(Variable.TABLA_DIRECCION, ((Direccion) object).getFECHA_CREACION(), 2, context))
                         insertOk = false;
                 break;
             }
@@ -267,7 +247,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.insertCargo(id, (Cargo) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_CARGO_ADEFUL, ((Cargo) object).getFECHA_CREACION(), 2, context))
+                    if (!updateTableXTable(Variable.TABLA_CARGO_ADEFUL, ((Cargo) object).getFECHA_CREACION(), 2, context))
                         insertOk = false;
                 break;
             }
@@ -276,7 +256,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.insertEquipoAdeful(id, (Equipo) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_EQUIPO_ADEFUL, ((Equipo) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_EQUIPO_ADEFUL, ((Equipo) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }
@@ -284,7 +264,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.insertTorneoAdeful(id, (Torneo) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_TORNEO_ADEFUL, ((Torneo) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_TORNEO_ADEFUL, ((Torneo) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }
@@ -292,7 +272,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.insertDivisionAdeful(id, (Division) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_DIVISION_ADEFUL, ((Division) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_DIVISION_ADEFUL, ((Division) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }
@@ -300,7 +280,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.insertCanchaAdeful(id, (Cancha) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_CANCHA_ADEFUL, ((Cancha) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_CANCHA_ADEFUL, ((Cancha) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }
@@ -309,7 +289,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.insertFixtureAdeful(id, (Fixture) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_FIXTURE_ADEFUL, ((Fixture) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_FIXTURE_ADEFUL, ((Fixture) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }
@@ -317,10 +297,10 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.insertJugadorAdeful(id, (Jugador) object))
                     insertOk = false;
                 if (insertOk)
-                if (!controladorLifuba.insertJugadorLifuba(id, (Jugador) object))
-                    insertOk = false;
+                    if (!controladorLifuba.insertJugadorLifuba(id, (Jugador) object))
+                        insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_JUGADOR, ((Jugador) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_JUGADOR, ((Jugador) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }
@@ -330,7 +310,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorLifuba.insertPosicionLifuba(id, (Posicion) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_POSICION, ((Posicion) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_POSICION, ((Posicion) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }
@@ -346,10 +326,10 @@ public class AsyncTaskGenericAdeful {
                     insertOk = false;
                 }
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_ENTRENAMIENTO, ((Entrenamiento) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_ENTRENAMIENTO, ((Entrenamiento) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
-                    if (!updateTableXTable(TABLA_DIVISION_ADEFUL, ((Entrenamiento) object).getFECHA_CREACION(), 0, context))
-                        insertOk = false;
+                if (!updateTableXTable(Variable.TABLA_DIVISION_ADEFUL, ((Entrenamiento) object).getFECHA_CREACION(), 0, context))
+                    insertOk = false;
                 break;
             }
             case "Asistencia": {
@@ -373,7 +353,7 @@ public class AsyncTaskGenericAdeful {
                     }
                 }
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_ASISTENCIA, ((Entrenamiento) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_ASISTENCIA, ((Entrenamiento) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }
@@ -381,7 +361,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.insertSancionAdeful(id, (Sancion) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_SANCION_ADEFUL, ((Sancion) object).getFECHA_CREACION(), 0, context))
+                    if (!updateTableXTable(Variable.TABLA_SANCION_ADEFUL, ((Sancion) object).getFECHA_CREACION(), 0, context))
                         insertOk = false;
                 break;
             }
@@ -389,7 +369,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.insertNotificacion(id, (Notificacion) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_NOTIFICACION, ((Notificacion) object).getFECHA_CREACION(), 2, context))
+                    if (!updateTableXTable(Variable.TABLA_NOTIFICACION, ((Notificacion) object).getFECHA_CREACION(), 2, context))
                         insertOk = false;
                 break;
             }
@@ -397,7 +377,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.insertNoticia(id, (Noticia) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_NOTICIA, ((Noticia) object).getFECHA_CREACION(), 2, context))
+                    if (!updateTableXTable(Variable.TABLA_NOTICIA, ((Noticia) object).getFECHA_CREACION(), 2, context))
                         insertOk = false;
                 break;
             }
@@ -405,7 +385,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.insertFoto(id, (Foto) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_FOTO, ((Foto) object).getFECHA_CREACION(), 2, context))
+                    if (!updateTableXTable(Variable.TABLA_FOTO, ((Foto) object).getFECHA_CREACION(), 2, context))
                         insertOk = false;
                 break;
             }
@@ -413,7 +393,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.insertPublicidad(id, (Publicidad) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_PUBLICIDAD, ((Publicidad) object).getFECHA_CREACION(), 2, context))
+                    if (!updateTableXTable(Variable.TABLA_PUBLICIDAD, ((Publicidad) object).getFECHA_CREACION(), 2, context))
                         insertOk = false;
                 break;
             }
@@ -421,7 +401,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.insertUsuario(id, (Usuario) object))
                     insertOk = false;
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_USUARIO, ((Usuario) object).getFECHA_CREACION(), 2, context))
+                    if (!updateTableXTable(Variable.TABLA_USUARIO, ((Usuario) object).getFECHA_CREACION(), 2, context))
                         insertOk = false;
                 break;
             }
@@ -442,7 +422,7 @@ public class AsyncTaskGenericAdeful {
                     insertOk = false;
                 }
                 if (insertOk)
-                    if (!updateTableXTable(TABLA_PERMISO, ((Permiso) object).getFECHA_CREACION(), 2
+                    if (!updateTableXTable(Variable.TABLA_PERMISO, ((Permiso) object).getFECHA_CREACION(), 2
                             , context))
                         insertOk = false;
                 break;
@@ -462,7 +442,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.actualizarArticulo((Articulo) object))
                     updateOk = false;
                 if (updateOk)
-                    if (!updateTableXTable(TABLA_ARTICULO, ((Articulo) object).getFECHA_CREACION(), 2
+                    if (!updateTableXTable(Variable.TABLA_ARTICULO, ((Articulo) object).getFECHA_CREACION(), 2
                             , context))
                         updateOk = false;
                 break;
@@ -471,27 +451,27 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.actualizarComision((Comision) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_COMISION, ((Comision) object).getFECHA_CREACION(), 2
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_COMISION, ((Comision) object).getFECHA_CREACION(), 2
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Dirección": {
                 if (!controladorGeneral.actualizarDireccion((Direccion) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_DIRECCION, ((Direccion) object).getFECHA_CREACION(), 2
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_DIRECCION, ((Direccion) object).getFECHA_CREACION(), 2
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Cargo": {
                 if (!controladorGeneral.actualizarCargo((Cargo) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_CARGO_ADEFUL, ((Cargo) object).getFECHA_CREACION(), 2
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_CARGO_ADEFUL, ((Cargo) object).getFECHA_CREACION(), 2
+                            , context))
+                        updateOk = false;
                 break;
             }
             //LIGA
@@ -499,36 +479,36 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.actualizarEquipoAdeful((Equipo) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_EQUIPO_ADEFUL, ((Equipo) object).getFECHA_CREACION(), 0
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_EQUIPO_ADEFUL, ((Equipo) object).getFECHA_CREACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Torneo": {
                 if (!controladorAdeful.actualizarTorneoAdeful((Torneo) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_TORNEO_ADEFUL, ((Torneo) object).getFECHA_CREACION(), 0
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_TORNEO_ADEFUL, ((Torneo) object).getFECHA_CREACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "División": {
                 if (!controladorAdeful.actualizarDivisionAdeful((Division) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_DIVISION_ADEFUL, ((Division) object).getFECHA_CREACION(), 0
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_DIVISION_ADEFUL, ((Division) object).getFECHA_CREACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Cancha": {
                 if (!controladorAdeful.actualizarCanchaAdeful((Cancha) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_CANCHA_ADEFUL, ((Cancha) object).getFECHA_CREACION(), 0
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_CANCHA_ADEFUL, ((Cancha) object).getFECHA_CREACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             //MI EQUIPO
@@ -536,27 +516,29 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.actualizarFixtureAdeful((Fixture) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_FIXTURE_ADEFUL, ((Fixture) object).getFECHA_CREACION(), 0
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_FIXTURE_ADEFUL, ((Fixture) object).getFECHA_CREACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Resultado": {
                 if (!controladorAdeful.actualizarResultadoAdeful((Resultado) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_FIXTURE_ADEFUL, ((Resultado) object).getFECHA_ACTUALIZACION(), 0
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_FIXTURE_ADEFUL, ((Resultado) object).getFECHA_ACTUALIZACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Jugador": {
                 if (!controladorAdeful.actualizarJugadorAdeful((Jugador) object))
                     updateOk = false;
-                if (updateOk)
-                if (!updateTableXTable(TABLA_JUGADOR, ((Jugador) object).getFECHA_CREACION(), 0
-                        , context))
+                if (!controladorLifuba.actualizarJugadorLifuba((Jugador) object))
                     updateOk = false;
+                if (updateOk)
+                    if (!updateTableXTable(Variable.TABLA_JUGADOR, ((Jugador) object).getFECHA_CREACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Posicion": {
@@ -565,9 +547,9 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorLifuba.actualizarPosicionLifuba((Posicion) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_POSICION, ((Posicion) object).getFECHA_CREACION(), 0
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_POSICION, ((Posicion) object).getFECHA_CREACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Entrenamiento": {
@@ -594,63 +576,63 @@ public class AsyncTaskGenericAdeful {
                     updateOk = false;
                 }
                 if (updateOk)
-                if (!updateTableXTable(TABLA_ENTRENAMIENTO, ((Entrenamiento) object).getFECHA_CREACION(), 0
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_ENTRENAMIENTO, ((Entrenamiento) object).getFECHA_CREACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Sancion": {
                 if (!controladorAdeful.actualizarSancionAdeful((Sancion) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_SANCION_ADEFUL, ((Sancion) object).getFECHA_CREACION(), 0
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_SANCION_ADEFUL, ((Sancion) object).getFECHA_CREACION(), 0
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Notificacion": {
                 if (!controladorGeneral.actualizarNotificacion((Notificacion) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_NOTIFICACION, ((Notificacion) object).getFECHA_CREACION(), 2
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_NOTIFICACION, ((Notificacion) object).getFECHA_CREACION(), 2
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Noticia": {
                 if (!controladorGeneral.actualizarNoticia((Noticia) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_NOTICIA, ((Noticia) object).getFECHA_CREACION(), 2
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_NOTICIA, ((Noticia) object).getFECHA_CREACION(), 2
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Foto": {
                 if (!controladorGeneral.actualizarFoto((Foto) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_FOTO, ((Foto) object).getFECHA_CREACION(), 2
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_FOTO, ((Foto) object).getFECHA_CREACION(), 2
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Publicidad": {
                 if (!controladorGeneral.actualizarPublicidad((Publicidad) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_PUBLICIDAD, ((Publicidad) object).getFECHA_CREACION(), 2
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_PUBLICIDAD, ((Publicidad) object).getFECHA_CREACION(), 2
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Usuario": {
                 if (!controladorGeneral.actualizarUsuario((Usuario) object))
                     updateOk = false;
                 if (updateOk)
-                if (!updateTableXTable(TABLA_USUARIO, ((Usuario) object).getFECHA_CREACION(), 2
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_USUARIO, ((Usuario) object).getFECHA_CREACION(), 2
+                            , context))
+                        updateOk = false;
                 break;
             }
             case "Permiso": {
@@ -683,9 +665,9 @@ public class AsyncTaskGenericAdeful {
                     }
                 }
                 if (updateOk)
-                if (!updateTableXTable(TABLA_PERMISO, ((Permiso) object).getFECHA_CREACION(), 2
-                        , context))
-                    updateOk = false;
+                    if (!updateTableXTable(Variable.TABLA_PERMISO, ((Permiso) object).getFECHA_CREACION(), 2
+                            , context))
+                        updateOk = false;
                 break;
             }
         }
@@ -695,6 +677,7 @@ public class AsyncTaskGenericAdeful {
     public boolean deleteEntity(String entity, int id, Object object, String fecha_delete) {
         ControladorAdeful controladorAdeful = new ControladorAdeful(context);
         ControladorGeneral controladorGeneral = new ControladorGeneral(context);
+        ControladorLifuba controladorLifuba = new ControladorLifuba(context);
 
         boolean deleteOk = true;
         switch (entity) {
@@ -703,7 +686,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.eliminarArticulo(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_ARTICULO, fecha_delete, 2
+                    if (!updateTableXTable(Variable.TABLA_ARTICULO, fecha_delete, 2
                             , context))
                         deleteOk = false;
                 break;
@@ -712,7 +695,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.eliminarComision(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_COMISION, fecha_delete, 2
+                    if (!updateTableXTable(Variable.TABLA_COMISION, fecha_delete, 2
                             , context))
                         deleteOk = false;
                 break;
@@ -721,7 +704,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.eliminarDireccion(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_DIRECCION, fecha_delete, 2
+                    if (!updateTableXTable(Variable.TABLA_DIRECCION, fecha_delete, 2
                             , context))
                         deleteOk = false;
                 break;
@@ -731,7 +714,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.eliminarEquipoAdeful(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_EQUIPO_ADEFUL, fecha_delete, 0
+                    if (!updateTableXTable(Variable.TABLA_EQUIPO_ADEFUL, fecha_delete, 0
                             , context))
                         deleteOk = false;
                 break;
@@ -740,7 +723,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.eliminarTorneoAdeful(id, isActual))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_TORNEO_ADEFUL, fecha_delete, 0
+                    if (!updateTableXTable(Variable.TABLA_TORNEO_ADEFUL, fecha_delete, 0
                             , context))
                         deleteOk = false;
                 break;
@@ -749,7 +732,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.eliminarDivisionAdeful(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_DIVISION_ADEFUL, fecha_delete, 0
+                    if (!updateTableXTable(Variable.TABLA_DIVISION_ADEFUL, fecha_delete, 0
                             , context))
                         deleteOk = false;
                 break;
@@ -759,7 +742,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.eliminarCanchaAdeful(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_CANCHA_ADEFUL, fecha_delete, 0
+                    if (!updateTableXTable(Variable.TABLA_CANCHA_ADEFUL, fecha_delete, 0
                             , context))
                         deleteOk = false;
                 break;
@@ -769,7 +752,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.eliminarFixtureAdeful(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_FIXTURE_ADEFUL, fecha_delete, 0
+                    if (!updateTableXTable(Variable.TABLA_FIXTURE_ADEFUL, fecha_delete, 0
                             , context))
                         deleteOk = false;
                 break;
@@ -777,8 +760,10 @@ public class AsyncTaskGenericAdeful {
             case "Jugador": {
                 if (!controladorAdeful.eliminarJugadorAdeful(id))
                     deleteOk = false;
+                if (!controladorLifuba.eliminarJugadorLifuba(id))
+                    deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_JUGADOR, fecha_delete, 0
+                    if (!updateTableXTable(Variable.TABLA_JUGADOR, fecha_delete, 0
                             , context))
                         deleteOk = false;
                 break;
@@ -791,7 +776,7 @@ public class AsyncTaskGenericAdeful {
                     deleteOk = false;
                 }
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_ENTRENAMIENTO, fecha_delete, 0
+                    if (!updateTableXTable(Variable.TABLA_ENTRENAMIENTO, fecha_delete, 0
                             , context))
                         deleteOk = false;
                 break;
@@ -800,7 +785,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorAdeful.eliminarSancionAdeful(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_SANCION_ADEFUL, fecha_delete, 0
+                    if (!updateTableXTable(Variable.TABLA_SANCION_ADEFUL, fecha_delete, 0
                             , context))
                         deleteOk = false;
                 break;
@@ -809,7 +794,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.eliminarNotificacion(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_NOTIFICACION, fecha_delete, 2
+                    if (!updateTableXTable(Variable.TABLA_NOTIFICACION, fecha_delete, 2
                             , context))
                         deleteOk = false;
                 break;
@@ -818,7 +803,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.eliminarNoticia(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_NOTICIA, fecha_delete, 2
+                    if (!updateTableXTable(Variable.TABLA_NOTICIA, fecha_delete, 2
                             , context))
                         deleteOk = false;
                 break;
@@ -827,7 +812,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.eliminarFoto(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_FOTO, fecha_delete, 2
+                    if (!updateTableXTable(Variable.TABLA_FOTO, fecha_delete, 2
                             , context))
                         deleteOk = false;
                 break;
@@ -836,7 +821,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.eliminarPublicidad(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_PUBLICIDAD, fecha_delete, 2
+                    if (!updateTableXTable(Variable.TABLA_PUBLICIDAD, fecha_delete, 2
                             , context))
                         deleteOk = false;
                 break;
@@ -845,7 +830,7 @@ public class AsyncTaskGenericAdeful {
                 if (!controladorGeneral.eliminarUsuario(id))
                     deleteOk = false;
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_USUARIO, fecha_delete, 2
+                    if (!updateTableXTable(Variable.TABLA_USUARIO, fecha_delete, 2
                             , context))
                         deleteOk = false;
                 break;
@@ -867,7 +852,7 @@ public class AsyncTaskGenericAdeful {
                     deleteOk = false;
                 }
                 if (deleteOk)
-                    if (!updateTableXTable(TABLA_PERMISO, fecha_delete, 2
+                    if (!updateTableXTable(Variable.TABLA_PERMISO, fecha_delete, 2
                             , context))
                         deleteOk = false;
                 break;
@@ -883,19 +868,19 @@ public class AsyncTaskGenericAdeful {
             case 0:
                 ControladorAdeful controladorAdeful = new ControladorAdeful(context);
                 if (!controladorAdeful.actualizarTablaXTabla(tabla, fecha))
-                isOK = false;
+                    isOK = false;
                 break;
             case 1:
                 ControladorLifuba controladorLifuba = new ControladorLifuba(context);
                 if (!controladorLifuba.actualizarTablaXTabla(tabla, fecha))
-                isOK = false;
+                    isOK = false;
                 break;
             case 2:
                 ControladorGeneral controladorGeneral = new ControladorGeneral(context);
                 if (!controladorGeneral.actualizarTablaXTabla(tabla, fecha))
-                isOK = false;
+                    isOK = false;
                 break;
         }
-       return isOK;
-   }
+        return isOK;
+    }
 }

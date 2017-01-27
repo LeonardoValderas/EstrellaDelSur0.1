@@ -73,6 +73,31 @@ public class ControladorGeneral {
         }
     }
 
+    public boolean insertModulo(List<Modulo> modulos)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Modulo modulo : modulos) {
+                cv.put("ID_MODULO", modulo.getID_MODULO());
+                cv.put("NOMBRE", modulo.getMODULO());
+
+                long valor = database.insert("MODULO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     //LISTA MODULO
     public ArrayList<Modulo> selectListaModulo() {
 
@@ -203,6 +228,32 @@ public class ControladorGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertSubModulo(List<SubModulo> Submodulos)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (SubModulo Submodulo : Submodulos) {
+                cv.put("ID_SUBMODULO", Submodulo.getID_SUBMODULO());
+                cv.put("NOMBRE", Submodulo.getSUBMODULO());
+                cv.put("ID_MODULO", Submodulo.getID_MODULO());
+                cv.put("ISSELECTED", Submodulo.ISSELECTED());
+                long valor = database.insert("SUBMODULO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     //LISTA SUBMODULO
@@ -394,6 +445,33 @@ public class ControladorGeneral {
         }
     }
 
+    public boolean insertTabla(List<Tabla> tablas)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Tabla tabla : tablas) {
+
+                cv.put("ID_TABLA", tabla.getID_TABLA());
+                cv.put("TABLA", tabla.getTABLA());
+                cv.put("FECHA", tabla.getFECHA());
+
+                long valor = database.insert("TABLA", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOk = false;
+        }
+        return isOk;
+    }
+
     // ACTUALIZAR USUARIO
     public boolean actualizarTablaXTabla(String tabla, String fecha)
             throws SQLiteException {
@@ -575,6 +653,36 @@ public class ControladorGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertUsuario(List<Usuario> usuarios)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Usuario usuario : usuarios) {
+                cv.put("ID_USUARIO", usuario.getID_USUARIO());
+                cv.put("USUARIO", usuario.getUSUARIO());
+                cv.put("PASSWORD", usuario.getPASSWORD());
+                cv.put("USUARIO_CREADOR", usuario.getUSUARIO_CREADOR());
+                cv.put("FECHA_CREACION", usuario.getFECHA_CREACION());
+                cv.put("USUARIO_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
+                cv.put("FECHA_ACTUALIZACION", usuario.getUSUARIO_ACTUALIZACION());
+
+                long valor = database.insert("USUARIO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     // ACTUALIZAR USUARIO
@@ -783,6 +891,34 @@ public class ControladorGeneral {
         }
     }
 
+    public boolean insertPermisos(List<Permiso> permisos)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Permiso permiso : permisos) {
+                cv.put("ID_PERMISO", permiso.getID_PERMISO());
+                cv.put("ID_USUARIO", permiso.getID_USUARIO());
+                cv.put("USUARIO_CREADOR", permiso.getUSUARIO_CREADOR());
+                cv.put("FECHA_CREACION", permiso.getFECHA_CREACION());
+                cv.put("USUARIO_ACTUALIZACION", permiso.getUSUARIO_ACTUALIZACION());
+                cv.put("FECHA_ACTUALIZACION", permiso.getFECHA_ACTUALIZACION());
+
+                long valor = database.insert("PERMISO", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            isOk = false;
+        }
+        return isOk;
+    }
+
     public boolean insertPermisoModulo(int id, int id_mod, int id_sub)
             throws SQLiteException {
         ContentValues cv = new ContentValues();
@@ -825,6 +961,29 @@ public class ControladorGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+    public boolean insertPermisoModulo(List<Permiso> permisos)
+            throws SQLiteException {
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Permiso permiso : permisos) {
+            cv.put("ID_PERMISO", permiso.getID_PERMISO());
+            cv.put("ID_MODULO", permiso.getID_MODULO());
+            cv.put("ID_SUBMODULO", permiso.getID_SUBMODULO());
+
+            long valor = database.insert("PERMISO_MODULO", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            isOk = false;
+        }
+        return isOk;
     }
 
     public boolean actualizarPermisos(Permiso permiso)
@@ -1188,6 +1347,36 @@ public class ControladorGeneral {
         }
     }
 
+    public boolean insertArticulo(List<Articulo> articulos)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Articulo articulo : articulos) {
+                cv.put("ID_ARTICULO", articulo.getID_ARTICULO());
+                cv.put("TITULO", articulo.getTITULO());
+                cv.put("ARTICULO", articulo.getARTICULO());
+                cv.put("USUARIO_CREADOR", articulo.getUSUARIO_CREADOR());
+                cv.put("FECHA_CREACION", articulo.getFECHA_CREACION());
+                cv.put("USUARIO_ACTUALIZACION", articulo.getUSUARIO_ACTUALIZACION());
+                cv.put("FECHA_ACTUALIZACION", articulo.getFECHA_ACTUALIZACION());
+
+                long valor = database.insert("ARTICULO", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOk = false;
+        }
+        return isOk;
+    }
+
     //ACTUALIZAR ARTICULO
     public boolean actualizarArticulo(Articulo articulo)
             throws SQLiteException {
@@ -1373,6 +1562,36 @@ public class ControladorGeneral {
         }
     }
 
+    public boolean insertCargo(List<Cargo> cargos)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Cargo cargo : cargos) {
+
+                cv.put("ID_CARGO", cargo.getID_CARGO());
+                cv.put("CARGO", cargo.getCARGO());
+                cv.put("USUARIO_CREADOR", cargo.getUSUARIO_CREADOR());
+                cv.put("FECHA_CREACION", cargo.getFECHA_CREACION());
+                cv.put("USUARIO_ACTUALIZACION", cargo.getUSUARIO_ACTUALIZACION());
+                cv.put("FECHA_ACTUALIZACION", cargo.getFECHA_ACTUALIZACION());
+
+                long valor = database.insert("CARGO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     // ACTUALIZAR CARGO
     public boolean actualizarCargo(Cargo cargo)
             throws SQLiteException {
@@ -1424,8 +1643,8 @@ public class ControladorGeneral {
     //LISTA CARGOS
     public ArrayList<Cargo> selectListaCargo() {
 
-        String sql = "SELECT * FROM CARGO";
-        ArrayList<Cargo> arrayCargo = new ArrayList<Cargo>();
+        String sql = "SELECT * FROM CARGO ORDER BY CARGO";
+        ArrayList<Cargo> arrayCargo = new ArrayList<>();
         String cargoS = null, fechaCreacion = null, fechaActualizacion = null, creador = null, usuario_act = null;
         int id;
         Cursor cursor = null;
@@ -1486,12 +1705,12 @@ public class ControladorGeneral {
         try {
             cv.put("ID_COMISION", id);
             cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
-            cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
+            //  cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
             cv.put("NOMBRE_FOTO", comision.getNOMBRE_FOTO());
             cv.put("ID_CARGO", comision.getID_CARGO());
+            cv.put("URL_COMISION", comision.getURL_COMISION());
             cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
             cv.put("PERIODO_HASTA", comision.getPERIODO_HASTA());
-            cv.put("URL_COMISION", comision.getURL_COMISION());
             cv.put("USUARIO_CREADOR", comision.getUSUARIO_CREADOR());
             cv.put("FECHA_CREACION", comision.getFECHA_CREACION());
 
@@ -1515,7 +1734,7 @@ public class ControladorGeneral {
         try {
             cv.put("ID_COMISION", comision.getID_COMISION());
             cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
-            cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
+            //  cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
             cv.put("NOMBRE_FOTO", comision.getNOMBRE_FOTO());
             cv.put("ID_CARGO", comision.getID_CARGO());
             cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
@@ -1537,16 +1756,49 @@ public class ControladorGeneral {
         }
     }
 
+    public boolean insertComision(List<Comision> comisiones) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Comision comision : comisiones) {
+                cv.put("ID_COMISION", comision.getID_COMISION());
+                cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
+                //  cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
+                cv.put("NOMBRE_FOTO", comision.getNOMBRE_FOTO());
+                cv.put("ID_CARGO", comision.getID_CARGO());
+                cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
+                cv.put("PERIODO_HASTA", comision.getPERIODO_HASTA());
+                cv.put("URL_COMISION", comision.getURL_COMISION());
+                cv.put("USUARIO_CREADOR", comision.getUSUARIO_CREADOR());
+                cv.put("FECHA_CREACION", comision.getFECHA_CREACION());
+
+
+                long valor = database.insert("COMISION", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOk = false;
+        }
+        return isOk;
+    }
+
     //COMISION POR ID
     public ArrayList<Comision> selectComision(int id_comision) {
 
-        String sql = "SELECT * FROM COMISION WHERE ID_COMISION=" + id_comision;
-        ArrayList<Comision> arrayComision = new ArrayList<Comision>();
+        String sql = "SELECT * FROM COMISION WHERE ID_COMISION =" + id_comision;
+        ArrayList<Comision> arrayComision = new ArrayList<>();
         String nombre = null, desde = null, hasta = null, fechaCreacion = null,
                 fechaActualizacion = null, creador = null, usuario_act = null, url_comision = null, nombre_foto = null;
         int id;
         int id_cargo;
-        byte[] foto = null;
+        //    byte[] foto = null;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -1562,8 +1814,8 @@ public class ControladorGeneral {
                         id = cursor.getInt(cursor.getColumnIndex("ID_COMISION"));
                         nombre = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_COMISION"));
-                        foto = cursor.getBlob(cursor
-                                .getColumnIndex("FOTO_COMISION"));
+//                        foto = cursor.getBlob(cursor
+//                                .getColumnIndex("FOTO_COMISION"));
                         nombre_foto = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_FOTO"));
                         id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
@@ -1582,7 +1834,7 @@ public class ControladorGeneral {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        comision = new Comision(id, nombre, foto, nombre_foto, id_cargo, null, desde, hasta, url_comision, creador,
+                        comision = new Comision(id, nombre, null, nombre_foto, id_cargo, null, desde, hasta, url_comision, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY CARGO
                         arrayComision.add(comision);
@@ -1601,7 +1853,7 @@ public class ControladorGeneral {
         nombre = null;
         desde = null;
         hasta = null;
-        foto = null;
+        //    foto = null;
         fechaCreacion = null;
         fechaActualizacion = null;
         creador = null;
@@ -1614,16 +1866,21 @@ public class ControladorGeneral {
     //LISTA COMISION
     public ArrayList<Comision> selectListaComision() {
 
-        String sql = "SELECT C.ID_COMISION, C.NOMBRE_COMISION, C.FOTO_COMISION, C.NOMBRE_FOTO, " +
+//        String sql = "SELECT C.ID_COMISION, C.NOMBRE_COMISION, C.FOTO_COMISION, C.NOMBRE_FOTO, " +
+//                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.URL_COMISION, C.USUARIO_CREADOR, " +
+//                "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
+//                "CA.CARGO FROM COMISION C INNER JOIN CARGO CA ON CA.ID_CARGO = C.ID_CARGO";
+
+        String sql = "SELECT C.ID_COMISION, C.NOMBRE_COMISION, C.NOMBRE_FOTO, " +
                 "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.URL_COMISION, C.USUARIO_CREADOR, " +
                 "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
                 "CA.CARGO FROM COMISION C INNER JOIN CARGO CA ON CA.ID_CARGO = C.ID_CARGO";
-        ArrayList<Comision> arrayComision = new ArrayList<Comision>();
+        ArrayList<Comision> arrayComision = new ArrayList<>();
         String nombre = null, desde = null, hasta = null, fechaCreacion = null,
                 fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_comision = null, nombre_foto = null;
         int id;
         int id_cargo;
-        byte[] foto = null;
+        //      byte[] foto = null;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -1639,8 +1896,8 @@ public class ControladorGeneral {
                         id = cursor.getInt(cursor.getColumnIndex("ID_COMISION"));
                         nombre = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_COMISION"));
-                        foto = cursor.getBlob(cursor
-                                .getColumnIndex("FOTO_COMISION"));
+//                        foto = cursor.getBlob(cursor
+//                                .getColumnIndex("FOTO_COMISION"));
                         nombre_foto = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_FOTO"));
                         id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
@@ -1661,7 +1918,7 @@ public class ControladorGeneral {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        comision = new Comision(id, nombre, foto, nombre_foto, id_cargo, cargo, desde, hasta, url_comision, creador,
+                        comision = new Comision(id, nombre, null, nombre_foto, id_cargo, cargo, desde, hasta, url_comision, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY COMISION
                         arrayComision.add(comision);
@@ -1680,7 +1937,7 @@ public class ControladorGeneral {
         nombre = null;
         desde = null;
         hasta = null;
-        foto = null;
+        //   foto = null;
         fechaCreacion = null;
         fechaActualizacion = null;
         creador = null;
@@ -1697,7 +1954,7 @@ public class ControladorGeneral {
         abrirBaseDeDatos();
         try {
             cv.put("NOMBRE_COMISION", comision.getNOMBRE_COMISION());
-            cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
+            // cv.put("FOTO_COMISION", comision.getFOTO_COMISION());
             cv.put("NOMBRE_FOTO", comision.getNOMBRE_FOTO());
             cv.put("ID_CARGO", comision.getID_CARGO());
             cv.put("PERIODO_DESDE", comision.getPERIODO_DESDE());
@@ -1776,7 +2033,7 @@ public class ControladorGeneral {
         try {
             cv.put("ID_DIRECCION", id);
             cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
-            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
+            // cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
             cv.put("NOMBRE_FOTO", direccion.getNOMBRE_FOTO());
             cv.put("ID_CARGO", direccion.getID_CARGO());
             cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
@@ -1805,7 +2062,7 @@ public class ControladorGeneral {
         try {
             cv.put("ID_DIRECCION", direccion.getID_DIRECCION());
             cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
-            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
+            //    cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
             cv.put("NOMBRE_FOTO", direccion.getNOMBRE_FOTO());
             cv.put("ID_CARGO", direccion.getID_CARGO());
             cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
@@ -1827,6 +2084,37 @@ public class ControladorGeneral {
         }
     }
 
+    public boolean insertDireccion(List<Direccion> direcciones) throws SQLiteException {
+        ContentValues cv = new ContentValues();
+        boolean isOk = true;
+        abrirBaseDeDatos();
+        try {
+            for (Direccion direccion : direcciones) {
+                cv.put("ID_DIRECCION", direccion.getID_DIRECCION());
+                cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
+                //    cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
+                cv.put("NOMBRE_FOTO", direccion.getNOMBRE_FOTO());
+                cv.put("ID_CARGO", direccion.getID_CARGO());
+                cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
+                cv.put("PERIODO_HASTA", direccion.getPERIODO_HASTA());
+                cv.put("URL_DIRECCION", direccion.getURL_DIRECCION());
+                cv.put("USUARIO_CREADOR", direccion.getUSUARIO_CREADOR());
+                cv.put("FECHA_CREACION", direccion.getFECHA_CREACION());
+
+                long valor = database.insert("DIRECCION", null, cv);
+                if (valor <= 0) {
+                    isOk = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOk = false;
+        }
+        return isOk;
+    }
+
     //DIRECCION POR ID
     public ArrayList<Direccion> selectDireccion(int id_direccion) {
 
@@ -1836,7 +2124,7 @@ public class ControladorGeneral {
                 fechaActualizacion = null, creador = null, usuario_act = null, url_direccion = null, nombre_foto = null;
         int id;
         int id_cargo;
-        byte[] foto = null;
+        //       byte[] foto = null;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -1852,8 +2140,8 @@ public class ControladorGeneral {
                         id = cursor.getInt(cursor.getColumnIndex("ID_DIRECCION"));
                         nombre = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_DIRECCION"));
-                        foto = cursor.getBlob(cursor
-                                .getColumnIndex("FOTO_DIRECCION"));
+//                        foto = cursor.getBlob(cursor
+//                                .getColumnIndex("FOTO_DIRECCION"));
                         nombre_foto = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_FOTO"));
                         id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
@@ -1872,7 +2160,7 @@ public class ControladorGeneral {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        direccion = new Direccion(id, nombre, foto, nombre_foto, id_cargo, null, desde, hasta, url_direccion, creador,
+                        direccion = new Direccion(id, nombre, null, nombre_foto, id_cargo, null, desde, hasta, url_direccion, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY CARGO
                         arrayDireccion.add(direccion);
@@ -1891,7 +2179,7 @@ public class ControladorGeneral {
         nombre = null;
         desde = null;
         hasta = null;
-        foto = null;
+        //       foto = null;
         fechaCreacion = null;
         fechaActualizacion = null;
         creador = null;
@@ -1903,16 +2191,20 @@ public class ControladorGeneral {
     //LISTA COMISION
     public ArrayList<Direccion> selectListaDireccion() {
 
-        String sql = "SELECT C.ID_DIRECCION, C.NOMBRE_DIRECCION, C.FOTO_DIRECCION, C.NOMBRE_FOTO, " +
+//        String sql = "SELECT C.ID_DIRECCION, C.NOMBRE_DIRECCION, C.FOTO_DIRECCION, C.NOMBRE_FOTO, " +
+//                "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.URL_DIRECCION, C.USUARIO_CREADOR, " +
+//                "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
+//                "CA.CARGO FROM DIRECCION C INNER JOIN CARGO CA ON CA.ID_CARGO = C.ID_CARGO";
+        String sql = "SELECT C.ID_DIRECCION, C.NOMBRE_DIRECCION, C.NOMBRE_FOTO, " +
                 "C.ID_CARGO, C.PERIODO_DESDE, C.PERIODO_HASTA, C.URL_DIRECCION, C.USUARIO_CREADOR, " +
                 "C.FECHA_CREACION, C.USUARIO_ACTUALIZACION, C.FECHA_ACTUALIZACION, " +
                 "CA.CARGO FROM DIRECCION C INNER JOIN CARGO CA ON CA.ID_CARGO = C.ID_CARGO";
-        ArrayList<Direccion> arrayDireccion = new ArrayList<Direccion>();
+        ArrayList<Direccion> arrayDireccion = new ArrayList<>();
         String nombre = null, desde = null, hasta = null, fechaCreacion = null,
                 fechaActualizacion = null, creador = null, usuario_act = null, cargo = null, url_direccion = null, nombre_foto = null;
         int id;
         int id_cargo;
-        byte[] foto = null;
+        //   byte[] foto = null;
         Cursor cursor = null;
         abrirBaseDeDatos();
         if (database != null && database.isOpen()) {
@@ -1928,8 +2220,8 @@ public class ControladorGeneral {
                         id = cursor.getInt(cursor.getColumnIndex("ID_DIRECCION"));
                         nombre = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_DIRECCION"));
-                        foto = cursor.getBlob(cursor
-                                .getColumnIndex("FOTO_DIRECCION"));
+//                        foto = cursor.getBlob(cursor
+//                                .getColumnIndex("FOTO_DIRECCION"));
                         nombre_foto = cursor.getString(cursor
                                 .getColumnIndex("NOMBRE_FOTO"));
                         id_cargo = cursor.getInt(cursor.getColumnIndex("ID_CARGO"));
@@ -1950,7 +2242,7 @@ public class ControladorGeneral {
                         fechaActualizacion = cursor.getString(cursor
                                 .getColumnIndex("FECHA_ACTUALIZACION"));
                         // CLASE AUX
-                        direccion = new Direccion(id, nombre, foto, nombre_foto, id_cargo, cargo, desde, hasta, url_direccion, creador,
+                        direccion = new Direccion(id, nombre, null, nombre_foto, id_cargo, cargo, desde, hasta, url_direccion, creador,
                                 fechaCreacion, usuario_act, fechaActualizacion);
                         //ARRAY COMISION
                         arrayDireccion.add(direccion);
@@ -1969,7 +2261,7 @@ public class ControladorGeneral {
         nombre = null;
         desde = null;
         hasta = null;
-        foto = null;
+        //   foto = null;
         fechaCreacion = null;
         fechaActualizacion = null;
         creador = null;
@@ -1985,7 +2277,7 @@ public class ControladorGeneral {
         abrirBaseDeDatos();
         try {
             cv.put("NOMBRE_DIRECCION", direccion.getNOMBRE_DIRECCION());
-            cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
+            //     cv.put("FOTO_DIRECCION", direccion.getFOTO_DIRECCION());
             cv.put("NOMBRE_FOTO", direccion.getNOMBRE_FOTO());
             cv.put("ID_CARGO", direccion.getID_CARGO());
             cv.put("PERIODO_DESDE", direccion.getPERIODO_DESDE());
@@ -2109,6 +2401,36 @@ public class ControladorGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertNotificacion(List<Notificacion> notificaciones)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Notificacion notificacion : notificaciones) {
+                cv.put("ID_NOTIFICACION", notificacion.getID_NOTIFICACION());
+                cv.put("TITULO", notificacion.getTITULO());
+                cv.put("NOTIFICACION", notificacion.getNOTIFICACION());
+                cv.put("USUARIO_CREADOR", notificacion.getUSUARIO_CREADOR());
+                cv.put("FECHA_CREACION", notificacion.getFECHA_CREACION());
+                cv.put("USUARIO_ACTUALIZACION", notificacion.getUSUARIO_ACTUALIZACION());
+                cv.put("FECHA_ACTUALIZACION", notificacion.getFECHA_ACTUALIZACION());
+
+                long valor = database.insert("NOTIFICACION", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     //ACTUALIZAR NOTIFICACION
@@ -2296,6 +2618,37 @@ public class ControladorGeneral {
         }
     }
 
+    public boolean insertNoticia(List<Noticia> noticias)
+            throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Noticia noticia : noticias) {
+                cv.put("ID_NOTICIA", noticia.getID_NOTICIA());
+                cv.put("TITULO", noticia.getTITULO());
+                cv.put("DESCRIPCION", noticia.getDESCRIPCION());
+                cv.put("LINK", noticia.getLINK());
+                cv.put("USUARIO_CREADOR", noticia.getUSUARIO_CREADOR());
+                cv.put("FECHA_CREACION", noticia.getFECHA_CREACION());
+                cv.put("USUARIO_ACTUALIZACION", noticia.getUSUARIO_ACTUALIZACION());
+                cv.put("FECHA_ACTUALIZACION", noticia.getFECHA_ACTUALIZACION());
+
+                long valor = database.insert("NOTICIA", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
+    }
+
     //ACTUALIZAR NOTIFICACION
     public boolean actualizarNoticia(Noticia noticia)
             throws SQLiteException {
@@ -2437,7 +2790,7 @@ public class ControladorGeneral {
         try {
             cv.put("ID_FOTO", id);
             cv.put("TITULO", foto.getTITULO());
-            cv.put("FOTO", foto.getFOTO());
+         //   cv.put("FOTO", foto.getFOTO());
             cv.put("NOMBRE_FOTO", foto.getNOMBRE_FOTO());
             cv.put("URL_FOTO", foto.getURL_FOTO());
             cv.put("USUARIO_CREADOR", foto.getUSUARIO_CREACION());
@@ -2484,6 +2837,37 @@ public class ControladorGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertFoto(List<Foto> fotos) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Foto foto : fotos) {
+                cv.put("ID_FOTO", foto.getID_FOTO());
+                cv.put("TITULO", foto.getTITULO());
+                // cv.put("FOTO", foto.getFOTO());
+                cv.put("NOMBRE_FOTO", foto.getNOMBRE_FOTO());
+                cv.put("URL_FOTO", foto.getURL_FOTO());
+                cv.put("USUARIO_CREADOR", foto.getUSUARIO_CREACION());
+                cv.put("FECHA_CREACION", foto.getFECHA_CREACION());
+                cv.put("USUARIO_ACTUALIZACION", foto.getUSUARIO_ACTUALIZACION());
+                cv.put("FECHA_ACTUALIZACION", foto.getFECHA_ACTUALIZACION());
+
+                long valor = database.insert("FOTO", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     // LISTA FOTO
@@ -2585,7 +2969,7 @@ public class ControladorGeneral {
         abrirBaseDeDatos();
         try {
             cv.put("TITULO", foto.getTITULO());
-            cv.put("FOTO", foto.getFOTO());
+         //   cv.put("FOTO", foto.getFOTO());
             cv.put("NOMBRE_FOTO", foto.getNOMBRE_FOTO());
             cv.put("URL_FOTO", foto.getURL_FOTO());
             cv.put("USUARIO_ACTUALIZACION", foto.getUSUARIO_ACTUALIZACION());
@@ -2657,7 +3041,7 @@ public class ControladorGeneral {
         try {
             cv.put("ID_PUBLICIDAD", id);
             cv.put("TITULO", publicidad.getTITULO());
-            cv.put("LOGO", publicidad.getLOGO());
+        //    cv.put("LOGO", publicidad.getLOGO());
             cv.put("OTROS", publicidad.getOTROS());
             cv.put("NOMBRE_FOTO", publicidad.getNOMBRE_FOTO());
             cv.put("URL_FOTO", publicidad.getURL_FOTO());
@@ -2706,6 +3090,38 @@ public class ControladorGeneral {
             cerrarBaseDeDatos();
             return false;
         }
+    }
+
+    public boolean insertPublicidad(List<Publicidad> publicidades) throws SQLiteException {
+
+        ContentValues cv = new ContentValues();
+        boolean isOK = true;
+        abrirBaseDeDatos();
+        try {
+            for (Publicidad publicidad : publicidades) {
+                cv.put("ID_PUBLICIDAD", publicidad.getID_PUBLICIDAD());
+                cv.put("TITULO", publicidad.getTITULO());
+                //   cv.put("LOGO", publicidad.getLOGO());
+                cv.put("OTROS", publicidad.getOTROS());
+                cv.put("NOMBRE_FOTO", publicidad.getNOMBRE_FOTO());
+                cv.put("URL_FOTO", publicidad.getURL_FOTO());
+                cv.put("USUARIO_CREADOR", publicidad.getUSUARIO_CREACION());
+                cv.put("FECHA_CREACION", publicidad.getFECHA_CREACION());
+                cv.put("USUARIO_ACTUALIZACION", publicidad.getUSUARIO_ACTUALIZACION());
+                cv.put("FECHA_ACTUALIZACION", publicidad.getFECHA_ACTUALIZACION());
+
+                long valor = database.insert("PUBLICIDAD", null, cv);
+                if (valor <= 0) {
+                    isOK = false;
+                    break;
+                }
+            }
+            cerrarBaseDeDatos();
+        } catch (SQLiteException e) {
+            cerrarBaseDeDatos();
+            isOK = false;
+        }
+        return isOK;
     }
 
     // LISTA PUBLICIDAD
@@ -2813,7 +3229,7 @@ public class ControladorGeneral {
         abrirBaseDeDatos();
         try {
             cv.put("TITULO", publicidad.getTITULO());
-            cv.put("LOGO", publicidad.getLOGO());
+       //     cv.put("LOGO", publicidad.getLOGO());
             cv.put("OTROS", publicidad.getOTROS());
             cv.put("NOMBRE_FOTO", publicidad.getNOMBRE_FOTO());
             cv.put("URL_FOTO", publicidad.getURL_FOTO());

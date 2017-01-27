@@ -49,6 +49,8 @@
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="com.estrelladelsur.estrelladelsur" />
             </intent-filter>
         </receiver>
@@ -56,14 +58,14 @@
         <service android:name=".navegador.usuario.GCMIntentService" />
 
         <!--SERVICE CONEXION INTERNET-->
-        <receiver
-            android:name=".auxiliar.NetworkChangeReceiver"
-            android:label="NetworkChangeReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver-->
+            <!--android:name=".auxiliar.NetworkChangeReceiver"-->
+            <!--android:label="NetworkChangeReceiver">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+                <!--<action android:name="android.net.wifi.WIFI_STATE_CHANGED" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
         <!--SPLASH USUARIO-->
         <activity android:name=".navegador.usuario.SplashUsuario" android:noHistory="true">

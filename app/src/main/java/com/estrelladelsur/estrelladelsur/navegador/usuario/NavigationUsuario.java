@@ -2,12 +2,8 @@ package com.estrelladelsur.estrelladelsur.navegador.usuario;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,9 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.auxiliar.ScrimInsetsFrameLayout;
@@ -70,7 +64,6 @@ public class NavigationUsuario extends AppCompatActivity {
     private ControladorGeneral controladorGeneral;
     private ControladorUsuarioGeneral controladorUsuarioGeneral;
     private Typeface titulos;
-    private Typeface adeful;
     private AuxiliarGeneral auxiliarGeneral;
     private InterstitialAd mInterstitialAd;
     private AdRequest adRequest;
@@ -95,7 +88,6 @@ public class NavigationUsuario extends AppCompatActivity {
         controladorUsuarioGeneral = new ControladorUsuarioGeneral(this);
         auxiliarGeneral = new AuxiliarGeneral(NavigationUsuario.this);
         titulos = auxiliarGeneral.tituloFont(NavigationUsuario.this);
-        adeful = auxiliarGeneral.ligaFont(NavigationUsuario.this);
         init();
         drawerLayout.openDrawer(GravityCompat.START);
         inicializarDatosGenerales();
@@ -299,7 +291,6 @@ public class NavigationUsuario extends AppCompatActivity {
                 listDataHeader.add(modulos.get(i).getMODULO());
             }
         }
-
         // Adding child data
         institucionalChild = new ArrayList<>();
         mi_equipoChild = new ArrayList<>();
@@ -313,16 +304,13 @@ public class NavigationUsuario extends AppCompatActivity {
                     case 1:
                         institucionalChild.add(submodulos.get(i).getSUBMODULO());
                         break;
-
                     case 2:
                         if (submodulos.get(i).getID_SUBMODULO() != 5)
                             mi_equipoChild.add(submodulos.get(i).getSUBMODULO());
                         break;
-
                     case 3:
                         ligaChild.add(submodulos.get(i).getSUBMODULO());
                         break;
-
                     case 4:
                         socialChild.add(submodulos.get(i).getSUBMODULO());
                         break;
@@ -394,14 +382,7 @@ public class NavigationUsuario extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-
             finish();
-
-//            Intent intent = new Intent(this, NavigationUsuario.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-//                    | Intent.FLAG_ACTIVITY_NEW_TASK
-//                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            startActivity(intent);
             return false;
         }
         return false;

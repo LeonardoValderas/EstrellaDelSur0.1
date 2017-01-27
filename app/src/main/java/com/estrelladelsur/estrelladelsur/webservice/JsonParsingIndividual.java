@@ -4,10 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.StrictMode;
-
-import com.estrelladelsur.estrelladelsur.database.administrador.adeful.ControladorAdeful;
 import com.estrelladelsur.estrelladelsur.database.administrador.general.ControladorGeneral;
-import com.estrelladelsur.estrelladelsur.database.administrador.lifuba.ControladorLifuba;
 import com.estrelladelsur.estrelladelsur.database.usuario.adeful.ControladorUsuarioAdeful;
 import com.estrelladelsur.estrelladelsur.database.usuario.general.ControladorUsuarioGeneral;
 import com.estrelladelsur.estrelladelsur.database.usuario.lifuba.ControladorUsuarioLifuba;
@@ -21,21 +18,15 @@ import com.estrelladelsur.estrelladelsur.entidad.Equipo;
 import com.estrelladelsur.estrelladelsur.entidad.Fixture;
 import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import com.estrelladelsur.estrelladelsur.entidad.Jugador;
-import com.estrelladelsur.estrelladelsur.entidad.Modulo;
 import com.estrelladelsur.estrelladelsur.entidad.Noticia;
 import com.estrelladelsur.estrelladelsur.entidad.Notificacion;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
 import com.estrelladelsur.estrelladelsur.entidad.Sancion;
-import com.estrelladelsur.estrelladelsur.entidad.SubModulo;
 import com.estrelladelsur.estrelladelsur.entidad.Tabla;
 import com.estrelladelsur.estrelladelsur.entidad.Torneo;
-import com.estrelladelsur.estrelladelsur.entidad.Usuario;
-import com.estrelladelsur.estrelladelsur.navegador.usuario.SplashUsuario;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -121,19 +112,17 @@ public class JsonParsingIndividual {
     public boolean processingJson(JSONArray jsonArray, String entity, Context context, String fecha) {
 
         JSONObject jsonAux = null;
+        List<JSONObject> jsonsAux = new ArrayList<>();
         boolean precessOK = true;
         if (jsonArray != null) {
             try {
                 if (deleteEntity(entity, context)) {
-
                     for (int i = 0; i < jsonArray.length(); i++) {
                         jsonAux = jsonArray.getJSONObject(i);
-
-                        if (!populateEntity(entity, jsonAux, context, fecha)) {
-                            precessOK = false;
-                            break;
-                        }
+                        jsonsAux.add(jsonAux);
                     }
+                    if (!populateEntity(entity, jsonsAux, context, fecha))
+                        precessOK = false;
                 } else {
                     precessOK = false;
                 }
@@ -141,7 +130,7 @@ public class JsonParsingIndividual {
                 precessOK = false;
 
             }
-        } else if (entity.equals(SplashUsuario.ENTRENAMIENTO_CANTIDAD_ADEFUL)) {
+        } else if (entity.equals(Variable.ENTRENAMIENTO_CANTIDAD_ADEFUL)) {
             populateCantidadEntrenamiento(entity, context);
         } else {
             precessOK = false;
@@ -161,74 +150,56 @@ public class JsonParsingIndividual {
         ControladorUsuarioAdeful controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
         ControladorUsuarioLifuba controladorUsuarioLifuba = new ControladorUsuarioLifuba(context);
         ControladorUsuarioGeneral controladorUsuarioGeneral = new ControladorUsuarioGeneral(context);
-        ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean deleteOk = true;
         switch (entity) {
-            //TABLA ADEFUL
-//            case SplashUsuario.TABLA_ADEFUL: {
-//                if (!controladorUsuarioAdeful.eliminarTablaAdeful())
-//                    deleteOk = false;
-//                break;
-//            }
-//            case SplashUsuario.TABLA_LIFUBA: {
-//                if (!controladorUsuarioLifuba.eliminarTablaLifuba())
-//                    deleteOk = false;
-//                break;
-//            }
-//            //TABLA GENERAR
-//            case SplashUsuario.TABLA_GENERAL: {
-//                if (!controladorUsuarioGeneral.eliminarTablaAdeful())
-//                    deleteOk = false;
-//                break;
-//            }
             //INSTITUCION
-            case SplashUsuario.ARTICULO: {
+            case Variable.ARTICULO: {
                 if (!controladorUsuarioGeneral.eliminarArticuloUsuario())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.COMISION: {
+            case Variable.COMISION: {
                 if (!controladorUsuarioGeneral.eliminarComisionUsuario())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.DIRECCION: {
+            case Variable.DIRECCION: {
                 if (!controladorUsuarioGeneral.eliminarDireccionUsuario())
                     deleteOk = false;
                 break;
             }
             //LIGA
-            case SplashUsuario.EQUIPO_ADEFUL: {
+            case Variable.EQUIPO_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarEquipoUsuarioAdeful())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.EQUIPO_LIFUBA: {
+            case Variable.EQUIPO_LIFUBA: {
                 if (!controladorUsuarioLifuba.eliminarEquipoUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.TORNEO_ADEFUL: {
+            case Variable.TORNEO_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarTorneoUsuarioAdeful())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.TORNEO_LIFUBA: {
+            case Variable.TORNEO_LIFUBA: {
                 if (!controladorUsuarioLifuba.eliminarTorneoUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.CANCHA_ADEFUL: {
+            case Variable.CANCHA_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarCanchaUsuarioAdeful())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.CANCHA_LIFUBA: {
+            case Variable.CANCHA_LIFUBA: {
                 if (!controladorUsuarioLifuba.eliminarCanchaUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.DIVISION_ADEFUL: {
+            case Variable.DIVISION_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarDivisionUsuarioAdeful())
                     deleteOk = false;
                 if (!controladorUsuarioLifuba.eliminarDivisionUsuarioLifuba())
@@ -236,175 +207,114 @@ public class JsonParsingIndividual {
                 break;
             }
             //MI EQUIPO
-            case SplashUsuario.FIXTURE_ADEFUL: {
+            case Variable.FIXTURE_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarFixtureUsuarioAdeful())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.FIXTURE_LIFUBA: {
+            case Variable.FIXTURE_LIFUBA: {
                 if (!controladorUsuarioLifuba.eliminarFixtureUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.JUGADOR_ADEFUL: {
+            case Variable.JUGADOR_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarJugadorUsuarioAdeful())
                     deleteOk = false;
                 if (!controladorUsuarioLifuba.eliminarJugadorUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.ENTRENAMIENTO_ADEFUL: {
+            case Variable.ENTRENAMIENTO_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarEntrenamientoUsuarioAdeful())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.ENTRENAMIENTO_DIVISION_ADEFUL: {
+            case Variable.ENTRENAMIENTO_DIVISION_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarDivisionEntrenamientoUsuarioAdeful())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.ENTRENAMIENTO_CANTIDAD_ADEFUL: {
+            case Variable.ENTRENAMIENTO_CANTIDAD_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarCantidadEntrenamientoUsuarioAdeful())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.ENTRENAMIENTO_ASISTENCIA_ADEFUL: {
+            case Variable.ENTRENAMIENTO_ASISTENCIA_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarAsistenciaEntrenamientoUsuarioAdeful())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.SANCION_ADEFUL: {
+            case Variable.SANCION_ADEFUL: {
                 if (!controladorUsuarioAdeful.eliminarSancionUsuarioAdeful())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.SANCION_LIFUBA: {
+            case Variable.SANCION_LIFUBA: {
                 if (!controladorUsuarioLifuba.eliminarSancionUsuarioLifuba())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.NOTIFICACION: {
+            case Variable.NOTIFICACION: {
                 if (!controladorUsuarioGeneral.eliminarNotificacionUsuario())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.NOTICIA: {
+            case Variable.NOTICIA: {
                 if (!controladorUsuarioGeneral.eliminarNoticiaUsuario())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.FOTO: {
+            case Variable.FOTO: {
                 if (!controladorUsuarioGeneral.eliminarFotoUsuario())
                     deleteOk = false;
                 break;
             }
-            case SplashUsuario.PUBLICIDAD: {
+            case Variable.PUBLICIDAD: {
                 if (!controladorUsuarioGeneral.eliminarPublicidadUsuario())
                     deleteOk = false;
                 break;
             }
-//            case SplashUsuario.USUARIO: {
-//                if (!controladorGeneral.eliminarUsuario())
-//                    deleteOk = false;
-//                break;
-//            }
-//            case SplashUsuario.MODULO: {
-//                if (!controladorUsuarioGeneral.eliminarModuloUsuario())
-//                    deleteOk = false;
-//                if (!controladorGeneral.eliminarModulo())
-//                    deleteOk = false;
-//                break;
-//            }
-//            case SplashUsuario.SUBMODULO: {
-//                if (!controladorUsuarioGeneral.eliminarSubmoduloUsuario())
-//                    deleteOk = false;
-//                if (!controladorGeneral.eliminarSubModulo())
-//                    deleteOk = false;
-//                break;
-//            }
         }
         return deleteOk;
     }
 
-    public boolean populateEntity(String entity, JSONObject jsonAux, Context context, String fecha) {
+    public boolean populateEntity(String entity, List<JSONObject> jsonsAux, Context context, String fecha) {
         ControladorUsuarioAdeful controladorUsuarioAdeful = new ControladorUsuarioAdeful(context);
         ControladorUsuarioGeneral controladorUsuarioGeneral = new ControladorUsuarioGeneral(context);
         ControladorUsuarioLifuba controladorUsuarioLifuba = new ControladorUsuarioLifuba(context);
-        ControladorGeneral controladorGeneral = new ControladorGeneral(context);
         boolean insertOk = true;
         switch (entity) {
-            //TABLA
-//            case SplashUsuario.TABLA_ADEFUL: {
-//                try {
-//                    Tabla tabla = new Tabla(jsonAux.getInt("ID_TABLA"),
-//                            jsonAux.getString("TABLA"), jsonAux.getString("FECHA"));
-//
-//                    if (!controladorUsuarioAdeful.insertTabla(tabla))
-//                        insertOk = false;
-//
-//                } catch (JSONException e) {
-//                    insertOk = false;
-//                }
-//                break;
-//            }
-//            case SplashUsuario.TABLA_LIFUBA: {
-//                try {
-//                    Tabla tabla = new Tabla(jsonAux.getInt("ID_TABLA"),
-//                            jsonAux.getString("TABLA"), jsonAux.getString("FECHA"));
-//
-//                    if (!controladorUsuarioLifuba.insertTabla(tabla))
-//                        insertOk = false;
-//
-//                } catch (JSONException e) {
-//                    insertOk = false;
-//                }
-//                break;
-//            }
-//            case SplashUsuario.TABLA_GENERAL: {
-//                try {
-//                    Tabla tabla = new Tabla(jsonAux.getInt("ID_TABLA"),
-//                            jsonAux.getString("TABLA"), jsonAux.getString("FECHA"));
-//
-//                    if (!controladorUsuarioGeneral.insertTabla(tabla))
-//                        insertOk = false;
-//
-//                } catch (JSONException e) {
-//                    insertOk = false;
-//                }
-//                break;
-//            }
             //INSTITUCION
-            case SplashUsuario.ARTICULO: {
+            case Variable.ARTICULO: {
                 try {
+                    List<Articulo> articulos = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
                     Articulo articulo = new Articulo(jsonAux.getInt("ID_ARTICULO"),
                             jsonAux.getString("TITULO"), jsonAux.getString("ARTICULO"));
-
-                    if (!controladorUsuarioGeneral.insertArticuloUsuario(articulo))
+                        articulos.add(articulo);
+                    }
+                    if (!controladorUsuarioGeneral.insertArticuloUsuario(articulos))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableGral(AsyncTaskGenericIndividual.TABLA_ARTICULO, fecha, context))
+                        if (!updateTableXTableGral(Variable.TABLA_ARTICULO, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-            case SplashUsuario.COMISION: {
+            case Variable.COMISION: {
                 try {
-                    String imageString = jsonAux.getString("FOTO_COMISION");
-
-                    Bitmap b = getBitmap(imageString);
-                    byte[] byteArray = null;
-                    if (b != null)
-                        byteArray = parseBitmapToByte(b);
-
-                    Comision comision = new Comision(jsonAux.getInt("ID_COMISION"),
-                            jsonAux.getString("NOMBRE_COMISION"), byteArray, jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
-
-                    if (!controladorUsuarioGeneral.insertComisionUsuario(comision))
+                    List<Comision> comisiones = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Comision comision = new Comision(jsonAux.getInt("ID_COMISION"),
+                                jsonAux.getString("NOMBRE_COMISION"), jsonAux.getString("FOTO_COMISION"), jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
+                        comisiones.add(comision);
+                    }
+                    if (!controladorUsuarioGeneral.insertComisionUsuario(comisiones))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableGral(AsyncTaskGenericIndividual.TABLA_COMISION, fecha, context))
+                        if (!updateTableXTableGral(Variable.TABLA_COMISION, fecha, context))
                             insertOk = false;
 
                 } catch (JSONException e) {
@@ -412,21 +322,18 @@ public class JsonParsingIndividual {
                 }
                 break;
             }
-            case SplashUsuario.DIRECCION: {
+            case Variable.DIRECCION: {
                 try {
-                    String imageString = jsonAux.getString("FOTO_DIRECCION");
-                    Bitmap b = getBitmap(imageString);
-                    byte[] byteArray = null;
-                    if (b != null)
-                        byteArray = parseBitmapToByte(b);
-
-                    Direccion direccion = new Direccion(jsonAux.getInt("ID_DIRECCION"),
-                            jsonAux.getString("NOMBRE_DIRECCION"), byteArray, jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
-
-                    if (!controladorUsuarioGeneral.insertDireccionUsuario(direccion))
+                    List<Direccion> direcciones = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Direccion direccion = new Direccion(jsonAux.getInt("ID_DIRECCION"),
+                                jsonAux.getString("NOMBRE_DIRECCION"), jsonAux.getString("FOTO_DIRECCION"), jsonAux.getString("CARGO"), jsonAux.getString("PERIODO_DESDE"), jsonAux.getString("PERIODO_HASTA"));
+                        direcciones.add(direccion);
+                    }
+                    if (!controladorUsuarioGeneral.insertDireccionUsuario(direcciones))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableGral(AsyncTaskGenericIndividual.TABLA_DIRECCION, fecha, context))
+                        if (!updateTableXTableGral(Variable.TABLA_DIRECCION, fecha, context))
                             insertOk = false;
 
                 } catch (JSONException e) {
@@ -435,44 +342,36 @@ public class JsonParsingIndividual {
                 break;
             }
             //LIGA
-            case SplashUsuario.EQUIPO_ADEFUL: {
+            case Variable.EQUIPO_ADEFUL: {
                 try {
-                    String imageString = jsonAux.getString("ESCUDO_EQUIPO");
-
-                    Bitmap b = getBitmap(imageString);
-                    byte[] byteArray = null;
-                    if (b != null)
-                        byteArray = parseBitmapToByte(b);
-
-                    Equipo equipo = new Equipo(jsonAux.getInt("ID_EQUIPO"),
-                            jsonAux.getString("NOMBRE_EQUIPO"), byteArray);
-
-                    if (!controladorUsuarioAdeful.insertEquipoUsuarioAdeful(equipo))
+                    List<Equipo> equipos = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Equipo equipo = new Equipo(jsonAux.getInt("ID_EQUIPO"),
+                                jsonAux.getString("NOMBRE_EQUIPO"), jsonAux.getString("ESCUDO_EQUIPO"));
+                        equipos.add(equipo);
+                    }
+                    if (!controladorUsuarioAdeful.insertEquipoUsuarioAdeful(equipos))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableAdeful(AsyncTaskGenericIndividual.TABLA_EQUIPO_ADEFUL, fecha, context))
+                        if (!updateTableXTableAdeful(Variable.TABLA_EQUIPO_ADEFUL, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-            case SplashUsuario.EQUIPO_LIFUBA: {
+            case Variable.EQUIPO_LIFUBA: {
                 try {
-                    String imageString = jsonAux.getString("ESCUDO_EQUIPO");
-
-                    Bitmap b = getBitmap(imageString);
-                    byte[] byteArray = null;
-                    if (b != null)
-                        byteArray = parseBitmapToByte(b);
-
-                    Equipo equipo = new Equipo(jsonAux.getInt("ID_EQUIPO"),
-                            jsonAux.getString("NOMBRE_EQUIPO"), byteArray);
-
-                    if (!controladorUsuarioLifuba.insertEquipoUsuarioLifuba(equipo))
+                    List<Equipo> equipos = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Equipo equipo = new Equipo(jsonAux.getInt("ID_EQUIPO"),
+                                jsonAux.getString("NOMBRE_EQUIPO"), jsonAux.getString("ESCUDO_EQUIPO"));
+                        equipos.add(equipo);
+                    }
+                    if (!controladorUsuarioLifuba.insertEquipoUsuarioLifuba(equipos))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableLifuba(AsyncTaskGenericIndividual.TABLA_EQUIPO_LIFUBA, fecha, context))
+                        if (!updateTableXTableLifuba(Variable.TABLA_EQUIPO_LIFUBA, fecha, context))
                             insertOk = false;
 
                 } catch (JSONException e) {
@@ -480,16 +379,18 @@ public class JsonParsingIndividual {
                 }
                 break;
             }
-            case SplashUsuario.TORNEO_ADEFUL: {
+            case Variable.TORNEO_ADEFUL: {
                 try {
-
-                    Torneo torneo = new Torneo(jsonAux.getInt("ID_TORNEO"),
-                            jsonAux.getString("DESCRIPCION"));
-
-                    if (!controladorUsuarioAdeful.insertTorneoUsuarioAdeful(torneo))
+                    List<Torneo> torneos = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Torneo torneo = new Torneo(jsonAux.getInt("ID_TORNEO"),
+                                jsonAux.getString("DESCRIPCION"));
+                        torneos.add(torneo);
+                    }
+                    if (!controladorUsuarioAdeful.insertTorneoUsuarioAdeful(torneos))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableAdeful(AsyncTaskGenericIndividual.TABLA_TORNEO_ADEFUL, fecha, context))
+                        if (!updateTableXTableAdeful(Variable.TABLA_TORNEO_ADEFUL, fecha, context))
                             insertOk = false;
 
                 } catch (JSONException e) {
@@ -497,16 +398,18 @@ public class JsonParsingIndividual {
                 }
                 break;
             }
-            case SplashUsuario.TORNEO_LIFUBA: {
+            case Variable.TORNEO_LIFUBA: {
                 try {
-
-                    Torneo torneo = new Torneo(jsonAux.getInt("ID_TORNEO"),
-                            jsonAux.getString("DESCRIPCION"));
-
-                    if (!controladorUsuarioLifuba.insertTorneoUsuarioLifuba(torneo))
+                    List<Torneo> torneos = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Torneo torneo = new Torneo(jsonAux.getInt("ID_TORNEO"),
+                                jsonAux.getString("DESCRIPCION"));
+                        torneos.add(torneo);
+                    }
+                    if (!controladorUsuarioLifuba.insertTorneoUsuarioLifuba(torneos))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableLifuba(AsyncTaskGenericIndividual.TABLA_TORNEO_LIFUBA, fecha, context))
+                        if (!updateTableXTableLifuba(Variable.TABLA_TORNEO_LIFUBA, fecha, context))
                             insertOk = false;
 
                 } catch (JSONException e) {
@@ -514,15 +417,18 @@ public class JsonParsingIndividual {
                 }
                 break;
             }
-            case SplashUsuario.CANCHA_ADEFUL: {
+            case Variable.CANCHA_ADEFUL: {
                 try {
-                    Cancha cancha = new Cancha(jsonAux.getInt("ID_CANCHA"), jsonAux.getString("NOMBRE"), jsonAux.getString("LONGITUD"),
-                            jsonAux.getString("LATITUD"), jsonAux.getString("DIRECCION"));
-
-                    if (!controladorUsuarioAdeful.insertCanchaUsuarioAdeful(cancha))
+                    List<Cancha> canchas = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Cancha cancha = new Cancha(jsonAux.getInt("ID_CANCHA"), jsonAux.getString("NOMBRE"), jsonAux.getString("LONGITUD"),
+                                jsonAux.getString("LATITUD"), jsonAux.getString("DIRECCION"));
+                        canchas.add(cancha);
+                    }
+                    if (!controladorUsuarioAdeful.insertCanchaUsuarioAdeful(canchas))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableAdeful(AsyncTaskGenericIndividual.TABLA_CANCHA_ADEFUL, fecha, context))
+                        if (!updateTableXTableAdeful(Variable.TABLA_CANCHA_ADEFUL, fecha, context))
                             insertOk = false;
 
                 } catch (JSONException e) {
@@ -530,15 +436,18 @@ public class JsonParsingIndividual {
                 }
                 break;
             }
-            case SplashUsuario.CANCHA_LIFUBA: {
+            case Variable.CANCHA_LIFUBA: {
                 try {
-                    Cancha cancha = new Cancha(jsonAux.getInt("ID_CANCHA"), jsonAux.getString("NOMBRE"), jsonAux.getString("LONGITUD"),
-                            jsonAux.getString("LATITUD"), jsonAux.getString("DIRECCION"));
-
-                    if (!controladorUsuarioLifuba.insertCanchaUsuarioLifuba(cancha))
+                    List<Cancha> canchas = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Cancha cancha = new Cancha(jsonAux.getInt("ID_CANCHA"), jsonAux.getString("NOMBRE"), jsonAux.getString("LONGITUD"),
+                                jsonAux.getString("LATITUD"), jsonAux.getString("DIRECCION"));
+                        canchas.add(cancha);
+                    }
+                    if (!controladorUsuarioLifuba.insertCanchaUsuarioLifuba(canchas))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableLifuba(AsyncTaskGenericIndividual.TABLA_CANCHA_LIFUBA, fecha, context))
+                        if (!updateTableXTableLifuba(Variable.TABLA_CANCHA_LIFUBA, fecha, context))
                             insertOk = false;
 
                 } catch (JSONException e) {
@@ -546,17 +455,20 @@ public class JsonParsingIndividual {
                 }
                 break;
             }
-            case SplashUsuario.DIVISION_ADEFUL: {
+            case Variable.DIVISION_ADEFUL: {
                 try {
-                    Division division = new Division(jsonAux.getInt("ID_DIVISION"),
-                            jsonAux.getString("DESCRIPCION"));
-
-                    if (!controladorUsuarioAdeful.insertDivisionUsuarioAdeful(division))
+                    List<Division> divisiones = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Division division = new Division(jsonAux.getInt("ID_DIVISION"),
+                                jsonAux.getString("DESCRIPCION"));
+                        divisiones.add(division);
+                    }
+                    if (!controladorUsuarioAdeful.insertDivisionUsuarioAdeful(divisiones))
                         insertOk = false;
-                    if (!controladorUsuarioLifuba.insertDivisionUsuarioLifuba(division))
+                    if (!controladorUsuarioLifuba.insertDivisionUsuarioLifuba(divisiones))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableAdeful(AsyncTaskGenericIndividual.TABLA_DIVISION_ADEFUL, fecha, context))
+                        if (!updateTableXTableAdeful(Variable.TABLA_DIVISION_ADEFUL, fecha, context))
                             insertOk = false;
 
                 } catch (JSONException e) {
@@ -565,71 +477,71 @@ public class JsonParsingIndividual {
                 break;
             }
             //MI EQUIPO
-            case SplashUsuario.FIXTURE_ADEFUL: {
+            case Variable.FIXTURE_ADEFUL: {
                 try {
-
-                    Fixture fixture = new Fixture(jsonAux.getInt("ID_FIXTURE"),
-                            jsonAux.getInt("ID_EQUIPO_LOCAL"),
-                            jsonAux.getInt("ID_EQUIPO_VISITA"),
-                            jsonAux.getInt("ID_DIVISION"),
-                            jsonAux.getInt("ID_TORNEO"),
-                            jsonAux.getInt("ID_CANCHA"), jsonAux.getString("FECHA"),
-                            jsonAux.getString("ANIO"), jsonAux.getString("DIA"),
-                            jsonAux.getString("HORA"), jsonAux.getString("RESULTADO_LOCAL"),
-                            jsonAux.getString("RESULTADO_VISITA"));
-
-                    if (!controladorUsuarioAdeful.insertFixtureUsuarioAdeful(fixture))
+                    List<Fixture> fixtures = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Fixture fixture = new Fixture(jsonAux.getInt("ID_FIXTURE"),
+                                jsonAux.getInt("ID_EQUIPO_LOCAL"),
+                                jsonAux.getInt("ID_EQUIPO_VISITA"),
+                                jsonAux.getInt("ID_DIVISION"),
+                                jsonAux.getInt("ID_TORNEO"),
+                                jsonAux.getInt("ID_CANCHA"), jsonAux.getString("FECHA"),
+                                jsonAux.getString("ANIO"), jsonAux.getString("DIA"),
+                                jsonAux.getString("HORA"), jsonAux.getString("RESULTADO_LOCAL"),
+                                jsonAux.getString("RESULTADO_VISITA"));
+                        fixtures.add(fixture);
+                    }
+                    if (!controladorUsuarioAdeful.insertFixtureUsuarioAdeful(fixtures))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableAdeful(AsyncTaskGenericIndividual.TABLA_FIXTURE_ADEFUL, fecha, context))
+                        if (!updateTableXTableAdeful(Variable.TABLA_FIXTURE_ADEFUL, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-            case SplashUsuario.FIXTURE_LIFUBA: {
+            case Variable.FIXTURE_LIFUBA: {
                 try {
-
-                    Fixture fixture = new Fixture(jsonAux.getInt("ID_FIXTURE"),
-                            jsonAux.getInt("ID_EQUIPO_LOCAL"),
-                            jsonAux.getInt("ID_EQUIPO_VISITA"),
-                            jsonAux.getInt("ID_DIVISION"),
-                            jsonAux.getInt("ID_TORNEO"),
-                            jsonAux.getInt("ID_CANCHA"), jsonAux.getString("FECHA"),
-                            jsonAux.getString("ANIO"), jsonAux.getString("DIA"),
-                            jsonAux.getString("HORA"), jsonAux.getString("RESULTADO_LOCAL"),
-                            jsonAux.getString("RESULTADO_VISITA"));
-
-                    if (!controladorUsuarioLifuba.insertFixtureUsuarioLifuba(fixture))
+                    List<Fixture> fixtures = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Fixture fixture = new Fixture(jsonAux.getInt("ID_FIXTURE"),
+                                jsonAux.getInt("ID_EQUIPO_LOCAL"),
+                                jsonAux.getInt("ID_EQUIPO_VISITA"),
+                                jsonAux.getInt("ID_DIVISION"),
+                                jsonAux.getInt("ID_TORNEO"),
+                                jsonAux.getInt("ID_CANCHA"), jsonAux.getString("FECHA"),
+                                jsonAux.getString("ANIO"), jsonAux.getString("DIA"),
+                                jsonAux.getString("HORA"), jsonAux.getString("RESULTADO_LOCAL"),
+                                jsonAux.getString("RESULTADO_VISITA"));
+                        fixtures.add(fixture);
+                    }
+                    if (!controladorUsuarioLifuba.insertFixtureUsuarioLifuba(fixtures))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableLifuba(AsyncTaskGenericIndividual.TABLA_FIXTURE_LIFUBA, fecha, context))
+                        if (!updateTableXTableLifuba(Variable.TABLA_FIXTURE_LIFUBA, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-            case SplashUsuario.JUGADOR_ADEFUL: {
+            case Variable.JUGADOR_ADEFUL: {
                 try {
-                    String imageString = jsonAux.getString("FOTO_JUGADOR");
-
-                    Bitmap b = getBitmap(imageString);
-                    byte[] byteArray = null;
-                    if (b != null)
-                        byteArray = parseBitmapToByte(b);
-
-                    Jugador jugador = new Jugador(jsonAux.getInt("ID_JUGADOR"),
-                            jsonAux.getString("NOMBRE_JUGADOR"), byteArray, jsonAux.getInt("ID_DIVISION"), jsonAux.getString("DIVISION"),
-                            jsonAux.getString("POSICION"));
-
-                    if (!controladorUsuarioAdeful.insertJugadorUsuarioAdeful(jugador))
+                    List<Jugador> jugadores = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Jugador jugador = new Jugador(jsonAux.getInt("ID_JUGADOR"),
+                                jsonAux.getString("NOMBRE_JUGADOR"), jsonAux.getString("FOTO_JUGADOR"), jsonAux.getInt("ID_DIVISION"), jsonAux.getString("DIVISION"),
+                                jsonAux.getString("POSICION"));
+                        jugadores.add(jugador);
+                    }
+                    if (!controladorUsuarioAdeful.insertJugadorUsuarioAdeful(jugadores))
                         insertOk = false;
-                    if (!controladorUsuarioLifuba.insertJugadorUsuarioLifuba(jugador))
+                    if (!controladorUsuarioLifuba.insertJugadorUsuarioLifuba(jugadores))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableAdeful(AsyncTaskGenericIndividual.TABLA_JUGADOR, fecha, context))
+                        if (!updateTableXTableAdeful(Variable.TABLA_JUGADOR, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
@@ -637,17 +549,19 @@ public class JsonParsingIndividual {
                 break;
             }
             //ENTRENAMIENTO
-            case SplashUsuario.ENTRENAMIENTO_ADEFUL: {
+            case Variable.ENTRENAMIENTO_ADEFUL: {
                 try {
-
-                    Entrenamiento entrenamiento = new Entrenamiento(jsonAux.getInt("ID_ENTRENAMIENTO"),
-                            jsonAux.getString("DIA_ENTRENAMIENTO"),
-                            jsonAux.getString("HORA_ENTRENAMIENTO"), jsonAux.getString("NOMBRE"));
-
-                    if (!controladorUsuarioAdeful.insertEntrenamientoUsuarioAdeful(entrenamiento))
+                    List<Entrenamiento> entrenamientos = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Entrenamiento entrenamiento = new Entrenamiento(jsonAux.getInt("ID_ENTRENAMIENTO"),
+                                jsonAux.getString("DIA_ENTRENAMIENTO"),
+                                jsonAux.getString("HORA_ENTRENAMIENTO"), jsonAux.getString("NOMBRE"));
+                        entrenamientos.add(entrenamiento);
+                    }
+                    if (!controladorUsuarioAdeful.insertEntrenamientoUsuarioAdeful(entrenamientos))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableAdeful(AsyncTaskGenericIndividual.TABLA_ENTRENAMIENTO, fecha, context))
+                        if (!updateTableXTableAdeful(Variable.TABLA_ENTRENAMIENTO, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
@@ -655,26 +569,24 @@ public class JsonParsingIndividual {
                 break;
             }
             //MI EQUIPO
-            case SplashUsuario.ENTRENAMIENTO_DIVISION_ADEFUL: {
+            case Variable.ENTRENAMIENTO_DIVISION_ADEFUL: {
                 try {
-
-                    Entrenamiento entrenamiento = new Entrenamiento(true, jsonAux.getInt("ID_ENTRENAMIENTO_DIVISION"),
-                            jsonAux.getInt("ID_ENTRENAMIENTO"),
-                            jsonAux.getInt("ID_DIVISION"));
-
-                    if (!controladorUsuarioAdeful.insertEntrenamientoDivisionUsuarioAdeful(entrenamiento))
+                    List<Entrenamiento> entrenamientos = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Entrenamiento entrenamiento = new Entrenamiento(true, jsonAux.getInt("ID_ENTRENAMIENTO_DIVISION"),
+                                jsonAux.getInt("ID_ENTRENAMIENTO"),
+                                jsonAux.getInt("ID_DIVISION"));
+                        entrenamientos.add(entrenamiento);
+                    }
+                    if (!controladorUsuarioAdeful.insertEntrenamientoDivisionUsuarioAdeful(entrenamientos))
                         insertOk = false;
-//                    if(insertOk)
-//                        if (!updateTableXTableAdeful(AsyncTaskGenericIndividual.TABLA_E, fecha, context))
-//                            insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
             //ENTRNEMIENTO
-            case SplashUsuario.ENTRENAMIENTO_CANTIDAD_ADEFUL: {
-
+            case Variable.ENTRENAMIENTO_CANTIDAD_ADEFUL: {
                 List<Division> divisions = new ArrayList<>();
                 int cantidad = 0;
                 divisions = controladorUsuarioAdeful.selectListaDivisionUsuarioAdeful();
@@ -692,14 +604,16 @@ public class JsonParsingIndividual {
                 break;
             }
             //ASISTENCIA
-            case SplashUsuario.ENTRENAMIENTO_ASISTENCIA_ADEFUL: {
+            case Variable.ENTRENAMIENTO_ASISTENCIA_ADEFUL: {
                 try {
-
-                    Entrenamiento entrenamiento = new Entrenamiento(jsonAux.getInt("ID_ENTRENAMIENTO_ASISTENCIA"),
-                            jsonAux.getInt("ID_ENTRENAMIENTO"),
-                            jsonAux.getInt("ID_JUGADOR"), "");
-
-                    if (!controladorUsuarioAdeful.insertAsistenciaEntrenamientoUsuarioAdeful(entrenamiento))
+                    List<Entrenamiento> entrenamientos = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Entrenamiento entrenamiento = new Entrenamiento(jsonAux.getInt("ID_ENTRENAMIENTO_ASISTENCIA"),
+                                jsonAux.getInt("ID_ENTRENAMIENTO"),
+                                jsonAux.getInt("ID_JUGADOR"), "");
+                        entrenamientos.add(entrenamiento);
+                    }
+                    if (!controladorUsuarioAdeful.insertAsistenciaEntrenamientoUsuarioAdeful(entrenamientos))
                         insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
@@ -707,36 +621,40 @@ public class JsonParsingIndividual {
                 break;
             }
             //SANCION
-            case SplashUsuario.SANCION_ADEFUL: {
+            case Variable.SANCION_ADEFUL: {
                 try {
-
-                    Sancion sancion = new Sancion(jsonAux.getInt("ID_SANCION"),
-                            jsonAux.getInt("ID_JUGADOR"),
-                            jsonAux.getInt("ID_TORNEO"), jsonAux.getInt("AMARILLA"), jsonAux.getInt("ROJA")
-                            , jsonAux.getInt("FECHA_SUSPENSION"), jsonAux.getString("OBSERVACIONES"));
-
-                    if (!controladorUsuarioAdeful.insertSancionUsuarioAdeful(sancion))
+                    List<Sancion> sanciones = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Sancion sancion = new Sancion(jsonAux.getInt("ID_SANCION"),
+                                jsonAux.getInt("ID_JUGADOR"),
+                                jsonAux.getInt("ID_TORNEO"), jsonAux.getInt("AMARILLA"), jsonAux.getInt("ROJA"),
+                                jsonAux.getInt("FECHA_SUSPENSION"), jsonAux.getString("OBSERVACIONES"));
+                        sanciones.add(sancion);
+                    }
+                    if (!controladorUsuarioAdeful.insertSancionUsuarioAdeful(sanciones))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableAdeful(AsyncTaskGenericIndividual.TABLA_SANCION_ADEFUL, fecha, context))
+                        if (!updateTableXTableAdeful(Variable.TABLA_SANCION_ADEFUL, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-            case SplashUsuario.SANCION_LIFUBA: {
+            case Variable.SANCION_LIFUBA: {
                 try {
-
-                    Sancion sancion = new Sancion(jsonAux.getInt("ID_SANCION"),
-                            jsonAux.getInt("ID_JUGADOR"),
-                            jsonAux.getInt("ID_TORNEO"), jsonAux.getInt("AMARILLA"), jsonAux.getInt("ROJA")
-                            , jsonAux.getInt("FECHA_SUSPENSION"), jsonAux.getString("OBSERVACIONES"));
-
-                    if (!controladorUsuarioLifuba.insertSancionUsuarioLifuba(sancion))
+                    List<Sancion> sanciones = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Sancion sancion = new Sancion(jsonAux.getInt("ID_SANCION"),
+                                jsonAux.getInt("ID_JUGADOR"),
+                                jsonAux.getInt("ID_TORNEO"), jsonAux.getInt("AMARILLA"), jsonAux.getInt("ROJA"),
+                                jsonAux.getInt("FECHA_SUSPENSION"), jsonAux.getString("OBSERVACIONES"));
+                        sanciones.add(sancion);
+                    }
+                    if (!controladorUsuarioLifuba.insertSancionUsuarioLifuba(sanciones))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableLifuba(AsyncTaskGenericIndividual.TABLA_SANCION_LIFUBA, fecha, context))
+                        if (!updateTableXTableLifuba(Variable.TABLA_SANCION_LIFUBA, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
@@ -744,130 +662,83 @@ public class JsonParsingIndividual {
                 break;
             }
             //SOCIAL
-            case SplashUsuario.NOTIFICACION: {
+            case Variable.NOTIFICACION: {
                 try {
-
-                    Notificacion notificacion = new Notificacion(jsonAux.getInt("ID_NOTIFICACION"),
-                            jsonAux.getString("TITULO"),
-                            jsonAux.getString("NOTIFICACION"));
-
-                    if (!controladorUsuarioGeneral.insertNotificacionUsuario(notificacion))
+                    List<Notificacion> notificaciones = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Notificacion notificacion = new Notificacion(jsonAux.getInt("ID_NOTIFICACION"),
+                                jsonAux.getString("TITULO"),
+                                jsonAux.getString("NOTIFICACION"));
+                        notificaciones.add(notificacion);
+                    }
+                    if (!controladorUsuarioGeneral.insertNotificacionUsuario(notificaciones))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableGral(AsyncTaskGenericIndividual.TABLA_NOTIFICACION, fecha, context))
+                        if (!updateTableXTableGral(Variable.TABLA_NOTIFICACION, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-            case SplashUsuario.NOTICIA: {
+            case Variable.NOTICIA: {
                 try {
-
-                    Noticia noticia = new Noticia(jsonAux.getInt("ID_NOTICIA"),
-                            jsonAux.getString("TITULO"),
-                            jsonAux.getString("DESCRIPCION"),
-                            jsonAux.getString("LINK"));
-
-                    if (!controladorUsuarioGeneral.insertNoticiaUsuario(noticia))
+                    List<Noticia> noticias = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Noticia noticia = new Noticia(jsonAux.getInt("ID_NOTICIA"),
+                                jsonAux.getString("TITULO"),
+                                jsonAux.getString("DESCRIPCION"),
+                                jsonAux.getString("LINK"));
+                        noticias.add(noticia);
+                    }
+                    if (!controladorUsuarioGeneral.insertNoticiaUsuario(noticias))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableGral(AsyncTaskGenericIndividual.TABLA_NOTICIA, fecha, context))
+                        if (!updateTableXTableGral(Variable.TABLA_NOTICIA, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-            case SplashUsuario.FOTO: {
+            case Variable.FOTO: {
                 try {
-                    String imageString = jsonAux.getString("FOTO");
-
-                    Bitmap b = getBitmap(imageString);
-                    byte[] byteArray = null;
-                    if (b != null)
-                        byteArray = parseBitmapToByte(b);
-                    Foto foto = new Foto(jsonAux.getInt("ID_FOTO"),
-                            jsonAux.getString("TITULO"),
-                            byteArray);
-
-                    if (!controladorUsuarioGeneral.insertFotoUsuario(foto))
+                    List<Foto> fotos = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Foto foto = new Foto(jsonAux.getInt("ID_FOTO"),
+                                jsonAux.getString("TITULO"),
+                                jsonAux.getString("FOTO"));
+                        fotos.add(foto);
+                    }
+                    if (!controladorUsuarioGeneral.insertFotoUsuario(fotos))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableGral(AsyncTaskGenericIndividual.TABLA_FOTO, fecha, context))
+                        if (!updateTableXTableGral(Variable.TABLA_FOTO, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-            case SplashUsuario.PUBLICIDAD: {
+            case Variable.PUBLICIDAD: {
                 try {
-                    String imageString = jsonAux.getString("LOGO");
-
-                    Bitmap b = getBitmap(imageString);
-                    byte[] byteArray = null;
-                    if (b != null)
-                        byteArray = parseBitmapToByte(b);
-                    Publicidad publicidad = new Publicidad(jsonAux.getInt("ID_PUBLICIDAD"),
-                            jsonAux.getString("TITULO"),
-                            byteArray, jsonAux.getString("OTROS"));
-
-                    if (!controladorUsuarioGeneral.insertPublicidadUsuario(publicidad))
+                    List<Publicidad> publicidades = new ArrayList<>();
+                    for (JSONObject jsonAux : jsonsAux) {
+                        Publicidad publicidad = new Publicidad(jsonAux.getInt("ID_PUBLICIDAD"),
+                                jsonAux.getString("TITULO"),
+                                jsonAux.getString("LOGO"), jsonAux.getString("OTROS"));
+                        publicidades.add(publicidad);
+                    }
+                    if (!controladorUsuarioGeneral.insertPublicidadUsuario(publicidades))
                         insertOk = false;
                     if (insertOk)
-                        if (!updateTableXTableGral(AsyncTaskGenericIndividual.TABLA_PUBLICIDAD, fecha, context))
+                        if (!updateTableXTableGral(Variable.TABLA_PUBLICIDAD, fecha, context))
                             insertOk = false;
                 } catch (JSONException e) {
                     insertOk = false;
                 }
                 break;
             }
-//            case SplashUsuario.USUARIO: {
-//                try {
-//
-//                    Usuario usuario = new Usuario(jsonAux.getInt("ID_USUARIO"),
-//                            jsonAux.getString("USUARIO"),
-//                            jsonAux.getString("PASSWORD"));
-//
-//                    if (!controladorGeneral.insertUsuario(usuario))
-//                        insertOk = false;
-//                } catch (JSONException e) {
-//                    insertOk = false;
-//                }
-//                break;
-//            }
-//            case SplashUsuario.MODULO: {
-//                try {
-//
-//                    Modulo modulo = new Modulo(jsonAux.getInt("ID_MODULO"),
-//                            jsonAux.getString("NOMBRE"));
-//
-//                    if (!controladorUsuarioGeneral.insertModuloUsuario(modulo))
-//                        insertOk = false;
-//                    if (!controladorGeneral.insertModulo(modulo))
-//                        insertOk = false;
-//                } catch (JSONException e) {
-//                    insertOk = false;
-//                }
-//                break;
-//            }
-//            case SplashUsuario.SUBMODULO: {
-//                try {
-//
-//                    SubModulo subModulo = new SubModulo(jsonAux.getInt("ID_SUBMODULO"),
-//                            jsonAux.getString("NOMBRE"),
-//                            jsonAux.getInt("ID_MODULO"), jsonAux.getInt("ISSELECTED") > 0);
-//
-//                    if (!controladorUsuarioGeneral.insertSubModuloUsuario(subModulo))
-//                        insertOk = false;
-//                    if (!controladorGeneral.insertSubModulo(subModulo))
-//                        insertOk = false;
-//                } catch (JSONException e) {
-//                    insertOk = false;
-//                }
-//                break;
-//            }
         }
         return insertOk;
     }
@@ -892,60 +763,6 @@ public class JsonParsingIndividual {
             }
         }
         return insertOk;
-    }
-
-    public static Bitmap getBitmap(String url) {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                .permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        Bitmap bm = null;
-        BitmapFactory.Options bmOptions;
-        bmOptions = new BitmapFactory.Options();
-        bmOptions.inSampleSize = 1;
-
-        if (bmOptions != null)
-            bm = loadBitmap(url, bmOptions);
-
-        return bm;
-    }
-
-    public static Bitmap loadBitmap(String URL, BitmapFactory.Options options) {
-        Bitmap bitmap = null;
-        InputStream in = null;
-        try {
-            in = OpenHttpConnection(URL);
-            bitmap = BitmapFactory.decodeStream(in, null, options);
-            if (in != null)
-                in.close();
-        } catch (IOException e1) {
-        }
-        return bitmap;
-    }
-
-    private static InputStream OpenHttpConnection(String strURL)
-            throws IOException {
-        InputStream inputStream = null;
-        URL url = new URL(strURL);
-        URLConnection conn = url.openConnection();
-
-        try {
-            HttpURLConnection httpConn = (HttpURLConnection) conn;
-            httpConn.setRequestMethod("GET");
-            httpConn.connect();
-
-            if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                inputStream = httpConn.getInputStream();
-            }
-        } catch (Exception ex) {
-        }
-        return inputStream;
-    }
-
-    public byte[] parseBitmapToByte(Bitmap b) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        b.compress(Bitmap.CompressFormat.PNG, 0, stream);
-        return stream.toByteArray();
     }
 
     public boolean updateTableXTableLifuba(String tabla, String fecha, Context context) {

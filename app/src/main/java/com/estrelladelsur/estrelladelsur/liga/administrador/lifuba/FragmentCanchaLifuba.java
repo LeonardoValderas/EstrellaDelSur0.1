@@ -48,7 +48,6 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
     private String URL = null;
     private Request request;
     private int id_cancha;
-    private ImageButton rotateButton;
 
     public static FragmentCanchaLifuba newInstance() {
         FragmentCanchaLifuba fragment = new FragmentCanchaLifuba();
@@ -74,8 +73,6 @@ public class FragmentCanchaLifuba extends Fragment implements MyAsyncTaskListene
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_general_liga, container,
                 false);
-        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
-        rotateButton.setVisibility(View.GONE);
         imageButtonCancha = (ImageView) v.findViewById(
                 R.id.imageButtonEquipo_Cancha);
         editTextNombre = (EditText) v.findViewById(

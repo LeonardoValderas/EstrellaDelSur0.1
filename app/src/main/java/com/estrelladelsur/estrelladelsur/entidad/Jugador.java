@@ -97,6 +97,44 @@ public class Jugador {
         NOMBRE_POSICION = nombre_posicion;
         ID_POSICION = posicion;
     }
+    public Jugador(int id_jugador, String nombre, String url_foto, int division, String nombre_division,
+                   int posicion, String nombre_posicion) {
+
+        ID_JUGADOR = id_jugador;
+        NOMBRE_JUGADOR = nombre;
+        URL_JUGADOR = url_foto;
+        ID_DIVISION = division;
+        NOMBRE_DIVISION = nombre_division;
+        NOMBRE_POSICION = nombre_posicion;
+        ID_POSICION = posicion;
+    }
+    public Jugador(int id_jugador, String nombre, String url_foto, String nombre_foto, int division, String nombre_division,
+                   int posicion, String nombre_posicion) {
+
+        ID_JUGADOR = id_jugador;
+        NOMBRE_JUGADOR = nombre;
+        URL_JUGADOR = url_foto;
+        NOMBRE_FOTO = nombre_foto;
+        ID_DIVISION = division;
+        NOMBRE_DIVISION = nombre_division;
+        NOMBRE_POSICION = nombre_posicion;
+        ID_POSICION = posicion;
+    }
+    public Jugador(int id_jugador, String nombre, int division) {
+        ID_JUGADOR = id_jugador;
+        NOMBRE_JUGADOR = nombre;
+        ID_DIVISION = division;
+    }
+    public Jugador(int id_jugador, String nombre, String url_foto, int division, String nombre_division,
+                   String nombre_posicion) {
+
+        ID_JUGADOR = id_jugador;
+        NOMBRE_JUGADOR = nombre;
+        URL_JUGADOR = url_foto;
+        ID_DIVISION = division;
+        NOMBRE_DIVISION = nombre_division;
+        NOMBRE_POSICION = nombre_posicion;
+    }
 
     public Jugador(int id_jugador, String nombre, byte[] foto, int id_division, String nombre_division,
                    String nombre_posicion) {

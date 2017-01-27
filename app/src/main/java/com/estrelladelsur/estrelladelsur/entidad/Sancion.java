@@ -18,6 +18,7 @@ public class Sancion {
     private String USUARIO_ACTUALIZACION;
     private String FECHA_ACTUALIZACION;
     private byte[] FOTO_JUGADOR;
+    private String FOTO_JUGADOR_URL;
 
     // SANCION
     public Sancion(int id, int id_jugador, int torneo, int amarilla, int roja, int fecha, String observaciones, String usuario,
@@ -57,6 +58,20 @@ public class Sancion {
         ID_JUGADOR = id_jugador;
         NOMBRE_JUGADOR = nombre_jugador;
         FOTO_JUGADOR = foto;
+        ID_DIVISION = id_division;
+        DESCRIPCION_DIVISION = nombre_division;
+        AMARILLA = amarilla;
+        ROJA = roja;
+        FECHA_SUSPENSION = fecha;
+        OBSERVACIONES = observaciones;
+    }
+    public Sancion(int id, int id_jugador, String nombre_jugador, String foto, int id_division, String nombre_division,
+                   int amarilla, int roja, int fecha, String observaciones) {
+
+        ID_SANCION = id;
+        ID_JUGADOR = id_jugador;
+        NOMBRE_JUGADOR = nombre_jugador;
+        FOTO_JUGADOR_URL = foto;
         ID_DIVISION = id_division;
         DESCRIPCION_DIVISION = nombre_division;
         AMARILLA = amarilla;
@@ -184,5 +199,13 @@ public class Sancion {
 
     public int getID_ANIO() {
         return ID_ANIO;
+    }
+
+    public String getFOTO_JUGADOR_URL() {
+        return FOTO_JUGADOR_URL;
+    }
+
+    public void setFOTO_JUGADOR_URL(String FOTO_JUGADOR_URL) {
+        this.FOTO_JUGADOR_URL = FOTO_JUGADOR_URL;
     }
 }

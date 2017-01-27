@@ -12,14 +12,6 @@
         android:layout_marginTop="1dp"
         android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/rotateButton"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="50dp"
-            android:src="@android:drawable/stat_notify_sync" />
-
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/imageJugador"
             android:layout_width="65dp"
@@ -40,6 +32,7 @@
             android:hint="Nombre"
             android:maxLength="20"
             android:textSize="12dp">
+
             <requestFocus />
         </EditText>
 

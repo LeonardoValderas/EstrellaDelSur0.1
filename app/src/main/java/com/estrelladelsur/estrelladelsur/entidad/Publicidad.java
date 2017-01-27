@@ -27,10 +27,15 @@ public class Publicidad {
 		FECHA_ACTUALIZACION = fechaActualizacion;
 	}
 	public Publicidad(int id_publicidad, String titulo, byte[] logo, String otros) {
-
 		ID_PUBLICIDAD = id_publicidad;
 		TITULO = titulo;
 		LOGO = logo;
+		OTROS = otros;
+	}
+	public Publicidad(int id_publicidad, String titulo, String logo, String otros) {
+		ID_PUBLICIDAD = id_publicidad;
+		TITULO = titulo;
+		URL_FOTO = logo;
 		OTROS = otros;
 	}
 

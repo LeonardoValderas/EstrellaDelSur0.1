@@ -29,11 +29,17 @@ public class Equipo {
 
 
     public Equipo(int id, String nombre,  byte[] escudo) {
-
         ID_EQUIPO = id;
         NOMBRE_EQUIPO = nombre;
         ESCUDO = escudo;
     }
+    public Equipo(int id, String nombre, String url_escudo) {
+
+        ID_EQUIPO = id;
+        NOMBRE_EQUIPO = nombre;
+        URL_ESCUDO = url_escudo;
+    }
+
     public String getURL_ESCUDO() {
         return URL_ESCUDO;
     }

@@ -154,7 +154,7 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
                 fixtureDivisionSpinner.setAdapter(adapterFixtureDivision);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
                 fixtureDivisionSpinner.setAdapter(adaptadorInicial);
             }
@@ -246,7 +246,7 @@ public class FragmentEditarFixtureLifuba extends Fragment implements MyAsyncTask
 
                 Intent editarFixture = new Intent(getActivity(),
                         TabsFixture.class);
-                editarFixture.putExtra("actualizar", true);
+                editarFixture.putExtra("actualizarLifuba", true);
                 editarFixture.putExtra("id_fixture",
                         fixtureArray.get(position).getID_FIXTURE());
                 editarFixture.putExtra("divisionSpinner", divisionSpinner);

@@ -44,6 +44,8 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -87,9 +89,9 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
     private TextView tituloTextPeriodo, tituloTextCargo;
     private Request request;
     private boolean isComision = true;
-    private String fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_direccion = null,
-            URL = null, usuario = null, url_nombre_foto = null, encodedImage = null;
-    private ImageButton rotateButton;
+    private String fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_direccion = "",
+            URL = null, usuario = null, url_nombre_foto = null, encodedImage = null, nombre_anterior = "";
+ //   private ImageButton rotateButton;
     private static final int PERMISSION_REQUEST_CODE = 1;
 
     public static FragmentGenerarDireccionAdeful newInstance() {
@@ -119,7 +121,7 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
         textViewFont = auxiliarGeneral.tituloFont(getActivity());
-        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
+       // rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
         //FOTO INTEGRANTE
         fotoImageDireccion = (CircleImageView) v
                 .findViewById(R.id.fotoImageComisionDireccion);
@@ -179,21 +181,45 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
             // DIRECCION POR ID
             direccionArray = controladorGeneral.selectDireccion(idDireccionExtra);
             if (direccionArray != null) {
-                nombreEditDireccion.setText(direccionArray.get(0).getNOMBRE_DIRECCION().toString());
-                desdeButtonDireccion.setText(direccionArray.get(0).getPERIODO_DESDE().toString());
-                hastaButtonDireccion.setText(direccionArray.get(0).getPERIODO_HASTA().toString());
-                imageDireccion = direccionArray.get(0).getFOTO_DIRECCION();
+                nombreEditDireccion.setText(direccionArray.get(0).getNOMBRE_DIRECCION());
+                desdeButtonDireccion.setText(direccionArray.get(0).getPERIODO_DESDE());
+                hastaButtonDireccion.setText(direccionArray.get(0).getPERIODO_HASTA());
+                nombre_anterior = direccionArray.get(0).getNOMBRE_DIRECCION();
+                //imageDireccion = direccionArray.get(0).getFOTO_DIRECCION();
                 nombre_foto_anterior = direccionArray.get(0).getNOMBRE_FOTO();
+                url_foto_direccion = direccionArray.get(0).getURL_DIRECCION();
+
                 puestoSpinnerDireccion.setSelection(getPositionCargo(direccionArray.get(0).getID_CARGO()));
 
-                if (imageDireccion != null) {
-                    Bitmap theImage = BitmapFactory.decodeByteArray(imageDireccion, 0,
-                            imageDireccion.length);
-                    theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
-                    fotoImageDireccion.setImageBitmap(theImage);
-                } else {
-                    fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
-                }
+                if (!url_foto_direccion.isEmpty())
+                    Picasso.with(getActivity())
+                            .load(url_foto_direccion).fit()
+                            .placeholder(R.mipmap.ic_foto_galery)
+                            .into(fotoImageDireccion, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError() {
+                                    fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
+                                }
+                            });
+                else
+                    Picasso.with(getActivity())
+                            .load(R.mipmap.ic_foto_galery).fit()
+                            .placeholder(R.mipmap.ic_foto_galery)
+                            .into(fotoImageDireccion);
+
+//                if (imageDireccion != null) {
+//                    Bitmap theImage = BitmapFactory.decodeByteArray(imageDireccion, 0,
+//                            imageDireccion.length);
+//                    theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
+//                    fotoImageDireccion.setImageBitmap(theImage);
+//                } else {
+//                    fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
+//                }
 
                 insertar = false;
             } else {
@@ -228,19 +254,6 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
                 // TODO Auto-generated method stub
                 botonFecha = false;
                 setDate();
-            }
-        });
-
-        rotateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (imageDireccion != null) {
-                    Bitmap theImage = auxiliarGeneral.setByteToBitmap(imageDireccion, 150,
-                            150);
-                    theImage = auxiliarGeneral.RotateBitmap(theImage);
-                    fotoImageDireccion.setImageBitmap(theImage);
-                    imageDireccion = auxiliarGeneral.pasarBitmapByte(theImage);
-                }
             }
         });
     }
@@ -397,7 +410,8 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
         desdeButtonDireccion.setText("Desde");
         hastaButtonDireccion.setText("Hasta");
         imageDireccion = null;
-        url_foto_direccion = null;
+        url_foto_direccion = "";
+        nombre_anterior = "";
         nombre_foto = null;
         nombre_foto_anterior = null;
         fotoImageDireccion.setImageResource(R.mipmap.ic_foto_galery);
@@ -423,12 +437,14 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
         String nombre = null;
         nombre = nombreEditDireccion.getText().toString();
         URL = null;
-        url_foto_direccion = null;
+
         if (imageDireccion != null) {
-            url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
-            fechaFoto = auxiliarGeneral.getFechaImagen();
-            nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
-            url_foto_direccion = auxiliarGeneral.getURLFOTODIRECCION() + nombre_foto;
+            setUrlFoto(nombre);
+        } else if (!url_foto_direccion.isEmpty()) {
+            if (nombre.compareTo(nombre_anterior) == 0)
+                nombre_foto_anterior = null;
+            else
+                setUrlFoto(nombre);
         }
         URL = auxiliarGeneral.getURLDIRECCIONADEFULALL();
         direccion = new Direccion(id, nombre,
@@ -436,6 +452,12 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
                 hastaButtonDireccion.getText().toString(), url_foto_direccion, usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
 
         envioWebService(ws);
+    }
+    public void setUrlFoto(String nombre) {
+        url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
+        fechaFoto = auxiliarGeneral.getFechaImagen();
+        nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
+        url_foto_direccion = auxiliarGeneral.getURLFOTODIRECCION() + nombre_foto;
     }
 
     public void cargarEntidadCargo(int id, int ws, String cargoEntidad) {
@@ -450,7 +472,6 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
         request = new Request();
         request.setMethod("POST");
         request.setParametrosDatos("nombre", direccion.getNOMBRE_DIRECCION());
-        // request.setParametrosDatos("nombre_foto", direccion.getNOMBRE_FOTO());
         request.setParametrosDatos("id_cargo", String.valueOf(direccion.getID_CARGO()));
         request.setParametrosDatos("periodo_desde", direccion.getPERIODO_DESDE());
         request.setParametrosDatos("periodo_hasta", direccion.getPERIODO_HASTA());
@@ -463,8 +484,15 @@ public class FragmentGenerarDireccionAdeful extends Fragment implements MyAsyncT
             request.setParametrosDatos("url_foto",
                     direccion.getURL_DIRECCION());
             request.setParametrosDatos("nombre_foto", direccion.getNOMBRE_FOTO());
-
+        } else if(!url_foto_direccion.isEmpty()){
+            request.setParametrosDatos("foto", "222");
+            request.setParametrosDatos("url_foto",
+                    direccion.getURL_DIRECCION());
+            request.setParametrosDatos("nombre_foto", direccion.getNOMBRE_FOTO());
+        }else {
+            request.setParametrosDatos("foto", "222");
         }
+
         if (tipo == 0) {
             request.setParametrosDatos("usuario_creador", direccion.getUSUARIO_CREADOR());
             request.setParametrosDatos("fecha_creacion", direccion.getFECHA_CREACION());

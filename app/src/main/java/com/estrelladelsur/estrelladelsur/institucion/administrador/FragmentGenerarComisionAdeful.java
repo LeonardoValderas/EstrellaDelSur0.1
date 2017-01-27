@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -44,12 +43,12 @@ import com.estrelladelsur.estrelladelsur.dialogo.adeful_lifuba.DialogoMenuLista;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericAdeful;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -87,8 +86,8 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
     private Request request;
     private boolean isComision = true;
     private String encodedImage = null, url_nombre_foto = null, usuario = null,
-            URL = null, fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_comision = null;
-    private ImageButton rotateButton;
+            URL = null, fechaFoto = null, nombre_foto = null, nombre_foto_anterior = null, url_foto_comision = "", nombre_anterior = "";
+   // private ImageButton rotateButton;
     private static final int PERMISSION_REQUEST_CODE = 1;
 
     public static FragmentGenerarComisionAdeful newInstance() {
@@ -118,7 +117,7 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
         auxiliarGeneral = new AuxiliarGeneral(getActivity());
         editTextFont = auxiliarGeneral.textFont(getActivity());
         textViewFont = auxiliarGeneral.tituloFont(getActivity());
-        rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
+      //  rotateButton = (ImageButton) v.findViewById(R.id.rotateButton);
         //FOTO INTEGRANTE
         fotoImageComision = (CircleImageView) v
                 .findViewById(R.id.fotoImageComisionDireccion);
@@ -177,25 +176,39 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
             idComisionExtra = getActivity().getIntent().getIntExtra("id_comision", 0);
             // COMISION POR ID
             comisionArray = controladorGeneral.selectComision(idComisionExtra);
+
             if (comisionArray != null) {
 
-                nombreEditComision.setText(comisionArray.get(0).getNOMBRE_COMISION().toString());
-                desdeButtonComision.setText(comisionArray.get(0).getPERIODO_DESDE().toString());
-                hastaButtonComision.setText(comisionArray.get(0).getPERIODO_HASTA().toString());
-                imageComision = comisionArray.get(0).getFOTO_COMISION();
+                nombreEditComision.setText(comisionArray.get(0).getNOMBRE_COMISION());
+                desdeButtonComision.setText(comisionArray.get(0).getPERIODO_DESDE());
+                hastaButtonComision.setText(comisionArray.get(0).getPERIODO_HASTA());
+                nombre_anterior = comisionArray.get(0).getNOMBRE_COMISION();
+                //  imageComision = comisionArray.get(0).getFOTO_COMISION();
                 nombre_foto_anterior = comisionArray.get(0).getNOMBRE_FOTO();
+                url_foto_comision = comisionArray.get(0).getURL_COMISION();
 
                 puestoSpinnerComision.setSelection(getPositionCargo(comisionArray.get(0).getID_CARGO()));
 
-                if (imageComision != null) {
-                    Bitmap theImage = BitmapFactory.decodeByteArray(imageComision, 0,
-                            imageComision.length);
-                    // theImage=getRoundedShape(theImage);
-                    theImage = Bitmap.createScaledBitmap(theImage, 150, 150, true);
-                    fotoImageComision.setImageBitmap(theImage);
-                } else {
-                    fotoImageComision.setImageResource(R.mipmap.ic_foto_galery);
-                }
+                if (!url_foto_comision.isEmpty())
+                    Picasso.with(getActivity())
+                            .load(url_foto_comision).fit()
+                            .placeholder(R.mipmap.ic_foto_galery)
+                            .into(fotoImageComision, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError() {
+                                    fotoImageComision.setImageResource(R.mipmap.ic_foto_galery);
+                                }
+                            });
+                else
+                    Picasso.with(getActivity())
+                            .load(R.mipmap.ic_foto_galery).fit()
+                            .placeholder(R.mipmap.ic_foto_galery)
+                            .into(fotoImageComision);
                 insertar = false;
             } else {
                 auxiliarGeneral.errorDataBase(getActivity());
@@ -228,19 +241,6 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
                 // TODO Auto-generated method stub
                 botonFecha = false;
                 setDate();
-            }
-        });
-
-        rotateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (imageComision != null) {
-                    Bitmap theImage = auxiliarGeneral.setByteToBitmap(imageComision, 150,
-                            150);
-                    theImage = auxiliarGeneral.RotateBitmap(theImage);
-                    fotoImageComision.setImageBitmap(theImage);
-                    imageComision = auxiliarGeneral.pasarBitmapByte(theImage);
-                }
             }
         });
     }
@@ -292,12 +292,12 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == getActivity().RESULT_OK) {
-             String p =  auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
-             Bitmap bitmap =  auxiliarGeneral.asignateImage(p);
-             asignateBitmap(bitmap);
+                String p = auxiliarGeneral.compressImage(getActivity(), result.getUri().toString());
+                Bitmap bitmap = auxiliarGeneral.asignateImage(p);
+                asignateBitmap(bitmap);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                if(!result.getError().toString().contains("ENOENT"))
-                Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
+                if (!result.getError().toString().contains("ENOENT"))
+                    Toast.makeText(getActivity(), "Error al asignar imagen: " + result.getError(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -328,7 +328,6 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
                 break;
             }
         }
-
         if (!isGranted)
             auxiliarGeneral.showDialogPermission(getActivity(), getActivity());
     }
@@ -351,7 +350,7 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
             puestoSpinnerComision.setAdapter(adapterSpinnerCargoComision);
         } else {
             //SPINNER HINT
-            adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+            adaptadorInicial = new ArrayAdapter<>(getActivity(),
                     R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerCargo));
             puestoSpinnerComision.setAdapter(adaptadorInicial);
         }
@@ -359,7 +358,7 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
 
     // POPULATION LISTVIEW
     public void loadListViewMenu() {
-        adapterList = new ArrayAdapter<Cargo>(getActivity(),
+        adapterList = new ArrayAdapter<>(getActivity(),
                 R.layout.listview_item_dialogo, R.id.textViewGeneral, selectCargoList());
         dialogoMenuLista.listViewGeneral.setAdapter(adapterList);
     }
@@ -398,7 +397,8 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
         desdeButtonComision.setText("Desde");
         hastaButtonComision.setText("Hasta");
         imageComision = null;
-        url_foto_comision = null;
+        url_foto_comision = "";
+        nombre_anterior = "";
         nombre_foto = null;
         nombre_foto_anterior = null;
         fotoImageComision.setImageResource(R.mipmap.ic_foto_galery);
@@ -425,22 +425,29 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
         String nombre = null;
         nombre = nombreEditComision.getText().toString();
         URL = null;
-        url_foto_comision = null;
         // si la foto es null(default) no enviaremos la url.
         if (imageComision != null) {
-            url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
-            fechaFoto = auxiliarGeneral.getFechaImagen();
-            nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
-            url_foto_comision = auxiliarGeneral.getURLFOTOCOMISION() + nombre_foto;
+            setUrlFoto(nombre);
+        } else if (!url_foto_comision.isEmpty()) {
+            if (nombre.compareTo(nombre_anterior) == 0)
+                nombre_foto_anterior = null;
+            else
+                setUrlFoto(nombre);
         }
         URL = auxiliarGeneral.getURLCOMISIONADEFULALL();
-
-        comision = new Comision(id, nombre,
-                imageComision, nombre_foto, cargoSpinner.getID_CARGO(), null, desdeButtonComision.getText().toString(),
-                hastaButtonComision.getText().toString(), url_foto_comision, usuario, auxiliarGeneral.getFechaOficial(), usuario, auxiliarGeneral.getFechaOficial());
+        comision = new Comision(id, nombre, nombre_foto, cargoSpinner.getID_CARGO(),
+                desdeButtonComision.getText().toString(), hastaButtonComision.getText().toString(),
+                url_foto_comision, usuario, auxiliarGeneral.getFechaOficial(),
+                usuario, auxiliarGeneral.getFechaOficial());
 
         envioWebService(ws);
+    }
 
+    public void setUrlFoto(String nombre) {
+        url_nombre_foto = auxiliarGeneral.removeAccents(nombre.replace(" ", "").trim());
+        fechaFoto = auxiliarGeneral.getFechaImagen();
+        nombre_foto = fechaFoto + url_nombre_foto + ".PNG";
+        url_foto_comision = auxiliarGeneral.getURLFOTOCOMISION() + nombre_foto;
     }
 
     public void cargarEntidadCargo(int id, int ws, String cargoEntidad) {
@@ -490,7 +497,13 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
             request.setParametrosDatos("url_foto",
                     comision.getURL_COMISION());
             request.setParametrosDatos("nombre_foto", comision.getNOMBRE_FOTO());
-
+        } else if(!url_foto_comision.isEmpty()){
+            request.setParametrosDatos("foto", "222");
+            request.setParametrosDatos("url_foto",
+                    comision.getURL_COMISION());
+            request.setParametrosDatos("nombre_foto", comision.getNOMBRE_FOTO());
+        } else{
+            request.setParametrosDatos("foto", "222");
         }
         if (tipo == 0) {
             //request.setQuery("SUBIR");
@@ -630,7 +643,6 @@ public class FragmentGenerarComisionAdeful extends Fragment implements MyAsyncTa
                                             }
                                         }
                                     });
-
                             dialogoAlerta.btnCancelar
                                     .setOnClickListener(new View.OnClickListener() {
 

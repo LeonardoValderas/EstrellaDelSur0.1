@@ -15,6 +15,8 @@ import com.estrelladelsur.estrelladelsur.R;
 import com.estrelladelsur.estrelladelsur.auxiliar.AuxiliarGeneral;
 import com.estrelladelsur.estrelladelsur.entidad.Foto;
 import com.estrelladelsur.estrelladelsur.entidad.Publicidad;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -27,6 +29,8 @@ public class AdaptadorRecyclerPublicidadUsuario extends
 	private Typeface nombreFont;
 	private Typeface cargoPeriodoFont;
 	private AuxiliarGeneral auxiliarGeneral;
+	private Context context;
+
 	public static class FotoViewHolder extends RecyclerView.ViewHolder {
 		private TextView tituloFoto;
 		private TextView publicidadOtros;
@@ -46,17 +50,39 @@ public class AdaptadorRecyclerPublicidadUsuario extends
 					.findViewById(R.id.imageFoto);
 		}
 
-		public void bindTitular(Publicidad publicidad, Typeface nombre, Typeface cargo, AuxiliarGeneral auxiliarGeneral) {
+		public void bindTitular(Publicidad publicidad, Typeface nombre, Typeface cargo, AuxiliarGeneral auxiliarGeneral, Context context) {
 
 			// ESCUDO EQUIPO LOCAL
-			fotoByte = publicidad.getLOGO();
-			if (fotoByte == null) {
-				imageFoto.setImageResource(R.mipmap.ic_foto);
-			} else {
+//			fotoByte = publicidad.getLOGO();
+//			if (fotoByte == null) {
+//				imageFoto.setImageResource(R.mipmap.ic_foto);
+//			} else {
+//
+//				fotoBitmap = auxiliarGeneral.setByteToBitmap(fotoByte, 300, 300);
+//     			imageFoto.setImageBitmap(fotoBitmap);
+//			}
 
-				fotoBitmap = auxiliarGeneral.setByteToBitmap(fotoByte, 300, 300);
-     			imageFoto.setImageBitmap(fotoBitmap);
-			}
+			if(!publicidad.getURL_FOTO().isEmpty())
+				Picasso.with(context)
+						.load(publicidad.getURL_FOTO()).fit()
+						.placeholder(R.mipmap.ic_foto)
+						.into(imageFoto, new Callback() {
+							@Override
+							public void onSuccess() {
+
+							}
+
+							@Override
+							public void onError() {
+								imageFoto.setImageResource(R.mipmap.ic_foto);
+							}
+						});
+			else
+				Picasso.with(context)
+						.load(R.mipmap.ic_foto).fit()
+						.placeholder(R.mipmap.ic_foto)
+						.into(imageFoto);
+
 			tituloFoto.setText(publicidad.getTITULO());
 			publicidadOtros.setText(publicidad.getOTROS());
 		}
@@ -66,6 +92,7 @@ public class AdaptadorRecyclerPublicidadUsuario extends
 		auxiliarGeneral = new AuxiliarGeneral(context);
 		this.cargoPeriodoFont = auxiliarGeneral.textFont(context);
 		this.nombreFont = auxiliarGeneral.tituloFont(context);
+		this.context = context;
 	}
 
 	@Override
@@ -84,7 +111,7 @@ public class AdaptadorRecyclerPublicidadUsuario extends
 	public void onBindViewHolder(FotoViewHolder viewHolder, int pos) {
 		Publicidad item = publicidadArray.get(pos);
 
-		viewHolder.bindTitular(item,nombreFont, cargoPeriodoFont, auxiliarGeneral);
+		viewHolder.bindTitular(item,nombreFont, cargoPeriodoFont, auxiliarGeneral, context);
 	}
 
 	@Override

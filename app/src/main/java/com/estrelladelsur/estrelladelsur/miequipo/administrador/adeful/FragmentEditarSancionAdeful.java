@@ -141,7 +141,7 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
                 sancionDivisionSpinner.setAdapter(adapterFixtureDivision);
             } else {
                 //SPINNER HINT
-                adaptadorInicial = new ArrayAdapter<String>(getActivity(),
+                adaptadorInicial = new ArrayAdapter<>(getActivity(),
                         R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.ceroSpinnerDivision));
                 sancionDivisionSpinner.setAdapter(adaptadorInicial);
             }
@@ -271,7 +271,7 @@ public class FragmentEditarSancionAdeful extends Fragment implements MyAsyncTask
 
     public void populationSpinnerJugador(int id_division) {
 
-        jugadorArray = controladorAdeful.selectListaJugadorAdeful(id_division);
+        jugadorArray = controladorAdeful.selectListaJugadorSpinner(id_division);
         if (jugadorArray != null) {
             if (!jugadorArray.isEmpty()) {
                 adapterSpinnerJugador = new AdapterSpinnerJugador(getActivity(),

@@ -57,9 +57,9 @@
 
             <TextView
                 android:id="@+id/textRecyclerViewCargo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:gravity="center"
                 android:text="Cargo"
                 android:textColor="#000000"
                 android:textSize="28dp" />

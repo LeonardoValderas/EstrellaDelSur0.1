@@ -28,6 +28,7 @@ import com.estrelladelsur.estrelladelsur.entidad.Cancha;
 import com.estrelladelsur.estrelladelsur.miequipo.MyAsyncTaskListener;
 import com.estrelladelsur.estrelladelsur.webservice.AsyncTaskGenericIndividual;
 import com.estrelladelsur.estrelladelsur.webservice.Request;
+import com.estrelladelsur.estrelladelsur.webservice.Variable;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -116,15 +117,15 @@ public class FragmentCanchaUsuario extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                String fecha = controladorUsuarioAdeful.selectTabla(AsyncTaskGenericIndividual.TABLA_CANCHA_ADEFUL);
+                String fecha = controladorUsuarioAdeful.selectTabla(Variable.TABLA_CANCHA_ADEFUL);
                 if (fecha != null) {
                     request = new Request();
                     request.setMethod("POST");
                     request.setParametrosDatos("fecha_tabla", fecha);
-                    request.setParametrosDatos("tabla", AsyncTaskGenericIndividual.TABLA_CANCHA_ADEFUL);
+                    request.setParametrosDatos("tabla", Variable.TABLA_CANCHA_ADEFUL);
                     request.setParametrosDatos("liga", "ADEFUL");
 
-                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, AsyncTaskGenericIndividual.CANCHA_ADEFUL);
+                    new AsyncTaskGenericIndividual(getActivity(), listener, auxiliarGeneral.getURLSINCRONIZARINDIVIDUAL(), request, Variable.CANCHA_ADEFUL);
                 }
             }
         });
